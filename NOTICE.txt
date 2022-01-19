@@ -1,0 +1,56 @@
+1、JDEasyflow use bpmn-js(https://bpmn.io/) component to render bpmn diagram. You should obey 
+their license rule(https://bpmn.io/license/) when using related function. Especially, you
+should notice and obey the bellow rule in their license:
+"The source code responsible for displaying the bpmn.io project watermark that
+links back to https://bpmn.io as part of rendered diagrams MUST NOT be
+removed or changed. When this software is being used in a website or application,
+the watermark must stay fully visible and not visually overlapped by other elements."
+
+2、JDEasyFlow license can be seen in LICENSE.txt. In addition, JDEasyFlow depends on a number of 
+components with separate copyright notices and license terms. Your use of 
+these components is subject to the terms and conditions of the licenses of the 
+following links:
+
+>>> Apache maven:
+https://github.com/apache/maven/blob/master/LICENSE
+
+>>> Spring framework:
+https://github.com/spring-projects/spring-framework/blob/main/src/docs/dist/license.txt
+
+>>> Commons-logging:
+https://github.com/apache/commons-logging/blob/master/LICENSE.txt
+
+>>> Logback:
+https://logback.qos.ch/license.html 
+
+>>> Slf4j:
+https://www.slf4j.org/license.html
+
+>>> Commons-lang3:
+https://github.com/apache/commons-lang/blob/master/LICENSE.txt 
+
+>>> Commons-io:
+https://github.com/apache/commons-io/blob/master/LICENSE.txt 
+
+>>> Commons-collections:
+https://github.com/apache/commons-collections/blob/master/LICENSE.txt
+
+>>> Jackson:
+https://github.com/FasterXML/jackson-databind/blob/2.11.4/LICENSE
+https://github.com/FasterXML/jackson-annotations/blob/2.11.4/LICENSE
+https://github.com/FasterXML/jackson-core/blob/2.11.4/LICENSE
+
+>>> Junit:
+https://junit.org/junit4/license.html
+
+>>> Hamcrest-core:
+http://hamcrest.org/JavaHamcrest/
+
+>>> Lombok:
+https://github.com/projectlombok/lombok/blob/master/LICENSE
+
+>>> Activiti:
+https://github.com/Activiti/Activiti/blob/develop/LICENSE.txt
+
+>>> Joda:
+https://www.joda.org/joda-time/licenses.html

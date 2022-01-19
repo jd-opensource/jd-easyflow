@@ -1,0 +1,8 @@
+{    "id": "parser_test_001",
+    "name": "Parser Test 001",
+    "nodes": [
+        {"id": "node001","name": "Node001","start": true,"post": {"to": "node002"}},
+        {"id": "node002","name": "Node002","action": {"createExp": "new com.jd.easyflow.flow.quickstart.QuickStart002Node01Action()"},"post": {"to": "node003"}},
+        {"id": "node003","name": "Node003"}
+    ]
+}

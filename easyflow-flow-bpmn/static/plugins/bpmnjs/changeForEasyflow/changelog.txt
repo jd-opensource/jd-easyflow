@@ -1,0 +1,5 @@
+We made some changes for easyflow. Details are as follows:
+1、For the purpose of using Viewer and Modeler at the same time, we change rollup.config.js to export different control name.(see rollup.config.js)
+2、Add Grid in Modeler.js and NavigatedViewer.js
+3、For the purpose of supporting other language of 'ID', we change node_modules\moddle-xml\dist\index.js and node_modules\moddle-xml\dist\index.esm.js, commenting the line `throw new Error('illegal ID <' + id + '>');`. 
+After above change ,we can run 'npm run distro command' to build a new version of bpmn.js.

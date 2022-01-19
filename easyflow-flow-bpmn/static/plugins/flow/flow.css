@@ -1,0 +1,99 @@
+/**BPMN pannel*/
+.j-bpmn-pannel {
+    background-color: white
+}
+
+.j-bpmn-pannel-normal {
+    position:relative;
+    height:500px;   
+}
+
+.j-bpmn-pannel-fullscreen {
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:1000
+}
+
+.j-flow-canvas {
+    height: 100%
+}
+
+.j-bpmn-btn-group {
+    position:absolute;
+    left:10px;
+    bottom:0;
+
+}
+/**info pannel*/
+.infoPannel {
+    padding:4px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom:50px;
+    overflow:scroll;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.infoPannel-up {
+	bottom:auto;
+	overflow:hidden;
+}
+
+.infoPannel form {
+	width:300px;
+}
+
+.infoPannel textarea.form-control {
+    height:30px;
+}
+
+.j-bpmn-info-switch {
+    float:right;
+    cursor: pointer;
+}
+
+/**instance info style*/
+.j-bpmn-node-close:not(.djs-connection) .djs-visual>:nth-child(1) {
+    fill: #3f3 !important; /* color elements as green */
+}
+
+.j-bpmn-node-active:not(.djs-connection) .djs-visual>:nth-child(1) {
+    fill: #ff0 !important; /* color elements as green */
+}
+
+.j-bpmn-comment-select-container {
+	display: inline-block;
+}
+
+.j-bpmn-comment {
+    border-radius:2px;
+    background-color:#cf9;
+    opacity: 0.8
+}
+
+.j-bpmn-comment-condition {
+	    background-color:#ff3;
+}
+
+/**Detail info style*/
+.j-bpmn-comment dl {
+    font-size: 10px;
+    margin:0;
+    padding:3px;
+}
+.j-bpmn-comment dt {
+    float:left
+}
+.j-bpmn-comment dd {
+    margin-bottom:1px;
+    word-break:break-all;
+}
+
+select.j-bpmn-comment-btn {
+   display:inline;width:90px 
+}

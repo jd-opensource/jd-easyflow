@@ -1,0 +1,8 @@
+{    "id": "quickstart_001",
+    "name": "Quick Start 001",
+    "nodes": [
+        {"id": "node001","name": "Node001","action": {"createExp": "new com.jd.easyflow.flow.quickstart.QuickStart001Node01Action()"},"start": true,"post": {"to": "node002"}},
+        {"id": "node002","name": "Node002","action": {"createExp": "new com.jd.easyflow.flow.quickstart.QuickStart002Node01Action()"},"post": {"to": "node003"}},
+        {"id": "node003","name": "Node003","action": {"createExp": "new com.jd.easyflow.flow.quickstart.QuickStart003Node01Action()"}}
+    ]
+}

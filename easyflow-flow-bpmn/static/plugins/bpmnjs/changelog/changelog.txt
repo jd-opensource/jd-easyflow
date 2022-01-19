@@ -1,0 +1,3 @@
+1、为同时使用Viewer和Modeler，特修改rollup.config.js导出不同的名称
+2、Modeler.js和NavigatedViewer.js中增加Grid
+3、为支持中文ID，node_modules\moddle-xml\dist\index.js和node_modules\moddle-xml\dist\index.esm.js中的throw new Error('illegal ID <' + id + '>'); 行注释掉，再执行npm run distro

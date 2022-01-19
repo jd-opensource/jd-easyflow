@@ -1,0 +1,17 @@
+{
+    "id": "quickstart_001",
+    "name":"Quick Start 001",
+    "states": [
+        {"id": "A","name": "A", "start":true},
+        {"id": "B","name": "B"}
+    ],
+    "events": [
+        {"id": "E1","name": "Event1"}
+    ],
+    "transitions": [
+        {"from": "A","event": "E1","action":{"createExp":"new com.jd.easyflow.fsm.quickstart.AStateE1EventTstAction()"}, "post":{"to":"B"}}
+    ],
+    "listeners":[
+    {"createExp":"new com.jd.easyflow.fsm.listener.FsmCommonListener()"}
+    ]
+}

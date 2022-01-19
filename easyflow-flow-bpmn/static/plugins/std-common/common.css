@@ -1,0 +1,124 @@
+html, body {
+    font-size: 12px;
+}
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin-bottom: 60px;
+    margin-top: 100px;
+    background-color: #fff;
+    font-family: Microsoft YaHei,tahoma,arial,Hiragino Sans GB,\\5b8b\4f53,sans-serif;
+}
+
+@media ( min-width :768px) {
+    body {
+        margin-top: 48px;
+    }
+}
+
+.multiselect {
+    color:#495057 !important;
+    background-color:#fff !important;
+    border-color:rgb(206, 212, 218) !important;
+}
+/*jquery validate*/
+.error {
+  color: red;
+  margin: 0;
+}
+
+.j-form-horizontal .form-group>label.error {
+	/*width:100%;*/
+	text-align:left;
+	/*padding-left:90px;*/
+}
+
+/*Form setting*/
+.j-form-horizontal .form-group {
+    display: flex;
+    align-items:flex-start;
+    flex-wrap:nowrap;
+}
+.j-form-horizontal .form-group>label {
+        padding-right:4px;
+        width:88px;
+        white-space: nowrap;
+        text-align:right;
+        margin:0;
+        line-height:2.5rem;
+        padding-bottom:0.5rem;
+        padding-right:2px;
+}
+.j-form-horizontal .form-group>.form-control,
+.j-form-horizontal .form-group>.input-group,
+.j-form-horizontal .form-group>.multiselect-native-select {
+        flex:1;
+}
+
+
+.j-info-container {
+    margin-top:1rem;
+}
+/*text info*/
+.j-info-group {
+    display:flex;
+    flex-flow:row;
+    flex-wrap:wrap;
+}
+.j-info-group dt {
+    text-align:right;
+    width:80px;
+}
+
+.j-info-group dd {
+    flex:1;
+    margin-left:5px;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+/*Required*/
+.j-require {
+	color:red;
+}
+/*loading*/
+#jloading {
+  position: fixed;
+  left: 0;
+  z-index: 10000;
+  display: none;
+}
+#jloading i{
+  position: absolute;
+}
+/*tooltip*/
+.j-tip {
+  position: fixed;
+  padding: 3px 5px;
+  background: #6495ed;
+  margin: 0 auto;
+  text-align: center;
+  width: auto;
+  color: #ffffff;
+  opacity: 0.8;
+  cursor: move;
+  z-index: 10000;
+}
+
+.bootstrap-table a.j-op {
+	color:rgb(0, 123, 255);
+	cursor:pointer;
+	 white-space:nowrap;
+}
+.bootstrap-table a.j-op:hover {
+	color:#0056b3;
+	text-decoration:underline;
+}
+
+.bootstrap-table button.j-op {
+    white-space:nowrap;
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:easyflow="http://jd.com/easyflow" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="quickstart_001" name="Quick Start 001" isExecutable="false">
+    <bpmn:scriptTask id="node001" name="Node001" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:start>true</easyflow:start>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0iohk2p</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.quickstart.QuickStart001Node01Action()</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="node002" name="Node002" scriptFormat="createExp">
+      <bpmn:incoming>Flow_0iohk2p</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a49msy</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.quickstart.QuickStart002Node01Action()</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0iohk2p" sourceRef="node001" targetRef="node002" />
+    <bpmn:scriptTask id="node003" name="Node003" scriptFormat="createExp">
+      <bpmn:incoming>Flow_0a49msy</bpmn:incoming>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.quickstart.QuickStart003Node01Action()</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0a49msy" sourceRef="node002" targetRef="node003" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="quickstart_001">
+      <bpmndi:BPMNEdge id="Flow_0a49msy_di" bpmnElement="Flow_0a49msy" waypoints="">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iohk2p_di" bpmnElement="Flow_0iohk2p" waypoints="">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0t933rz_di" bpmnElement="node001">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_100vlo4_di" bpmnElement="node002">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tvu80v_di" bpmnElement="node003">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

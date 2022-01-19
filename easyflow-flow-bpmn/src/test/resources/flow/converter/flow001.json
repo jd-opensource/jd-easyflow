@@ -1,0 +1,27 @@
+{
+	"id": "flow001",
+	"name": "Mock loan flow",
+	"nodes": [
+		{
+			"id": "CONTRACT_SIGN",
+			"name": "Sign contract",
+			"properties": {"order": 1},
+			"pre":null,
+			"action":{"exp":"new com.jd.easyflow.flow.mockbiz.loan.contract.LoanContractSignBiz().sign()"},
+			"post":{"to":"LIMIT_JUDGE"}
+		},
+		{
+			"id": "LIMIT_JUDGE",
+			"name": "Judge limit",
+			"properties": {"order": 2},
+			"action":{"exp":"new com.jd.easyflow.flow.mockbiz.limit.LimitBiz().judgeLimit(param.param['amount'])"},
+			"post":{"conditions":[{"when":"nodeContext.actionResult==true", "to":"DO_LOAN"}]}
+		},
+		      {
+            "id": "DO_LOAN",
+            "name": "Do loan",
+            "properties": {"order": 3},
+            "action":{"exp":"new com.jd.easyflow.flow.mockbiz.loan.LoanBiz().doLoan()"}
+        }
+	]
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8" />
+<title>EasyFlow-BPMN Designer</title>
+
+<!-- required modeler styles -->
+<link rel="stylesheet" href="./static/plugins/fontawesome/css/all.css">
+<link rel="stylesheet" href="./static/plugins/bpmnjs/assets/diagram-js.css">
+<link rel="stylesheet"
+	href="./static/plugins/bpmnjs/assets/bpmn-font/css/bpmn.css">
+<link rel="stylesheet" href="./static/plugins/bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" href="./static/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" />
+<link rel="stylesheet" href="./static/plugins/std-common/common.css" />
+<link rel="stylesheet" href="./static/plugins/flow/flow.css" />
+<style>
+body {margin-top: 5px}
+.j-bpmn-pannel-normal {
+height: 600px}
+</style>
+</head>
+
+<body>
+<div class="container-fluid">
+<div id="flowControl">
+</div>
+
+</div>
+</body>
+<script>
+//window.jLocale="en_US";
+</script>
+<script src="./static/plugins/bpmnjs/bpmn-navigated-viewer.development.js"></script>
+<script src="./static/plugins/bpmnjs/bpmn-modeler.development.js"></script>
+<script src="./static/plugins/jquery/jquery-3.6.0.js"></script>
+<script src="./static/plugins/jquery-validation/jquery.validate.js"></script>
+<script src="./static/plugins/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="./static/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+<script src="./static/plugins/std-common/messages_default.js"></script>
+<script src="./static/plugins/std-common/messages_zh.js"></script>
+<script src="./static/plugins/std-common/common.js"></script>
+<script src="./static/plugins/flow/bpmn.js"></script>
+<script src="./static/plugins/flow/flow.js"></script>
+<script>
+window.bpmn2JsonUrl = null;
+new J.FlowControl({$container: $("#flowControl")}).render();
+</script>
+</html>

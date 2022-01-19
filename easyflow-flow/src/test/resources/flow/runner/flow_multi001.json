@@ -1,0 +1,11 @@
+{
+    "id": "flow_multi001","name": "Multiple flow test 001",
+    "nodes": [
+        {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.stepaction.TestStepAction()"},
+            "post":{"to":["EMPTY_NODE2","EMPTY_NODE3"]}, "properties":{"sleep":3}
+        },
+        {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.stepaction.TestStepAction()"}, "properties":{"sleep":1}},
+        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.stepaction.TestStepAction()"}, "properties":{"sleep":5}}
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.runner.TestMultiRunner()"}
+}
