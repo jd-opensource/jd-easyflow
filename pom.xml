@@ -24,14 +24,10 @@
         <jackson.version>2.11.4</jackson.version>
         <junit.version>4.12</junit.version>
         <activiti.version>7.1.134</activiti.version>
-        <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <r2m.version>3.2.6</r2m.version>
-        <mybatis.version>3.5.6</mybatis.version>
-        <json-path.version>2.4.0</json-path.version>
         <commons-io.version>2.4</commons-io.version>
-        <logback.version>1.2.3</logback.version>
+        <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -154,8 +150,70 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>Maven Central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>alfresco</id>
+            <name>Activiti Releases</name>
+            <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases/</url>
+        </repository>
+    </repositories>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>liyuliang5</id>
+            <name>YuliangLi</name>
+            <email>liyuliang5@jd.com</email>
+        </developer>
+        <developer>
+            <id>lixudong22</id>
+            <name>XudongLi</name>
+            <email>lixudong22@jd.com</email>
+        </developer>
+    </developers>
 </project>

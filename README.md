@@ -1,4 +1,4 @@
-# EasyFlow
+# JDEasyFlow
 
 ### Introduce
 JDEasyFlow is a general flow orchestration component, suitable for service orchestration、workflow、auditing, etc. The characteristics are easy use、flexible、easy extended. Developer can understand using it in 30 minutes，understand its principle half of the day.
@@ -16,7 +16,7 @@ There are test cases in the test package of source code. You can run or debug di
 
 #### Flow Engine
 
-1. Import easyflow-flow jar, take maven as example:
+1. Import easyflow-flow jar. take maven as example:
 ```
     <dependency>
         <groupId>com.jd.easyflow</groupId>
@@ -24,8 +24,7 @@ There are test cases in the test package of source code. You can run or debug di
         <version>{latestVersion}</version>
     </dependency>
 ```
-2. Write flow definition
-For example, the sequence is node001->node002->node003:
+2. Write flow definition. For example, the sequence is node001->node002->node003:
 ```
 {"id": "quickstart_001", "name": "Quick Start 001",
 "nodes": [

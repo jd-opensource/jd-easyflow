@@ -6,14 +6,15 @@ import com.jd.easyflow.flow.engine.FlowContext;
  * 
  * @author liyuliang5
  *
- * @param <T>
+ * @param <T> type
  */
 public interface FlowExecutor<T> {
-    
+
     /**
      * Common execute method
-     * @param context
-     * @return
+     * 
+     * @param context FlowContext
+     * @return result
      */
-	T execute(FlowContext context);
+    T execute(FlowContext context);
 }
