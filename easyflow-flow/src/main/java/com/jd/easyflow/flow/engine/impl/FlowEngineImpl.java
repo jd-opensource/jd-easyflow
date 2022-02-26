@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -58,6 +59,7 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
 
     private volatile boolean inited;
 
+    @Autowired
     private ApplicationContext applicationContext;
 
     private FlowRunner defaultFlowRunner = new SingleThreadFlowRunner();
@@ -82,6 +84,9 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
     }
 
     protected void loadFlow() {
+        if (flowPath == null) {
+            return;
+        }
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources;
         String[] flowPaths = flowPath.split(",");
@@ -260,11 +265,9 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (inited) {
-            return;
+        if (event.getApplicationContext() == this.applicationContext) {
+            init();
         }
-        this.applicationContext = event.getApplicationContext();
-        init();
     }
 
     public Map<String, Flow> getFlowMap() {
@@ -322,5 +325,23 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
     public void setFlowParser(FlowParser flowParser) {
         this.flowParser = flowParser;
     }
+
+    public boolean isInited() {
+        return inited;
+    }
+
+    public void setInited(boolean inited) {
+        this.inited = inited;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+    
+    
 
 }

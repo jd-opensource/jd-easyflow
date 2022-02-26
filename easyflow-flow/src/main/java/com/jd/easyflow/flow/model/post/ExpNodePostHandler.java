@@ -28,8 +28,9 @@ public class ExpNodePostHandler extends AbstractNodePostHandler {
 
 	@Override
 	public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
-		List<String> result = ElFactory.get().eval(exp, nodeContext, context, null);
-		return nodeIds2Nodes(result);
+		Object result = ElFactory.get().eval(exp, nodeContext, context, null);
+		List<String> toList = parseToNodeIds(result, nodeContext, context);
+		return nodeIds2Nodes(toList);
 	}
 	public String getExp() {
 		return exp;

@@ -365,7 +365,7 @@
         // view JSON button
         $dialog.find(".j-btn-bpmn-json").click(function() {
             var bpmnXml = $dialog.find(".bpmnDef").val();
-            var bpmn2JsonUrl = window.bpmn2JsonUrl ? window.bpmn2JsonUrl : ($.getBaseUrl() && $.getBaseUrl().startWith("http") ? $.getBaseUrl() + "/public/ajax/bpmn2Json": null);
+            var bpmn2JsonUrl = window.bpmn2JsonUrl ? window.bpmn2JsonUrl : ($.getBaseUrl() && $.getBaseUrl().indexOf("http")==0 ? $.getBaseUrl() + "/public/ajax/bpmn2Json": null);
             $.post(bpmn2JsonUrl, { bpmnXmlData: bpmnXml }, function(result) {
                 // error tip
                 if (result.resultMsg) {
@@ -1045,7 +1045,7 @@
         return '<div class="bpmnDefContainer">                                                                                 ' +
             '    <div class="row">                                                                                          ' +
             '        <div class="form-group col">                                                                           ' +
-            '            <label><span class="j-require">*</span>' + J.msg['flowBpmnDefinition'] + ':</label>                                       ' +
+            '            <label><span class="j-require">*</span>' + J.msg['bpmn.flowBpmnDefinition'] + ':</label>                                       ' +
             '            <textarea class="bpmnDef form-control" rows="30"></textarea>                                       ' +
             '        </div>                                                                                                 ' +
             '    </div>                                                                                                     ' +

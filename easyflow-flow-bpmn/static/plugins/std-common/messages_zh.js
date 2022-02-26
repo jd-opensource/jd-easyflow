@@ -48,10 +48,12 @@ $.extend(J.msg, {
     "jListSelect.select":"选择",
     
     "flow.jsonDefTitle":"JSON流程定义",
+    "flow.flowJsonDefinition":"JSON流程定义",        
     "flow.newFlowDef":"新流程定义",
     "flow.oldFlowDef":"旧流程定义",
     "flow.noJsonDataTip":"无JSON流程定义数据",
     "flow.nodeId":"节点ID",
+    "flow.nodeName":"节点名称",
     "flow.flowDefId":"流程定义ID",
     "flow.flowDefName":"流程定义名称",
     "flow.flowDefType":"流程定义类型",
@@ -69,7 +71,7 @@ $.extend(J.msg, {
     
     "bpmn.detailInfoType":"详情信息类型",
     "bpmn.bpmnFlowDefinition":"BPMN流程定义",
-    "bpmn.flowJsonDefinitioin":"流程JSON定义",
+    "bpmn.flowJsonDefinition":"流程JSON定义",
     "bpmn.jsonContent":"JSON内容",
     "bpmn.convertErrorTip":"BPMN转换JSON请求异常，此请求为ajax请求,请确认地址或服务是否正确,当前地址:",
     "bpmn.newFlowDefinition":"新流程定义",

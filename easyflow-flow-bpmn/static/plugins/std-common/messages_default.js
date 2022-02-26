@@ -60,10 +60,12 @@ if (!window.J) {
     "jListSelect.select":"Select",
     
     "flow.jsonDefTitle":"JSON Flow Definition",
+    "flow.flowJsonDefinition":"JSON Flow Definition",    
     "flow.newFlowDef":"New Flow Definition",
     "flow.oldFlowDef":"Old Flow Definition",
     "flow.noJsonDataTip":"No JSON flow definition data",
     "flow.nodeId":"Node ID",
+    "flow.nodeName":"Node Name",
     "flow.flowDefId":"Flow Definition ID",
     "flow.flowDefName":"Flow Definition Name",
     "flow.flowDefType":"Flow Definition Type",
@@ -81,7 +83,7 @@ if (!window.J) {
     
     "bpmn.detailInfoType":"Detail Info Type",
     "bpmn.bpmnFlowDefinition":"BPMN Flow Definition",
-    "bpmn.flowJsonDefinitioin":"Flow JSON Definition",
+    "bpmn.flowJsonDefinition":"Flow JSON Definition",
     "bpmn.jsonContent":"JSON Content",
     "bpmn.convertErrorTip":"BPMN convert to JSON request exception，this is ajax request, please confirm url or service whether or not normal,current url:",
     "bpmn.newFlowDefinition":"New Flow Definition",

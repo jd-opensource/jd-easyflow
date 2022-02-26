@@ -31,3 +31,5 @@ build/
 .vscode/
 .project
 .mvn/
+
+local/

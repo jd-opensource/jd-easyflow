@@ -1,8 +1,12 @@
 package com.jd.easyflow.flow.ext.chain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.util.ExceptionUtil;
 
 /**
  * Node action with chain pattern.
@@ -11,6 +15,8 @@ import com.jd.easyflow.flow.model.NodeContext;
  *
  */
 public abstract class BaseChainPlugin implements NodeAction {
+    
+    private static final Logger logger = LoggerFactory.getLogger(BaseChainPlugin.class);
 
     /**
      * execute node action.
@@ -29,6 +35,7 @@ public abstract class BaseChainPlugin implements NodeAction {
                     context.put(ChainConstants.STAGE, ChainConstants.STAGE_POST);
                 }
             } catch (Throwable t) {
+                logger.error(this.getClass().getName() + " pre handle exception:" + t.getMessage(), t);
                 context.put(ChainConstants.STAGE, ChainConstants.STAGE_POST);
                 context.put(ChainConstants.EXCEPTION, t);
             }
@@ -36,6 +43,7 @@ public abstract class BaseChainPlugin implements NodeAction {
             try {
                 postHandle(nodeContext, context);
             } catch (Throwable t) {
+                logger.error(this.getClass().getName() + "post handle exception:" + t.getMessage(), t);
                 context.put(ChainConstants.EXCEPTION, t);
             }
         }
@@ -72,7 +80,9 @@ public abstract class BaseChainPlugin implements NodeAction {
      * @param nodeContext
      * @param context
      */
-    public abstract void postHandleNormal(NodeContext nodeContext, FlowContext context);
+    public void postHandleNormal(NodeContext nodeContext, FlowContext context) {
+        return;
+    }
 
     /**
      * Post handle when exception.
@@ -81,7 +91,9 @@ public abstract class BaseChainPlugin implements NodeAction {
      * @param nodeContext
      * @param context
      */
-    public abstract void postHandleException(Throwable t, NodeContext nodeContext, FlowContext context);
+    public void postHandleException(Throwable t, NodeContext nodeContext, FlowContext context) {
+        throw ExceptionUtil.throwException(t);
+    }
 
     /**
      * Clear exception.

@@ -1,6 +1,6 @@
 package com.jd.easyflow.flow.ext.chain;
 
-import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
@@ -19,20 +19,20 @@ import com.jd.easyflow.flow.util.FlowConstants;
 public class ChainInvoker {
 
     private FlowEngine flowEngine;
-
-    public Object invoke(String chainFlowId, Callable<Object> targetAction) {
-        FlowParam param = new FlowParam(chainFlowId);
-        param.put(FlowConstants.PARAM_ACTION_EXECUTOR, new NodeExecutor<Object>() {
+    
+    public <T, R>R invoke(String chainFlowId, T param, Function<T, R> targetAction) {
+        FlowParam flowParam = new FlowParam(chainFlowId, param);
+        flowParam.put(FlowConstants.PARAM_ACTION_EXECUTOR, new NodeExecutor<Object>() {
             @Override
             public Object execute(NodeContext nodeContext, FlowContext context) {
                 try {
-                    return targetAction.call();
+                    return targetAction.apply(context.getParam().getParam());
                 } catch (Exception e) {
                     throw ExceptionUtil.throwException(e);
                 }
             }
         });
-        FlowResult result = flowEngine.execute(param);
+        FlowResult result = flowEngine.execute(flowParam);
         Throwable exception = result.getContext().get(ChainConstants.EXCEPTION);
         if (exception != null) {
             throw ExceptionUtil.throwException(exception);

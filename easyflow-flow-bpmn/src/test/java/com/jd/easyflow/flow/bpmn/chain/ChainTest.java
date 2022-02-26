@@ -2,7 +2,7 @@ package com.jd.easyflow.flow.bpmn.chain;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,10 +31,10 @@ public class ChainTest {
         invoker.setFlowEngine(flowEngine);
         
         // Execute flow instance1.
-        Callable targetAction = () -> {
+        Function<Object, Object> targetAction = (o) -> {
             return new ChainTestService().execute();
         };
-        Object result = invoker.invoke("flow_chaintest1", targetAction);
+        Object result = invoker.invoke("flow_chaintest1", null, targetAction);
         logger.info("Execute result:" + result);
     }
     
@@ -49,10 +49,10 @@ public class ChainTest {
         ChainInvoker invoker = new ChainInvoker();
         invoker.setFlowEngine(flowEngine);
         
-        Callable targetAction = () -> {
+        Function<Object, Object> targetAction = (o) -> {
             return new ChainTestService().execute();
         };
-        Object result = invoker.invoke("flow_chaintest2", targetAction);
+        Object result = invoker.invoke("flow_chaintest2", null, targetAction);
         logger.info("Result:" + result);
         assertEquals("abc", result);
     }

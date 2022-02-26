@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -35,7 +36,7 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     public static final Logger logger = LoggerFactory.getLogger(FsmManager.class);
 
     protected Map<String, Fsm> fsmMap = new ConcurrentHashMap<>();
-    
+
     protected Map<String, String> fsmDefinitionMap = new ConcurrentHashMap<String, String>();
 
     private String fsmPath;
@@ -43,11 +44,12 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     private FsmEventTrigger eventTrigger = new FsmEventTrigger();
 
     private List<FsmEventListener> listeners;
-    
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     private volatile boolean inited = false;
-    
+
     private List<Filter<FsmParam, FsmResult>> filters;
 
     public void init() {
@@ -63,7 +65,7 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
         }
         inited = true;
     }
-    
+
     /**
      * 
      * Loan fsm.
@@ -119,7 +121,7 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
             return chain.doFilter(param);
         }
     }
-    
+
     protected FsmResult invokeFsm(FsmParam param) {
         Map<String, Object> data = new HashMap<>();
         data.put("param", param);
@@ -153,8 +155,6 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     public void setListeners(List<FsmEventListener> listeners) {
         this.listeners = listeners;
     }
-    
-    
 
     public Map<String, Fsm> getFsmMap() {
         return fsmMap;
@@ -171,7 +171,6 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     public void setEventTrigger(FsmEventTrigger eventTrigger) {
         this.eventTrigger = eventTrigger;
     }
-    
 
     public Map<String, String> getFsmDefinitionMap() {
         return fsmDefinitionMap;
@@ -183,12 +182,36 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (this.inited) {
-            return;
+        if (event.getApplicationContext() == this.applicationContext) {
+            init();
         }
-        this.applicationContext = event.getApplicationContext();
-        init();
 
     }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public boolean isInited() {
+        return inited;
+    }
+
+    public void setInited(boolean inited) {
+        this.inited = inited;
+    }
+
+    public List<Filter<FsmParam, FsmResult>> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(List<Filter<FsmParam, FsmResult>> filters) {
+        this.filters = filters;
+    }
+    
+    
 
 }

@@ -1,0 +1,13 @@
+{
+    "id": "flow_exp_post_to_001",
+    "name": "text exp post to",
+    "nodes": [
+        {
+            "id": "STEP1", "start": true,
+            "post":{"to":{"exp":"'STEP' + '2'"}}
+        },
+        {
+            "id": "STEP2"
+        }
+    ]
+}

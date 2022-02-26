@@ -3,7 +3,9 @@ package com.jd.easyflow.flow.model.post;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
@@ -48,6 +50,12 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
                 }
             }
             return toResult;
+        } else if (to instanceof Map) {
+            Map<String, Object> toMap = (Map) to;
+            String toExp = (String) toMap.get("exp");
+            Object result = ElFactory.get().eval(toExp, nodeContext, flowContext, null);
+            List<String> toList = parseToNodeIds(result, nodeContext, flowContext);
+            return toList;
         } else {
             throw new UnsupportedOperationException("Unsupported type:" + to.getClass());
         }
