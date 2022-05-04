@@ -1,0 +1,11 @@
+{
+    "id": "flow_memory_001","name": "Memory test flow 001",
+    "nodes": [
+        {"id": "EMPTY_NODE","name": "Empty node 1","action":{"exp":"new com.jd.easyflow.flow.cases.performance.EmptyStepAction().execute(nodeContext, context)"}},
+        {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.performance.EmptyStepAction()"}},
+        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.performance.LoopStepAction()"}}
+    ],
+    "properties":{
+        "flow.recordHistory":false
+    }
+}

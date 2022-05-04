@@ -40,9 +40,17 @@ public class EventNodeAction implements NodeAction {
         if (event == null) {
             event = FlowConstants.NONE_EVENT;
         }
-
         Map<String, NodeAction> eventActionMap = context.getFlow().getNode(nodeContext.getNodeId())
                 .getProperty(FlowConstants.PROP_RUNTIME_EVENT_NODE_ACTION_MAP);
+        // For exp scenario
+        if (eventActionMap == null) {
+            InitContext initContext = new InitContext();
+            initContext.setFlowParser(context.getFlowEngine().getFlowParser());
+            initContext.setParseEl(true);
+            initEventActionMap(initContext, context.getFlow().getNode(nodeContext.getNodeId()));
+            eventActionMap = context.getFlow().getNode(nodeContext.getNodeId())
+                    .getProperty(FlowConstants.PROP_RUNTIME_EVENT_NODE_ACTION_MAP);
+        }
         NodeAction nodeAction = eventActionMap.get(event);
         if (nodeAction == null) {
             if (logger.isInfoEnabled()) {
@@ -78,7 +86,9 @@ public class EventNodeAction implements NodeAction {
             }
             if (eventActionConfMap != null) {
                 NodeAction nodeAction = initContext.getFlowParser().parseAction(eventActionConfMap, null, initContext.isParseEl());
-                eventActionMap.put(event, nodeAction);
+                if (nodeAction != null) {
+                    eventActionMap.put(event, nodeAction);
+                }
             }
         }
         

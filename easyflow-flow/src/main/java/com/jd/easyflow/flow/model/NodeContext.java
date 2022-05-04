@@ -86,7 +86,6 @@ public class NodeContext {
         if (nextNodes != null) {
             for (int i = 0; i < nextNodes.length; i++) {
                 nextNodes[i].setPreviousNode(this);
-                ;
             }
         }
     }

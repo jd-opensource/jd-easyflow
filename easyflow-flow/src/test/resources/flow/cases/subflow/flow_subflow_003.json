@@ -1,0 +1,11 @@
+{    "id": "subflow_test_003",
+    "name": "Sub Flow Test 003",
+    "nodes": [
+        {"id": "node001","name": "Node001","start": true,"post": {"to": "node002"}},
+        {"id": "node002","name": "Node002","action": {"createExp":"new com.jd.easyflow.flow.cases.subflow.TestInvokeSubFlowNodeAction()"},"post": {"to": "node003"}, 
+        "properties":{
+            "subFlowId":"subflow3_node002"
+        }},
+        {"id": "node003","name": "Node003"}
+    ]
+}

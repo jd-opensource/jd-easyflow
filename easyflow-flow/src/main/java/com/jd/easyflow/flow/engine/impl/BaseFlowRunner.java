@@ -77,8 +77,9 @@ public abstract class BaseFlowRunner implements FlowRunner {
             }
         }
         // Clear previous node to avoid OOM
-        if (!Boolean.FALSE.equals(flow.getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY))) {
+        if (Boolean.FALSE.equals(flow.getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY))) {
             currentNode.setPreviousNode(null);
+            currentNode.setNextNodes(null);
         }
     }
 

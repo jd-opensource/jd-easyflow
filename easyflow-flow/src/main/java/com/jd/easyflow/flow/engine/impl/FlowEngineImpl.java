@@ -144,7 +144,7 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
             eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_END, data, null, false);
             return result;
         } finally {
-            eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_COMPLETE, data, null, false);
+            eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_COMPLETE, data, null, true);
         }
     }
 
@@ -318,6 +318,7 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
         this.defaultFlowRunner = defaultFlowRunner;
     }
 
+    @Override
     public FlowParser getFlowParser() {
         return flowParser;
     }

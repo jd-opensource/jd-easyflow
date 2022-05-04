@@ -1,6 +1,7 @@
 package com.jd.easyflow.flow.engine;
 
 import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.parser.FlowParser;
 
 /**
  * 
@@ -22,4 +23,10 @@ public interface FlowEngine {
      * @return
      */
     Flow getFlow(String id);
+    
+    /**
+     * Get flow parser.
+     * @return
+     */
+    FlowParser getFlowParser();
 }

@@ -1,0 +1,8 @@
+{    "id": "subflow_test_002",
+    "name": "Sub Flow Test 002",
+    "nodes": [
+        {"id": "node001","name": "Node001","start": true,"post": {"to": "node002"}},
+        {"id": "node002","name": "Node002","action": {"flowId":"subflow2_node002", "startNodeId":"node002_02"},"post": {"to": "node003"}},
+        {"id": "node003","name": "Node003"}
+    ]
+}

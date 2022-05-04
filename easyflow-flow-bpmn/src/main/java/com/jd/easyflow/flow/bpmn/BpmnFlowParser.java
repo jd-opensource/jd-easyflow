@@ -2,6 +2,7 @@ package com.jd.easyflow.flow.bpmn;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -23,27 +24,38 @@ import com.jd.easyflow.flow.util.JsonUtil;
 public class BpmnFlowParser extends FlowParserImpl {
 
     public static final Logger logger = LoggerFactory.getLogger(BpmnFlowParser.class);
-    
+
     private static final String FLOW_BPMN_STRING_KEY = "_flow_bpmn_string";
 
-    private BpmnConverter bpmnConverter = new BpmnConverter();
+    private static final String DEFAULT_FLOW_PRETTY_CONFIG_PATH = "/pretty/pretty-flow.json";
 
     private static final String XML_PREFIX = "<?xml";
 
     private Map<String, Object> flowPrettyConfig;
 
+    private String flowPrettyConfigPath;
+
     public BpmnFlowParser() {
-        String flowPrettyConf;
-        try {
-            InputStream inputStream = BpmnFlowParser.class.getResourceAsStream("/pretty/pretty-flow.json");
-            if (inputStream == null) {
-                throw new FlowException("Pretty config not found");
-            }
-            flowPrettyConf = IOUtils.toString(inputStream);
-        } catch (IOException e) {
-            throw new FlowException("Pretty conf parse exception," + e.getMessage(), e);
+        init();
+    }
+
+    public void init() {
+        if (flowPrettyConfigPath == null) {
+            flowPrettyConfigPath = DEFAULT_FLOW_PRETTY_CONFIG_PATH;
         }
-        flowPrettyConfig = JsonUtil.parseObject(flowPrettyConf, Map.class);
+        String flowPrettyConfStr = null;
+        InputStream inputStream = BpmnFlowParser.class.getResourceAsStream(flowPrettyConfigPath);
+        if (inputStream == null) {
+            flowPrettyConfStr = BpmnConverter.defaultFlowPrettyConfigStr;
+        } else {
+            try {
+                flowPrettyConfStr = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new FlowException(
+                        "Pretty conf parse exception, path:" + flowPrettyConfigPath + " message:" + e.getMessage(), e);
+            }
+        }
+        flowPrettyConfig = JsonUtil.parseObject(flowPrettyConfStr, Map.class);
     }
 
     @Override
@@ -53,7 +65,7 @@ public class BpmnFlowParser extends FlowParserImpl {
         }
         try {
             logger.info("BPMN Definition:\n" + data);
-            String easyFlowDef = bpmnConverter.convert(data, flowPrettyConfig);
+            String easyFlowDef = BpmnConverter.convert(data, flowPrettyConfig);
             logger.info("EasyFlow Definition:\n" + easyFlowDef);
             List<Flow> flowList = super.parse(easyFlowDef);
             flowList.get(0).setProperty(FLOW_BPMN_STRING_KEY, data);
@@ -62,7 +74,7 @@ public class BpmnFlowParser extends FlowParserImpl {
             throw new FlowException(e);
         }
     }
-    
+
     /**
      * 
      * BPMN Model to string
@@ -76,4 +88,13 @@ public class BpmnFlowParser extends FlowParserImpl {
         }
         return null;
     }
+
+    public String getFlowPrettyConfigPath() {
+        return flowPrettyConfigPath;
+    }
+
+    public void setFlowPrettyConfigPath(String flowPrettyConfigPath) {
+        this.flowPrettyConfigPath = flowPrettyConfigPath;
+    }
+
 }

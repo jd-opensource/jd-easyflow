@@ -19,7 +19,7 @@ import com.jd.easyflow.flow.model.NodeExecutor;
  *
  */
 public class ConditionalNodePostHandler extends AbstractNodePostHandler {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ConditionalNodePostHandler.class);
 
     public static final String EXCLUSIVE_TYPE = "exclusive";
@@ -42,12 +42,12 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
     public ConditionalNodePostHandler(List<Map<String, Object>> branchList) {
         this.branchList = branchList;
     }
-    
+
     public ConditionalNodePostHandler(String type, List<Map<String, Object>> branchList, Object defaultBranch) {
         this.type = type;
         this.branchList = branchList;
         this.defaultBranch = defaultBranch;
-    }   
+    }
 
     @Override
     public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
@@ -57,34 +57,35 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
                 boolean result = evalCondition(branch.get("when"), nodeContext, context);
                 if (result) {
                     Object next = branch.get("to");
-                    return nodeIds2Nodes(parseToNodeIds(next, nodeContext, context));
+                    return parseToNodes(next, nodeContext, context);
                 }
             }
             if (defaultBranch != null) {
-                return nodeIds2Nodes(parseToNodeIds(defaultBranch, nodeContext, context));
+                return parseToNodes(defaultBranch, nodeContext, context);
             }
             // Inclusive
         } else {
-            List<String> nextList = new ArrayList<>();
+            List<NodeContext> nextList = new ArrayList<>();
             for (Map<String, Object> branch : branchList) {
                 boolean result = evalCondition(branch.get("when"), nodeContext, context);
                 if (result) {
                     Object next = branch.get("to");
-                        nextList.addAll(parseToNodeIds(next, nodeContext, context));
+                    addArray2List(parseToNodes(next, nodeContext, context), nextList);
                 }
             }
             if (nextList.isEmpty() && defaultBranch != null) {
-                nextList.addAll(parseToNodeIds(defaultBranch, nodeContext, context));
+                addArray2List(parseToNodes(defaultBranch, nodeContext, context), nextList);
             }
             if (!nextList.isEmpty()) {
-                return nodeIds2Nodes(nextList);
+                return list2Array(nextList);
             }
         }
         return null;
     }
-    
+
     /**
      * Evaluate condition.
+     * 
      * @param nodeContext
      * @param context
      * @return
@@ -122,7 +123,5 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
     public void setBranchList(List<Map<String, Object>> branchList) {
         this.branchList = branchList;
     }
-    
-    
 
 }

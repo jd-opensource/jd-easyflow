@@ -11,6 +11,7 @@ public class DefConstants {
     public static final String COMMON_PROP_NAME = "name";
     public static final String COMMON_PROP_EXP = "exp";
     public static final String COMMON_PROP_FLOW = "flow";
+    public static final String COMMON_PROP_FLOW_ID = "flowId";
     public static final String COMMON_PROP_CREATE_EXP = "createExp";
     public static final String COMMON_PROP_PROPERTIES = "properties";
     public static final String COMMON_PROP_CREATE = "create";
@@ -34,6 +35,11 @@ public class DefConstants {
     public static final String NODE_PROP_POST = "post";
     
     public static final String NODE_PROPERTIES_PROP_PRE_NODES = "preNodes";
+    
+    /**
+     * Node action property
+     */
+    public static final String NODE_ACTION_PROP_START_NODE_ID = "startNodeId";
     
     /**
      * Node post property

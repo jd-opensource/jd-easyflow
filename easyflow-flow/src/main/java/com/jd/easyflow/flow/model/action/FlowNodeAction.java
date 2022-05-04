@@ -23,8 +23,18 @@ public class FlowNodeAction implements NodeAction {
     public static final String PARENT_CONTEXT = "parentContext";
 
     private String flowId;
-    private String nodeId;
+    private String[] startNodeIds;
     private boolean inherit = true;
+    
+    public FlowNodeAction() {
+        // NOOP
+    }
+    
+    public FlowNodeAction(String flowId, String[] startNodeIds, boolean inherit) {
+        this.flowId = flowId;
+        this.startNodeIds = startNodeIds;
+        this.inherit = inherit;
+    }
 
     @Override
     public <T> T execute(NodeContext nodeContext, FlowContext context) {
@@ -32,7 +42,7 @@ public class FlowNodeAction implements NodeAction {
         // init param.
         FlowParam param = new FlowParam();
         param.setFlowId(flowId);
-        param.setNodeId(nodeId);
+        param.setNodeIds(startNodeIds);
         if (inherit) {
             param.setParam(context.getParam().getParam());
         }
@@ -65,12 +75,13 @@ public class FlowNodeAction implements NodeAction {
         this.flowId = flowId;
     }
 
-    public String getNodeId() {
-        return nodeId;
+
+    public String[] getStartNodeIds() {
+        return startNodeIds;
     }
 
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
+    public void setStartNodeIds(String[] startNodeIds) {
+        this.startNodeIds = startNodeIds;
     }
 
     public boolean isInherit() {

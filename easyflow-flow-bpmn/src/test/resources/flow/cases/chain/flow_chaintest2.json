@@ -1,0 +1,11 @@
+{
+"id":"flow_chaintest2",
+"nodes":[
+{"id":"targetAction", "action":{"createExp":"new com.jd.easyflow.flow.ext.chain.TargetAction()"}, "start":true}
+],
+"filters":[
+{"createExp":"new com.jd.easyflow.flow.bpmn.cases.chain.Filter1()"},
+{"createExp":"new com.jd.easyflow.flow.bpmn.cases.chain.Filter2()"},
+{"createExp":"new com.jd.easyflow.flow.bpmn.cases.chain.Filter3()"}
+]
+}

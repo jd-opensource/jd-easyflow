@@ -98,7 +98,7 @@ public class FlowParserImpl implements FlowParser {
                     || nodeConf.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                 if (parseEl) {
                     String exp = (String) nodeConf.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                    Map<String, Object> context =  new HashMap<>();
+                    Map<String, Object> context = new HashMap<>();
                     context.put("nodeDef", nodeConf);
                     context.put("flowParser", this);
                     FlowNode node = ElFactory.get().evalWithDefaultContext(exp, context, false);
@@ -204,7 +204,8 @@ public class FlowParserImpl implements FlowParser {
      * @param parseEl
      */
     private void parseNodeFilter(Map<String, Object> map, Flow flow, boolean parseEl) {
-        List<Map<String, Object>> nodeFilters = (List<Map<String, Object>>) map.get(DefConstants.FLOW_PROP_NODE_FILTERS);
+        List<Map<String, Object>> nodeFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_NODE_FILTERS);
         if (nodeFilters != null) {
             for (Object filterObj : nodeFilters) {
                 if (filterObj instanceof String) {
@@ -234,7 +235,8 @@ public class FlowParserImpl implements FlowParser {
      * @param parseEl
      */
     private void parseNodeActionFilter(Map<String, Object> map, Flow flow, boolean parseEl) {
-        List<Map<String, Object>> nodeActionFilters = (List<Map<String, Object>>) map.get(DefConstants.FLOW_PROP_NODE_ACTION_FILTERS);
+        List<Map<String, Object>> nodeActionFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_NODE_ACTION_FILTERS);
         if (nodeActionFilters != null) {
             for (Object filterObj : nodeActionFilters) {
                 if (filterObj instanceof String) {
@@ -337,12 +339,24 @@ public class FlowParserImpl implements FlowParser {
             String exp = (String) action.get(DefConstants.COMMON_PROP_EXP);
             nodeAction.setExp(exp);
             return nodeAction;
-        } else if (DefConstants.COMMON_PROP_FLOW.equals(type) || action.containsKey(DefConstants.COMMON_PROP_FLOW)) {
+        } else if (DefConstants.COMMON_PROP_FLOW.equals(type) || action.containsKey(DefConstants.COMMON_PROP_FLOW)
+                || action.containsKey(DefConstants.COMMON_PROP_FLOW_ID)) {
             FlowNodeAction nodeAction = new FlowNodeAction();
-            Flow flow = parse((Map<String, Object>) action.get(DefConstants.COMMON_PROP_FLOW), flowList, parseEl);
-            nodeAction.setFlowId(flow.getId());
+            if (action.containsKey(DefConstants.COMMON_PROP_FLOW)) {
+                Flow flow = parse((Map<String, Object>) action.get(DefConstants.COMMON_PROP_FLOW), flowList, parseEl);
+                nodeAction.setFlowId(flow.getId());
+            } else if (action.containsKey(DefConstants.COMMON_PROP_FLOW_ID)) {
+                nodeAction.setFlowId((String) action.get(DefConstants.COMMON_PROP_FLOW_ID));
+            }
+            Object startNodeId = action.get(DefConstants.NODE_ACTION_PROP_START_NODE_ID);
+            if (startNodeId != null) {
+                if (startNodeId instanceof String) {
+                    nodeAction.setStartNodeIds(new String[] { (String) startNodeId });
+                } else {
+                    nodeAction.setStartNodeIds(((List<String>) startNodeId).toArray(new String[] {}));
+                }
+            }
             return nodeAction;
-
         }
         throw new IllegalArgumentException("Param illegal " + action);
     }

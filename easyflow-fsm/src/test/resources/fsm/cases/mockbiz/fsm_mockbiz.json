@@ -1,0 +1,32 @@
+{
+	"id": "apply_001",
+	"name":"CREDIT ACCESS FLOW",
+	"states": [
+		{"id": "WHITELIST","name": "Whitelist check", "start":true, "properties": {}},
+		{"id": "COMPANY_AUTH","name": "Company identity auth", "properties": {}},
+		{"id": "COMPANY_INFO","name": "Additional info input", "properties": {}}
+	],
+	"events": [
+		{"id": "QUERY_WHITELIST","name": "Query whitelist"},
+		
+		{"id": "QUERY_COMPANY_AUTH","name": "Query company auth status"},
+		{"id": "SUBMIT_COMPANY_AUTH","name": "Submit company auth info"},
+		
+		{"id": "QUERY_COMPANY_INFO","name": "Query additional info"},
+		{"id": "SUBMIT_COMPANY_INFO","name": "Submit additional info"}
+	],
+	"transitions": [
+	    {"from": "WHITELIST","event": ["_state_enter","_state_check"],"action":{"exp":"new com.jd.easyflow.fsm.cases.mockbiz.WhitelistService().isWhitelist()"}, "post":{"conditions":[{"when":"context.transitionActionResult", "to":"COMPANY_AUTH"}]}},
+		{"from": "WHITELIST","event": "QUERY_WHITELIST","action":{"exp":"new com.jd.easyflow.fsm.cases.mockbiz.WhitelistService().isWhitelist()"}, "post":{"when":"context.transitionActionResult", "to":"COMPANY_AUTH"}},
+		
+		{"from": "COMPANY_AUTH","event": "_state_enter","action": {"exp":"new com.jd.easyflow.fsm.cases.mockbiz.CompanyAuthService().isAuth()"},"post": {"conditions":[{"when":"context.transitionActionResult", "to":"COMPANY_INFO"}]}},
+		{"from": "COMPANY_AUTH","event": "QUERY_COMPANY_AUTH","action": {"exp":""}},
+		{"from": "COMPANY_AUTH","event": "SUBMIT_COMPANY_AUTH","action": {"exp":"new com.jd.easyflow.fsm.cases.mockbiz.CompanyAuthService().saveCompanyAuth(param.param)"}, "post":{"to":"COMPANY_INFO"}},
+		
+		{"from": "COMPANY_INFO","event": "QUERY_COMPANY_INFO","action": {"exp":""}},
+		{"from": "COMPANY_INFO","event": "SUBMIT_COMPANY_INFO","action": {"exp":""},"post": {"exp":""}}
+	],
+	"listeners":[
+	{"createExp":"new com.jd.easyflow.fsm.listener.FsmCommonListener()"}
+	]
+}

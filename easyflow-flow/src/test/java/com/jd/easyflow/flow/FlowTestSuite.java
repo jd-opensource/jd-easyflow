@@ -4,13 +4,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.jd.easyflow.flow.event.EventFlowTest;
-import com.jd.easyflow.flow.flowengine.FlowEngineImplTest;
-import com.jd.easyflow.flow.index.FlowIndexTest;
-import com.jd.easyflow.flow.mockbiz.MockLoanTest;
-import com.jd.easyflow.flow.parser.FlowParserTest;
+import com.jd.easyflow.flow.cases.event.EventFlowTest;
+import com.jd.easyflow.flow.cases.flowengine.FlowEngineImplTest;
+import com.jd.easyflow.flow.cases.mockbiz.MockLoanTest;
+import com.jd.easyflow.flow.cases.parser.FlowParserTest;
+import com.jd.easyflow.flow.cases.posthandler.FlowIndexTest;
+import com.jd.easyflow.flow.cases.posthandler.NodePostHandlerTest;
+import com.jd.easyflow.flow.cases.runner.MultiThreadTest;
+import com.jd.easyflow.flow.cases.subflow.SubFlowTest;
 import com.jd.easyflow.flow.quickstart.QuickStartTest;
-import com.jd.easyflow.flow.runner.MultiThreadTest;
 
 /**
  * 
@@ -25,7 +27,9 @@ import com.jd.easyflow.flow.runner.MultiThreadTest;
     MultiThreadTest.class,
     EventFlowTest.class,
     FlowIndexTest.class,
-    FlowParserTest.class
+    FlowParserTest.class,
+    NodePostHandlerTest.class,
+    SubFlowTest.class
 })
 public class FlowTestSuite {
 

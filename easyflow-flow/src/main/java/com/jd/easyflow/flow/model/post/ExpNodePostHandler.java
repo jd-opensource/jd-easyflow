@@ -1,7 +1,5 @@
 package com.jd.easyflow.flow.model.post;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +27,7 @@ public class ExpNodePostHandler extends AbstractNodePostHandler {
 	@Override
 	public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
 		Object result = ElFactory.get().eval(exp, nodeContext, context, null);
-		List<String> toList = parseToNodeIds(result, nodeContext, context);
-		return nodeIds2Nodes(toList);
+		return parseToNodes(result, nodeContext, context);
 	}
 	public String getExp() {
 		return exp;

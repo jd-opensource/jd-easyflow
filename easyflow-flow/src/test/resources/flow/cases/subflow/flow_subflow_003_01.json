@@ -1,0 +1,6 @@
+{"id":"subflow3_node002",
+          "nodes":[
+          {"id": "node002_01","name": "Node002_01","start": true,"post": {"to": "node002_02"}},
+          {"id": "node002_02","name": "Node002_02"}
+          ]
+}

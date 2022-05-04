@@ -22,7 +22,7 @@ public class FixedNodePostHandler extends AbstractNodePostHandler {
 
 	@Override
 	public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
-	    return nodeIds2Nodes(parseToNodeIds(to, nodeContext, context));
+	    return parseToNodes(to, nodeContext, context);
 	}
 
     public Object getTo() {
