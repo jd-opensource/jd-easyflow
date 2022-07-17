@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
 
     private List<FlowEventListener> listeners;
 
-    private List<Filter<FlowParam, FlowResult>> filters;
+    private List<Filter<Pair<FlowParam, FlowEngine>, FlowResult>> filters;
 
     private String flowPath;
 
@@ -121,7 +122,8 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
     @Override
     public FlowResult execute(FlowParam param) {
         if (logger.isInfoEnabled()) {
-            logger.info("START EXECUTE FLOW, flowId:" + param.getFlowId() + " nodeIds:" + JsonUtil.toJsonString(param.getNodeIds()));
+            logger.info("START EXECUTE FLOW, flowId:" + param.getFlowId() + " nodeIds:"
+                    + JsonUtil.toJsonString(param.getNodeIds()));
         }
         if (logger.isDebugEnabled()) {
             logger.debug("Flow param:" + JsonUtil.toJsonString(param));
@@ -129,14 +131,14 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
         if (filters == null || filters.size() == 0) {
             return invokeFlowEngine(param);
         } else {
-            FilterChain<FlowParam, FlowResult> chain = new FilterChain<FlowParam, FlowResult>(filters,
-                    p -> invokeFlowEngine(p));
-            return chain.doFilter(param);
+            FilterChain<Pair<FlowParam, FlowEngine>, FlowResult> chain = new FilterChain<Pair<FlowParam, FlowEngine>, FlowResult>(filters,
+                    p -> invokeFlowEngine(p.getLeft()));
+            return chain.doFilter(Pair.of(param, this));
         }
     }
 
     protected FlowResult invokeFlowEngine(FlowParam param) {
-        Map<String, Object> data =  new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         data.put("param", param);
         eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);
         try {
@@ -212,8 +214,11 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
      * @return
      */
     protected Flow findFlow(FlowContext context) {
-        Flow flow = getFlow(context.getFlowId());
-        context.setFlow(flow);
+        Flow flow = context.getFlow();
+        if (flow == null) {
+            flow = getFlow(context.getFlowId());
+            context.setFlow(flow);
+        }
         // Exists scenario changing flow id
         context.setFlowId(flow.getId());
         return flow;
@@ -233,7 +238,8 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
     protected void init(FlowContext context) {
         context.getFlow().triggerEvent(FlowEventTypes.INIT_START, context);
         String[] nodeIds = context.getParam().getNodeIds();
-        // If nodeIds is null, using startNodeIds；if is empty array，run empty flow instance.
+        // If nodeIds is null, using startNodeIds；if is empty array，run empty flow
+        // instance.
         if (nodeIds == null) {
             nodeIds = context.getFlow().getStartNodeIds();
         }
@@ -286,11 +292,11 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
         this.flowDefinitionMap = flowDefinitionMap;
     }
 
-    public List<Filter<FlowParam, FlowResult>> getFilters() {
+    public List<Filter<Pair<FlowParam, FlowEngine>, FlowResult>> getFilters() {
         return filters;
     }
 
-    public void setFilters(List<Filter<FlowParam, FlowResult>> filters) {
+    public void setFilters(List<Filter<Pair<FlowParam, FlowEngine>, FlowResult>> filters) {
         this.filters = filters;
     }
 
@@ -342,7 +348,5 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
-    
-    
 
 }

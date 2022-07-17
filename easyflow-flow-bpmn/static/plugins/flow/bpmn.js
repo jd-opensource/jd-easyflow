@@ -722,6 +722,20 @@
             var newNodeFilters = $nodeFilters.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:NodeFilters", newNodeFilters);
         });
+        // Node pre handler filter
+        var nodePreHandlerFilters = getExtensionBody(bo, "easyflow:NodePreHandlerFilters");
+        var nodePreHandlerFiltersHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.nodePreHandlerFilter'] + ':</label> <textarea class="form-control j-nodeprehandlerfilters" name="j-nodeprehandlerfilters"></textarea></div>'
+            + '</div>';
+        var $nodePreHandlerFiltersElement = $(nodePreHandlerFiltersHtml).appendTo($infoPannel);
+        var $nodePreHandlerFilters = $nodePreHandlerFiltersElement.find(".j-nodeprehandlerfilters");
+        $nodePreHandlerFilters.tooltip({ title: J.msg['bpmn.nodePreHandlerFilterTooltip'] })
+        $nodePreHandlerFilters.rules('add', { json: true });
+        $nodePreHandlerFilters.text(nodePreHandlerFilters);
+        $nodePreHandlerFilters.blur(function() {
+            var newNodePreHandlerFilters = $nodePreHandlerFilters.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:NodePreHandlerFilters", newNodePreHandlerFilters);
+        });        
         // Node action filter
         var nodeActionFilters = getExtensionBody(bo, "easyflow:NodeActionFilters");
         var nodeActionFiltersHtml = '<div class="row">' +
@@ -736,6 +750,20 @@
             var newNodeActionFilters = $nodeActionFilters.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:NodeActionFilters", newNodeActionFilters);
         });
+        // Node post handler filter
+        var nodePostHandlerFilters = getExtensionBody(bo, "easyflow:NodePostHandlerFilters");
+        var nodePostHandlerFiltersHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.nodePostHandlerFilter'] + ':</label> <textarea class="form-control j-nodeposthandlerfilters" name="j-nodeposthandlerfilters"></textarea></div>'
+            + '</div>';
+        var $nodePostHandlerFiltersElement = $(nodePostHandlerFiltersHtml).appendTo($infoPannel);
+        var $nodePostHandlerFilters = $nodePostHandlerFiltersElement.find(".j-nodeposthandlerfilters");
+        $nodePostHandlerFilters.tooltip({ title: J.msg['bpmn.nodePostHandlerFilterTooltip'] })
+        $nodePostHandlerFilters.rules('add', { json: true });
+        $nodePostHandlerFilters.text(nodePostHandlerFilters);
+        $nodePostHandlerFilters.blur(function() {
+            var newNodePostHandlerFilters = $nodePostHandlerFilters.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:NodePostHandlerFilters", newNodePostHandlerFilters);
+        });        
         // Flow runner
         var runner = getExtensionBody(bo, "easyflow:Runner");
         var runnerHtml = '<div class="row">' +
@@ -1198,6 +1226,17 @@
                 ]
             },
             {
+                "name": "NodePreHandlerFilters",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            },
+            {
                 "name": "NodeActionFilters",
                 "superClass": ["Element"],
                 "properties": [
@@ -1208,6 +1247,17 @@
                     }
                 ]
             },
+            {
+                "name": "NodePostHandlerFilters",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            },                        
             {
                 "name": "ConditionType",
                 "superClass": ["Element"],

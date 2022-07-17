@@ -23,7 +23,7 @@ public class NodeContext {
 
     private NodeContext[] nextNodes;
     
-    private boolean preResult;
+    private Boolean preResult;
 
     private Object actionResult;
     
@@ -118,12 +118,12 @@ public class NodeContext {
         this.throwable = throwable;
     }
 
-    public boolean isPreResult() {
+    public Boolean getPreResult() {
         return preResult;
     }
 
-    public void setPreResult(boolean preResult) {
+    public void setPreResult(Boolean preResult) {
         this.preResult = preResult;
     }
-    
+
 }

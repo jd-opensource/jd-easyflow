@@ -1,0 +1,17 @@
+{
+    "id": "flow_post_handler_filter_001",
+    "name": "flow_post_handler_filter_001",
+    "nodes": [
+        {
+            "id": "STEP1", "start": true, "action":{"createExp":"new com.jd.easyflow.flow.cases.posthandler.PostParamNode1Action()"},
+            "post":{"to":{"node":"STEP2", "data":{"a":"5", "b":"nodeContext.dataMap['node1Param']"}}}
+        },
+        {
+            "id": "STEP2",  "action":{"createExp":"new com.jd.easyflow.flow.cases.posthandler.PostParamNode2Action()"}
+        },
+        {
+            "id": "STEP3",  "action":{"createExp":"new com.jd.easyflow.flow.cases.posthandler.PostParamNode3Action()"}
+        }
+    ],
+    "nodePostHandlerFilters":[{"createExp":"new com.jd.easyflow.flow.cases.posthandler.TestPostHandlerFilter()"}]
+}

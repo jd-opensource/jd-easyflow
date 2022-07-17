@@ -212,6 +212,13 @@ public class BpmnConverter {
             String elementText = element.getElementText();
             List<Object> list = JsonUtil.parseObject(elementText, List.class);
             flowDef.put(DefConstants.FLOW_PROP_NODE_FILTERS, list);
+        }  
+        // nodePreHandlerFilters
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.NODE_PRE_HANDLER_FILTERS)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.NODE_PRE_HANDLER_FILTERS).get(0);
+            String elementText = element.getElementText();
+            List<Object> list = JsonUtil.parseObject(elementText, List.class);
+            flowDef.put(DefConstants.FLOW_PROP_NODE_PRE_HANDLER_FILTERS, list);
         }        
         // nodeActionFilters
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.NODE_ACTION_FILTERS)) {
@@ -220,6 +227,13 @@ public class BpmnConverter {
             List<Object> list = JsonUtil.parseObject(elementText, List.class);
             flowDef.put(DefConstants.FLOW_PROP_NODE_ACTION_FILTERS, list);
         }
+        // nodePostHandlerFilters
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.NODE_POST_HANDLER_FILTERS)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.NODE_POST_HANDLER_FILTERS).get(0);
+            String elementText = element.getElementText();
+            List<Object> list = JsonUtil.parseObject(elementText, List.class);
+            flowDef.put(DefConstants.FLOW_PROP_NODE_POST_HANDLER_FILTERS, list);
+        }        
         // runner
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.RUNNER)) {
             ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.RUNNER).get(0);

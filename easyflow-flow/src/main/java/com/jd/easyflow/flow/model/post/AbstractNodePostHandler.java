@@ -1,7 +1,6 @@
 package com.jd.easyflow.flow.model.post;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,7 +67,6 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
             // fill context data
             Map<String, String> dataConf = (Map<String, String>) toMap.get("data");
             if (dataConf != null && toNodes != null) {
-                Map<String, Object> data = new HashMap<>();
                 for (Entry<String, String> entry : dataConf.entrySet()) {
                     Object value = ElFactory.get().eval(entry.getValue(), nodeContext, flowContext, null);
                     for (NodeContext node : toNodes) {

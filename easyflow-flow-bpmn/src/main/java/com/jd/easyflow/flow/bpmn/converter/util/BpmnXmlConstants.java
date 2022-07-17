@@ -12,7 +12,9 @@ public class BpmnXmlConstants {
     public static final String LISTENERS = "listeners";
     public static final String FILTERS = "filters";
     public static final String NODE_FILTERS = "nodeFilters";
+    public static final String NODE_PRE_HANDLER_FILTERS = "nodePreHandlerFilters";
     public static final String NODE_ACTION_FILTERS = "nodeActionFilters";
+    public static final String NODE_POST_HANDLER_FILTERS = "nodePostHandlerFilters";
     public static final String RUNNER = "runner";
     public static final String CONDITION_TYPE = "conditionType";
     public static final String POST = "post";

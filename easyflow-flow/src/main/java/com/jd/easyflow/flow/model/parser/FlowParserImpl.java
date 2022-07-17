@@ -125,8 +125,14 @@ public class FlowParserImpl implements FlowParser {
         parseFilters(map, flow, parseEl);
         // Node filter
         parseNodeFilter(map, flow, parseEl);
+        
+        // Node pre handler filter
+        parseNodePreHandlerFilter(map, flow, parseEl);
         // Node action filter
         parseNodeActionFilter(map, flow, parseEl);
+        // Node post handler filter
+        parseNodePostHandlerFilter(map, flow, parseEl);
+        
         // Flow runner
         parseRunner(map, flow, parseEl);
         InitContext initContext = new InitContext();
@@ -228,6 +234,37 @@ public class FlowParserImpl implements FlowParser {
     }
 
     /**
+     * Parse node pre handler filter.
+     * 
+     * @param map
+     * @param flow
+     * @param parseEl
+     */
+    private void parseNodePreHandlerFilter(Map<String, Object> map, Flow flow, boolean parseEl) {
+        List<Map<String, Object>> nodePreHandlerFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_NODE_PRE_HANDLER_FILTERS);
+        if (nodePreHandlerFilters != null) {
+            for (Object filterObj : nodePreHandlerFilters) {
+                if (filterObj instanceof String) {
+                    ExpFilter expFilter = new ExpFilter<>((String) filterObj);
+                    flow.addFilter(expFilter);
+                } else {
+                    Map<String, Object> filter = (Map<String, Object>) filterObj;
+                    String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                        if (parseEl) {
+                            String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Filter nodePreHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            flow.addNodePreHandlerFilter(nodePreHandlerFilter);
+                        }
+                    }
+                }
+            }
+        }
+    }    
+    
+    /**
      * Parse node action filter.
      * 
      * @param map
@@ -257,6 +294,37 @@ public class FlowParserImpl implements FlowParser {
             }
         }
     }
+    
+    /**
+     * Parse node post handler filter.
+     * 
+     * @param map
+     * @param flow
+     * @param parseEl
+     */
+    private void parseNodePostHandlerFilter(Map<String, Object> map, Flow flow, boolean parseEl) {
+        List<Map<String, Object>> nodePostHandlerFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_NODE_POST_HANDLER_FILTERS);
+        if (nodePostHandlerFilters != null) {
+            for (Object filterObj : nodePostHandlerFilters) {
+                if (filterObj instanceof String) {
+                    ExpFilter expFilter = new ExpFilter<>((String) filterObj);
+                    flow.addFilter(expFilter);
+                } else {
+                    Map<String, Object> filter = (Map<String, Object>) filterObj;
+                    String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                        if (parseEl) {
+                            String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Filter nodePostHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            flow.addNodePostHandlerFilter(nodePostHandlerFilter);
+                        }
+                    }
+                }
+            }
+        }
+    } 
 
     /**
      * Parse flow runner.
