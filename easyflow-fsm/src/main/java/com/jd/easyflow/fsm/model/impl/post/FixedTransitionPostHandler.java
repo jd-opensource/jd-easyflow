@@ -1,6 +1,7 @@
 package com.jd.easyflow.fsm.model.impl.post;
 
 import com.jd.easyflow.fsm.FsmContext;
+import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.TransitionContext;
 
 /**
@@ -10,15 +11,15 @@ import com.jd.easyflow.fsm.model.TransitionContext;
  */
 public class FixedTransitionPostHandler extends AbstractTransitionPostHandler {
 	
-	private Object nextState;
+	private Object to;
 	
-	public FixedTransitionPostHandler(Object nextState) {
-		this.nextState = nextState;
+	public FixedTransitionPostHandler(Object to) {
+		this.to = to;
 	}
 
 	@Override
-	public String postHandle(TransitionContext transitionContext, FsmContext context) {
-		return super.parseToStateId(nextState, transitionContext, context);
+	public PostHandleResult postHandle(TransitionContext transitionContext, FsmContext context) {
+		return super.parseTo(to, transitionContext, context);
 	}
 
 }

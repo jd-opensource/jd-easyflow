@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.el.ElFactory;
+import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.model.TransitionExecutor;
-import com.jd.easyflow.fsm.model.TransitionPostHandler;
 
 /**
  * 
@@ -36,12 +36,12 @@ public class ConditionalTransitionPostHandler  extends AbstractTransitionPostHan
     }
 
     @Override
-    public String postHandle(TransitionContext transitionContext, FsmContext context) {
+    public PostHandleResult postHandle(TransitionContext transitionContext, FsmContext context) {
         for (Map<String, Object> branch : branchList) {
             boolean result = evalCondition(branch.get("when"), transitionContext, context);
             if (result) {
                 Object next = branch.get("to");
-                return super.parseToStateId(next, transitionContext, context);
+                return super.parseTo(next, transitionContext, context);
             }
         }
         return null;

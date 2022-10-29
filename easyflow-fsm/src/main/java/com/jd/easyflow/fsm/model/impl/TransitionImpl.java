@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
+import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.Transition;
 import com.jd.easyflow.fsm.model.TransitionAction;
 import com.jd.easyflow.fsm.model.TransitionContext;
@@ -20,64 +21,79 @@ import com.jd.easyflow.fsm.util.FsmEventTypes;
  *
  */
 public class TransitionImpl implements Transition {
-    
+
     private String fromId;
-    
+
     private String eventId;
-    
+
     private List<String> toIdList;
-    
+
     private TransitionPreHandler preHandler;
-    
+
     private TransitionAction action;
-    
+
     private TransitionPostHandler postHandler;
-    
+
     @Override
-    public TransitionContext execute(TransitionContext transitionContext, FsmContext context) {
+    public void execute(TransitionContext transitionContext, FsmContext context) {
         if (preHandler != null) {
-            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_PRE_START, transitionContext, context, false);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_PRE_START, transitionContext, context,
+                    false);
             boolean result = preHandler.preHandle(transitionContext, context);
             transitionContext.setPreResult(result);
-            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_PRE_END, transitionContext, context, false);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_PRE_END, transitionContext, context,
+                    false);
             if (!transitionContext.isPreResult()) {
-                return transitionContext;
+                return;
             }
         }
         Object actionResult = null;
         if (action != null) {
-            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_START, transitionContext, context, false);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_START, transitionContext, context,
+                    false);
             actionResult = action.execute(transitionContext, context);
             transitionContext.setActionResult(actionResult);
-           context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_END, transitionContext, context, false);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_END, transitionContext, context,
+                    false);
         }
         if (context.isFirstTransition()) {
             context.setFirstTransitionActionResult(actionResult);
         }
         context.setTransitionActionResult(actionResult);
-        
+
         String postStateId = null;
+        String postEventId = null;
         if (postHandler != null) {
-            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_POST_START, transitionContext, context, false);
-            postStateId = postHandler.postHandle(transitionContext, context);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_POST_START, transitionContext, context,
+                    false);
+            PostHandleResult postHandleResult = postHandler.postHandle(transitionContext, context);
+            if (postHandleResult != null) {
+                postStateId = postHandleResult.getPostStateId();
+                postEventId = postHandleResult.getPostEventId();
+            }
             transitionContext.setPostStateId(postStateId);
-            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_POST_END, transitionContext, context, false);
+            transitionContext.setPostEventId(postEventId);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_POST_END, transitionContext, context,
+                    false);
+            postStateId = transitionContext.getPostStateId();
+            postEventId = transitionContext.getPostEventId();
         }
         if (context.isFirstTransition()) {
             context.setFirstTransitionPostState(context.getFsm().getState(postStateId));
         }
         context.setTransitionPostState(context.getFsm().getState(postStateId));
+        
         if (postStateId != null) {
             context.setPreviousState(context.getCurrentState());
             context.setCurrentState(context.getFsm().getState(postStateId));
         }
         context.setPreviousEvent(context.getCurrentEvent());
-        context.setCurrentEvent(null);
-        return transitionContext;
+        context.setCurrentEvent(postEventId == null ? null : context.getFsm().getEvent(postEventId));
     }
-    
+
     /**
      * Execute node action.
+     * 
      * @param nodeContext
      * @param context
      */
@@ -94,13 +110,15 @@ public class TransitionImpl implements Transition {
                 });
         chain.doFilter(Pair.of(transitionContext, context));
     }
-    
+
     protected void invokeAction(TransitionContext transitionContext, FsmContext context) {
         if (action != null) {
-            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_START, transitionContext, context, false);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_START, transitionContext, context,
+                    false);
             Object actionResult = action.execute(transitionContext, context);
             transitionContext.setActionResult(actionResult);
-           context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_END, transitionContext, context, false);
+            context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_ACTION_END, transitionContext, context,
+                    false);
         }
     }
 
@@ -154,7 +172,5 @@ public class TransitionImpl implements Transition {
     public void setToIdList(List<String> toIdList) {
         this.toIdList = toIdList;
     }
-    
-    
 
 }

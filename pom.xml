@@ -6,7 +6,7 @@
 
 	<groupId>com.jd.easyflow</groupId>
 	<artifactId>easyflow-parent</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<name>easyflow-parent</name>
 	<packaging>pom</packaging>
 	<description>JDEasyFlow is a general flow orchestration component</description>

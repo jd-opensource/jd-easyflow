@@ -19,6 +19,8 @@ public class TransitionContext {
     private Object actionResult;
     
     private String postStateId;
+    
+    private String postEventId;
 
     /**
      * Common Data Map;
@@ -86,5 +88,15 @@ public class TransitionContext {
     public void setTransition(Transition transition) {
         this.transition = transition;
     }
+
+    public String getPostEventId() {
+        return postEventId;
+    }
+
+    public void setPostEventId(String postEventId) {
+        this.postEventId = postEventId;
+    }
+    
+    
     
 }

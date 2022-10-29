@@ -15,6 +15,6 @@ public interface TransitionPostHandler {
      * @param context
      * @return
      */
-	String postHandle(TransitionContext transitionContext, FsmContext context);
+	PostHandleResult postHandle(TransitionContext transitionContext, FsmContext context);
 
 }

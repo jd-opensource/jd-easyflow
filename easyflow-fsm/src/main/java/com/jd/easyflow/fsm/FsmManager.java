@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -31,7 +30,7 @@ import com.jd.easyflow.fsm.util.SpelHelper;
  * @author liyuliang5
  *
  */
-public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
+public class FsmManager implements SmartLifecycle {
 
     public static final Logger logger = LoggerFactory.getLogger(FsmManager.class);
 
@@ -51,6 +50,10 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     private volatile boolean inited = false;
 
     private List<Filter<FsmParam, FsmResult>> filters;
+
+    private  int phase = Integer.MIN_VALUE;
+
+    private volatile boolean isRunning = false;
 
     public void init() {
         if (inited) {
@@ -125,6 +128,7 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     protected FsmResult invokeFsm(FsmParam param) {
         Map<String, Object> data = new HashMap<>();
         data.put("param", param);
+        data.put("fsmManager", this);
         eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_START, data, null, false);
         try {
             Fsm fsm = getFsm(param.getFsmId());
@@ -180,13 +184,7 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
         this.fsmDefinitionMap = fsmDefinitionMap;
     }
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext() == this.applicationContext) {
-            init();
-        }
 
-    }
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -211,7 +209,30 @@ public class FsmManager implements ApplicationListener<ContextRefreshedEvent> {
     public void setFilters(List<Filter<FsmParam, FsmResult>> filters) {
         this.filters = filters;
     }
-    
-    
 
+
+    @Override
+    public void start() {
+        init();
+        isRunning = true;
+    }
+
+    @Override
+    public void stop() {
+        isRunning = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
+    }
+    @Override
+    public int getPhase() {
+        return phase;
+    }
+
+
+    public void setPhase(int phase) {
+        this.phase = phase;
+    }
 }

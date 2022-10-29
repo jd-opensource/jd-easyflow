@@ -935,6 +935,17 @@ J.formatTimestampOrStrTime = function(timesMs) {
     return y+'-'+check(m)+'-'+check(d)+' '+check(h)+':'+check(mm)+':'+check(s);
 };
 
+/**
+ * 打开窗口
+ */
+J.openWindow=function(url, name, specs, replace) {
+    if (self != top) {
+        window.location.href=url;
+    } else {
+        window.open(url, name, specs, replace);
+    }
+}
+
 
 
 

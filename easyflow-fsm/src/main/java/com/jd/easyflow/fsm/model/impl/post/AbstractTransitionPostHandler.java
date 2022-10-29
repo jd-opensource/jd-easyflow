@@ -1,7 +1,10 @@
 package com.jd.easyflow.fsm.model.impl.post;
 
+import java.util.Map;
+
 import com.jd.easyflow.fsm.Fsm;
 import com.jd.easyflow.fsm.FsmContext;
+import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.model.TransitionPostHandler;
 
@@ -14,18 +17,22 @@ public abstract class AbstractTransitionPostHandler implements TransitionPostHan
 
     private static final String IDX_VAR_PREFIX = "$";
 
-    protected String parseToStateId(Object to, TransitionContext transitionContext, FsmContext fsmContext) {
+    protected PostHandleResult parseTo(Object to, TransitionContext transitionContext, FsmContext fsmContext) {
         // String type
         if (to instanceof String) {
             String toStr = (String) to;
             if (!toStr.startsWith(IDX_VAR_PREFIX)) {
-                return toStr;
+                return new PostHandleResult(toStr);
             } else {
-                return parseIndexVar(toStr, transitionContext, fsmContext);
+                return new PostHandleResult(parseIndexVar(toStr, transitionContext, fsmContext));
             }
         } else if (to instanceof Integer) {
             int toIdx = (Integer) to;
-            return fsmContext.getFsm().getStateList().get(toIdx).getId();
+            return new PostHandleResult(fsmContext.getFsm().getStateList().get(toIdx).getId());
+        } else if (to instanceof Map) {
+            String state = (String) ((Map) to).get("state");
+            String event = (String) ((Map) to).get("event");
+            return new PostHandleResult(state, event);
         } else {
             throw new UnsupportedOperationException("Unsupported type" + to.getClass());
         }

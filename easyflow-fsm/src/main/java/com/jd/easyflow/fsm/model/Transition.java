@@ -37,6 +37,6 @@ public interface Transition {
      * @param context
      * @return
      */
-	TransitionContext execute(TransitionContext transitionContext, FsmContext context);
+	void execute(TransitionContext transitionContext, FsmContext context);
 	
 }

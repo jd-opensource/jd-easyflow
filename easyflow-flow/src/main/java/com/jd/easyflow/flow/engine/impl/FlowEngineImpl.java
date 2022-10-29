@@ -14,8 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -42,7 +41,7 @@ import com.jd.easyflow.flow.util.SpelHelper;
  * @author liyuliang5
  *
  */
-public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRefreshedEvent> {
+public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
 
     public static final Logger logger = LoggerFactory.getLogger(FlowEngineImpl.class);
 
@@ -69,6 +68,10 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
      * Default is json definition parser.
      */
     private FlowParser flowParser = new FlowParserImpl();
+
+    private  int phase = Integer.MIN_VALUE;
+
+    private volatile boolean isRunning = false;
 
     public void init() {
         if (inited) {
@@ -140,6 +143,7 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
     protected FlowResult invokeFlowEngine(FlowParam param) {
         Map<String, Object> data = new HashMap<>();
         data.put("param", param);
+        data.put("flowEngine", this);
         eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);
         try {
             FlowResult result = executeFlow(param);
@@ -269,12 +273,6 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
         this.flowPath = flowPath;
     }
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext() == this.applicationContext) {
-            init();
-        }
-    }
 
     public Map<String, Flow> getFlowMap() {
         return flowMap;
@@ -349,4 +347,28 @@ public class FlowEngineImpl implements FlowEngine, ApplicationListener<ContextRe
         this.applicationContext = applicationContext;
     }
 
+
+    @Override
+    public void start() {
+        init();
+        isRunning = true;
+    }
+
+    @Override
+    public void stop() {
+        isRunning = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
+    }
+    @Override
+    public int getPhase() {
+        return phase;
+    }
+
+    public void setPhase(int phase) {
+        this.phase = phase;
+    }
 }
