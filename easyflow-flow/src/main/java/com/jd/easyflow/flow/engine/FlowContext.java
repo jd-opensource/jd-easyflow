@@ -12,6 +12,7 @@ import com.jd.easyflow.flow.model.NodeContext;
  *
  */
 public interface FlowContext {
+        
     /**
      * Get start node context list.
      * @return
@@ -142,5 +143,17 @@ public interface FlowContext {
 	 * @param flowEngine
 	 */
 	void setFlowEngine(FlowEngine flowEngine);
+	
+	/**
+	 * Set interrupted. only can from false to true.
+	 * @param interrupted
+	 */
+	void setInterrupted();
+	
+	/**
+	 * Get interrupted.
+	 * @return
+	 */
+	boolean isInterrupted();
 
 }

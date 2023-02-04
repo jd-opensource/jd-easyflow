@@ -74,6 +74,13 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                         logger.info("Start execute flow node:" + finalCurrentNode.getNodeId() + ", runId:" + runId);
                     }
                     runOneNode(finalCurrentNode, context, flow);
+                    if (context.isInterrupted()) {
+                        if (logger.isInfoEnabled()) {
+                            logger.info("Flow state is interrupted");
+                        }
+                        lock.countDown();
+                        return;
+                    }
                     addTaskIfExists(context, executor, counter, lock, runId);
                     int count = counter.addAndGet(-1);
                     if (count == 0) {

@@ -126,7 +126,7 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     public FlowResult execute(FlowParam param) {
         if (logger.isInfoEnabled()) {
             logger.info("START EXECUTE FLOW, flowId:" + param.getFlowId() + " nodeIds:"
-                    + JsonUtil.toJsonString(param.getNodeIds()));
+                    + Arrays.toString(param.getNodeIds()));
         }
         if (logger.isDebugEnabled()) {
             logger.debug("Flow param:" + JsonUtil.toJsonString(param));

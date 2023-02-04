@@ -94,6 +94,13 @@ public class Fsm {
             // init start state
             initStartState(context);
             while (true) {
+                if (context.isInterrupted()) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("fsm interrupted");
+                    break;
+                    }
+                }
+                
                 State currentState = context.getCurrentState();
                 Event event = context.getCurrentEvent();
                 if (logger.isInfoEnabled()) {

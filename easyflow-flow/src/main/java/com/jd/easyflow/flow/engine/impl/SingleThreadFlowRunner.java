@@ -9,11 +9,12 @@ import com.jd.easyflow.flow.model.NodeContext;
 
 /**
  * Single thread executor.
+ * 
  * @author liyuliang5
  * @date 2021/07/25
  */
 public class SingleThreadFlowRunner extends BaseFlowRunner {
-    
+
     public static final Logger logger = LoggerFactory.getLogger(SingleThreadFlowRunner.class);
 
     /**
@@ -28,6 +29,12 @@ public class SingleThreadFlowRunner extends BaseFlowRunner {
         NodeContext currentNode;
         // Loop execute.
         while ((currentNode = context.getNextNode()) != null) {
+            if (context.isInterrupted()) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Flow interrupted!");
+                }
+                break;
+            }
             runOneNode(currentNode, context, flow);
         }
     }

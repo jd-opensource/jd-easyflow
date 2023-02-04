@@ -1,0 +1,13 @@
+{
+	"id": "parser_createExp_test",
+	"name":"CREDIT ACCESS FLOW",
+	"states": [
+		{"id": "WHITELIST","name": "Whitelist check", "start":true, "properties": {}}
+	],
+	"transitions": [
+	    {"from": "WHITELIST","event": ["_state_enter","_state_check"],"action":{"createExp":"new com.jd.easyflow.fsm.cases.parser.TestTransitionAction()"}}
+	],
+	"listeners":[
+	{"createExp":"new com.jd.easyflow.fsm.listener.FsmCommonListener()"}
+	]
+}

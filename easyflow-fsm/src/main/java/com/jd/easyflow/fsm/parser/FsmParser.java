@@ -276,7 +276,7 @@ public class FsmParser {
             if (! parseEl) {
                 return null;
             }
-            String exp = (String) action.get(DefConstants.COMMON_PROP_EXP);
+            String exp = (String) action.get(DefConstants.COMMON_PROP_CREATE_EXP);
             TransitionAction nodeAction = ElFactory.get().evalWithDefaultContext(exp, null, false);
             return nodeAction;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || action.containsKey(DefConstants.COMMON_PROP_EXP)) {

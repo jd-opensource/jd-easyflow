@@ -72,4 +72,4 @@ Spring环境可直接定义FlowEngineImpl bean.
 JDEasyFlow具有非常灵活的扩展性，你可以基于目前已开源组件做更多的功能，如流程持久化、任务审批等. 
 
 ### 联系我们
-email: liyuliang5@jd.com lixudong22@jd.com
+email: liyuliang5@jd.com

@@ -62,6 +62,11 @@ public class FlowContextImpl implements FlowContext {
 	 * Flow engine.
 	 */
 	private FlowEngine flowEngine;
+	
+	/**
+	 * interrupted
+	 */
+	private volatile boolean interrupted = false;
 
 	@Override
 	public void put(String key, Object value) {
@@ -194,5 +199,13 @@ public class FlowContextImpl implements FlowContext {
         }
         endNodes.add(node);
     }
-	
+
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    public void setInterrupted() {
+        this.interrupted = true;
+    }
+
 }

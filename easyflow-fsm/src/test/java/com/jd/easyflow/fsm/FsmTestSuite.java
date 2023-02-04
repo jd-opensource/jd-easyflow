@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.jd.easyflow.fsm.cases.mockbiz.FsmMockBizTest;
+import com.jd.easyflow.fsm.cases.parser.FsmParserTest;
 import com.jd.easyflow.fsm.quickstart.FsmQuickStartTest;
 
 /**
@@ -15,7 +16,8 @@ import com.jd.easyflow.fsm.quickstart.FsmQuickStartTest;
 @RunWith(Suite.class)
 @SuiteClasses ({
     FsmMockBizTest.class,
-    FsmQuickStartTest.class})
+    FsmQuickStartTest.class,
+    FsmParserTest.class})
 public class FsmTestSuite {
 
 }

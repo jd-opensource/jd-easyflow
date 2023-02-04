@@ -37,4 +37,24 @@ public class MultiThreadTest {
         FlowResult result = flowEngine.execute(param);
         logger.info("end");  
     }
+    
+    @Test
+    public void testInterruptOnMultipleThread() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/runner/flow_interrupt001.json");
+        flowEngine.init();
+        FlowParam param = new FlowParam("flow_interrupt001");
+        FlowResult result = flowEngine.execute(param);
+        logger.info("end");  
+    }
+    
+    @Test
+    public void testInterruptOnSingleThread() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/runner/flow_interrupt002.json");
+        flowEngine.init();
+        FlowParam param = new FlowParam("flow_interrupt002");
+        FlowResult result = flowEngine.execute(param);
+        logger.info("end");  
+    }
 }

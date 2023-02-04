@@ -913,6 +913,31 @@ J.formatMoney = function(money, sysmbol = '', places = 2) {
      var s = time.getSeconds();
      return y+'-'+check(m)+'-'+check(d)+' '+check(h)+':'+check(mm)+':'+check(s);
  };
+J.formatTimeYmd = function(timestampMs) {
+    if(timestampMs === undefined || timestampMs === "") {
+        return "";
+    }
+    var check = function(m) {
+        return m<10 ? '0' + m : m
+    };
+    var time = new Date(timestampMs);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    return y+'-'+check(m)+'-'+check(d);
+};
+J.formatTimeYm = function(timestampMs) {
+    if(timestampMs === undefined || timestampMs === "") {
+        return "";
+    }
+    var check = function(m) {
+        return m<10 ? '0' + m : m
+    };
+    var time = new Date(timestampMs);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    return y+'-'+check(m);
+};
 //yyyy-mm-dd hh:mm:ss
 J.formatTimestampOrStrTime = function(timesMs) {
     if(timesMs === undefined || timesMs === "") {
@@ -946,6 +971,21 @@ J.openWindow=function(url, name, specs, replace) {
     }
 }
 
+/**
+ * 动态计算js，打印异常信息.
+ */
+J.eval = function(js, ctxData) {
+    try {
+        eval(js);
+    } catch (err) {
+        console.dir(err);
+        console.log("eval异常, js:" + js);
+        if (ctxData) {
+            console.log("ctxData:" + JSON.stringify(ctxData));
+        };
+        throw err;
+    }
+}
 
 
 

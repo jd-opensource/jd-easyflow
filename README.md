@@ -72,4 +72,4 @@ Above is simple usecase, JDEasyFlow support many configurations and use cases. M
 JDEasyFlow has very flexible extension ability. You can implement more feature based on current component. For example flow data persistence、auditting、exception retry. 
 
 ### Contact US
-mailTo: liyuliang5@jd.com lixudong22@jd.com
+mailTo: liyuliang5@jd.com

@@ -15,7 +15,7 @@ import com.jd.easyflow.fsm.model.TransitionContext;
  *
  */
 public class FsmContext {
-
+    
     private State currentState;
 
     private State previousState;
@@ -69,6 +69,10 @@ public class FsmContext {
      * Transition list to record history.
      */
     private List<TransitionContext> transitionList;
+    /**
+     * Fsm interrupted flag.
+     */
+    private volatile boolean interrupted = false;
 
     public Object getStateInstance() {
         return stateInstance;
@@ -252,7 +256,13 @@ public class FsmContext {
     public void setTransitionList(List<TransitionContext> transitionList) {
         this.transitionList = transitionList;
     }
-    
-    
+
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    public void setInterrupted() {
+        this.interrupted = true;
+    }
 
 }
