@@ -654,6 +654,55 @@
 
     }
     
+    /**
+     * Pre
+     */
+    J.BpmnControl.prototype._elementPannelRender["bpmn:NodePre"] = function($infoPannel, element) {
+        const moddle = this.bpmnModeler.get('moddle');
+        var bo = element.businessObject;
+        var eventBus = this.bpmnModeler.get('eventBus');
+        var _self = this;
+        // Property
+        var pre = getExtensionBody(bo, "easyflow:Pre");
+        var preHtml = '<div class="row"><div class="form-group col"><label>' + J.msg['bpmn.selfPre'] + ':</label> <textarea class="form-control j-bpmn-pre" name="j-bpmn-pre"></textarea></div></div>';
+        var $preElement = $(preHtml).appendTo($infoPannel);
+        var $pre = $preElement.find(".j-bpmn-pre");
+        $pre.tooltip({ title: J.msg['bpmn.selfPreTooltip'] });
+        $pre.val(pre);
+        $pre.blur(function() {
+            var newPre = $pre.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Pre", newPre);
+            _self._comment(element);
+        });
+
+    }
+    
+    /**
+     * Action
+     */
+    J.BpmnControl.prototype._elementPannelRender["bpmn:NodeAction"] = function($infoPannel, element) {
+        const moddle = this.bpmnModeler.get('moddle');
+        var bo = element.businessObject;
+        var eventBus = this.bpmnModeler.get('eventBus');
+        var _self = this;
+        // Property
+        var action = getExtensionBody(bo, "easyflow:Action");
+        var actionHtml = '<div class="row"><div class="form-group col"><label>' + J.msg['bpmn.selfAction'] + ':</label> <textarea class="form-control j-bpmn-action" name="j-bpmn-action"></textarea></div></div>';
+        var $actionElement = $(actionHtml).appendTo($infoPannel);
+        var $action = $actionElement.find(".j-bpmn-action");
+        $action.tooltip({ title: J.msg['bpmn.selfActionTooltip'] });
+        $action.val(action);
+        $action.blur(function() {
+            var newAction = $action.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Action", newAction);
+            _self._comment(element);
+        });
+
+    }
+    
+    /**
+     * Post
+     */
     J.BpmnControl.prototype._elementPannelRender["bpmn:NodePost"] = function($infoPannel, element) {
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
@@ -784,6 +833,7 @@
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
         var bo = element.businessObject;
         var _self = this;
@@ -828,6 +878,8 @@
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // Receive task
@@ -835,38 +887,50 @@
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // Start event
     J.BpmnControl.prototype._elementPannelRender["bpmn:StartEvent"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // End event
     J.BpmnControl.prototype._elementPannelRender["bpmn:EndEvent"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
     }
     // Catch event
     J.BpmnControl.prototype._elementPannelRender["bpmn:IntermediateCatchEvent"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // Exclusive gateway
     J.BpmnControl.prototype._elementPannelRender["bpmn:ExclusiveGateway"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // Inclusive gateway
     J.BpmnControl.prototype._elementPannelRender["bpmn:InclusiveGateway"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // Parallel gateway
     J.BpmnControl.prototype._elementPannelRender["bpmn:ParallelGateway"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // Sequence flow
@@ -1280,6 +1344,28 @@
                     }
                 ]
             },   
+            {
+                "name": "Pre",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            }, 
+            {
+                "name": "Action",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            },                         
             {
                 "name": "Post",
                 "superClass": ["Element"],

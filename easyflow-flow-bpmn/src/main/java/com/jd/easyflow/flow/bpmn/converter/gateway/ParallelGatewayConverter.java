@@ -36,13 +36,15 @@ public class ParallelGatewayConverter extends BaseFlowNodeConverter {
             throw new FlowException("Parallel gateway:" + flowNode.getId() + " no incomming flows");
         }
         if (list.size() > 1) {
-            Map<String, Object> pre = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_PRE);
-            pre.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + MultiCheckPreHandler.class.getName() + "()");
+            if (node.get(DefConstants.NODE_PROP_PRE) == null) {
+                Map<String, Object> pre = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_PRE);
+                pre.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + MultiCheckPreHandler.class.getName() + "()");
 
-            Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
-            List<String> preNodes = new ArrayList<>();
-            flowNode.getIncomingFlows().forEach(incomingFlow -> preNodes.add(incomingFlow.getTargetRef()));
-            properties.put(DefConstants.NODE_PROPERTIES_PROP_PRE_NODES, preNodes);
+                Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
+                List<String> preNodes = new ArrayList<>();
+                flowNode.getIncomingFlows().forEach(incomingFlow -> preNodes.add(incomingFlow.getSourceRef()));
+                properties.put(DefConstants.NODE_PROPERTIES_PROP_PRE_NODES, preNodes);
+            }
         }
         return node;
     }

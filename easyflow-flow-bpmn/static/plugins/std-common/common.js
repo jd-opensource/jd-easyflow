@@ -362,7 +362,7 @@ var _ajaxSuccessCallback = function(data, option, $element) {
                                 "<div class='modal-content'>" + 
                                    "<div class='modal-header'><h5 class='modal-title'>" + title + "</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span>&times;</span></button></div>" +
                                    "<div class='modal-body'><p>" + option.msg + "</p></div>" + 
-                                   "<div class='modal-footer'><button type='button' class='btn btn-secondary' data-dismiss='modal'>" + J.msg['jDialog.close'] + "</button></div>" + 
+                                   "<div class='modal-footer'><button type='button' class='btn btn-secondary j-btn-close' data-dismiss='modal'>" + J.msg['jDialog.close'] + "</button></div>" +
                                 "</div>" + 
                                "</div>" + 
                             "</div>");
@@ -370,7 +370,10 @@ var _ajaxSuccessCallback = function(data, option, $element) {
           this.$element.modal().on("hidden.bs.modal", function(){
               $element.modal("dispose");
               $element.remove();
-          }); 
+              if(option.callback) {
+                  option.callback.call(window);
+              }
+          });
       },
       // ====JConfirm====
       jConfirm:function(option){

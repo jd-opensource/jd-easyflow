@@ -1,0 +1,16 @@
+{
+    "id": "flow_parallel001","name": "Parallel nodes 001",
+    "nodes": [
+        {"id": "START_NODE", "start":true, "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+            "post":{"to":["PARALLEL_NODE1","PARALLEL_NODE2"]}
+        },
+        
+        {"id": "PARALLEL_NODE1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"END_NODE"}, "properties":{"sleep":1}},
+        {"id": "PARALLEL_NODE2","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"END_NODE"}, "properties":{"sleep":3}},
+        
+        {"id": "END_NODE", "pre":{"createExp":"new com.jd.easyflow.flow.model.pre.MultiCheckPreHandler()"},
+                           "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+                           "properties":{"preNodes":["PARALLEL_NODE1","PARALLEL_NODE2"]}}
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestMultiRunner()"}
+}

@@ -6,7 +6,7 @@
 
 	<groupId>com.jd.easyflow</groupId>
 	<artifactId>easyflow-parent</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<name>easyflow-parent</name>
 	<packaging>pom</packaging>
 	<description>JDEasyFlow is a general flow orchestration component</description>
@@ -26,7 +26,7 @@
 		<logback.version>1.2.3</logback.version>
 		<lombok.version>1.18.18</lombok.version>
 		<slf4j.version>1.7.30</slf4j.version>
-		<jackson.version>2.13.3</jackson.version>
+		<jackson.version>2.14.2</jackson.version>
 		<junit.version>4.13.1</junit.version>
 		<activiti.version>7.1.134</activiti.version>
 		<commons-lang3.version>3.11</commons-lang3.version>

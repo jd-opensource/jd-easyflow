@@ -1,4 +1,4 @@
-package com.jd.easyflow.flow.cases.share.nodeaction;
+package com.jd.easyflow.flow.bpmn.cases.share.nodeaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

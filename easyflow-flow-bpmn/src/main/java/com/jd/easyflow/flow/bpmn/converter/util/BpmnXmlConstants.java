@@ -17,6 +17,8 @@ public class BpmnXmlConstants {
     public static final String NODE_POST_HANDLER_FILTERS = "nodePostHandlerFilters";
     public static final String RUNNER = "runner";
     public static final String CONDITION_TYPE = "conditionType";
+    public static final String PRE = "pre";
+    public static final String ACTION = "action";
     public static final String POST = "post";
     
 }

@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.jd.easyflow.flow.cases.event.EventFlowTest;
 import com.jd.easyflow.flow.cases.flowengine.FlowEngineImplTest;
 import com.jd.easyflow.flow.cases.mockbiz.MockLoanTest;
+import com.jd.easyflow.flow.cases.parallel.ParallelTest;
 import com.jd.easyflow.flow.cases.parser.FlowParserTest;
 import com.jd.easyflow.flow.cases.posthandler.FlowIndexTest;
 import com.jd.easyflow.flow.cases.posthandler.NodePostHandlerTest;
@@ -31,7 +32,8 @@ import com.jd.easyflow.flow.quickstart.QuickStartTest;
     FlowParserTest.class,
     NodePostHandlerTest.class,
     PostHandlerFilterTest.class,
-    SubFlowTest.class
+    SubFlowTest.class,
+    ParallelTest.class
 })
 public class FlowTestSuite {
 

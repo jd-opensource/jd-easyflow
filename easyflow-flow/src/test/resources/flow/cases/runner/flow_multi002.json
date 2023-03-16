@@ -1,11 +1,11 @@
 {
     "id": "flow_multi002","name": "Multiple thread flow 001",
     "nodes": [
-        {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.stepaction.TestStepAction()"},
+        {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
             "post":{"to":["EMPTY_NODE2","EMPTY_NODE3"]}, "properties":{"sleep":3}
         },
-        {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.stepaction.TestStepAction()"}, "properties":{"sleep":1}},
-        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.stepaction.TestStepAction()"}, "properties":{"exception":true}}
+        {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "properties":{"sleep":1}},
+        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "properties":{"exception":true}}
     ],
     "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestMultiRunner()"}
 }

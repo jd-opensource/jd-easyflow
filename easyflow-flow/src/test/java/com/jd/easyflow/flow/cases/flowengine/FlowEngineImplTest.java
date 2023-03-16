@@ -36,6 +36,7 @@ public class FlowEngineImplTest {
         		.build();
         FlowEngineImpl flowEngine = new FlowEngineImpl();
         flowEngine.addFlow(flow);
+        flowEngine.init();
         
         // create param
         FlowParam param = FlowParamBuilder.create("test", "node1").build();

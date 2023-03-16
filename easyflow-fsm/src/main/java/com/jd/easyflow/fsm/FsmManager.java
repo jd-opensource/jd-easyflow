@@ -117,6 +117,13 @@ public class FsmManager implements SmartLifecycle {
     }
 
     public FsmResult run(FsmParam param) {
+        if (! inited) {
+            throw new FsmException("Fsm is not inited. fsmId:" + param.getFsmId());
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("FSM MANAGER RUN. fsmId: " + param.getFsmId() + " event:" + param.getEventId() + " currentStateId:"
+                    + param.getCurrentStateId() + " opType:" + param.getOpType());
+        }
         if (filters == null || filters.size() == 0) {
             return invokeFsm(param);
         } else {

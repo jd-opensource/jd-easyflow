@@ -13,27 +13,30 @@ import com.jd.easyflow.flow.model.definition.DefConstants;
 
 /**
  * Script Task Converter.
+ * 
  * @author liyuliang5
  *
  */
 public class ScriptTaskConverter extends BaseFlowNodeConverter {
-    
+
     private static final String EXP_FORMAT = "exp";
-    //private static final String CREATE_EXP_FORMAT = "createExp";
+    // private static final String CREATE_EXP_FORMAT = "createExp";
 
     @Override
     public Map<String, Object> convert(FlowNode flowNode, BpmnModel bpmnModel, Map<String, Object> flowDef) {
         Map<String, Object> node = super.convert(flowNode, bpmnModel, flowDef);
-        ScriptTask scriptTask = (ScriptTask) flowNode;
-        String format = scriptTask.getScriptFormat();
-        String script = scriptTask.getScript();
-        if (StringUtils.isNotEmpty(script)) {
-            if (format == null) {
-                format = EXP_FORMAT;
+        if (node.get(DefConstants.NODE_PROP_ACTION) == null) {
+            ScriptTask scriptTask = (ScriptTask) flowNode;
+            String format = scriptTask.getScriptFormat();
+            String script = scriptTask.getScript();
+            if (StringUtils.isNotEmpty(script)) {
+                if (format == null) {
+                    format = EXP_FORMAT;
+                }
+                Map<String, Object> action = new HashMap<>();
+                action.put(format, script);
+                node.put(DefConstants.NODE_PROP_ACTION, action);
             }
-            Map<String, Object> action = new HashMap<>();
-            action.put(format, script);
-            node.put(DefConstants.NODE_PROP_ACTION, action);
         }
         return node;
     }

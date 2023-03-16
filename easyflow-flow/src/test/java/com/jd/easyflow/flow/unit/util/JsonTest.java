@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowParam;
+import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.impl.FlowContextImpl;
 import com.jd.easyflow.flow.util.JsonUtil;
 
@@ -51,5 +52,15 @@ public class JsonTest {
 	    logger.info(JsonUtil.toJsonString(context));
 	    
 	}
+	
+    @Test
+    public void testJsonIgnore2() {
+        FlowResult result = new FlowResult();
+        FlowContextImpl context = new FlowContextImpl();
+        result.setContext(context);
+        context.setResult(result);
+        logger.info(JsonUtil.toJsonString(result));
+
+    }
 	
 }

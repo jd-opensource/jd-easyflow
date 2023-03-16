@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:easyflow="http://jd.com/easyflow" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="flow_bpmn_parallel001" isExecutable="false">
+    <bpmn:startEvent id="START_NODE" name="START_NODE">
+      <bpmn:outgoing>Flow_08hz986</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="PARALLEL_NODE1" name="PARALLEL_NODE1" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:properties>{"sleep":1}</easyflow:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1xkqwtr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jod389</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.cases.share.nodeaction.TestStepAction()</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="PARALLEL_NODE2" name="PARALLEL_NODE2" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:properties>{"sleep":3}</easyflow:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rnxuqo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lreky6</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.cases.share.nodeaction.TestStepAction()</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_08hz986" sourceRef="START_NODE" targetRef="GATEWAY1" />
+    <bpmn:sequenceFlow id="Flow_1xkqwtr" sourceRef="GATEWAY1" targetRef="PARALLEL_NODE1" />
+    <bpmn:sequenceFlow id="Flow_0rnxuqo" sourceRef="GATEWAY1" targetRef="PARALLEL_NODE2" />
+    <bpmn:sequenceFlow id="Flow_0jod389" sourceRef="PARALLEL_NODE1" targetRef="GATEWAY2" />
+    <bpmn:sequenceFlow id="Flow_0lreky6" sourceRef="PARALLEL_NODE2" targetRef="GATEWAY2" />
+    <bpmn:endEvent id="END_NODE" name="END_NODE">
+      <bpmn:incoming>Flow_1992ddw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1992ddw" sourceRef="GATEWAY2" targetRef="END_NODE" />
+    <bpmn:parallelGateway id="GATEWAY1" name="GATEWAY1">
+      <bpmn:incoming>Flow_08hz986</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xkqwtr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0rnxuqo</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="GATEWAY2" name="GATEWAY2">
+      <bpmn:incoming>Flow_0jod389</bpmn:incoming>
+      <bpmn:incoming>Flow_0lreky6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1992ddw</bpmn:outgoing>
+    </bpmn:parallelGateway>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flow_bpmn_parallel001">
+      <bpmndi:BPMNEdge id="Flow_08hz986_di" bpmnElement="Flow_08hz986" waypoints="">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="245" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xkqwtr_di" bpmnElement="Flow_1xkqwtr" waypoints="">
+        <di:waypoint x="270" y="95" />
+        <di:waypoint x="270" y="40" />
+        <di:waypoint x="370" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rnxuqo_di" bpmnElement="Flow_0rnxuqo" waypoints="">
+        <di:waypoint x="270" y="145" />
+        <di:waypoint x="270" y="190" />
+        <di:waypoint x="370" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jod389_di" bpmnElement="Flow_0jod389" waypoints="">
+        <di:waypoint x="470" y="40" />
+        <di:waypoint x="570" y="40" />
+        <di:waypoint x="570" y="95" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lreky6_di" bpmnElement="Flow_0lreky6" waypoints="">
+        <di:waypoint x="470" y="190" />
+        <di:waypoint x="570" y="190" />
+        <di:waypoint x="570" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1992ddw_di" bpmnElement="Flow_1992ddw" waypoints="">
+        <di:waypoint x="595" y="120" />
+        <di:waypoint x="662" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="START_NODE">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="145" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hvlhnh_di" bpmnElement="PARALLEL_NODE1">
+        <dc:Bounds x="370" y="0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07s31qf_di" bpmnElement="PARALLEL_NODE2">
+        <dc:Bounds x="370" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s6k7qf_di" bpmnElement="END_NODE">
+        <dc:Bounds x="662" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="649" y="145" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1au5o2w_di" bpmnElement="GATEWAY1">
+        <dc:Bounds x="245" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="321" y="110" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_028xlvx_di" bpmnElement="GATEWAY2">
+        <dc:Bounds x="545" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="460" y="110" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

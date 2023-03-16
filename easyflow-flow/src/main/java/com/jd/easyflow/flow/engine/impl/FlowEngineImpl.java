@@ -124,6 +124,9 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
      */
     @Override
     public FlowResult execute(FlowParam param) {
+        if (! inited) {
+            throw new FlowException("Flow engine is not inited. flowId:" + param.getFlowId());
+        }
         if (logger.isInfoEnabled()) {
             logger.info("START EXECUTE FLOW, flowId:" + param.getFlowId() + " nodeIds:"
                     + Arrays.toString(param.getNodeIds()));
@@ -159,6 +162,9 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
         FlowContext context = initContext(param);
         // find flow definition
         Flow flow = findFlow(context);
+        if (logger.isInfoEnabled()) {
+            logger.info("EXECUTE FLOW, flowId:" + flow.getId());
+        }
         if (flow.getFilters() == null || flow.getFilters().size() == 0) {
             return invokeFlow(context);
         } else {

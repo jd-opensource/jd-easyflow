@@ -57,6 +57,20 @@ public class BaseFlowNodeConverter implements FlowNodeConverter {
             String elementText = element.getElementText();
             node.put(DefConstants.NODE_PROP_START, JsonUtil.parseObject(elementText, Boolean.class));
         }
+        // Pre
+        // self first
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.PRE)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.PRE).get(0);
+            String elementText = element.getElementText();
+            node.put(DefConstants.NODE_PROP_PRE, JsonUtil.parseObject(elementText, Map.class));
+        }           
+        // Action
+        // self first
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.ACTION)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.ACTION).get(0);
+            String elementText = element.getElementText();
+            node.put(DefConstants.NODE_PROP_ACTION, JsonUtil.parseObject(elementText, Map.class));
+        }        
         // Post
         // self first.
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.POST)) {
