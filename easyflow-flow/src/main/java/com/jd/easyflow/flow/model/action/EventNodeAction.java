@@ -14,6 +14,7 @@ import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.definition.DefConstants;
+import com.jd.easyflow.flow.model.parser.param.ActionParseParam;
 import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
@@ -61,7 +62,6 @@ public class EventNodeAction implements NodeAction {
         return nodeAction.execute(nodeContext, context);
     }
 
-    
     private void initEventActionMap(InitContext initContext, FlowNode flowNode) {
         Map<String, Object> eventActionMap = flowNode.getProperty(FlowConstants.PROP_RUNTIME_EVENT_NODE_ACTION_MAP);
         if (eventActionMap != null) {
@@ -78,20 +78,21 @@ public class EventNodeAction implements NodeAction {
             Object eventConf = (Object) entry.getValue();
             Map<String, Object> eventActionConfMap = null;
             if (eventConf instanceof String) {
-                eventActionConfMap =  new HashMap<>();
+                eventActionConfMap = new HashMap<>();
                 eventActionConfMap.put(DefConstants.COMMON_PROP_EXP, (String) eventConf);
             } else {
                 Map<String, Object> eventConfMap = (Map<String, Object>) eventConf;
                 eventActionConfMap = (Map<String, Object>) eventConfMap.get("action");
             }
             if (eventActionConfMap != null) {
-                NodeAction nodeAction = initContext.getFlowParser().parseAction(eventActionConfMap, null, initContext.isParseEl());
+                NodeAction nodeAction = initContext.getFlowParser()
+                        .parseAction(new ActionParseParam(eventActionConfMap, null, initContext.isParseEl(), flowNode));
                 if (nodeAction != null) {
                     eventActionMap.put(event, nodeAction);
                 }
             }
         }
-        
+
     }
 
 }

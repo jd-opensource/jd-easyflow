@@ -1,0 +1,39 @@
+{
+    "id": "flow_session_001","name": "Flow session 001",
+    "nodes": [
+        {"id": "NODE1","name": "Node1","action":{"createExp":"new com.jd.easyflow.flow.model.action.EventNodeAction()"},
+            "post":{"createExp":"new com.jd.easyflow.flow.model.post.EventPostHandler()"}, 
+            "properties":{"events":{
+                "NONE":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().call(bizParam)",
+                "RESULT":{"action":{"exp":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().resultProcess(bizParam, nodeContext, context)"}, "post":{"to":["NODE2", "NODE3"]}}
+         }}},
+         
+        {"id": "NODE2","name": "Node2","action":{"createExp":"new com.jd.easyflow.flow.model.action.EventNodeAction()"},
+            "post":{"createExp":"new com.jd.easyflow.flow.model.post.EventPostHandler()"}, 
+            "properties":{"events":{
+                "NONE":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().call(bizParam)",
+                "RESULT":{"action":{"exp":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().resultProcess(bizParam, nodeContext, context)"}, "post":{"to":"NODE4"}}
+         }}},
+         
+        {"id": "NODE3","name": "Node3","action":{"createExp":"new com.jd.easyflow.flow.model.action.EventNodeAction()"},
+            "post":{"createExp":"new com.jd.easyflow.flow.model.post.EventPostHandler()"}, 
+            "properties":{"events":{
+                "NONE":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().call(bizParam)",
+                "RESULT":{"action":{"exp":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().resultProcess(bizParam, nodeContext, context)"}, "post":{"to":"NODE4"}}
+         }}},    
+         
+        {"id": "NODE4","name": "Node4",
+            "pre":{"createExp":"new com.jd.easyflow.flow.model.pre.ExpNodePreHandler('nodeContext.get(\"EVENT\")==\"RESULT\" || new com.jd.easyflow.flow.ext.session.SessionMultiCheckPreHandler().preHandle(nodeContext, context)')"},
+            "action":{"createExp":"new com.jd.easyflow.flow.model.action.EventNodeAction()"},
+            "post":{"createExp":"new com.jd.easyflow.flow.model.post.EventPostHandler()"}, 
+            "properties":{
+              "preNodes":["NODE2","NODE3"],
+              "events":{
+                "NONE":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().call(bizParam)",
+                "RESULT":{"action":{"exp":"new com.jd.easyflow.flow.ext.cases.session.MockRequestAsyncCall().resultProcess(bizParam, nodeContext, context)"}}},
+              "end":true
+         }}                         
+        
+    ],
+    "listeners":[{"createExp":"new com.jd.easyflow.flow.engine.event.impl.EventFlowListener()"}]
+}

@@ -22,11 +22,11 @@ public class NodeContext {
     private NodeContext previousNode;
 
     private NodeContext[] nextNodes;
-    
+
     private Boolean preResult;
 
     private Object actionResult;
-    
+
     private Throwable throwable;
 
     /**
@@ -54,7 +54,11 @@ public class NodeContext {
         if (dataMap == null) {
             dataMap = new ConcurrentHashMap<String, Object>();
         }
-        dataMap.put(key, value);
+        if (value == null) {
+            dataMap.remove(key);
+        } else {
+            dataMap.put(key, value);
+        }
     }
 
     public <T> T get(String key) {

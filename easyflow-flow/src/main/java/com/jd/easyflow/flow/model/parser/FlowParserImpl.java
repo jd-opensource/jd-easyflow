@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import com.jd.easyflow.flow.engine.FlowRunner;
 import com.jd.easyflow.flow.engine.event.ExpFlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.engine.impl.ExpFlowRunner;
+import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.ExpFilter;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.model.Flow;
@@ -26,10 +28,15 @@ import com.jd.easyflow.flow.model.action.ExpNodeAction;
 import com.jd.easyflow.flow.model.action.FlowNodeAction;
 import com.jd.easyflow.flow.model.definition.DefConstants;
 import com.jd.easyflow.flow.model.node.NodeImpl;
+import com.jd.easyflow.flow.model.parser.param.ActionParseParam;
+import com.jd.easyflow.flow.model.parser.param.FlowParseParam;
+import com.jd.easyflow.flow.model.parser.param.PostParseParam;
+import com.jd.easyflow.flow.model.parser.param.PreParseParam;
 import com.jd.easyflow.flow.model.post.ConditionalNodePostHandler;
 import com.jd.easyflow.flow.model.post.ExpNodePostHandler;
 import com.jd.easyflow.flow.model.post.FixedNodePostHandler;
 import com.jd.easyflow.flow.model.pre.ExpNodePreHandler;
+import com.jd.easyflow.flow.model.pre.MultiCheckPreHandler;
 import com.jd.easyflow.flow.util.JsonUtil;
 
 /**
@@ -45,31 +52,40 @@ public class FlowParserImpl implements FlowParser {
 
     @Override
     public List<Flow> parse(String data) {
-        List<Flow> flowList = parse(JsonUtil.parseObject(data, Map.class));
-        flowList.get(0).setProperty(FLOW_STRING_KEY, data);
-        return flowList;
+        return parse(new FlowParseParam(data));
     }
 
     @Override
     public List<Flow> parse(Map<String, Object> map) {
-        List<Flow> flowList = new ArrayList<Flow>();
-        parse(map, flowList, true);
-        flowList.get(0).setProperty(FLOW_STRING_KEY, JsonUtil.toJsonString(map));
-        return flowList;
+        return parse(new FlowParseParam(map));
     }
 
     @Override
     public List<Flow> parse(String data, boolean parseEl) {
-        List<Flow> flowList = parse(JsonUtil.parseObject(data, Map.class), parseEl);
-        flowList.get(0).setProperty(FLOW_STRING_KEY, data);
-        return flowList;
+        return parse(new FlowParseParam(data, parseEl));
     }
 
     @Override
     public List<Flow> parse(Map<String, Object> map, boolean parseEl) {
+        return parse(new FlowParseParam(map, parseEl));
+    }
+
+    @Override
+    public List<Flow> parse(FlowParseParam param) {
+        String stringDef = param.getStringDefinition();
+        Map<String, Object> mapDef = (Map<String, Object>) param.getObjectDefinition();
+        if (mapDef == null) {
+            if (StringUtils.isEmpty(stringDef)) {
+                throw new FlowException("definition is empty");
+            }
+            mapDef = JsonUtil.parseObject(stringDef, Map.class);
+        }
+        if (stringDef == null) {
+            stringDef = JsonUtil.toJsonString(mapDef);
+        }
         List<Flow> flowList = new ArrayList<Flow>();
-        parse(map, flowList, parseEl);
-        flowList.get(0).setProperty(FLOW_STRING_KEY, JsonUtil.toJsonString(map));
+        parse(mapDef, flowList, param.isParseEl());
+        flowList.get(0).setProperty(FLOW_STRING_KEY, stringDef);
         return flowList;
     }
 
@@ -98,10 +114,8 @@ public class FlowParserImpl implements FlowParser {
                     || nodeConf.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                 if (parseEl) {
                     String exp = (String) nodeConf.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                    Map<String, Object> context = new HashMap<>();
-                    context.put("nodeDef", nodeConf);
-                    context.put("flowParser", this);
-                    FlowNode node = ElFactory.get().evalWithDefaultContext(exp, context, false);
+                    Map<String, Object> elContext = createElContext(nodeConf, null, flow);
+                    FlowNode node = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
                     flow.addNode(node);
                 }
             } else {
@@ -109,9 +123,12 @@ public class FlowParserImpl implements FlowParser {
                 node.setId((String) nodeConf.get(DefConstants.COMMON_PROP_ID));
                 node.setName((String) nodeConf.get(DefConstants.COMMON_PROP_NAME));
                 node.putProperties((Map<String, Object>) nodeConf.get(DefConstants.COMMON_PROP_PROPERTIES));
-                node.setPreHandler(parsePre(nodeConf.get(DefConstants.NODE_PROP_PRE), parseEl));
-                node.setAction(parseAction(nodeConf.get(DefConstants.NODE_PROP_ACTION), flowList, parseEl));
-                node.setPostHandler(parsePost(nodeConf.get(DefConstants.NODE_PROP_POST), parseEl));
+                node.setPreHandler(
+                        parsePre(new PreParseParam(nodeConf.get(DefConstants.NODE_PROP_PRE), parseEl, node)));
+                node.setAction(parseAction(
+                        new ActionParseParam(nodeConf.get(DefConstants.NODE_PROP_ACTION), flowList, parseEl, node)));
+                node.setPostHandler(
+                        parsePost(new PostParseParam(nodeConf.get(DefConstants.NODE_PROP_POST), parseEl, node)));
                 flow.addNode(node);
             }
         }
@@ -125,14 +142,14 @@ public class FlowParserImpl implements FlowParser {
         parseFilters(map, flow, parseEl);
         // Node filter
         parseNodeFilter(map, flow, parseEl);
-        
+
         // Node pre handler filter
         parseNodePreHandlerFilter(map, flow, parseEl);
         // Node action filter
         parseNodeActionFilter(map, flow, parseEl);
         // Node post handler filter
         parseNodePostHandlerFilter(map, flow, parseEl);
-        
+
         // Flow runner
         parseRunner(map, flow, parseEl);
         InitContext initContext = new InitContext();
@@ -163,7 +180,9 @@ public class FlowParserImpl implements FlowParser {
                             || listener.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) listener.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            FlowEventListener eventListener = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            Map<String, Object> elContext = createElContext(listener, null, flow);
+                            FlowEventListener eventListener = ElFactory.get().evalWithDefaultContext(exp, elContext,
+                                    false);
                             flow.getEventTrigger().addListener(eventListener);
                         }
                     }
@@ -193,7 +212,8 @@ public class FlowParserImpl implements FlowParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter flowFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter flowFilter = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
                             flow.addFilter(flowFilter);
                         }
                     }
@@ -224,7 +244,8 @@ public class FlowParserImpl implements FlowParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter flowFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter flowFilter = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
                             flow.addNodeFilter(flowFilter);
                         }
                     }
@@ -255,15 +276,16 @@ public class FlowParserImpl implements FlowParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter nodePreHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter nodePreHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
                             flow.addNodePreHandlerFilter(nodePreHandlerFilter);
                         }
                     }
                 }
             }
         }
-    }    
-    
+    }
+
     /**
      * Parse node action filter.
      * 
@@ -286,7 +308,8 @@ public class FlowParserImpl implements FlowParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter nodeActionFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter nodeActionFilter = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
                             flow.addNodeActionFilter(nodeActionFilter);
                         }
                     }
@@ -294,7 +317,7 @@ public class FlowParserImpl implements FlowParser {
             }
         }
     }
-    
+
     /**
      * Parse node post handler filter.
      * 
@@ -317,14 +340,16 @@ public class FlowParserImpl implements FlowParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter nodePostHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter nodePostHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, elContext,
+                                    false);
                             flow.addNodePostHandlerFilter(nodePostHandlerFilter);
                         }
                     }
                 }
             }
         }
-    } 
+    }
 
     /**
      * Parse flow runner.
@@ -346,7 +371,8 @@ public class FlowParserImpl implements FlowParser {
                         || runner.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                     if (parseEl) {
                         String exp = (String) runner.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                        FlowRunner flowRunner = ElFactory.get().evalWithDefaultContext(exp, null, false);
+                        Map<String, Object> elContext = createElContext(runner, null, flow);
+                        FlowRunner flowRunner = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
                         flow.setRunner(flowRunner);
                     }
                 }
@@ -355,52 +381,62 @@ public class FlowParserImpl implements FlowParser {
     }
 
     @Override
-    public NodePreHandler parsePre(Object preParam, boolean parseEl) {
-        if (preParam == null) {
+    public NodePreHandler parsePre(PreParseParam param) {
+        Object preDef = param.getPreDef();
+        if (preDef == null) {
             return null;
         }
-        if (preParam instanceof String) {
+        if (preDef instanceof String) {
             ExpNodePreHandler handler = new ExpNodePreHandler();
-            handler.setExp((String) preParam);
+            handler.setExp((String) preDef);
             return handler;
         }
-        Map<String, Object> pre = (Map<String, Object>) preParam;
+        Map<String, Object> pre = (Map<String, Object>) preDef;
         String type = (String) pre.get(DefConstants.COMMON_PROP_TYPE);
         if (DefConstants.COMMON_PROP_CREATE.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
-            if (!parseEl) {
+            if (!param.isParseEl()) {
                 return null;
             }
             String exp = (String) pre.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            NodePreHandler handler = ElFactory.get().evalWithDefaultContext(exp, null, false);
-            return handler;
+            Map<String, Object> elContext = createElContext(pre, param.getNode(), null);
+            NodePreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
+            return preHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_EXP)) {
             String exp = (String) pre.get(DefConstants.COMMON_PROP_EXP);
-            ExpNodePreHandler handler = new ExpNodePreHandler();
-            handler.setExp(exp);
-            return handler;
+            ExpNodePreHandler preHandler = new ExpNodePreHandler();
+            preHandler.setExp(exp);
+            return preHandler;
+        } else if (DefConstants.NODE_PRE_TYPE_MULTICHECK.equals(type)
+                || pre.containsKey(DefConstants.NODE_PRE_PROP_PRE_NODES)) {
+            List<String> preNodes = (List<String>) pre.get(DefConstants.NODE_PRE_PROP_PRE_NODES);
+            MultiCheckPreHandler preHandler = new MultiCheckPreHandler();
+            preHandler.setPreNodes(preNodes);
+            return preHandler;
         }
         throw new IllegalArgumentException("Param illegal " + pre);
 
     }
 
     @Override
-    public NodeAction parseAction(Object actionParam, List<Flow> flowList, boolean parseEl) {
-        if (actionParam == null) {
+    public NodeAction parseAction(ActionParseParam param) {
+        Object actionDef = param.getActionDef();
+        if (actionDef == null) {
             return null;
         }
-        if (actionParam instanceof String) {
+        if (actionDef instanceof String) {
             ExpNodeAction nodeAction = new ExpNodeAction();
-            nodeAction.setExp((String) actionParam);
+            nodeAction.setExp((String) actionDef);
             return nodeAction;
         }
-        Map<String, Object> action = (Map<String, Object>) actionParam;
+        Map<String, Object> action = (Map<String, Object>) actionDef;
         String type = (String) action.get(DefConstants.COMMON_PROP_TYPE);
         if (DefConstants.COMMON_PROP_CREATE.equals(type) || action.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
-            if (!parseEl) {
+            if (!param.isParseEl()) {
                 return null;
             }
             String exp = (String) action.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            NodeAction nodeAction = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> elContext = createElContext(action, param.getNode(), null);
+            NodeAction nodeAction = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
             return nodeAction;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || action.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpNodeAction nodeAction = new ExpNodeAction();
@@ -411,7 +447,8 @@ public class FlowParserImpl implements FlowParser {
                 || action.containsKey(DefConstants.COMMON_PROP_FLOW_ID)) {
             FlowNodeAction nodeAction = new FlowNodeAction();
             if (action.containsKey(DefConstants.COMMON_PROP_FLOW)) {
-                Flow flow = parse((Map<String, Object>) action.get(DefConstants.COMMON_PROP_FLOW), flowList, parseEl);
+                Flow flow = parse((Map<String, Object>) action.get(DefConstants.COMMON_PROP_FLOW), param.getFlowList(),
+                        param.isParseEl());
                 nodeAction.setFlowId(flow.getId());
             } else if (action.containsKey(DefConstants.COMMON_PROP_FLOW_ID)) {
                 nodeAction.setFlowId((String) action.get(DefConstants.COMMON_PROP_FLOW_ID));
@@ -430,24 +467,26 @@ public class FlowParserImpl implements FlowParser {
     }
 
     @Override
-    public NodePostHandler parsePost(Object postParam, boolean parseEl) {
-        if (postParam == null) {
+    public NodePostHandler parsePost(PostParseParam param) {
+        Object postDef = param.getPostDef();
+        if (postDef == null) {
             return null;
         }
-        if (postParam instanceof String) {
+        if (postDef instanceof String) {
             ExpNodePostHandler postHandler = new ExpNodePostHandler();
-            String exp = (String) postParam;
+            String exp = (String) postDef;
             postHandler.setExp(exp);
             return postHandler;
         }
-        Map<String, Object> post = (Map<String, Object>) postParam;
+        Map<String, Object> post = (Map<String, Object>) postDef;
         String type = (String) post.get(DefConstants.COMMON_PROP_TYPE);
         if (DefConstants.COMMON_PROP_CREATE.equals(type) || post.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
-            if (!parseEl) {
+            if (!param.isParseEl()) {
                 return null;
             }
             String exp = (String) post.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            NodePostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> elContext = createElContext(post, param.getNode(), null);
+            NodePostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
             return postHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || post.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpNodePostHandler postHandler = new ExpNodePostHandler();
@@ -467,11 +506,13 @@ public class FlowParserImpl implements FlowParser {
                 if (condition.containsKey(DefConstants.NODE_POST_PROP_WHEN)) {
                     Object value = condition.get(DefConstants.NODE_POST_PROP_WHEN);
                     if (value instanceof Map) {
-                        if (parseEl) {
+                        if (param.isParseEl()) {
                             String createExp = (String) ((Map<String, Object>) value)
                                     .get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Map<String, Object> elContext = createElContext((Map<String, Object>) value,
+                                    param.getNode(), null);
                             condition.put(DefConstants.NODE_POST_PROP_WHEN,
-                                    ElFactory.get().evalWithDefaultContext(createExp, null, false));
+                                    ElFactory.get().evalWithDefaultContext(createExp, elContext, false));
                         }
                     }
                 }
@@ -506,6 +547,19 @@ public class FlowParserImpl implements FlowParser {
         }
         logger.warn("No original string definition, unsupported now. flowId: " + flow.getId());
         return null;
+    }
+
+    private Map<String, Object> createElContext(Map<String, Object> currentDef, FlowNode node, Flow flow) {
+        Map<String, Object> context = new HashMap<>(3);
+        context.put("def", currentDef);
+        if (node != null) {
+            context.put("node", node);
+        }
+        if (flow != null) {
+            context.put("flow", flow);
+        }
+        context.put("flowParser", this);
+        return context;
     }
 
 }

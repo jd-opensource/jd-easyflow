@@ -14,7 +14,6 @@ import com.jd.easyflow.flow.bpmn.converter.util.ConvertUtil;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.definition.DefConstants;
 import com.jd.easyflow.flow.model.post.ConditionalNodePostHandler;
-import com.jd.easyflow.flow.model.pre.MultiCheckPreHandler;
 
 /**
  * Parallel Gateway Converter.
@@ -38,12 +37,12 @@ public class ParallelGatewayConverter extends BaseFlowNodeConverter {
         if (list.size() > 1) {
             if (node.get(DefConstants.NODE_PROP_PRE) == null) {
                 Map<String, Object> pre = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_PRE);
-                pre.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + MultiCheckPreHandler.class.getName() + "()");
-
-                Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
                 List<String> preNodes = new ArrayList<>();
                 flowNode.getIncomingFlows().forEach(incomingFlow -> preNodes.add(incomingFlow.getSourceRef()));
-                properties.put(DefConstants.NODE_PROPERTIES_PROP_PRE_NODES, preNodes);
+                pre.put("preNodes", preNodes);
+//                pre.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + MultiCheckPreHandler.class.getName() + "()");
+//                Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
+//                properties.put(DefConstants.NODE_PROPERTIES_PROP_PRE_NODES, preNodes);
             }
         }
         return node;

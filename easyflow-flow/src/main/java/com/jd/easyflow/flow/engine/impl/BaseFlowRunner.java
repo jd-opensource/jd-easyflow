@@ -26,7 +26,7 @@ public abstract class BaseFlowRunner implements FlowRunner {
     public void run(FlowContext context) {
         Flow flow = context.getFlow();
         flow.triggerEvent(FlowEventTypes.RUN_START, context);
-        doRun(context);
+        doRun((FlowContextImpl) context);
         flow.triggerEvent(FlowEventTypes.RUN_END, context);
     }
 
@@ -35,7 +35,17 @@ public abstract class BaseFlowRunner implements FlowRunner {
      * 
      * @param context
      */
-    public abstract void doRun(FlowContext context);
+    public abstract void doRun(FlowContextImpl context);
+    
+    
+    
+    protected NodeContext[] runOneNodeAndAddNextNodes(NodeContext currentNode, FlowContextImpl context) {
+        NodeContext[] nextNodes = runOneNode(currentNode, context);
+        if (nextNodes != null) {
+            context.addNodes(nextNodes);
+        }
+        return nextNodes;
+    }
 
     /**
      * Run one node.
@@ -43,25 +53,24 @@ public abstract class BaseFlowRunner implements FlowRunner {
      * @param currentNode
      * @param context
      * @param flow
+     * @return next nodes
      */
-    protected void runOneNode(NodeContext currentNode, FlowContext context, Flow flow) {
+    protected NodeContext[] runOneNode(NodeContext currentNode, FlowContextImpl context) {
         if (logger.isInfoEnabled()) {
             logger.info("EXECUTE NODE:" + currentNode.getNodeId());
         }
         FlowNode node = context.getFlow().getNode(currentNode.getNodeId());
         NodeContext[] nextNodes = null;
         try {
-            runNode(node, currentNode, context, flow);
+            runNode(node, currentNode, context);
             // get next nodes
             nextNodes = currentNode.getNextNodes();
         } catch (Throwable t) { // NOSONAR
             currentNode.setThrowable(t);
             throw t;
         } finally {
-            if (nextNodes != null) {
-                context.addNodes(nextNodes);
-            } else {
-                context.addEndNode(currentNode);
+            if (nextNodes == null) {
+                ((FlowContextImpl) context).addEndNode(currentNode);
             }
         }
         // print nodes info
@@ -77,13 +86,15 @@ public abstract class BaseFlowRunner implements FlowRunner {
             }
         }
         // Clear previous node to avoid OOM
-        if (Boolean.FALSE.equals(flow.getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY))) {
+        if (Boolean.FALSE.equals(context.getFlow().getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY))) {
             currentNode.setPreviousNode(null);
             currentNode.setNextNodes(null);
         }
+        return nextNodes;
     }
 
-    protected void runNode(FlowNode node, NodeContext currentNode, FlowContext context, Flow flow) {
+    protected void runNode(FlowNode node, NodeContext currentNode, FlowContextImpl context) {
+        Flow flow = context.getFlow();
         if (flow.getNodeFilters() == null || flow.getNodeFilters().size() == 0) {
             invokeNode(node, currentNode, context, flow);
             return;

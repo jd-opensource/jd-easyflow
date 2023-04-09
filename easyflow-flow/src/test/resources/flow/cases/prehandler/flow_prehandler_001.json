@@ -1,0 +1,24 @@
+{
+  "id":"flow_prehandler_001",
+  "name":"前处理流程001",
+  "nodes":[
+    {"id":"node_001", "name":"001节点", "start":true,
+      "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+      "post":{"to":["node_002","node_003"]}
+    },
+    {"id":"node_002", "name":"002节点",
+      "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+      "post":{"to":"node_004"}
+    },
+     {"id":"node_003", "name":"003节点",
+      "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+      "post":{"to":"node_004"}
+    },
+    {"id":"node_004", "name":"004节点",
+      "pre":{"preNodes":["node_002","node_003"]},
+      "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+      "post":{"to":"end"}
+    },       
+    {"id":"end", "name":"结束节点", "properties":{"end":true}}
+  ]
+}

@@ -834,6 +834,7 @@
         this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
         var bo = element.businessObject;
         var _self = this;

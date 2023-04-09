@@ -39,6 +39,13 @@ public class DefConstants {
     public static final String NODE_PROPERTIES_PROP_PRE_NODES = "preNodes";
     
     /**
+     * Node pre property
+     */
+    public static final String NODE_PRE_TYPE_MULTICHECK = "multiCheck";
+    public static final String NODE_PRE_PROP_PRE_NODES = "preNodes";
+
+    
+    /**
      * Node action property
      */
     public static final String NODE_ACTION_PROP_START_NODE_ID = "startNodeId";

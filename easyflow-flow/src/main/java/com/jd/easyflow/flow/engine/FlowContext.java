@@ -29,11 +29,6 @@ public interface FlowContext {
      * @return
      */
     List<NodeContext> getEndNodes();
-    /**
-     * Set end node list(ONLY FOR INNER USAGE).
-     * @param endNodes
-     */
-    void setEndNodes(List<NodeContext> endNodes);
     
     /**
      * Put context data.
@@ -66,23 +61,6 @@ public interface FlowContext {
 	 * @return
 	 */
 	Map<String, Object> getData();
-	
-	/**
-	 * Add nodes.
-	 * @param nodes
-	 */
-	void addNodes(NodeContext[] nodes);
-	/**
-	 * Add end node context list.
-	 * @param node
-	 */
-	void addEndNode(NodeContext node);
-	
-	/**
-	 * Get next node context.
-	 * @return
-	 */
-	NodeContext getNextNode();
 	
 	/**
 	 * Get flow param.
@@ -137,12 +115,6 @@ public interface FlowContext {
 	 * @return
 	 */
 	FlowEngine getFlowEngine();
-	
-	/**
-	 * Set flow engine.
-	 * @param flowEngine
-	 */
-	void setFlowEngine(FlowEngine flowEngine);
 	
 	/**
 	 * Set interrupted. only can from false to true.

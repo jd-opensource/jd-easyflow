@@ -10,6 +10,8 @@ package com.jd.easyflow.flow.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.MapAccessor;
@@ -27,7 +29,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * 
  */
 public class SpelHelper {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(SpelHelper.class);
+
     public static StandardEvaluationContext context = new StandardEvaluationContext();
 
     private static Map<String, Expression> cacheMap = new ConcurrentHashMap();
@@ -39,7 +43,7 @@ public class SpelHelper {
     private static ExpressionParser parser = new SpelExpressionParser();
 
     private static ApplicationContext applicationContext;
-    
+
     static {
         context.addPropertyAccessor(new MapAccessor());
     }
@@ -92,7 +96,7 @@ public class SpelHelper {
         Object value = exp.getValue(context);
         return (T) value;
     }
-    
+
     public static <T> T evalWithDefaultContext(String exp, Object root, boolean cache) {
         return eval(exp, context, root, cache);
     }
@@ -102,40 +106,50 @@ public class SpelHelper {
     }
 
     public static <T> T eval(String exp, Object context, boolean cache) {
-        Expression expression;
-        if (cache) {
-            expression = cacheMap.get(exp);
-            if (expression == null) {
+        try {
+            Expression expression;
+            if (cache) {
+                expression = cacheMap.get(exp);
+                if (expression == null) {
+                    expression = parse(exp);
+                    cacheMap.put(exp, expression);
+                }
+            } else {
                 expression = parse(exp);
-                cacheMap.put(exp, expression);
             }
-        } else {
-            expression = parse(exp);
-        }
 
-        Object value = null;
-        if (context instanceof EvaluationContext) {
-            value = expression.getValue((EvaluationContext) context);
-        } else {
-            value = expression.getValue(context);
+            Object value = null;
+            if (context instanceof EvaluationContext) {
+                value = expression.getValue((EvaluationContext) context);
+            } else {
+                value = expression.getValue(context);
+            }
+            return (T) value;
+        } catch (Exception e) {
+            logger.error("SPEL eval exception, exp:" + exp, e);
+            throw e;
         }
-        return (T) value;
     }
 
     public static <T> T eval(String exp, EvaluationContext context, Object root, boolean cache) {
-        Expression expression;
-        if (cache) {
-            expression = cacheMap.get(exp);
-            if (expression == null) {
+        try {
+            Expression expression;
+            if (cache) {
+                expression = cacheMap.get(exp);
+                if (expression == null) {
+                    expression = parse(exp);
+                    cacheMap.put(exp, expression);
+                }
+            } else {
                 expression = parse(exp);
-                cacheMap.put(exp, expression);
             }
-        } else {
-            expression = parse(exp);
-        }
 
-        Object value = expression.getValue(context, root);
-        return (T) value;
+            Object value = expression.getValue(context, root);
+            return (T) value;
+        } catch (Exception e) {
+            logger.error("SPEL eval exception, exp:" + exp, e);
+            throw e;
+        }
     }
 
     public static Expression parseTemplate(String template) {
@@ -151,28 +165,33 @@ public class SpelHelper {
     }
 
     public static String evalTemplate(String template, Object context, boolean cache) {
-        Expression expression;
-        if (cache) {
-            expression = tmpCacheMap.get(template);
-            if (expression == null) {
+        try {
+            Expression expression;
+            if (cache) {
+                expression = tmpCacheMap.get(template);
+                if (expression == null) {
+                    expression = parseTemplate(template);
+                    tmpCacheMap.put(template, expression);
+                }
+            } else {
                 expression = parseTemplate(template);
-                tmpCacheMap.put(template, expression);
             }
-        } else {
-            expression = parseTemplate(template);
+            Object result = null;
+            if (context instanceof EvaluationContext) {
+                result = expression.getValue((EvaluationContext) context);
+            } else {
+                result = expression.getValue(context);
+            }
+            if (result == null) {
+                return null;
+            }
+            return result.toString();
+        } catch (Exception e) {
+            logger.error("SPEL template eval exception, template:" + template, e);
+            throw e;
         }
-        Object result = null;
-        if (context instanceof EvaluationContext) {
-            result = expression.getValue((EvaluationContext) context);
-        } else {
-            result = expression.getValue(context);
-        }
-        if (result == null) {
-            return null;
-        }
-        return result.toString();
     }
-    
+
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }

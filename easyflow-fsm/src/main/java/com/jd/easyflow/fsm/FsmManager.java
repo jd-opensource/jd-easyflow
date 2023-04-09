@@ -52,6 +52,8 @@ public class FsmManager implements SmartLifecycle {
     private List<Filter<FsmParam, FsmResult>> filters;
 
     private  int phase = Integer.MIN_VALUE;
+    
+    private boolean autoStartup = true;
 
     private volatile boolean isRunning = false;
 
@@ -233,6 +235,18 @@ public class FsmManager implements SmartLifecycle {
     public boolean isRunning() {
         return isRunning;
     }
+    
+    @Override
+    public boolean isAutoStartup() {
+        return autoStartup;
+    }
+    
+    @Override
+    public void stop(Runnable callback) {
+        stop();
+        callback.run();
+    }
+    
     @Override
     public int getPhase() {
         return phase;
@@ -242,4 +256,12 @@ public class FsmManager implements SmartLifecycle {
     public void setPhase(int phase) {
         this.phase = phase;
     }
+
+    public void setAutoStartup(boolean autoStartup) {
+        this.autoStartup = autoStartup;
+    }
+
+
+    
+    
 }

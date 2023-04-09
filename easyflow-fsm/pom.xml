@@ -6,21 +6,21 @@
     <parent>
         <artifactId>easyflow-parent</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </parent>
     <artifactId>easyflow-fsm</artifactId>
     <name>easyflow-fsm</name>
     <packaging>jar</packaging>
     <dependencies>
-                <!--spring-->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-            </dependency>
+        <!--spring-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+        </dependency>
         <!-- logback & slf4j dependencies -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-        </dependency>     
+        </dependency>
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

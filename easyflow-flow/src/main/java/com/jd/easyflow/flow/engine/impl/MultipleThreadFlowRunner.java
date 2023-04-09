@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
-import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.util.ExceptionUtil;
 import com.jd.easyflow.flow.util.FlowConstants;
@@ -23,23 +22,22 @@ import com.jd.easyflow.flow.util.FlowConstants;
  * @date 2021/07/26
  */
 public class MultipleThreadFlowRunner extends BaseFlowRunner {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(MultipleThreadFlowRunner.class);
 
-    private static long startId = System.currentTimeMillis();
-    
+    protected static long startId = System.currentTimeMillis();
+
     protected Executor executor;
 
-
     @Override
-    public void doRun(FlowContext context) {
-        long runId = startId++;
+    public void doRun(FlowContextImpl context) {
+        String runId = startId++ + "";
         if (logger.isInfoEnabled()) {
             logger.info("Start running flow node, runId:" + runId);
         }
         CountDownLatch lock = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger();
-        addTaskIfExists(context, executor, counter, lock, runId);
+        scheduleNodes(context, counter, lock, runId);
         try {
             lock.await();
         } catch (InterruptedException e) {
@@ -53,17 +51,22 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
             throw ExceptionUtil.throwException(t);
         }
     }
-    
+
+    protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock,
+            String runId) {
+        addTaskIfExists(context, counter, lock, runId);
+    }
+
     /**
      * Add task.
+     * 
      * @param context
      * @param executor
      * @param counter
      * @param lock
      */
-    private void addTaskIfExists(FlowContext context, Executor executor, AtomicInteger counter, CountDownLatch lock,
-            long runId) {
-        Flow flow = context.getFlow();
+    private void addTaskIfExists(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock,
+            String runId) {
         NodeContext currentNode;
         while ((currentNode = context.getNextNode()) != null) {
             final NodeContext finalCurrentNode = currentNode;
@@ -73,7 +76,10 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                     if (logger.isInfoEnabled()) {
                         logger.info("Start execute flow node:" + finalCurrentNode.getNodeId() + ", runId:" + runId);
                     }
-                    runOneNode(finalCurrentNode, context, flow);
+                    NodeContext[] nextNodes = runOneNode(finalCurrentNode, context);
+                    if (nextNodes != null) {
+                        context.addNodes(nextNodes);
+                    }
                     if (context.isInterrupted()) {
                         if (logger.isInfoEnabled()) {
                             logger.info("Flow state is interrupted");
@@ -81,12 +87,12 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                         lock.countDown();
                         return;
                     }
-                    addTaskIfExists(context, executor, counter, lock, runId);
+                    addTaskIfExists(context, counter, lock, runId);
                     int count = counter.addAndGet(-1);
                     if (count == 0) {
                         lock.countDown();
                     }
-                } catch (Throwable t) { //NOSONAR
+                } catch (Throwable t) { // NOSONAR
                     addException(context, finalCurrentNode, t);
                     int count = counter.addAndGet(-1);
                     if (count == 0) {
@@ -96,14 +102,15 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
             });
         }
     }
-    
+
     /**
      * Add exception.
+     * 
      * @param context
      * @param nodeContext
      * @param t
      */
-    private synchronized void addException(FlowContext context, NodeContext nodeContext, Throwable t) {
+    protected synchronized void addException(FlowContext context, NodeContext nodeContext, Throwable t) {
         List<NodeContext> exceptionNodes = context.get(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS);
         if (exceptionNodes == null) {
             exceptionNodes = new ArrayList<NodeContext>();
@@ -113,8 +120,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         exceptionNodes.add(nodeContext);
     }
 
-
-    private void printStackTrace() {
+    protected void printStackTrace() {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < stack.length; i++) {

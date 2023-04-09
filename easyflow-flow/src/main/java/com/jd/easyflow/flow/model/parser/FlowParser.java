@@ -7,6 +7,10 @@ import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.NodePreHandler;
+import com.jd.easyflow.flow.model.parser.param.ActionParseParam;
+import com.jd.easyflow.flow.model.parser.param.FlowParseParam;
+import com.jd.easyflow.flow.model.parser.param.PostParseParam;
+import com.jd.easyflow.flow.model.parser.param.PreParseParam;
 
 /**
  * Flow definition parser.
@@ -26,7 +30,7 @@ public interface FlowParser {
     List<Flow> parse(String data);
     
     /**
-     * Parse definition string to java model.
+     * Parse definition map to java model.
      * @param map
      * @return
      */
@@ -41,7 +45,7 @@ public interface FlowParser {
     List<Flow> parse(String data, boolean parseEl);
     
     /**
-     * Parse definition string to java model.
+     * Parse definition map to java model.
      * @param map
      * @param parseEl
      * @return
@@ -49,29 +53,33 @@ public interface FlowParser {
     List<Flow> parse(Map<String, Object> map, boolean parseEl);
     
     /**
-     * Parse preHandler.
-     * @param preParam
-     * @param parseEl
+     * General parse method.
+     * @param param
      * @return
      */
-    NodePreHandler parsePre(Object preParam, boolean parseEl);
+    List<Flow> parse(FlowParseParam param);
+    
+    
+    /**
+     * Parse preHandler.
+     * @param param
+     * @return
+     */
+    NodePreHandler parsePre(PreParseParam param);
     
     /**
      * Parse nodeAction.
-     * @param actionParam
-     * @param flowList
-     * @param parseEl
+     * @param param
      * @return
      */
-    NodeAction parseAction(Object actionParam, List<Flow> flowList, boolean parseEl);
+    NodeAction parseAction(ActionParseParam param);
 
     /**
      * Parse postHandler.
-     * @param postParam
-     * @param parseEl
+     * @param param.
      * @return
      */
-    NodePostHandler parsePost(Object postParam, boolean parseEl);
+    NodePostHandler parsePost(PostParseParam param);
 
     /**
      * 

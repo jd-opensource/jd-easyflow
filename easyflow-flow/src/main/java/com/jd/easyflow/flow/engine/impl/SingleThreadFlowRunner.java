@@ -3,8 +3,6 @@ package com.jd.easyflow.flow.engine.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.engine.FlowContext;
-import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
 
 /**
@@ -24,18 +22,21 @@ public class SingleThreadFlowRunner extends BaseFlowRunner {
      * @param context
      */
     @Override
-    public void doRun(FlowContext context) {
-        Flow flow = context.getFlow();
+    public void doRun(FlowContextImpl context) {
         NodeContext currentNode;
+        FlowContextImpl contextImpl = (FlowContextImpl) context;
         // Loop execute.
-        while ((currentNode = context.getNextNode()) != null) {
+        while ((currentNode = contextImpl.getNextNode()) != null) {
             if (context.isInterrupted()) {
                 if (logger.isInfoEnabled()) {
                     logger.info("Flow interrupted!");
                 }
                 break;
             }
-            runOneNode(currentNode, context, flow);
+            NodeContext[] nextNodes = runOneNode(currentNode, context);
+            if (nextNodes != null) {
+                contextImpl.addNodes(nextNodes);
+            }
         }
     }
 }

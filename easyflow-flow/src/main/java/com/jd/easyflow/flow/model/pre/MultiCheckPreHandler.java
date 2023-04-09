@@ -18,9 +18,19 @@ import com.jd.easyflow.flow.util.FlowConstants;
  * @author liyuliang5
  *
  */
-public class MultiCheckPreHandler  implements NodePreHandler {
-    
+public class MultiCheckPreHandler implements NodePreHandler, PreNodesGetter {
+
     private static final Logger logger = LoggerFactory.getLogger(MultiCheckPreHandler.class);
+
+    private List<String> preNodes;
+
+    public MultiCheckPreHandler() {
+
+    }
+
+    public MultiCheckPreHandler(List<String> preNodes) {
+        this.preNodes = preNodes;
+    }
 
     /**
      * Judge all pre nodes finished.
@@ -34,7 +44,7 @@ public class MultiCheckPreHandler  implements NodePreHandler {
             return checkResult;
         }
         final Object lockObj;
-        final FlowContext lockContext  = context;
+        final FlowContext lockContext = context;
         synchronized (lockContext) {
             Object contextLockObj = context.get(FlowConstants.CTX_LOCK_PREFIX + nodeContext.getNodeId());
             if (contextLockObj == null) {
@@ -52,14 +62,16 @@ public class MultiCheckPreHandler  implements NodePreHandler {
             preNodes.add(nodeContext.getPreviousNode().getNodeId());
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
-            List<String> configPreNodes = currentNode.getProperty(FlowConstants.PROP_PRENODES);
+            List<String> configPreNodes = this.preNodes != null ? this.preNodes
+                    : currentNode.getProperty(FlowConstants.PROP_PRENODES);
             logger.info("Pre nodes executed:" + preNodes);
             if (preNodes.size() != configPreNodes.size()) {
                 return false;
             }
             for (String s : configPreNodes) {
                 if (!preNodes.contains(s)) {
-                    throw new FlowException("node info inconsistent, config:" + configPreNodes + ", runtime:" + preNodes);
+                    throw new FlowException(
+                            "node info inconsistent, config:" + configPreNodes + ", runtime:" + preNodes);
                 }
             }
             logger.info("All pre nodes finished");
@@ -67,6 +79,14 @@ public class MultiCheckPreHandler  implements NodePreHandler {
             return true;
 
         }
+    }
+
+    public List<String> getPreNodes() {
+        return preNodes;
+    }
+
+    public void setPreNodes(List<String> preNodes) {
+        this.preNodes = preNodes;
     }
 
 }

@@ -14,6 +14,7 @@ import com.jd.easyflow.flow.bpmn.converter.BpmnConverter;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.parser.FlowParserImpl;
+import com.jd.easyflow.flow.model.parser.param.FlowParseParam;
 import com.jd.easyflow.flow.util.JsonUtil;
 
 /**
@@ -59,19 +60,18 @@ public class BpmnFlowParser extends FlowParserImpl {
     }
 
     @Override
-    public List<Flow> parse(String data) {
-        if (!data.trim().startsWith(XML_PREFIX)) {
-            return super.parse(data);
-        }
-        try {
+    public List<Flow> parse(FlowParseParam param) {
+        String data = param.getStringDefinition();
+        if (data != null && data.trim().startsWith(XML_PREFIX)) {
             logger.info("BPMN Definition:\n" + data);
             String easyFlowDef = BpmnConverter.convert(data, flowPrettyConfig);
             logger.info("EasyFlow Definition:\n" + easyFlowDef);
-            List<Flow> flowList = super.parse(easyFlowDef);
+            param.setStringDefinition(easyFlowDef);
+            List<Flow> flowList = super.parse(param);
             flowList.get(0).setProperty(FLOW_BPMN_STRING_KEY, data);
             return flowList;
-        } catch (Exception e) {
-            throw new FlowException(e);
+        } else {
+            return super.parse(param);
         }
     }
 

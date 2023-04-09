@@ -70,6 +70,8 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     private FlowParser flowParser = new FlowParserImpl();
 
     private  int phase = Integer.MIN_VALUE;
+    
+    private boolean autoStartup = true;
 
     private volatile boolean isRunning = false;
 
@@ -205,7 +207,7 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
         if (context.getFlowId() == null) {
             context.setFlowId(param.getFlowId());
         }
-        context.setFlowEngine(this);
+        ((FlowContextImpl) context).setFlowEngine(this);
         return context;
     }
 
@@ -247,18 +249,25 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
      */
     protected void init(FlowContext context) {
         context.getFlow().triggerEvent(FlowEventTypes.INIT_START, context);
-        String[] nodeIds = context.getParam().getNodeIds();
-        // If nodeIds is null, using startNodeIds；if is empty array，run empty flow
-        // instance.
-        if (nodeIds == null) {
-            nodeIds = context.getFlow().getStartNodeIds();
+        if (context.getStartNodes() == null) {
+            String[] nodeIds = context.getParam().getNodeIds();
+            // If nodeIds is null, using startNodeIds；if is empty array，run empty flow
+            // instance.
+            if (nodeIds == null) {
+                nodeIds = context.getFlow().getStartNodeIds();
+            }
+            if (nodeIds == null) {
+                throw new FlowException("no start node");
+            }
+            NodeContext[] nodes = new NodeContext[nodeIds.length];
+            for (int i = 0; i < nodeIds.length; i++) {
+                nodes[i] = new NodeContext(nodeIds[i]);
+            }
+            ((FlowContextImpl) context).addNodes(nodes);
+            context.setStartNodes(Arrays.asList(nodes));
+        } else {
+            ((FlowContextImpl) context).addNodes(context.getStartNodes().toArray(new NodeContext[context.getStartNodes().size()]));
         }
-        NodeContext[] nodes = new NodeContext[nodeIds.length];
-        for (int i = 0; i < nodeIds.length; i++) {
-            nodes[i] = new NodeContext(nodeIds[i]);
-        }
-        context.addNodes(nodes);
-        context.setStartNodes(Arrays.asList(nodes));
         context.getFlow().triggerEvent(FlowEventTypes.INIT_END, context);
     }
 
@@ -364,11 +373,23 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     public void stop() {
         isRunning = false;
     }
+    
+    @Override
+    public boolean isAutoStartup() {
+        return autoStartup;
+    }
+    
+    @Override
+    public void stop(Runnable callback) {
+        stop();
+        callback.run();
+    }
 
     @Override
     public boolean isRunning() {
         return isRunning;
     }
+    
     @Override
     public int getPhase() {
         return phase;
@@ -377,4 +398,9 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     public void setPhase(int phase) {
         this.phase = phase;
     }
+
+    public void setAutoStartup(boolean autoStartup) {
+        this.autoStartup = autoStartup;
+    }
+    
 }

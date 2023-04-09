@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 public class FlowResult {
-    
+
     @JsonIgnore
     private FlowContext context;
 
@@ -27,7 +27,7 @@ public class FlowResult {
         this.context = context;
     }
 
-    public synchronized <T>T getResult() {
+    public synchronized <T> T getResult() {
         return (T) result;
     }
 
@@ -46,8 +46,13 @@ public class FlowResult {
         if (result == null) {
             result = new ConcurrentHashMap<>();
         }
-        ((Map<String, Object>) result).put(key, value);
+        if (value == null) {
+            ((Map<String, Object>) result).remove(key);
+        } else {
+            ((Map<String, Object>) result).put(key, value);
+        }
     }
+
     /**
      * 
      * Add result. putResult or addResult should use only one.
@@ -60,19 +65,19 @@ public class FlowResult {
         }
         ((List<Object>) result).add(value);
     }
-    
-    public synchronized <T>T getResult(String key) {
+
+    public synchronized <T> T getResult(String key) {
         if (result == null) {
             return null;
         }
         return (T) ((Map<String, Object>) result).get(key);
     }
-    
-    public synchronized <T>T getResult(int index) {
+
+    public synchronized <T> T getResult(int index) {
         if (result == null) {
             return null;
         }
         return (T) ((List<Object>) result).get(index);
-    }    
-    
+    }
+
 }

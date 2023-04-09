@@ -12,6 +12,7 @@ import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePostHandler;
+import com.jd.easyflow.flow.model.parser.param.PostParseParam;
 import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
@@ -20,9 +21,9 @@ import com.jd.easyflow.flow.util.FlowConstants;
  *
  */
 public class EventPostHandler implements NodePostHandler {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(EventPostHandler.class);
-    
+
     @Override
     public void init(InitContext initContext, FlowNode flowNode) {
         initEventPostHandlerMap(initContext, flowNode);
@@ -49,9 +50,10 @@ public class EventPostHandler implements NodePostHandler {
         }
         return postHandler.postHandle(nodeContext, context);
     }
-    
+
     private void initEventPostHandlerMap(InitContext initContext, FlowNode flowNode) {
-        Map<String, Object> eventPostHandlerMap = flowNode.getProperty(FlowConstants.PROP_RUNTIME_EVENT_POST_HANDLER_MAP);
+        Map<String, Object> eventPostHandlerMap = flowNode
+                .getProperty(FlowConstants.PROP_RUNTIME_EVENT_POST_HANDLER_MAP);
         if (eventPostHandlerMap != null) {
             return;
         }
@@ -70,11 +72,12 @@ public class EventPostHandler implements NodePostHandler {
                 eventPostHandlerConfMap = (Map<String, Object>) eventConfMap.get("post");
             }
             if (eventPostHandlerConfMap != null) {
-                NodePostHandler nodePostHandler = initContext.getFlowParser().parsePost(eventPostHandlerConfMap, initContext.isParseEl());
+                NodePostHandler nodePostHandler = initContext.getFlowParser()
+                        .parsePost(new PostParseParam(eventPostHandlerConfMap, initContext.isParseEl(), flowNode));
                 eventPostHandlerMap.put(event, nodePostHandler);
             }
         }
-        
+
     }
 
 }
