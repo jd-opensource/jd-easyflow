@@ -160,6 +160,14 @@ public class BpmnConverter {
             flowDef.put(DefConstants.COMMON_PROP_NAME, processName);
         }
         Map<String, List<ExtensionElement>> extensionElementMap = process.getExtensionElements();
+        
+        // flow pre handler
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.PRE)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.PRE).get(0);
+            String elementText = element.getElementText();
+            Object preHandlerDef = JsonUtil.parseObject(elementText, Map.class);
+            flowDef.put(DefConstants.FLOW_PROP_PRE, preHandlerDef);
+        }
 
         // Process flow element，convert Gateway、Event、Activity to Node.
         List<Map<String, Object>> nodeList = new ArrayList<>();
@@ -183,7 +191,13 @@ public class BpmnConverter {
             }
         }
 
-        // DSF
+        // flow post handler
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.POST)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.POST).get(0);
+            String elementText = element.getElementText();
+            Object postHandlerDef = JsonUtil.parseObject(elementText, Map.class);
+            flowDef.put(DefConstants.FLOW_PROP_POST, postHandlerDef);
+        }
 
         // properties
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.PROPERTIES)) {

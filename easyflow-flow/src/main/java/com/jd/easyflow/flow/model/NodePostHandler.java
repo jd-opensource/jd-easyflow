@@ -1,7 +1,5 @@
 package com.jd.easyflow.flow.model;
 
-import java.util.Map;
-
 import com.jd.easyflow.flow.engine.FlowContext;
 
 /**
@@ -27,21 +25,4 @@ public interface NodePostHandler {
     default void init(InitContext initContext, FlowNode node) {
     }
 
-    /**
-     * Get properties.
-     * @return
-     */
-    default Map<String, Object> getProperties() {
-        return null;
-    }
-
-    /**
-     * Get property.
-     * @param <T>
-     * @param key
-     * @return
-     */
-    default <T> T getProperty(String key) {
-        return null;
-    }
 }

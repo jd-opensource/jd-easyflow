@@ -22,7 +22,7 @@ public class SingleThreadFlowRunner extends BaseFlowRunner {
      * @param context
      */
     @Override
-    public void doRun(FlowContextImpl context) {
+    public void runNodes(FlowContextImpl context) {
         NodeContext currentNode;
         FlowContextImpl contextImpl = (FlowContextImpl) context;
         // Loop execute.

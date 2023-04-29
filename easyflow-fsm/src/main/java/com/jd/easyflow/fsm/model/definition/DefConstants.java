@@ -18,7 +18,8 @@ public class DefConstants {
     
     public static final String STATE_PROP_START = "start";
 
-    
+    public static final String FSM_PROP_PRE = "pre";
+    public static final String FSM_PROP_POST = "post";
     public static final String FSM_PROP_STATES = "states";
     public static final String FSM_PROP_EVENTS = "events";
     public static final String FSM_PROP_TRANSITIONS = "transitions";

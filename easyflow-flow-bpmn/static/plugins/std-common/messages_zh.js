@@ -138,8 +138,11 @@ $.extend(J.msg, {
     "bpmn.viewFlowDefinition":"查看EasyFlow定义",
     "bpmn.oldNewBpmnCompare":"新旧BPMN定义比对",
     "bpmn.oldNewEasyFlowCompare":"新旧EasyFlow定义比对",
-    "bpmn.cancel":"取消"
-    
+    "bpmn.cancel":"取消",
+    "bpmn.flowPreHandler":"流程前置处理器",
+    "bpmn.flowPreHandlerTooltip":"流程前置处理器",
+    "bpmn.flowPostHandler":"流程后置处理器",
+    "bpmn.flowPostHandlerTooltip":"流程后置处理器"
 });
 
 

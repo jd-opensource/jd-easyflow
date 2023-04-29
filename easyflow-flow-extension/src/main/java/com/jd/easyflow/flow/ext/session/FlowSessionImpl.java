@@ -23,7 +23,11 @@ public class FlowSessionImpl implements FlowSession {
 
     @Override
     public void put(String key, Object value) {
-        data.put(key, value);
+        if (value == null) {
+            data.remove(value);
+        } else {
+            data.put(key, value);
+        }
     }
 
     @Override

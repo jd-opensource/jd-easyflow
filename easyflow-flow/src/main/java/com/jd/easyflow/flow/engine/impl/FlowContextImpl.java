@@ -67,6 +67,8 @@ public class FlowContextImpl implements FlowContext {
      * interrupted
      */
     private volatile boolean interrupted = false;
+    
+    private Boolean preResult;
 
     @Override
     public void put(String key, Object value) {
@@ -205,6 +207,14 @@ public class FlowContextImpl implements FlowContext {
 
     public void setInterrupted() {
         this.interrupted = true;
+    }
+
+    public Boolean getPreResult() {
+        return preResult;
+    }
+
+    public void setPreResult(Boolean preResult) {
+        this.preResult = preResult;
     }
 
 }

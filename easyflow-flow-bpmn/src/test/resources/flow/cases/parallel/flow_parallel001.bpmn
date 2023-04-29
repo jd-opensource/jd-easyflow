@@ -6,7 +6,7 @@
     </bpmn:startEvent>
     <bpmn:scriptTask id="PARALLEL_NODE1" name="PARALLEL_NODE1" scriptFormat="createExp">
       <bpmn:extensionElements>
-        <easyflow:properties>{"sleep":1}</easyflow:properties>
+        <easyflow:properties>{"sleep":100}</easyflow:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1xkqwtr</bpmn:incoming>
       <bpmn:outgoing>Flow_0jod389</bpmn:outgoing>
@@ -14,7 +14,7 @@
     </bpmn:scriptTask>
     <bpmn:scriptTask id="PARALLEL_NODE2" name="PARALLEL_NODE2" scriptFormat="createExp">
       <bpmn:extensionElements>
-        <easyflow:properties>{"sleep":3}</easyflow:properties>
+        <easyflow:properties>{"sleep":300}</easyflow:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0rnxuqo</bpmn:incoming>
       <bpmn:outgoing>Flow_0lreky6</bpmn:outgoing>

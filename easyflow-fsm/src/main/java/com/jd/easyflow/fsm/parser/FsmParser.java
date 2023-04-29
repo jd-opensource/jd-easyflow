@@ -14,6 +14,8 @@ import com.jd.easyflow.fsm.event.ExpFsmEventListener;
 import com.jd.easyflow.fsm.event.FsmEventListener;
 import com.jd.easyflow.fsm.filter.ExpFilter;
 import com.jd.easyflow.fsm.filter.Filter;
+import com.jd.easyflow.fsm.model.FsmPostHandler;
+import com.jd.easyflow.fsm.model.FsmPreHandler;
 import com.jd.easyflow.fsm.model.Transition;
 import com.jd.easyflow.fsm.model.TransitionAction;
 import com.jd.easyflow.fsm.model.TransitionPostHandler;
@@ -22,6 +24,8 @@ import com.jd.easyflow.fsm.model.builder.TransitionBuilder;
 import com.jd.easyflow.fsm.model.definition.DefConstants;
 import com.jd.easyflow.fsm.model.impl.StateImpl;
 import com.jd.easyflow.fsm.model.impl.action.ExpTransitionAction;
+import com.jd.easyflow.fsm.model.impl.fsm.post.ExpFsmPostHandler;
+import com.jd.easyflow.fsm.model.impl.fsm.pre.ExpFsmPreHandler;
 import com.jd.easyflow.fsm.model.impl.post.ConditionalTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.post.ExpTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.post.FixedTransitionPostHandler;
@@ -42,7 +46,7 @@ public class FsmParser {
     private static final Logger logger = LoggerFactory.getLogger(FsmParser.class);
 
     private static final String FSM_STRING_KEY = "_fsm_string";
-    
+
     public static Fsm parse(String data) {
         return parse(data, true);
     }
@@ -61,12 +65,16 @@ public class FsmParser {
         // Parse property
         Map<String, Object> properties = (Map<String, Object>) map.get(DefConstants.COMMON_PROP_PROPERTIES);
         builder.properties(properties);
+        // Parse pre handler
+        FsmPreHandler fsmPreHandler = parseFsmPreHandler(map.get(DefConstants.FSM_PROP_PRE), parseEl);
+        builder.fsmPreHandler(fsmPreHandler);
         // Parse state
         List<Map<String, Object>> states = (List<Map<String, Object>>) map.get(DefConstants.FSM_PROP_STATES);
         if (states != null) {
             for (Map<String, Object> state : states) {
                 boolean start = Boolean.TRUE.equals(state.get(DefConstants.STATE_PROP_START));
-                StateImpl stateInfo = new StateImpl((String) state.get(DefConstants.COMMON_PROP_ID), (String) state.get(DefConstants.COMMON_PROP_NAME),
+                StateImpl stateInfo = new StateImpl((String) state.get(DefConstants.COMMON_PROP_ID),
+                        (String) state.get(DefConstants.COMMON_PROP_NAME),
                         (Map<String, Object>) state.get(DefConstants.COMMON_PROP_PROPERTIES));
                 if (start) {
                     builder.startState(stateInfo);
@@ -75,11 +83,15 @@ public class FsmParser {
                 }
             }
         }
+        // Parse post handler
+        FsmPostHandler fsmPostHandler = parseFsmPostHandler(map.get(DefConstants.FSM_PROP_POST), parseEl);
+        builder.fsmPostHandler(fsmPostHandler);
         // Parse event
         List<Map<String, Object>> events = (List<Map<String, Object>>) map.get(DefConstants.FSM_PROP_EVENTS);
         if (events != null) {
             for (Map<String, Object> event : events) {
-                builder.event((String) event.get(DefConstants.COMMON_PROP_ID), (String) event.get(DefConstants.COMMON_PROP_NAME));
+                builder.event((String) event.get(DefConstants.COMMON_PROP_ID),
+                        (String) event.get(DefConstants.COMMON_PROP_NAME));
             }
         }
         // Parse transition
@@ -87,9 +99,11 @@ public class FsmParser {
         for (Map<String, Object> transition : transitions) {
             // create exp is unsupported.
             TransitionBuilder transBuilder = TransitionBuilder.create();
-            TransitionPreHandler preHandler = parsePre(transition.get(DefConstants.TST_PROP_PRE), parseEl);
-            TransitionAction transAction = parseAction(transition.get(DefConstants.TST_PROP_ACTION), parseEl);
-            TransitionPostHandler postHandler = parsePost(transition.get(DefConstants.TST_PROP_POST), parseEl);
+            TransitionPreHandler preHandler = parseTransitionPreHandler(transition.get(DefConstants.TST_PROP_PRE),
+                    parseEl);
+            TransitionAction transAction = parseTransitionAction(transition.get(DefConstants.TST_PROP_ACTION), parseEl);
+            TransitionPostHandler postHandler = parseTransitionPostHandler(transition.get(DefConstants.TST_PROP_POST),
+                    parseEl);
             List<String> toList = (List<String>) transition.get(DefConstants.TST_PROP_TOLIST);
 
             Object from = transition.get(DefConstants.TST_PROP_FROM);
@@ -108,7 +122,7 @@ public class FsmParser {
         // Listener
         parseListeners(map, builder, parseEl);
         // Filter
-       parseFilters(map, builder, parseEl);
+        parseFilters(map, builder, parseEl);
         // Transition Filter.
         parseTransitionFilters(map, builder, parseEl);
         // Transition Action Filter.
@@ -119,9 +133,10 @@ public class FsmParser {
 
         return fsm;
     }
-    
+
     /**
      * Listener.
+     * 
      * @param map
      * @param builder
      * @param parseEl
@@ -136,7 +151,8 @@ public class FsmParser {
                 } else {
                     Map<String, Object> listener = (Map<String, Object>) listenerObj;
                     String type = (String) listener.get(DefConstants.COMMON_PROP_TYPE);
-                    if (DefConstants.COMMON_PROP_CREATE.equals(type) || listener.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || listener.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) listener.get(DefConstants.COMMON_PROP_CREATE_EXP);
                             FsmEventListener eventListener = ElFactory.get().evalWithDefaultContext(exp, null, false);
@@ -147,9 +163,10 @@ public class FsmParser {
             }
         }
     }
-    
+
     /**
      * Filter.
+     * 
      * @param map
      * @param builder
      * @param parseEl
@@ -164,7 +181,8 @@ public class FsmParser {
                 } else {
                     Map<String, Object> filter = (Map<String, Object>) filterObj;
                     String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
-                    if (DefConstants.COMMON_PROP_CREATE.equals(type) || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
                             Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
@@ -175,15 +193,17 @@ public class FsmParser {
             }
         }
     }
-    
+
     /**
      * Transition Filter.
+     * 
      * @param map
      * @param builder
      * @param parseEl
      */
     private static void parseTransitionFilters(Map<String, Object> map, FsmBuilder builder, boolean parseEl) {
-        List<Map<String, Object>> transitionFilters = (List<Map<String, Object>>) map.get(DefConstants.FSM_PROP_TRANSITION_FILTERS);
+        List<Map<String, Object>> transitionFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FSM_PROP_TRANSITION_FILTERS);
         if (transitionFilters != null) {
             for (Object filterObj : transitionFilters) {
                 if (filterObj instanceof String) {
@@ -192,7 +212,8 @@ public class FsmParser {
                 } else {
                     Map<String, Object> filter = (Map<String, Object>) filterObj;
                     String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
-                    if (DefConstants.COMMON_PROP_CREATE.equals(type) || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
                             Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
@@ -203,9 +224,10 @@ public class FsmParser {
             }
         }
     }
-    
+
     /**
      * Transition action filter.
+     * 
      * @param map
      * @param builder
      * @param parseEl
@@ -221,7 +243,8 @@ public class FsmParser {
                 } else {
                     Map<String, Object> filter = (Map<String, Object>) filterObj;
                     String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
-                    if (DefConstants.COMMON_PROP_CREATE.equals(type) || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
                             Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
@@ -233,14 +256,14 @@ public class FsmParser {
         }
     }
 
-    public static TransitionPreHandler parsePre(Object preObj, boolean parseEl) {
+    public static FsmPreHandler parseFsmPreHandler(Object preObj, boolean parseEl) {
         if (preObj == null) {
             return null;
         }
         if (preObj instanceof String) {
-            ExpTransitionPreHandler transAction = new ExpTransitionPreHandler();
-            transAction.setExp((String) preObj);
-            return transAction;
+            ExpFsmPreHandler preHandler = new ExpFsmPreHandler();
+            preHandler.setExp((String) preObj);
+            return preHandler;
         }
         Map<String, Object> pre = (Map<String, Object>) preObj;
         String type = (String) pre.get(DefConstants.COMMON_PROP_TYPE);
@@ -248,20 +271,74 @@ public class FsmParser {
             if (!parseEl) {
                 return null;
             }
-                String exp = (String) pre.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                TransitionPreHandler handler = ElFactory.get().evalWithDefaultContext(exp, null, false);
-                return handler;
+            String exp = (String) pre.get(DefConstants.COMMON_PROP_CREATE_EXP);
+            FsmPreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            return preHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_EXP)) {
-            ExpTransitionPreHandler transAction = new ExpTransitionPreHandler();
+            ExpFsmPreHandler preHandler = new ExpFsmPreHandler();
             String exp = (String) pre.get(DefConstants.COMMON_PROP_EXP);
-            transAction.setExp(exp);
-            return transAction;
+            preHandler.setExp(exp);
+            return preHandler;
+        }
+        throw new IllegalArgumentException("Param illegal:" + pre);
+    }
+
+    public static FsmPostHandler parseFsmPostHandler(Object postObj, boolean parseEl) {
+        if (postObj == null) {
+            return null;
+        }
+        if (postObj instanceof String) {
+            ExpFsmPostHandler postHandler = new ExpFsmPostHandler();
+            postHandler.setExp((String) postObj);
+            return postHandler;
+        }
+        Map<String, Object> post = (Map<String, Object>) postObj;
+        String type = (String) post.get(DefConstants.COMMON_PROP_TYPE);
+        if (DefConstants.COMMON_PROP_CREATE.equals(type) || post.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+            if (!parseEl) {
+                return null;
+            }
+            String exp = (String) post.get(DefConstants.COMMON_PROP_CREATE_EXP);
+            FsmPostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            return postHandler;
+        } else if (DefConstants.COMMON_PROP_EXP.equals(type) || post.containsKey(DefConstants.COMMON_PROP_EXP)) {
+            ExpFsmPostHandler postHandler = new ExpFsmPostHandler();
+            String exp = (String) post.get(DefConstants.COMMON_PROP_EXP);
+            postHandler.setExp(exp);
+            return postHandler;
+        }
+        throw new IllegalArgumentException("Param illegal:" + post);
+    }
+
+    public static TransitionPreHandler parseTransitionPreHandler(Object preObj, boolean parseEl) {
+        if (preObj == null) {
+            return null;
+        }
+        if (preObj instanceof String) {
+            ExpTransitionPreHandler preHandler = new ExpTransitionPreHandler();
+            preHandler.setExp((String) preObj);
+            return preHandler;
+        }
+        Map<String, Object> pre = (Map<String, Object>) preObj;
+        String type = (String) pre.get(DefConstants.COMMON_PROP_TYPE);
+        if (DefConstants.COMMON_PROP_CREATE.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+            if (!parseEl) {
+                return null;
+            }
+            String exp = (String) pre.get(DefConstants.COMMON_PROP_CREATE_EXP);
+            TransitionPreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            return preHandler;
+        } else if (DefConstants.COMMON_PROP_EXP.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_EXP)) {
+            ExpTransitionPreHandler preHandler = new ExpTransitionPreHandler();
+            String exp = (String) pre.get(DefConstants.COMMON_PROP_EXP);
+            preHandler.setExp(exp);
+            return preHandler;
         }
         throw new IllegalArgumentException("Param illegal:" + pre);
 
     }
 
-    public static TransitionAction parseAction(Object actionObj, boolean parseEl) {
+    public static TransitionAction parseTransitionAction(Object actionObj, boolean parseEl) {
         if (actionObj == null) {
             return null;
         }
@@ -273,7 +350,7 @@ public class FsmParser {
         Map<String, Object> action = (Map<String, Object>) actionObj;
         String type = (String) action.get(DefConstants.COMMON_PROP_TYPE);
         if (DefConstants.COMMON_PROP_CREATE.equals(type) || action.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
-            if (! parseEl) {
+            if (!parseEl) {
                 return null;
             }
             String exp = (String) action.get(DefConstants.COMMON_PROP_CREATE_EXP);
@@ -288,7 +365,7 @@ public class FsmParser {
         throw new IllegalArgumentException("Param illegal:" + action);
     }
 
-    public static TransitionPostHandler parsePost(Object postObj, boolean parseEl) {
+    public static TransitionPostHandler parseTransitionPostHandler(Object postObj, boolean parseEl) {
         if (postObj == null) {
             return null;
         }
@@ -300,7 +377,7 @@ public class FsmParser {
         Map<String, Object> post = (Map<String, Object>) postObj;
         String type = (String) post.get(DefConstants.COMMON_PROP_TYPE);
         if (DefConstants.COMMON_PROP_CREATE.equals(type) || post.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
-            if (! parseEl) {
+            if (!parseEl) {
                 return null;
             }
             String exp = (String) post.get(DefConstants.COMMON_PROP_CREATE_EXP);
@@ -311,7 +388,9 @@ public class FsmParser {
             String exp = (String) post.get(DefConstants.COMMON_PROP_EXP);
             postHandler.setExp(exp);
             return postHandler;
-        } else if (DefConstants.TST_POST_TYPE_CONDITION.equals(type) || post.containsKey(DefConstants.TST_POST_PROP_CONDITIONS) || post.containsKey(DefConstants.TST_POST_PROP_WHEN)) {
+        } else if (DefConstants.TST_POST_TYPE_CONDITION.equals(type)
+                || post.containsKey(DefConstants.TST_POST_PROP_CONDITIONS)
+                || post.containsKey(DefConstants.TST_POST_PROP_WHEN)) {
             List<Map<String, Object>> conditionList = null;
             if (post.containsKey(DefConstants.TST_POST_PROP_CONDITIONS)) {
                 conditionList = (List<Map<String, Object>>) post.get(DefConstants.TST_POST_PROP_CONDITIONS);

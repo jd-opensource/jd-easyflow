@@ -127,5 +127,11 @@ public interface FlowContext {
 	 * @return
 	 */
 	boolean isInterrupted();
+	
+	/**
+	 * Get pre result.
+	 * @return
+	 */
+	Boolean getPreResult();
 
 }

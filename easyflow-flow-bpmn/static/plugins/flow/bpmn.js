@@ -729,6 +729,35 @@
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
+        // Flow pre handler
+        var flowPreHandler = getExtensionBody(bo, "easyflow:Pre");
+        var flowPreHandlerHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.flowPreHandler'] + ':</label> <textarea class="form-control j-bpmn-flowprehandler" name="j-bpmn-flowprehandler"></textarea></div>'
+            + '</div>';
+        var $flowPreHandlerElement = $(flowPreHandlerHtml).appendTo($infoPannel);
+        var $flowPreHandler = $flowPreHandlerElement.find(".j-bpmn-flowprehandler");
+        $flowPreHandler.tooltip({ title: J.msg['bpmn.flowPreHandlerTooltip'] })
+        $flowPreHandler.rules('add', { json: true });
+        $flowPreHandler.text(flowPreHandler);
+        $flowPreHandler.blur(function() {
+            var newFlowPreHandler = $flowPreHandler.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Pre", newFlowPreHandler);
+        });
+        // Flow post handler
+        var flowPostHandler = getExtensionBody(bo, "easyflow:Post");
+        var flowPostHandlerHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.flowPostHandler'] + ':</label> <textarea class="form-control j-bpmn-flowposthandler" name="j-bpmn-flowposthandler"></textarea></div>'
+            + '</div>';
+        var $flowPostHandlerElement = $(flowPostHandlerHtml).appendTo($infoPannel);
+        var $flowPostHandler = $flowPostHandlerElement.find(".j-bpmn-flowposthandler");
+        $flowPostHandler.tooltip({ title: J.msg['bpmn.flowPostHandlerTooltip'] })
+        $flowPostHandler.rules('add', { json: true });
+        $flowPostHandler.text(flowPostHandler);
+        $flowPostHandler.blur(function() {
+            var newFlowPostHandler = $flowPostHandler.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Post", newFlowPostHandler);
+        });        
+        
         // Listener
         var listeners = getExtensionBody(bo, "easyflow:Listeners");
         var listenersHtml = '<div class="row">' +
@@ -1034,7 +1063,7 @@
         if (element.type == 'bpmn:ScriptTask' || element.type=='bpmn:UserTask' || element.type=='bpmn:ReceiveTask') {
            var conditionType = getExtensionBody(bo, "easyflow:ConditionType");
             if (conditionType == 'exclusive') {
-                html += '<dt>' + J.msg['bpmn.branchType'] + ':</dt><dd>' + J.msg['bpmn.brancType.exclusive'] + '</dd>';
+                html += '<dt>' + J.msg['bpmn.branchType'] + ':</dt><dd>' + J.msg['bpmn.branchType.exclusive'] + '</dd>';
             }
             var start = getExtensionBody(bo, "easyflow:Start");
             if (start == 'true') {

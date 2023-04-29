@@ -2,6 +2,8 @@ package com.jd.easyflow.flow.model.builder;
 
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
+import com.jd.easyflow.flow.model.FlowPostHandler;
+import com.jd.easyflow.flow.model.FlowPreHandler;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.node.NodeImpl;
@@ -56,6 +58,18 @@ public class FlowBuilder {
         flow.setStartNodeIds(startNodeIds);
         return this;
     }
+    
+    public FlowBuilder setFlowPreHandler(FlowPreHandler preHandler) {
+        flow.setPreHandler(preHandler);
+        return this;
+    }
+    
+    public FlowBuilder setFlowPostHandler(FlowPostHandler postHandler) {
+        flow.setPostHandler(postHandler);
+        return this;
+    }
+    
+    
 
 	public Flow build() {
 		return flow;

@@ -17,6 +17,8 @@ public class DefConstants {
     public static final String COMMON_PROP_CREATE = "create";
     public static final String COMMON_PROP_TYPE = "type";
     
+    public static final String FLOW_PROP_PRE = "pre";
+    public static final String FLOW_PROP_POST = "post";
     public static final String FLOW_PROP_NODES = "nodes";
     public static final String FLOW_PROP_LISTENERS = "listeners";
     public static final String FLOW_PROP_FILTERS = "filters";

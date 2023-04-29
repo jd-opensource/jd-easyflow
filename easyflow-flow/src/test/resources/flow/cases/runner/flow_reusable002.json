@@ -2,7 +2,7 @@
     "id": "flow_reusable002","name": "Reusable thread flow 001",
     "nodes": [
         {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
-            "post":{"to":["EMPTY_NODE2","EMPTY_NODE3"]}, "properties":{"sleep":3}
+            "post":{"to":["EMPTY_NODE2","EMPTY_NODE3"]}, "properties":{"sleep":300}
         },
         {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "properties":{"sleep":1}},
         {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "properties":{"exception":true}}

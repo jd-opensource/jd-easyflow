@@ -73,6 +73,8 @@ public class FsmContext {
      * Fsm interrupted flag.
      */
     private volatile boolean interrupted = false;
+    
+    private Boolean preResult;
 
     public Object getStateInstance() {
         return stateInstance;
@@ -263,6 +265,14 @@ public class FsmContext {
 
     public void setInterrupted() {
         this.interrupted = true;
+    }
+
+    public Boolean getPreResult() {
+        return preResult;
+    }
+
+    public void setPreResult(Boolean preResult) {
+        this.preResult = preResult;
     }
 
 }

@@ -30,7 +30,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
     protected Executor executor;
 
     @Override
-    public void doRun(FlowContextImpl context) {
+    public void runNodes(FlowContextImpl context) {
         String runId = startId++ + "";
         if (logger.isInfoEnabled()) {
             logger.info("Start running flow node, runId:" + runId);

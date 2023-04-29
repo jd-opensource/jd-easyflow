@@ -29,7 +29,7 @@ public class TestStepAction implements NodeAction {
         if (sleep != null) {
             logger.info("Sleep time is:" + sleep);
             try {
-                Thread.sleep(sleep * 1000);
+                Thread.sleep(sleep);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

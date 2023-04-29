@@ -26,7 +26,18 @@ public abstract class BaseFlowRunner implements FlowRunner {
     public void run(FlowContext context) {
         Flow flow = context.getFlow();
         flow.triggerEvent(FlowEventTypes.RUN_START, context);
-        doRun((FlowContextImpl) context);
+        if (flow.getPreHandler() != null) {
+            boolean preResult = flow.getPreHandler().preHandle(context);
+            ((FlowContextImpl) context).setPreResult(preResult);
+            if (!preResult) {
+                flow.triggerEvent(FlowEventTypes.RUN_END, context);
+                return;
+            }
+        }
+        runNodes((FlowContextImpl) context);
+        if (flow.getPostHandler() != null) {
+            flow.getPostHandler().postHandle(context);
+        }
         flow.triggerEvent(FlowEventTypes.RUN_END, context);
     }
 
@@ -35,10 +46,8 @@ public abstract class BaseFlowRunner implements FlowRunner {
      * 
      * @param context
      */
-    public abstract void doRun(FlowContextImpl context);
-    
-    
-    
+    public abstract void runNodes(FlowContextImpl context);
+
     protected NodeContext[] runOneNodeAndAddNextNodes(NodeContext currentNode, FlowContextImpl context) {
         NodeContext[] nextNodes = runOneNode(currentNode, context);
         if (nextNodes != null) {

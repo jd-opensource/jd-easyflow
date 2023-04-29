@@ -65,21 +65,21 @@ public interface FlowParser {
      * @param param
      * @return
      */
-    NodePreHandler parsePre(PreParseParam param);
+    NodePreHandler parseNodePreHandler(PreParseParam param);
     
     /**
      * Parse nodeAction.
      * @param param
      * @return
      */
-    NodeAction parseAction(ActionParseParam param);
+    NodeAction parseNodeAction(ActionParseParam param);
 
     /**
      * Parse postHandler.
      * @param param.
      * @return
      */
-    NodePostHandler parsePost(PostParseParam param);
+    NodePostHandler parseNodePostHandler(PostParseParam param);
 
     /**
      * 

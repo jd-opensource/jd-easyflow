@@ -37,4 +37,22 @@ public class FunCallTest {
         FlowResult result = flowEngine.execute(param);
         logger.info("响应结果:" + result.getResult());
     }
+    
+    /**
+     * Test customize action.
+     */
+    @Test
+    public void testFunCall002() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/funcall/funcall_test_002.json");
+        flowEngine.init();
+        
+        Map<String, Object> bizParam = new HashMap<>();
+        bizParam.put("a", "a1");
+        bizParam.put("b", "b1");
+        logger.info("请求参数:" + bizParam);
+        FlowParam param = new FlowParam("funcall_test_002", bizParam);
+        FlowResult result = flowEngine.execute(param);
+        logger.info("响应结果:" + result.getResult());
+    }
 }

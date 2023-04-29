@@ -15,6 +15,8 @@ import com.jd.easyflow.fsm.event.FsmEventTrigger;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.model.Event;
+import com.jd.easyflow.fsm.model.FsmPostHandler;
+import com.jd.easyflow.fsm.model.FsmPreHandler;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.Transition;
 import com.jd.easyflow.fsm.model.TransitionContext;
@@ -30,19 +32,23 @@ import com.jd.easyflow.fsm.util.JsonUtil;
 public class Fsm {
 
     public static final Logger logger = LoggerFactory.getLogger(Fsm.class);
-    
+
     public static final String DOLLAR = "$";
 
     private String id;
 
     private String name;
 
+    private FsmPreHandler preHandler;
+
+    private FsmPostHandler postHandler;
+
     private List<State> stateList = new ArrayList<State>();
 
     private String startStateId;
 
     private Map<String, State> stateMap = new HashMap<String, State>();
-    
+
     private Map<String, Integer> stateIndexMap = new HashMap<>();
 
     private List<Event> eventList = new ArrayList<Event>();
@@ -58,11 +64,11 @@ public class Fsm {
     private Map<String, Object> properties;
 
     private List<Filter<FsmContext, FsmResult>> filters;
-    
+
     private List<Filter<Triple<Transition, TransitionContext, FsmContext>, Void>> transitionFilters;
-    
+
     private List<Filter<Pair<TransitionContext, FsmContext>, Void>> transitionActionFilters;
-    
+
     /**
      * 执行状态机时，外层负责查找执行哪个状态机
      * 
@@ -93,18 +99,28 @@ public class Fsm {
             eventTrigger.triggerEvent(FsmEventTypes.FSM_START, context);
             // init start state
             initStartState(context);
+            if (this.preHandler != null) {
+                boolean preResult = this.preHandler.preHandle(context);
+                context.setPreResult(preResult);
+                if (!preResult) {
+                    logger.info("pre result false");
+                    eventTrigger.triggerEvent(FsmEventTypes.FSM_END, context);
+                    return wrapResult(context);
+                }
+            }
             while (true) {
                 if (context.isInterrupted()) {
                     if (logger.isInfoEnabled()) {
                         logger.info("fsm interrupted");
-                    break;
+                        break;
                     }
                 }
-                
+
                 State currentState = context.getCurrentState();
                 Event event = context.getCurrentEvent();
                 if (logger.isInfoEnabled()) {
-                    logger.info("Current state:" + currentState.getId() + ", Current event:" + (event == null ? null : event.getId()));
+                    logger.info("Current state:" + currentState.getId() + ", Current event:"
+                            + (event == null ? null : event.getId()));
                 }
                 if (event == null) {
                     break;
@@ -112,8 +128,8 @@ public class Fsm {
                 String transitionKey = createTransitionKey(currentState, event);
                 Transition transition = transitionMap.get(transitionKey);
                 if (transition == null) {
-                    logger.warn("No transition found, currentState:" + currentState.getId() + " currentEvent:" + event.getId()
-                            + ",EXIT");
+                    logger.warn("No transition found, currentState:" + currentState.getId() + " currentEvent:"
+                            + event.getId() + ",EXIT");
                     break;
                 }
                 beforeTransition(context);
@@ -124,12 +140,15 @@ public class Fsm {
                 }
                 try {
                     runTransition(transition, transitionContext, context);
-                } catch (Throwable t) { //NOSONAR
+                } catch (Throwable t) { // NOSONAR
                     transitionContext.setThrowable(t);
                     throw t;
                 }
                 afterTransition(context);
 
+            }
+            if (this.postHandler != null) {
+                this.postHandler.postHandle(context);
             }
             eventTrigger.triggerEvent(FsmEventTypes.FSM_END, context);
             return wrapResult(context);
@@ -141,7 +160,7 @@ public class Fsm {
             eventTrigger.triggerEvent(FsmEventTypes.FSM_COMPLETE, throwable, context, true);
         }
     }
-    
+
     private void runTransition(Transition transition, TransitionContext transitionContext, FsmContext context) {
         if (this.transitionFilters == null || this.transitionFilters.size() == 0) {
             invokeTransition(transition, transitionContext, context);
@@ -154,7 +173,7 @@ public class Fsm {
                 });
         chain.doFilter(Triple.of(transition, transitionContext, context));
     }
-    
+
     private void invokeTransition(Transition transition, TransitionContext transitionContext, FsmContext context) {
         Throwable tstThrowable;
         try {
@@ -308,7 +327,7 @@ public class Fsm {
             context.setFirstTransitionState(context.getCurrentState());
             context.setFirstTransitionEvent(context.getCurrentEvent());
         }
-        //execute on next transition
+        // execute on next transition
         if (context.isTransitionExecuted()) {
             context.setFirstTransition(false);
         }
@@ -417,10 +436,10 @@ public class Fsm {
             List<Filter<Pair<TransitionContext, FsmContext>, Void>> transitionActionFilters) {
         this.transitionActionFilters = transitionActionFilters;
     }
-    
+
     public void addTransitionActionFilter(Filter<Pair<TransitionContext, FsmContext>, Void> filter) {
         if (this.transitionActionFilters == null) {
-            this.transitionActionFilters = new ArrayList<Filter<Pair<TransitionContext,FsmContext>,Void>>();
+            this.transitionActionFilters = new ArrayList<Filter<Pair<TransitionContext, FsmContext>, Void>>();
         }
         this.transitionActionFilters.add(filter);
     }
@@ -433,16 +452,32 @@ public class Fsm {
             List<Filter<Triple<Transition, TransitionContext, FsmContext>, Void>> transitionFilters) {
         this.transitionFilters = transitionFilters;
     }
-    
+
     public void addTransitionFilter(Filter<Triple<Transition, TransitionContext, FsmContext>, Void> transitionFilter) {
         if (this.transitionFilters == null) {
-            this.transitionFilters = new ArrayList<Filter<Triple<Transition,TransitionContext,FsmContext>,Void>>();
+            this.transitionFilters = new ArrayList<Filter<Triple<Transition, TransitionContext, FsmContext>, Void>>();
         }
         this.transitionFilters.add(transitionFilter);
     }
-    
+
     public int getStateIndex(String stateId) {
         return stateIndexMap.get(stateId);
+    }
+
+    public FsmPreHandler getPreHandler() {
+        return preHandler;
+    }
+
+    public void setPreHandler(FsmPreHandler preHandler) {
+        this.preHandler = preHandler;
+    }
+
+    public FsmPostHandler getPostHandler() {
+        return postHandler;
+    }
+
+    public void setPostHandler(FsmPostHandler postHandler) {
+        this.postHandler = postHandler;
     }
 
 }

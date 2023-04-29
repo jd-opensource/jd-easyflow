@@ -86,7 +86,7 @@ public class EventNodeAction implements NodeAction {
             }
             if (eventActionConfMap != null) {
                 NodeAction nodeAction = initContext.getFlowParser()
-                        .parseAction(new ActionParseParam(eventActionConfMap, null, initContext.isParseEl(), flowNode));
+                        .parseNodeAction(new ActionParseParam(eventActionConfMap, null, initContext.isParseEl(), flowNode));
                 if (nodeAction != null) {
                     eventActionMap.put(event, nodeAction);
                 }

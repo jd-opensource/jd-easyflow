@@ -20,7 +20,7 @@ public class InterruptNodeAction implements NodeAction {
     public <T> T execute(NodeContext nodeContext, FlowContext context) {
         logger.info("start execute node:" + nodeContext.getNodeId());
         try {
-            Thread.sleep(3000);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

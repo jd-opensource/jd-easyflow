@@ -150,7 +150,11 @@ if (!window.J) {
     "bpmn.viewFlowDefinition":"View EasyFlow Definition",
     "bpmn.oldNewBpmnCompare":"Old/New BPMN Definition Compare",
     "bpmn.oldNewEasyFlowCompare":"Old/New EasyFlow Definition Compare",
-    "bpmn.cancel":"Cancel"
+    "bpmn.cancel":"Cancel",
+    "bpmn.flowPreHandler":"Flow PreHandler",
+    "bpmn.flowPreHandlerTooltip":"Flow PreHandler",
+    "bpmn.flowPostHandler":"Flow PostHandler",
+    "bpmn.flowPostHandlerTooltip":"Flow PostHandler"
     });
     
     J.bpmnIOTranslations = {};

@@ -41,6 +41,10 @@ public class Flow {
      * relation of node id and index.
      */
     private Map<String, Integer> nodeIndexMap;
+    
+    private FlowPreHandler preHandler;
+    
+    private FlowPostHandler postHandler;
 
     private FlowEventTrigger eventTrigger = new FlowEventTrigger();
 
@@ -66,10 +70,16 @@ public class Flow {
     private FlowParser flowParser;
 
     public void init(InitContext initContext) {
+        if (preHandler != null) {
+            preHandler.init(initContext, this);
+        }
         if (nodeList != null) {
             for (FlowNode flowNode : nodeList) {
                 flowNode.init(initContext, this);
             }
+        }
+        if (postHandler != null) {
+            postHandler.init(initContext, this);
         }
     }
 
@@ -281,5 +291,23 @@ public class Flow {
             List<Filter<Pair<NodeContext, FlowContext>, NodeContext[]>> nodePostHandlerFilters) {
         this.nodePostHandlerFilters = nodePostHandlerFilters;
     }
+
+    public FlowPreHandler getPreHandler() {
+        return preHandler;
+    }
+
+    public void setPreHandler(FlowPreHandler preHandler) {
+        this.preHandler = preHandler;
+    }
+
+    public FlowPostHandler getPostHandler() {
+        return postHandler;
+    }
+
+    public void setPostHandler(FlowPostHandler postHandler) {
+        this.postHandler = postHandler;
+    }
+    
+    
 
 }
