@@ -39,6 +39,11 @@ public class FlowConstants {
     
     public static final String PROP_PRENODES = "preNodes";
     
+    public static final String PROP_INTERRUPT = "interrupt";
+    
+    public static final String PROP_INTERRUPT_EXP = "interruptExp";
+    
+    
     public static final String PROP_RUNTIME_EVENT_NODE_ACTION_MAP = "$eventNodeActionMap";
     public static final String PROP_RUNTIME_EVENT_POST_HANDLER_MAP = "$eventPostHandlerMap";
     
@@ -52,6 +57,13 @@ public class FlowConstants {
     public static final String PARAM_DATA_EVENT = "EVENT";
     
     public static final String NONE_EVENT = "NONE";
+    
+    /**
+     * Node Pre checkType
+     */
+    public static final String NODE_PRE_CHECK_TYPE_MULTICHECK = "multiCheck";
+    public static final String NODE_PRE_CHECK_TYPE_INCLUSIVECHECK = "inclusiveCheck";
+    
 
 
 }

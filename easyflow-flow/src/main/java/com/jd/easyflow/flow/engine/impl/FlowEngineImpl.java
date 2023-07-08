@@ -229,6 +229,9 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
         Flow flow = context.getFlow();
         if (flow == null) {
             flow = getFlow(context.getFlowId());
+            if (flow == null) {
+                throw new FlowException("Flow " + context.getFlowId() + " not exists");
+            }
             context.setFlow(flow);
         }
         // Exists scenario changing flow id

@@ -1,0 +1,9 @@
+{    "id": "action_interrupt_test_001",
+    "name": "Action Interrupt Test 001",
+    "nodes": [
+        {"id": "node001","name": "Node001","start": true,
+            "post": {"to": ["node002", "node003"]}},   
+        {"id": "node002","action":{"createExp":"new com.jd.easyflow.flow.model.action.InterruptNodeAction()"}, "name": "Node002"}, 
+        {"id": "node003", "name": "Node003"}
+        ]
+}

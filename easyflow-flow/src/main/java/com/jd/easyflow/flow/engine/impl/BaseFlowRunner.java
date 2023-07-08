@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowRunner;
+import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
@@ -69,6 +70,9 @@ public abstract class BaseFlowRunner implements FlowRunner {
             logger.info("EXECUTE NODE:" + currentNode.getNodeId());
         }
         FlowNode node = context.getFlow().getNode(currentNode.getNodeId());
+        if (node == null) {
+            throw new FlowException("Node " + currentNode.getNodeId() + " not exists");
+        }
         NodeContext[] nextNodes = null;
         try {
             runNode(node, currentNode, context);

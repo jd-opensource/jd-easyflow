@@ -1,6 +1,8 @@
 package com.jd.easyflow.fsm.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,9 @@ import com.jd.easyflow.fsm.model.impl.post.ConditionalTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.post.ExpTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.post.FixedTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.pre.ExpTransitionPreHandler;
+import com.jd.easyflow.fsm.parser.event.FsmParseEvent;
+import com.jd.easyflow.fsm.parser.event.FsmParseEventListener;
+import com.jd.easyflow.fsm.parser.event.FsmParseEventTypes;
 import com.jd.easyflow.fsm.util.JsonUtil;
 
 /**
@@ -62,6 +67,10 @@ public class FsmParser {
         String fsmId = (String) map.get(DefConstants.COMMON_PROP_ID);
         String fsmName = (String) map.get(DefConstants.COMMON_PROP_NAME);
         FsmBuilder builder = FsmBuilder.create(fsmId, fsmName);
+        
+        List<FsmParseEventListener> parseListeners = parseParseListeners(map, builder.build(), parseEl);
+        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_START, map, builder.build(), null);
+        
         // Parse property
         Map<String, Object> properties = (Map<String, Object>) map.get(DefConstants.COMMON_PROP_PROPERTIES);
         builder.properties(properties);
@@ -96,28 +105,31 @@ public class FsmParser {
         }
         // Parse transition
         List<Map<String, Object>> transitions = (List<Map<String, Object>>) map.get(DefConstants.FSM_PROP_TRANSITIONS);
-        for (Map<String, Object> transition : transitions) {
-            // create exp is unsupported.
-            TransitionBuilder transBuilder = TransitionBuilder.create();
-            TransitionPreHandler preHandler = parseTransitionPreHandler(transition.get(DefConstants.TST_PROP_PRE),
-                    parseEl);
-            TransitionAction transAction = parseTransitionAction(transition.get(DefConstants.TST_PROP_ACTION), parseEl);
-            TransitionPostHandler postHandler = parseTransitionPostHandler(transition.get(DefConstants.TST_PROP_POST),
-                    parseEl);
-            List<String> toList = (List<String>) transition.get(DefConstants.TST_PROP_TOLIST);
+        if (transitions != null) {
+            for (Map<String, Object> transition : transitions) {
+                // create exp is unsupported.
+                TransitionPreHandler preHandler = parseTransitionPreHandler(transition.get(DefConstants.TST_PROP_PRE),
+                        parseEl);
+                TransitionAction transAction = parseTransitionAction(transition.get(DefConstants.TST_PROP_ACTION),
+                        parseEl);
+                TransitionPostHandler postHandler = parseTransitionPostHandler(
+                        transition.get(DefConstants.TST_PROP_POST), parseEl);
+                List<String> toList = (List<String>) transition.get(DefConstants.TST_PROP_TOLIST);
 
-            Object from = transition.get(DefConstants.TST_PROP_FROM);
-            List<String> froms = from instanceof String ? Arrays.asList((String) from) : (List<String>) from;
-            Object event = transition.get(DefConstants.TST_PROP_EVENT);
-            List<String> evts = event instanceof String ? Arrays.asList((String) event) : (List<String>) event;
-            for (String fromId : froms) {
-                for (String eventId : evts) {
-                    Transition trans = transBuilder.fromId(fromId).eventId(eventId).toIdList(toList)
-                            .preHandler(preHandler).action(transAction).postHandler(postHandler).build();
-                    builder.transition(trans);
+                Object from = transition.get(DefConstants.TST_PROP_FROM);
+                List<String> froms = from instanceof String ? Arrays.asList((String) from) : (List<String>) from;
+                Object event = transition.get(DefConstants.TST_PROP_EVENT);
+                List<String> evts = event instanceof String ? Arrays.asList((String) event) : (List<String>) event;
+                for (String fromId : froms) {
+                    for (String eventId : evts) {
+                        TransitionBuilder transBuilder = TransitionBuilder.create();
+                        Transition trans = transBuilder.fromId(fromId).eventId(eventId).toIdList(toList)
+                                .preHandler(preHandler).action(transAction).postHandler(postHandler).build();
+                        builder.transition(trans);
+                    }
                 }
-            }
 
+            }
         }
         // Listener
         parseListeners(map, builder, parseEl);
@@ -129,8 +141,11 @@ public class FsmParser {
         parseTransitionActionFilters(map, builder, parseEl);
 
         Fsm fsm = builder.build();
-        fsm.setProperty(FSM_STRING_KEY, data);
+        
+        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_END, map, builder.build(), null);
 
+        fsm.setProperty(FSM_STRING_KEY, data);
+                
         return fsm;
     }
 
@@ -406,6 +421,39 @@ public class FsmParser {
             return postHandler;
         }
         throw new IllegalArgumentException("Param illegal:" + post);
+    }
+    
+    private static List<FsmParseEventListener> parseParseListeners(Map<String, Object> map, Fsm fsm, boolean parseEl) {
+        List<String> parseListenerExpList = (List<String>) map.get(DefConstants.FSM_PROP_PARSE_LISTENERS);
+        if (parseListenerExpList == null || !parseEl) {
+            return null;
+        }
+        List<FsmParseEventListener> listeners = new ArrayList<>();
+        for (String exp : parseListenerExpList) {
+            Map<String, Object> elContext = new HashMap<>();
+            elContext.put("def", map);
+            elContext.put("fsm", fsm);
+            FsmParseEventListener listener = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
+            if (listener != null) {
+                listeners.add(listener);
+            }
+        }
+        return listeners;
+    }
+
+    private static void triggerParseEvent(List<FsmParseEventListener> listeners, String eventType,
+            Map<String, Object> fsmDef, Fsm fsm, Object data) {
+        if (listeners == null || listeners.size() == 0) {
+            return;
+        }
+        FsmParseEvent event = new FsmParseEvent();
+        event.setType(eventType);
+        event.setFsm(fsm);
+        event.setFsmDef(fsmDef);
+        event.setData(data);
+        for (FsmParseEventListener listener : listeners) {
+            listener.on(event);
+        }
     }
 
     /**

@@ -124,6 +124,8 @@ if (!window.J) {
     "bpmn.nodePostHandlerFilterTooltip":"Node PostHandler Filter，JSON array format，see reference doc",    
     "bpmn.runner":"Flow Runner",
     "bpmn.runnerTooltip":"Flow Runner, default is sequential runner",
+    "bpmn.parseListeners":"Flow parse event listener",
+    "bpmn.parseListenersTooltip":"Flow parse event listener",      
     "bpmn.scriptFormat":"Script Format",
     "bpmn.scriptFormat.exp":"SpringEL Expression",
     "bpmn.scriptFormat.createExp":"Create Expression",

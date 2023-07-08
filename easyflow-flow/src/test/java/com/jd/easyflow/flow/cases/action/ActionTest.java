@@ -32,9 +32,23 @@ public class ActionTest {
         Map<String, Object> bizParam = new HashMap<>();
         bizParam.put("a", "a1");
         bizParam.put("b", "b1");
-        logger.info("请求参数:" + bizParam);
+        logger.info("biz param:" + bizParam);
         FlowParam param = new FlowParam("action_test_001", bizParam);
         FlowResult result = flowEngine.execute(param);
-        logger.info("响应结果:" + result.getResult());
+        logger.info("biz result:" + result.getResult());
+    }
+    
+    /**
+     * Test interrupt.
+     */
+    @Test
+    public void testActionInterrupt001() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/action/action_interrupt_001.json");
+        flowEngine.init();
+        
+        FlowParam param = new FlowParam("action_interrupt_test_001");
+        FlowResult result = flowEngine.execute(param);
+        logger.info("biz result:" + result.getResult());
     }
 }

@@ -1,29 +1,31 @@
 {
     "id": "flow001",
     "name": "Mock loan flow",
+    "pre":{"createExp":"null"},
     "nodes": [
         {
             "id": "CONTRACT_SIGN",
             "name": "sign contract",
-            "properties": {"order": 1},
             "pre":null,
             "action":{"exp":"new com.jd.easyflow.flow.mockbiz.loan.contract.LoanContractSignBiz().sign()"},
-            "post":{"to":"LIMIT_JUDGE"}
+            "post":{"to":"LIMIT_JUDGE"},
+            "properties": {"order": 1}
         },
         {
             "id": "LIMIT_JUDGE",
             "name": "Judge limit",
-            "properties": {"order": 2},
             "action":{"exp":"new com.jd.easyflow.flow.mockbiz.limit.LimitBiz().judgeLimit(param.param['amount'])"},
-            "post":{"conditions":[{"when":"nodeContext.actionResult==true", "to":"DO_LOAN"}]}
+            "post":{"conditions":[{"when":"nodeContext.actionResult==true", "to":"DO_LOAN"}]},
+            "properties": {"order": 2}
         },
               {
             "id": "DO_LOAN",
-            "name": "Do loan",
-            "properties": {"order": 3},
-            "action":{"exp":"new com.jd.easyflow.flow.mockbiz.loan.LoanBiz().doLoan()"}
+            "name": "Do loan\"only test\"",
+            "action":{"exp":"new com.jd.easyflow.flow.mockbiz.loan.LoanBiz().doLoan()"},
+            "properties": {"order": 3}
         }
     ],
+    "post":{"createExp":"null"},
     "listeners":[
     {"createExp":"new com.jd.easyflow.flow.mockbiz.MockFlowListener()"}
     ],

@@ -13,6 +13,7 @@ import com.jd.easyflow.flow.cases.posthandler.FlowIndexTest;
 import com.jd.easyflow.flow.cases.posthandler.NodePostHandlerTest;
 import com.jd.easyflow.flow.cases.posthandler.PostHandlerFilterTest;
 import com.jd.easyflow.flow.cases.prehandler.PreHandlerTest;
+import com.jd.easyflow.flow.cases.pretty.FlowDefPrettyHelperTest;
 import com.jd.easyflow.flow.cases.runner.MultiThreadTest;
 import com.jd.easyflow.flow.cases.runner.ReusableThreadTest;
 import com.jd.easyflow.flow.cases.subflow.SubFlowTest;
@@ -37,7 +38,8 @@ import com.jd.easyflow.flow.quickstart.QuickStartTest;
     PostHandlerFilterTest.class,
     SubFlowTest.class,
     ParallelTest.class,
-    PreHandlerTest.class
+    PreHandlerTest.class,
+    FlowDefPrettyHelperTest.class
 })
 public class FlowTestSuite {
 

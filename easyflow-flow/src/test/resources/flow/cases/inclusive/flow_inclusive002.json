@@ -1,0 +1,20 @@
+{
+    "id": "flow_inclusive002","name": "Inclusive nodes 002",
+    "nodes": [
+        {"id": "START_NODE", "start":true, "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+            "post":{"conditionType":"inclusive", "conditions":[
+            {"when":"bizParam<1", "to":"NODE1"},
+            {"when":"bizParam<2", "to":"NODE2"}
+            ]}
+        },
+        
+        {"id": "NODE1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"INCLUSIVE_NODE"}},
+        {"id": "NODE2","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"INCLUSIVE_NODE"}},
+        
+        {"id": "INCLUSIVE_NODE", "pre":{"type":"inclusiveCheck", "preNodes":["NODE1","NODE2"]},
+                           "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+                           "post":{"to":"END"}},
+        {"id":"END"}
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestMultiRunner()"}
+}

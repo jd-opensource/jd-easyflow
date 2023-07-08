@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
-import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePreHandler;
@@ -18,7 +17,7 @@ import com.jd.easyflow.flow.util.FlowConstants;
  * @author liyuliang5
  *
  */
-public class MultiCheckPreHandler implements NodePreHandler, PreNodesGetter {
+public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGetter {
 
     private static final Logger logger = LoggerFactory.getLogger(MultiCheckPreHandler.class);
 
@@ -65,13 +64,13 @@ public class MultiCheckPreHandler implements NodePreHandler, PreNodesGetter {
             List<String> configPreNodes = this.preNodes != null ? this.preNodes
                     : currentNode.getProperty(FlowConstants.PROP_PRENODES);
             logger.info("Pre nodes executed:" + preNodes);
-            if (preNodes.size() != configPreNodes.size()) {
+            
+            if (preNodes.size() < configPreNodes.size()) {
                 return false;
             }
             for (String s : configPreNodes) {
                 if (!preNodes.contains(s)) {
-                    throw new FlowException(
-                            "node info inconsistent, config:" + configPreNodes + ", runtime:" + preNodes);
+                    return false;
                 }
             }
             logger.info("All pre nodes finished");
@@ -87,6 +86,11 @@ public class MultiCheckPreHandler implements NodePreHandler, PreNodesGetter {
 
     public void setPreNodes(List<String> preNodes) {
         this.preNodes = preNodes;
+    }
+
+    @Override
+    public String getCheckType() {
+        return FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK;
     }
 
 }

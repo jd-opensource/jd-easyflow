@@ -130,7 +130,11 @@ public class FsmParam {
         if (dataMap == null) {
             dataMap = new ConcurrentHashMap<String, Object>();
         }
-        dataMap.put(key, value);
+        if (value == null) {
+            dataMap.remove(key);
+        } else {
+            dataMap.put(key, value);
+        }
     }
 
     public <T> T get(String key) {

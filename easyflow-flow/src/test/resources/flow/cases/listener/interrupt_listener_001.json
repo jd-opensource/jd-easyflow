@@ -1,0 +1,12 @@
+{    "id": "interrupt_listener_test_001",
+    "name": "Interrupt Listener Test 001",
+    "nodes": [
+        {"id": "node001","name": "Node001","start": true,
+            "post": {"to": ["node002", "node003"]}},   
+        {"id": "node002", "name": "Node002", "properties":{"interrupt":true}}, 
+        {"id": "node003", "name": "Node003"}
+        ],
+    "listeners":[
+        {"createExp":"new com.jd.easyflow.flow.engine.event.impl.InterruptFlowListener()"}
+    ]
+}

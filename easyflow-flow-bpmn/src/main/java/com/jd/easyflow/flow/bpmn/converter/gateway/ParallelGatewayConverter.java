@@ -40,9 +40,6 @@ public class ParallelGatewayConverter extends BaseFlowNodeConverter {
                 List<String> preNodes = new ArrayList<>();
                 flowNode.getIncomingFlows().forEach(incomingFlow -> preNodes.add(incomingFlow.getSourceRef()));
                 pre.put("preNodes", preNodes);
-//                pre.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + MultiCheckPreHandler.class.getName() + "()");
-//                Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
-//                properties.put(DefConstants.NODE_PROPERTIES_PROP_PRE_NODES, preNodes);
             }
         }
         return node;

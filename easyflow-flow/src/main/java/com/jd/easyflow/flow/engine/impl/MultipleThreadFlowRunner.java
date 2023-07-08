@@ -124,9 +124,9 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < stack.length; i++) {
-            builder.append(stack[i].getClassName() + "(" + stack[i].getMethodName() + ")\n");
+            builder.append(stack[i].toString() + "\n");
         }
-        logger.error("Flow execute exception, " + builder);
+        logger.error("Flow execute exception,\n " + builder);
     }
 
     public Executor getExecutor() {

@@ -17,6 +17,8 @@ public class DefConstants {
     public static final String COMMON_PROP_TYPE = "type";
     
     public static final String STATE_PROP_START = "start";
+    
+    public static final String FSM_PROP_PARSE_LISTENERS = "parseListeners";
 
     public static final String FSM_PROP_PRE = "pre";
     public static final String FSM_PROP_POST = "post";

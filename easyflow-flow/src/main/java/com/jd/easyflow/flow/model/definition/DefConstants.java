@@ -17,6 +17,9 @@ public class DefConstants {
     public static final String COMMON_PROP_CREATE = "create";
     public static final String COMMON_PROP_TYPE = "type";
     
+    public static final String FLOW_PROP_PARSE_LISTENERS = "parseListeners";
+
+    
     public static final String FLOW_PROP_PRE = "pre";
     public static final String FLOW_PROP_POST = "post";
     public static final String FLOW_PROP_NODES = "nodes";
@@ -44,6 +47,7 @@ public class DefConstants {
      * Node pre property
      */
     public static final String NODE_PRE_TYPE_MULTICHECK = "multiCheck";
+    public static final String NODE_PRE_TYPE_INCLUSIVECHECK = "inclusiveCheck";
     public static final String NODE_PRE_PROP_PRE_NODES = "preNodes";
 
     

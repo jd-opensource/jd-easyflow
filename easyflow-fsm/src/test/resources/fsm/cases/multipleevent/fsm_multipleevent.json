@@ -1,0 +1,7 @@
+{
+    "id": "multiple_event",
+    "name":"CREDIT ACCESS FLOW",
+    "transitions": [
+        {"from": "WHITELIST","event": ["_state_enter","_state_check"],"action":{"exp":"new com.jd.easyflow.fsm.cases.mockbiz.WhitelistService().isWhitelist()"}}
+    ]
+}

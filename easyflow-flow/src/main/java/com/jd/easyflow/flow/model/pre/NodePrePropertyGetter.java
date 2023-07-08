@@ -7,7 +7,9 @@ import java.util.List;
  * @author liyuliang5
  *
  */
-public interface PreNodesGetter {
+public interface NodePrePropertyGetter {
+    
+    String getCheckType();
     
     List<String> getPreNodes();
 }

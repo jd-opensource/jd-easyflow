@@ -9,6 +9,10 @@
             "newLine": true
         },
         {
+            "key": "pre",
+            "newLine": true
+        },         
+        {
             "key": "nodes",
             "newLine": true,
             "endNewLine": true,
@@ -70,6 +74,10 @@
             ]
         },
         {
+            "key": "post",
+            "newLine": true
+        },               
+        {
             "key": "listeners",
             "newLine": true,
             "endNewLine": true,
@@ -90,6 +98,26 @@
             ]
         },
         {
+            "key": "nodeFilters",
+            "newLine": true,
+            "endNewLine": true,
+            "subList": [
+                {
+                    "newLine": true
+                }
+            ]
+        }, 
+        {
+            "key": "nodePreHandlerFilters",
+            "newLine": true,
+            "endNewLine": true,
+            "subList": [
+                {
+                    "newLine": true
+                }
+            ]
+        },             
+        {
             "key": "nodeActionFilters",
             "newLine": true,
             "endNewLine": true,
@@ -99,6 +127,16 @@
                 }
             ]
         },
+        {
+            "key": "nodePostHandlerFilters",
+            "newLine": true,
+            "endNewLine": true,
+            "subList": [
+                {
+                    "newLine": true
+                }
+            ]
+        },         
         {
             "key": "properties",
             "newLine": true,
@@ -114,6 +152,16 @@
                 "endNewLine": true
             }
         },
+        {
+            "key": "parseListeners",
+            "newLine": true,
+            "endNewLine": true,
+            "subList": [
+                {
+                    "newLine": true
+                }
+            ]
+        },        
         {
             "keyType": "OTHER",
             "default": {

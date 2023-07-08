@@ -155,7 +155,11 @@
                 if (element.type == 'bpmn:StartEvent') {
                     return { "replace-with-none-end": entries['replace-with-none-end'] }
                 } else if (element.type == 'bpmn:EndEvent') {
-                    return { "replace-with-none-start": entries['replace-with-none-start'] }
+                    var newEntries = {};
+                    if (entries['replace-with-terminate-end']) {newEntries['replace-with-terminate-end']=entries['replace-with-terminate-end']};
+                    if (entries['replace-with-none-end']) {newEntries['replace-with-none-end']=entries['replace-with-none-end']};
+                    if (entries['replace-with-none-start']) {newEntries['replace-with-none-start']=entries['replace-with-none-start']};
+                    return newEntries;
                 } else if (element.type == 'bpmn:IntermediateCatchEvent') {
                     return {};
                 } else if (element.type == 'bpmn:ExclusiveGateway') {
@@ -376,7 +380,7 @@
                 var html =
                     '<div class="row">        ' +
     '<div class="form-group col"> ' +
-        '<label><span class="j-require">*</span>' + J.msg['"bpmn.flowJsonDefinitioin"'] + ':</label>' +
+        '<label><span class="j-require">*</span>' + J.msg['"bpmn.flowJsonDefinition"'] + ':</label>' +
         '<textarea class="jsonDef form-control" rows="30" readonly="readonly"></textarea>' +
     '</div>' +
 '</div>';
@@ -856,6 +860,20 @@
             var newRunner = $runner.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Runner", newRunner);
         });
+        // Flow parse listeners 
+        var parseListenersExp = getExtensionBody(bo, "easyflow:ParseListeners");
+        var parseListenersHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.parseListeners'] + ':</label> <textarea class="form-control j-bpmn-parselisteners" name="j-bpmn-parselisteners"></textarea></div>'
+            + '</div>';
+        var $parseListenersElement = $(parseListenersHtml).appendTo($infoPannel);
+        var $parseListeners = $parseListenersElement.find(".j-bpmn-parselisteners");
+        $parseListeners.tooltip({ title: J.msg['bpmn.parseListenersTooltip'] })
+        $parseListeners.rules('add', { json: true });
+        $parseListeners.text(parseListenersExp);
+        $parseListeners.blur(function() {
+            var newParseListeners = $parseListeners.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:ParseListeners", newParseListeners);
+        });                
     }
     // Script task
     J.BpmnControl.prototype._elementPannelRender["bpmn:ScriptTask"] = function($infoPannel, element) {
@@ -1418,6 +1436,17 @@
                     }
                 ]
             },
+            {
+                "name": "ParseListeners",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            },                    
             {
                 "name": "ExtProperties",
                 "superClass": ["Element"],

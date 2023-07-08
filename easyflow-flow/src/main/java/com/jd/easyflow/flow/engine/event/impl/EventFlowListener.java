@@ -22,10 +22,12 @@ import com.jd.easyflow.flow.util.FlowEventTypes;
 public class EventFlowListener implements FlowEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(EventFlowListener.class);
+    
+    private int initEndEventOrder = FlowConstants.EVENT_ORDER_START;
 
     @Override
     public Pair<String, Integer>[] getAcceptedEvents() {
-        return new Pair[] { Pair.of(FlowEventTypes.INIT_END, FlowConstants.EVENT_ORDER_START) };
+        return new Pair[] { Pair.of(FlowEventTypes.INIT_END, initEndEventOrder) };
     }
 
     @Override
@@ -49,5 +51,15 @@ public class EventFlowListener implements FlowEventListener {
         }
 
     }
+
+    public int getInitEndEventOrder() {
+        return initEndEventOrder;
+    }
+
+    public void setInitEndEventOrder(int initEndEventOrder) {
+        this.initEndEventOrder = initEndEventOrder;
+    }
+    
+    
 
 }

@@ -112,6 +112,8 @@ $.extend(J.msg, {
     "bpmn.nodePostHandlerFilterTooltip":"节点后置处理过滤器，JSON数组格式，具体参考配置文档",        
     "bpmn.runner":"流程执行器",
     "bpmn.runnerTooltip":"流程执行器，默认为串行执行器",
+    "bpmn.parseListeners":"流程解析事件监听器",
+    "bpmn.parseListenersTooltip":"流程解析事件监听器",            
     "bpmn.scriptFormat":"脚本格式",
     "bpmn.scriptFormat.exp":"spel表达式",
     "bpmn.scriptFormat.createExp":"create表达式",

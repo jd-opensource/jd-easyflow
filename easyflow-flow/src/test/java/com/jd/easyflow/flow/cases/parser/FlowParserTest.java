@@ -1,5 +1,7 @@
 package com.jd.easyflow.flow.cases.parser;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -45,5 +47,32 @@ public class FlowParserTest {
 				}
 			}
 		}
+	}
+	
+	@Test
+	public void testFlowParseListener() throws Exception {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources;
+        InputStream is = null;
+        Flow flow = null;
+        resources = resolver.getResources("classpath:flow/cases/parser/parser_test_002.json");
+        for (Resource resource : resources) {
+            try {
+                logger.info("Start parse flow definition:" + resource.getURI());
+                is = resource.getInputStream();
+                String flowConfigStr = IOUtils.toString(is);
+                List<Flow> flowList = new FlowParserImpl().parse(flowConfigStr);
+                logger.info("Parse end，model:" + JsonUtil.toJsonString(flowList));
+                flow = flowList.get(0);
+            } finally {
+                if (is != null) {
+                    IOUtils.closeQuietly(is);
+                }
+            }
+        }	
+        
+        assertEquals("node001", flow.getNodeList().get(0).getName());
+        assertEquals("node001", flow.getStartNodeIds()[0]);
+        
 	}
 }

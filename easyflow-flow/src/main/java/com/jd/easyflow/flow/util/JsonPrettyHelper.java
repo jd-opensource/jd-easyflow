@@ -203,7 +203,11 @@ public class JsonPrettyHelper {
     }
 
     private static String quote(Object s) {
-        return "\"" + s + "\"";
+        String str = s.toString();
+        if (str.indexOf("\"") > 0) {
+            str = str.replace("\"", "\\\"");
+        }
+        return "\"" + str + "\"";
     }
 
     private static String quoteColon(String s) {

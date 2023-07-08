@@ -177,7 +177,11 @@ public class FlowParam {
         if (context == null) {
             context = new FlowContextImpl();
         }
-        context.put(key, value);
+        if (value == null) {
+            context.remove(key);
+        } else {
+            context.put(key, value);
+        }
     }
 
 }
