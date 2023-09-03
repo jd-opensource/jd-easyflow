@@ -2,12 +2,12 @@ package com.jd.easyflow.flow.cases.pretty;
 
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jd.easyflow.flow.util.FlowIOUtil;
 import com.jd.easyflow.flow.util.JsonPrettyHelper;
 import com.jd.easyflow.flow.util.JsonUtil;
 
@@ -23,8 +23,8 @@ public class FlowDefPrettyHelperTest {
     
     @Test
     public void testPrettyFile() throws Exception {
-        String origin = IOUtils.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/flow/cases/pretty/pretty_test.json"));
-        String flowPrettyConf =  IOUtils.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
+        String origin = FlowIOUtil.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/flow/cases/pretty/pretty_test.json"));
+        String flowPrettyConf =  FlowIOUtil.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
         logger.info("Pretty conf:" + flowPrettyConf);
         logger.info("Input:" + JsonUtil.toJsonString(JsonUtil.parseObject(flowPrettyConf, Map.class)));
         String prettyStr = JsonPrettyHelper.pretty(origin, flowPrettyConf);
@@ -33,8 +33,8 @@ public class FlowDefPrettyHelperTest {
 
     @Test
     public void testPretty1() throws Exception {
-        String origin = IOUtils.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/flow/cases/pretty/pretty_test.json"));
-        String flowPrettyConf =  IOUtils.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
+        String origin = FlowIOUtil.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/flow/cases/pretty/pretty_test.json"));
+        String flowPrettyConf =  FlowIOUtil.toString(FlowDefPrettyHelperTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
         String prettyStr = JsonPrettyHelper.pretty(origin, flowPrettyConf);
         logger.info("Pretty result:\n" + prettyStr);
         logger.info("Start comparing result:");

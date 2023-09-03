@@ -3,7 +3,6 @@ package com.jd.easyflow.flow.bpmn.cases.converter;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import com.jd.easyflow.flow.bpmn.converter.BpmnConverter;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
+import com.jd.easyflow.flow.util.FlowIOUtil;
 import com.jd.easyflow.flow.util.JsonPrettyHelper;
 import com.jd.easyflow.flow.util.JsonUtil;
 
@@ -36,7 +36,7 @@ public class BpmnConverterTest {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource resource = resolver.getResource("classpath:flow/cases/converter/process_1.bpmn");
         Map<String, Object> model = BpmnConverter.convert(resource.getInputStream());
-        String flowPrettyConf =  IOUtils.toString(BpmnConverterTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
+        String flowPrettyConf =  FlowIOUtil.toString(BpmnConverterTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
         String pretty = JsonPrettyHelper.pretty(model, JsonUtil.parseObject(flowPrettyConf, Map.class));
         logger.info("Model is:" + pretty);
     }

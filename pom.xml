@@ -6,7 +6,7 @@
 
 	<groupId>com.jd.easyflow</groupId>
 	<artifactId>easyflow-parent</artifactId>
-	<version>1.0.9</version>
+	<version>1.1.0</version>
 	<name>easyflow-parent</name>
 	<packaging>pom</packaging>
 	<description>JDEasyFlow is a general flow orchestration component</description>
@@ -25,14 +25,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>5.3.16</spring.version>
 		<logback.version>1.2.3</logback.version>
-		<lombok.version>1.18.18</lombok.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<jackson.version>2.14.2</jackson.version>
 		<junit.version>4.13.1</junit.version>
 		<activiti.version>7.1.134</activiti.version>
 		<commons-lang3.version>3.11</commons-lang3.version>
-		<commons-collections4.version>4.4</commons-collections4.version>
-		<commons-io.version>2.7</commons-io.version>
 		<additionalparam>-Xdoclint:none</additionalparam>
 	</properties>
 	<dependencyManagement>
@@ -56,16 +53,6 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>${commons-lang3.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-collections4</artifactId>
-				<version>${commons-collections4.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>${commons-io.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -107,7 +94,12 @@
                 <groupId>com.jd.easyflow</groupId>
                 <artifactId>easyflow-flow-bpmn</artifactId>
                 <version>${project.version}</version>
-            </dependency>			
+            </dependency>	
+            <dependency>
+                <groupId>com.jd.easyflow</groupId>
+                <artifactId>easyflow-flow-extension</artifactId>
+                <version>${project.version}</version>
+            </dependency>            		
 		</dependencies>
 	</dependencyManagement>
 

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +96,7 @@ public class JsonPrettyHelper {
             if (StringUtils.isNotEmpty(confKey)) {
                 keys = Arrays.asList(confKey);
             } else if ("OTHER".equals(keyType)) {
-                keys = ListUtils.subtract(new ArrayList(value.keySet()), processedKey);
+                keys = subtract(new ArrayList<String>(value.keySet()), processedKey);
             } else {
                 throw new IllegalArgumentException("Config error," + subConf);
             }
@@ -131,6 +130,19 @@ public class JsonPrettyHelper {
             builder.append(newLine(indent));
         }
         builder.append("}");
+    }
+    
+    private static List<String> subtract(List<String> list1, List<String> list2) {
+        List<String> result = new ArrayList<>();
+        if (list1 == null) {
+            return result;
+        }
+        for (String s : list1) {
+            if (!list2.contains(s)) {
+                result.add(s);
+            }
+        }
+        return result;
     }
 
     /**

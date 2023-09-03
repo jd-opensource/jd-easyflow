@@ -10,7 +10,7 @@
       <bpmn:incoming>Flow_1h77pr5</bpmn:incoming>
       <bpmn:outgoing>Flow_161s0ml</bpmn:outgoing>
       <bpmn:outgoing>Flow_1ipaej0</bpmn:outgoing>
-      <bpmn:script>new com.jd.easyflow.flow.ext.cases.chain.Plugin1()</bpmn:script>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.ext.cases.chain.Plugin1()</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="plugin2" name="Plugin2" scriptFormat="createExp">
       <bpmn:extensionElements>
@@ -21,7 +21,7 @@
       <bpmn:incoming>Flow_0hype9i</bpmn:incoming>
       <bpmn:outgoing>Flow_0nnnvyb</bpmn:outgoing>
       <bpmn:outgoing>Flow_1h77pr5</bpmn:outgoing>
-      <bpmn:script>new com.jd.easyflow.flow.ext.cases.chain.Plugin2()</bpmn:script>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.ext.cases.chain.Plugin2()</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_161s0ml" sourceRef="plugin1" targetRef="plugin2">
       <bpmn:extensionElements>
@@ -38,7 +38,7 @@
       <bpmn:incoming>Flow_0woq951</bpmn:incoming>
       <bpmn:outgoing>Flow_1rtbe85</bpmn:outgoing>
       <bpmn:outgoing>Flow_0hype9i</bpmn:outgoing>
-      <bpmn:script>new com.jd.easyflow.flow.ext.cases.chain.Plugin3()</bpmn:script>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.ext.cases.chain.Plugin3()</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0nnnvyb" sourceRef="plugin2" targetRef="plugin3">
       <bpmn:extensionElements>

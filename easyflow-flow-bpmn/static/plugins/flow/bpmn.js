@@ -157,6 +157,7 @@
                 } else if (element.type == 'bpmn:EndEvent') {
                     var newEntries = {};
                     if (entries['replace-with-terminate-end']) {newEntries['replace-with-terminate-end']=entries['replace-with-terminate-end']};
+                    if (entries['replace-with-error-end']) {newEntries['replace-with-error-end']=entries['replace-with-error-end']};
                     if (entries['replace-with-none-end']) {newEntries['replace-with-none-end']=entries['replace-with-none-end']};
                     if (entries['replace-with-none-start']) {newEntries['replace-with-none-start']=entries['replace-with-none-start']};
                     return newEntries;
@@ -180,27 +181,52 @@
                 } else if (element.type == 'bpmn:ScriptTask') {
                     return {
                         "replace-with-receive-task": entries["replace-with-receive-task"],
-                        "replace-with-user-task": entries['replace-with-user-task']
+                        "replace-with-user-task": entries['replace-with-user-task'],
+                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
+                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],
+                        "replace-with-call-activity": entries['replace-with-call-activity']
                     };
                 } else if (element.type == 'bpmn:UserTask') {
                     return {
                         "replace-with-receive-task": entries["replace-with-receive-task"],
-                        "replace-with-script-task": entries['replace-with-script-task']
+                        "replace-with-script-task": entries['replace-with-script-task'],
+                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
+                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],
+                        "replace-with-call-activity": entries['replace-with-call-activity']
                     };
                 } else if (element.type == 'bpmn:ReceiveTask') {
                     return {
                         "replace-with-user-task": entries["replace-with-user-task"],
-                        "replace-with-script-task": entries['replace-with-script-task']
+                        "replace-with-script-task": entries['replace-with-script-task'],
+                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
+                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],                        
+                        "replace-with-call-activity": entries['replace-with-call-activity']
+                    };
+                } else if (element.type == 'bpmn:SubProcess') {
+                   var newEntries = {};
+                   if (entries['replace-with-transaction']) {newEntries['replace-with-transaction']=entries['replace-with-transaction']};
+                   if (entries['replace-with-expanded-subprocess']) {newEntries['replace-with-expanded-subprocess']=entries['replace-with-expanded-subprocess']};
+                   if (entries['replace-with-collapsed-subprocess']) {newEntries['replace-with-collapsed-subprocess']=entries['replace-with-collapsed-subprocess']};
+                   return newEntries;
+                } else if (element.type == 'bpmn:Transaction') {
+                   var newEntries = {};
+                   if (entries['replace-with-subprocess']) {newEntries['replace-with-subprocess']=entries['replace-with-subprocess']};
+                   return newEntries;
+                } else if (element.type == 'bpmn:CallActivity') {
+                    return {
+                        "replace-with-script-task": entries['replace-with-script-task'],
+                        "replace-with-receive-task": entries["replace-with-receive-task"],
+                        "replace-with-user-task": entries["replace-with-user-task"],
+                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
+                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess']
                     };
                 }
+                
                 return entries;
             }
         }
         this.getPopupMenuHeaderEntries = function(element) {
             return function(entries) {
-                if (element.type == 'bpmn:ScriptTask' || element.type == 'bpmn:UserTask' || element.type == 'bpmn:ReceiveTask') {
-                    return {};
-                }
                 return entries;
             }
         };
@@ -878,11 +904,6 @@
     // Script task
     J.BpmnControl.prototype._elementPannelRender["bpmn:ScriptTask"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
         var bo = element.businessObject;
         var _self = this;
         // Script format
@@ -920,6 +941,12 @@
             bo.script = newScript;
             _self._comment(element);
         });
+        
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
     // User task
     J.BpmnControl.prototype._elementPannelRender["bpmn:UserTask"] = function($infoPannel, element) {
@@ -939,6 +966,81 @@
         this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
+    // Call activity
+    J.BpmnControl.prototype._elementPannelRender["bpmn:CallActivity"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        var bo = element.businessObject;
+        var _self = this;
+        // Called element
+        var calledElement = bo.calledElement;
+        var calledElementHtml = '<div class="row">' +
+            '<div class="form-group col"><span class="j-require">*</span><label>' + J.msg['bpmn.calledElement'] + ':</label> ' +
+               '<input class="form-control j-bpmn-calledelement"/>' +
+            '</div>';
+        var $calledElementElement = $(calledElementHtml).appendTo($infoPannel);
+        $calledElementElement.tooltip({ title: J.msg['bpmn.calledElementTooltip'] });
+        var $calledElement = $calledElementElement.find(".j-bpmn-calledelement");
+        $calledElement.val(calledElement);
+        $calledElement.blur(function() {
+            var newCalledElement = $calledElement.val();
+                bo.calledElement = newCalledElement;
+        });
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }
+    // Sub process
+    J.BpmnControl.prototype._elementPannelRender["bpmn:SubProcess"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        var bo = element.businessObject;
+        var _self = this;
+        // Flow
+        var flow = getExtensionBody(bo, "easyflow:Flow");
+        var flowHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.flow'] + ':</label> <textarea class="form-control j-bpmn-flow" name="j-bpmn-flow"></textarea></div>'
+            + '</div>';
+        var $flowElement = $(flowHtml).appendTo($infoPannel);
+        var $flow = $flowElement.find(".j-bpmn-flow");
+        $flow.tooltip({ title: J.msg['bpmn.flowTooltip'] })
+        $flow.rules('add', { json: true });
+        $flow.text(flow);
+        $flow.blur(function() {
+            var newFlow = $flow.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Flow", newFlow);
+        });
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }    
+    // Transaction
+    J.BpmnControl.prototype._elementPannelRender["bpmn:Transaction"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        var bo = element.businessObject;
+        var _self = this;
+        // Flow
+        var flow = getExtensionBody(bo, "easyflow:Flow");
+        var flowHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.flow'] + ':</label> <textarea class="form-control j-bpmn-flow" name="j-bpmn-flow"></textarea></div>'
+            + '</div>';
+        var $flowElement = $(flowHtml).appendTo($infoPannel);
+        var $flow = $flowElement.find(".j-bpmn-flow");
+        $flow.tooltip({ title: J.msg['bpmn.flowTooltip'] })
+        $flow.rules('add', { json: true });
+        $flow.text(flow);
+        $flow.blur(function() {
+            var newFlow = $flow.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Flow", newFlow);
+        });
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }        
     // Start event
     J.BpmnControl.prototype._elementPannelRender["bpmn:StartEvent"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
@@ -1016,7 +1118,7 @@
         var elementRegistry = this.bpmnModeler.get('elementRegistry');
         var commentTypes = ["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent",
             "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway",
-            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask",
+            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:UserTask","bpmn:CallActivity","bpmn:SubProcess","bpmn:Transaction",
             "bpmn:SequenceFlow"];
         var commentElements = elementRegistry.filter(function(e) {
             return commentTypes.indexOf(e.type) >= 0;
@@ -1032,7 +1134,7 @@
     J.BpmnControl.prototype._comment = function(element, commentType) {
         var commentTypes = ["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent",
             "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway",
-            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask",
+            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:CallActivity","bpmn:SubProcess","bpmn:Transaction",
             "bpmn:SequenceFlow"];
             if (! commentTypes.includes(element.type)) {
                 return;
@@ -1043,7 +1145,7 @@
         var _self = this;
         var overlays = this.bpmnModeler.get('overlays');
         var bo = element.businessObject;
-        overlays.remove({ element: element.id });
+        overlays.remove({ element: element.id, type:"easyflow-comment"});
         if (!commentType.includes("node") && !commentType.includes("condition")) {
             return;
         }
@@ -1055,7 +1157,8 @@
         }
         if (["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent",
             "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway",
-            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask"].includes(element.type)) {
+            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:CallActivity",
+            "bpmn:SubProcess","bpmn:Transaction"].includes(element.type)) {
             if (!commentType.includes("node")) {
                 return;
             }
@@ -1073,6 +1176,9 @@
         }
         if (element.type == 'bpmn:ScriptTask') {
             html += '<dt>' + J.msg['bpmn.script'] + ':</dt><dd>' + (bo.script ? bo.script : J.msg['bpmn.none']) + '</dd>';
+        }
+        if (element.type=='bpmn:CallActivity') {
+            html += '<dt>' + J.msg['bpmn.calledElement'] + ':</dt><dd>' + (bo.calledElement ? bo.calledElement : J.msg['bpmn.none']) + '</dd>';
         }
             var properties = getExtensionBody(bo, "easyflow:Properties");
             if (properties) {
@@ -1093,7 +1199,7 @@
         var extPropertiesStr = getExtensionBody(bo, "easyflow:ExtProperties");
         var extProperties = extPropertiesStr ? JSON.parse(extPropertiesStr) : {};
         var pos = extProperties && extProperties.commentPosition ? extProperties.commentPosition : { top:3, left:20 };
-        overlays.add(element.id, {
+        overlays.add(element.id, "easyflow-comment", {
             position: pos,
             html: html,
             scale:{max:1}
@@ -1457,7 +1563,18 @@
                         "type": "String"
                     }
                 ]
-            }
+            },
+            {
+                "name": "Flow",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            }            
         ]
     };
 

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.parser.FlowParser;
 import com.jd.easyflow.flow.model.parser.FlowParserImpl;
 import com.jd.easyflow.flow.util.FlowEventTypes;
+import com.jd.easyflow.flow.util.FlowIOUtil;
 import com.jd.easyflow.flow.util.JsonUtil;
 import com.jd.easyflow.flow.util.SpelHelper;
 
@@ -104,7 +104,7 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
                         logger.info("Start parsing definition files:" + resource.getURI());
                     }
                     try (InputStream is = resource.getInputStream()) {
-                        String flowDefinition = IOUtils.toString(is);
+                        String flowDefinition = FlowIOUtil.toString(is);
                         List<Flow> flowList = flowParser.parse(flowDefinition);
                         flowDefinitionMap.put(flowList.get(0).getId(), flowDefinition);
                         flowList.forEach(flow -> {

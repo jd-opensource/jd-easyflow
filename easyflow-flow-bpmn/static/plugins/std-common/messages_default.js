@@ -156,7 +156,12 @@ if (!window.J) {
     "bpmn.flowPreHandler":"Flow PreHandler",
     "bpmn.flowPreHandlerTooltip":"Flow PreHandler",
     "bpmn.flowPostHandler":"Flow PostHandler",
-    "bpmn.flowPostHandlerTooltip":"Flow PostHandler"
+    "bpmn.flowPostHandlerTooltip":"Flow PostHandler",
+    "bpmn.calledElement":"Sub Flow ID",
+    "bpmn.calledElementTooltip":"Sub Flow ID",
+    "bpmn.flow":"Flow Info",
+    "bpmn.flowTooltip":"Flow info, id is required",
+    "bpmn.calledElement":"Called ID"
     });
     
     J.bpmnIOTranslations = {};

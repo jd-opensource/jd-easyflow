@@ -1,8 +1,5 @@
 
-.bpmn-icon-screw-wrench:before { content: '\e800'; } /* '' */
 .bpmn-icon-trash:before { content: '\e801'; } /* '' */
-.bpmn-icon-conditional-flow:before { content: '\e802'; } /* '' */
-.bpmn-icon-default-flow:before { content: '\e803'; } /* '' */
 .bpmn-icon-gateway-parallel:before { content: '\e804'; } /* '' */
 .bpmn-icon-intermediate-event-catch-cancel:before { content: '\e805'; } /* '' */
 .bpmn-icon-intermediate-event-catch-non-interrupting-message:before { content: '\e806'; } /* '' */
@@ -15,7 +12,6 @@
 .bpmn-icon-intermediate-event-catch-parallel-multiple:before { content: '\e80d'; } /* '' */
 .bpmn-icon-intermediate-event-catch-compensation:before { content: '\e80e'; } /* '' */
 .bpmn-icon-gateway-xor:before { content: '\e80f'; } /* '' */
-.bpmn-icon-connection:before { content: '\e810'; } /* '' */
 .bpmn-icon-end-event-cancel:before { content: '\e811'; } /* '' */
 .bpmn-icon-intermediate-event-catch-condition:before { content: '\e812'; } /* '' */
 .bpmn-icon-intermediate-event-catch-non-interrupting-parallel-multiple:before { content: '\e813'; } /* '' */
@@ -47,7 +43,6 @@
 .bpmn-icon-intermediate-event-none:before { content: '\e82d'; } /* '' */
 .bpmn-icon-intermediate-event-catch-link:before { content: '\e82e'; } /* '' */
 .bpmn-icon-end-event-escalation:before { content: '\e82f'; } /* '' */
-.bpmn-icon-text-annotation:before { content: '\e830'; } /* '' */
 .bpmn-icon-bpmn-io:before { content: '\e831'; } /* '' */
 .bpmn-icon-gateway-complex:before { content: '\e832'; } /* '' */
 .bpmn-icon-gateway-eventbased:before { content: '\e833'; } /* '' */
@@ -105,4 +100,9 @@
 .bpmn-icon-data-output:before { content: '\e867'; } /* '' */
 .bpmn-icon-hand-tool:before { content: '\e868'; } /* '' */
 .bpmn-icon-group:before { content: '\e869'; } /* '' */
+.bpmn-icon-text-annotation:before { content: '\e86b'; } /* '' */
 .bpmn-icon-transaction:before { content: '\e8c4'; } /* '' */
+.bpmn-icon-screw-wrench:before { content: '\e8db'; } /* '' */
+.bpmn-icon-connection:before { content: '\e8dc'; } /* '' */
+.bpmn-icon-conditional-flow:before { content: '\e8e0'; } /* '' */
+.bpmn-icon-default-flow:before { content: '\e8e1'; } /* '' */

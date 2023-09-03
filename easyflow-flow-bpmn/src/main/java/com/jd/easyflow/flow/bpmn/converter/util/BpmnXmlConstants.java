@@ -21,5 +21,7 @@ public class BpmnXmlConstants {
     public static final String PRE = "pre";
     public static final String ACTION = "action";
     public static final String POST = "post";
+    public static final String FLOW = "flow";
+
     
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,7 @@ import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.parser.FsmParser;
 import com.jd.easyflow.fsm.util.FsmEventTypes;
+import com.jd.easyflow.fsm.util.FsmIOUtil;
 import com.jd.easyflow.fsm.util.SpelHelper;
 
 /**
@@ -79,32 +79,22 @@ public class FsmManager implements SmartLifecycle {
     protected void loadFsm() {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources;
-        InputStream is = null;
         try {
             resources = resolver.getResources(fsmPath);
             for (Resource resource : resources) {
-                try {
-                    logger.info("Start parse fsm definition file:" + resource.getURI());
-                    is = resource.getInputStream();
-                    String fsmDefinition = IOUtils.toString(is);
+                logger.info("Start parse fsm definition file:" + resource.getURI());
+                try (InputStream is = resource.getInputStream()) {
+                    String fsmDefinition = FsmIOUtil.toString(is);
                     Fsm fsm = FsmParser.parse(fsmDefinition);
                     if (fsmDefinitionMap.containsKey(fsm.getId())) {
                         throw new FsmException();
                     }
                     fsmDefinitionMap.put(fsm.getId(), fsmDefinition);
                     fsmMap.put(fsm.getId(), fsm);
-                } finally {
-                    if (is != null) {
-                        IOUtils.closeQuietly(is);
-                    }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Fsm definition file load exception", e);
-        } finally {
-            if (is != null) {
-                IOUtils.closeQuietly(is);
-            }
         }
     }
 

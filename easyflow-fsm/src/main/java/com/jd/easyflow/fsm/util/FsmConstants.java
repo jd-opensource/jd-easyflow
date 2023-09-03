@@ -19,5 +19,9 @@ public class FsmConstants {
      * Record execute history， default is true
      */
     public static final String FSM_PROPERTY_RECORD_HISTORY = "fsm.recordHistory";
+    
+    public static final String CTX_PARENT_CONTEXT = "parentContext";
+    
+    public static final String CTX_PARENT_TRANSITION_CONTEXT = "parentTransitionContext";
 
 }

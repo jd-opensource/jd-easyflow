@@ -36,7 +36,7 @@ public class DefConstants {
     public static final String NODE_PROP_START = "start";
     
     public static final String NODE_PROPERTIES_PROP_END = "end";
-    
+
     public static final String NODE_PROP_ACTION = "action";
     public static final String NODE_PROP_PRE = "pre";
     public static final String NODE_PROP_POST = "post";
@@ -55,6 +55,8 @@ public class DefConstants {
      * Node action property
      */
     public static final String NODE_ACTION_PROP_START_NODE_ID = "startNodeId";
+    public static final String NODE_ACTION_PROP_INHERIT = "inherit";
+
     
     /**
      * Node post property

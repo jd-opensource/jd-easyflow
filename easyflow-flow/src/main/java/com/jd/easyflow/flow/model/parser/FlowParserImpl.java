@@ -178,6 +178,7 @@ public class FlowParserImpl implements FlowParser {
         InitContext initContext = new InitContext();
         initContext.setFlowParser(this);
         initContext.setParseEl(parseEl);
+        initContext.setFlowList(flowList);
         flow.init(initContext);
         triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_END, map, flow, null);
         return flow;
@@ -540,6 +541,10 @@ public class FlowParserImpl implements FlowParser {
                     nodeAction.setStartNodeIds(((List<String>) startNodeId).toArray(new String[] {}));
                 }
             }
+            Boolean inherit = (Boolean) action.get(DefConstants.NODE_ACTION_PROP_INHERIT);
+            if (inherit != null) {
+                nodeAction.setInherit(inherit);
+            }
             return nodeAction;
         }
         throw new IllegalArgumentException("Param illegal " + action);
@@ -612,7 +617,7 @@ public class FlowParserImpl implements FlowParser {
         throw new IllegalArgumentException("Param illegal " + post);
     }
     
-    private List<FlowParseEventListener> parseParseListeners(Map<String, Object> map, Flow flow, boolean parseEl) {
+    protected List<FlowParseEventListener> parseParseListeners(Map<String, Object> map, Flow flow, boolean parseEl) {
         List<String> parseListenerExpList = (List<String>) map.get(DefConstants.FLOW_PROP_PARSE_LISTENERS);
         if (parseListenerExpList == null || !parseEl) {
             return null;

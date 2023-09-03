@@ -28,8 +28,8 @@ public class EndEventConverter extends BaseFlowNodeConverter {
         Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
         properties.put(DefConstants.NODE_PROPERTIES_PROP_END, true);
         
-        // Terminate event parse
         List<EventDefinition> events = ((EndEvent) flowNode).getEventDefinitions();
+        // Terminate event parse
         if (events != null) {
             boolean isTerminateEvent = false;
             for (EventDefinition definition : events) {
@@ -44,6 +44,7 @@ public class EndEventConverter extends BaseFlowNodeConverter {
                 }
             }
         }
+        
         return node;
     }
 }

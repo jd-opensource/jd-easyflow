@@ -1,5 +1,7 @@
 package com.jd.easyflow.flow.model;
 
+import java.util.List;
+
 import com.jd.easyflow.flow.model.parser.FlowParser;
 
 /**
@@ -12,6 +14,8 @@ public class InitContext {
     private boolean parseEl;
     
     FlowParser flowParser;
+    
+    List<Flow> flowList;
 
     public boolean isParseEl() {
         return parseEl;
@@ -27,6 +31,14 @@ public class InitContext {
 
     public void setFlowParser(FlowParser flowParser) {
         this.flowParser = flowParser;
+    }
+
+    public List<Flow> getFlowList() {
+        return flowList;
+    }
+
+    public void setFlowList(List<Flow> flowList) {
+        this.flowList = flowList;
     }
     
     

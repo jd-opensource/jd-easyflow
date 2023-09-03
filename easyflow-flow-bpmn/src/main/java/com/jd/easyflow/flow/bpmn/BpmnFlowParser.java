@@ -2,11 +2,9 @@ package com.jd.easyflow.flow.bpmn;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +13,7 @@ import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.parser.FlowParserImpl;
 import com.jd.easyflow.flow.model.parser.param.FlowParseParam;
+import com.jd.easyflow.flow.util.FlowIOUtil;
 import com.jd.easyflow.flow.util.JsonUtil;
 
 /**
@@ -50,7 +49,8 @@ public class BpmnFlowParser extends FlowParserImpl {
             flowPrettyConfStr = BpmnConverter.defaultFlowPrettyConfigStr;
         } else {
             try {
-                flowPrettyConfStr = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+                flowPrettyConfStr = FlowIOUtil.toString(inputStream);
+                inputStream.close();
             } catch (IOException e) {
                 throw new FlowException(
                         "Pretty conf parse exception, path:" + flowPrettyConfigPath + " message:" + e.getMessage(), e);

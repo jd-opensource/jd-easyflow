@@ -8,7 +8,7 @@ import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
 
 /**
- * BPMN终止测试
+ * BPMN Terminate test.
  * @author liyuliang5
  *
  */

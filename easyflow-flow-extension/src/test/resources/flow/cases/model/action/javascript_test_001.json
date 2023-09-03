@@ -1,0 +1,17 @@
+{
+    "id": "javascript_test_001",
+    "name": "JavaScript Test 001",
+    "nodes": [
+        {
+            "id": "node001",
+            "name": "Node001",
+            "start": true,
+            "action": {
+                "createExp": "new com.jd.easyflow.flow.ext.model.action.JavaScriptNodeAction()"
+            },
+            "properties": {
+                "javascript":"1+2"
+            }
+        }
+    ]
+}

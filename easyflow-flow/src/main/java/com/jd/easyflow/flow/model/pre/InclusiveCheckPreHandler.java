@@ -3,7 +3,6 @@ package com.jd.easyflow.flow.model.pre;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +79,7 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
                 nextNodeIds.add(node.getNodeId());
             }
 
-            List<String> expectedNodeIds = ListUtils.intersection(nextNodeIds, configPreNodes);
+            List<String> expectedNodeIds = intersection(nextNodeIds, configPreNodes);
             logger.info("Expected node ids:" + expectedNodeIds + "(next node ids:" + nextNodeIds + ")");
 
             for (String s : expectedNodeIds) {
@@ -93,6 +92,19 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
             return true;
 
         }
+    }
+    
+    private static List<String> intersection(List<String> list1, List<String> list2) {
+        List<String> result = new ArrayList<>();
+        if (list1 == null || list2 == null) {
+            return result;
+        }
+        for (String s : list1) {
+            if (list2.contains(s)) {
+                result.add(s);
+            }
+        }
+        return result;
     }
 
     public List<String> getPreNodes() {

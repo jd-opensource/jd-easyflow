@@ -35,6 +35,10 @@ public class FlowConstants {
     
     public static final String CTX_PRE_NODES_PREFIX = "_pre_nodes_";
     
+    public static final String CTX_PARENT_CONTEXT = "parentContext";
+    
+    public static final String CTX_PARENT_NODE_CONTEXT = "parentNodeContext";
+    
     public static final String NODECTX_PRE_RESULT = "_preResult";
     
     public static final String PROP_PRENODES = "preNodes";

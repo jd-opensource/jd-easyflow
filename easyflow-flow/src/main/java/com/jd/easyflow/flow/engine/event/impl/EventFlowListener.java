@@ -2,7 +2,6 @@ package com.jd.easyflow.flow.engine.event.impl;
 
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public class EventFlowListener implements FlowEventListener {
                 if (logger.isInfoEnabled()) {
                     logger.info("EVENT ID:" + eventId);
                 }
-                if (CollectionUtils.isNotEmpty(startNodes)) {
+                if (startNodes != null && ! startNodes.isEmpty()) {
                     startNodes.forEach(node -> node.put(FlowConstants.NODE_CONTEXT_DATA_EVENT, eventId));
                 }
             }

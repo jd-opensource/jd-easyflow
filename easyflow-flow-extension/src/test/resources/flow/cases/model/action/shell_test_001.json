@@ -1,0 +1,18 @@
+{
+    "id": "shell_test_001",
+    "name": "Shell Test 001",
+    "nodes": [
+        {
+            "id": "node001",
+            "name": "Node001",
+            "start": true,
+            "action": {
+                "createExp": "new com.jd.easyflow.flow.ext.model.action.ShellNodeAction()"
+            },
+            "properties": {
+                "shellTimeoutSeconds":10,
+                "shellCommand":["ls"]
+            }
+        }
+    ]
+}

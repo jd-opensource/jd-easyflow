@@ -144,7 +144,12 @@ $.extend(J.msg, {
     "bpmn.flowPreHandler":"流程前置处理器",
     "bpmn.flowPreHandlerTooltip":"流程前置处理器",
     "bpmn.flowPostHandler":"流程后置处理器",
-    "bpmn.flowPostHandlerTooltip":"流程后置处理器"
+    "bpmn.flowPostHandlerTooltip":"流程后置处理器",
+    "bpmn.calledElement":"子流程ID",
+    "bpmn.calledElementTooltip":"子流程ID",
+    "bpmn.flow":"流程信息",
+    "bpmn.flowTooltip":"流程信息,至少需配置id",
+    "bpmn.calledElement":"调用ID"
 });
 
 
@@ -159,7 +164,7 @@ $.extend(J.msg, {
         "Append Intermediate/Boundary Event": "追加消息接收事件",
         "Append TextAnnotation": "追加文本标注",
         "Business Rule Task": "规则任务",
-        "Call Activity": "引用流程",
+        "Call Activity": "调用流程",
         "Cancel Boundary Event": "取消边界事件",
         "Cancel End Event": "结束取消事件",
         "Change type": "更改类型",
@@ -171,6 +176,7 @@ $.extend(J.msg, {
         "Complex Gateway": "复杂网关",
         "Conditional Boundary Event (non-interrupting)": "条件边界事件 (非中断)",
         "Conditional Boundary Event": "条件边界事件",
+        "Conditional Flow": "条件流转",        
         "Conditional Intermediate Catch Event": "中间条件捕获事件",
         "Conditional Start Event (non-interrupting)": "条件启动事件 (非中断)",
         "Conditional Start Event": "条件启动事件",
@@ -185,6 +191,7 @@ $.extend(J.msg, {
         "Create ScriptTask": "创建任务",
         "Create Gateway": "创建网关",
         "Create Group": "创建分组",
+        "Default Flow": "缺省流转",
         "Divide into three Lanes": "分成三条通道",
         "Divide into two Lanes": "分成两条通道",
         "End Event": "结束事件",
@@ -220,6 +227,7 @@ $.extend(J.msg, {
         "Remove": "移除",
         "Script Task": "脚本任务",
         "Send Task": "发送任务",
+        "Sequence Flow": "顺序流转",
         "Sequential Multi Instance": "串行多实例",
         "Service Task": "服务任务",
         "Signal Boundary Event (non-interrupting)": "信号边界事件 (非中断)",
@@ -230,8 +238,8 @@ $.extend(J.msg, {
         "Signal Start Event (non-interrupting)": "信号启动事件 (非中断)",
         "Signal Start Event": "信号启动事件",
         "Start Event": "开始事件",
-        "Sub Process (collapsed)": "可折叠子流程",
-        "Sub Process (expanded)": "可展开子流程",
+        "Sub Process (collapsed)": "折叠子流程",
+        "Sub Process (expanded)": "展开子流程",
         "Sub Process": "子流程",
         "Task": "任务",
         "TextAnnotation": "文本标注",
@@ -254,7 +262,9 @@ $.extend(J.msg, {
         "no parent for {element} in {parent}": "在 {element} 中没有父元素 {parent}",
         "no process or collaboration to display": "没有可显示的流程或协作",
         "no shape type specified": "未指定形状类型",
-        "out of bounds release": "越界释放"
+        "out of bounds release": "越界释放",
+        "Change element":"更换元素",
+        "Activate the lasso tool":"区域选择"
     };
 
 }

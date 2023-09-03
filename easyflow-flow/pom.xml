@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>easyflow-parent</artifactId>
 		<groupId>com.jd.easyflow</groupId>
-		<version>1.0.9</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>easyflow-flow</artifactId>
 	<name>easyflow-flow</name>
@@ -39,14 +39,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-    <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-        </dependency>
 		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

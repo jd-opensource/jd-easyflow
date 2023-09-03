@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.CallActivity;
 import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.ExclusiveGateway;
 import org.activiti.bpmn.model.ExtensionElement;
@@ -29,13 +30,17 @@ import org.activiti.bpmn.model.ReceiveTask;
 import org.activiti.bpmn.model.ScriptTask;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.bpmn.model.StartEvent;
+import org.activiti.bpmn.model.SubProcess;
 import org.activiti.bpmn.model.UserTask;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jd.easyflow.flow.bpmn.converter.activity.CallActivityConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.ReceiveTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.ScriptTaskConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.SubProcessConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.TransactionConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.UserTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.EndEventConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.IntermediateCatchEventConverter;
@@ -62,7 +67,7 @@ public class BpmnConverter {
     
     private static String defaultFlowPrettyConfigPath = "/pretty/pretty-flow.json";
     
-    public static String defaultFlowPrettyConfigStr = "{\"endNewLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}";
+    public static String defaultFlowPrettyConfigStr = "{\"endNewLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}";
     
     private static Map<String, Object> defaultFlowPrettyConfig;
 
@@ -74,6 +79,9 @@ public class BpmnConverter {
         flowNodeConverterMap.put(ScriptTask.class, new ScriptTaskConverter());
         flowNodeConverterMap.put(UserTask.class, new UserTaskConverter());
         flowNodeConverterMap.put(ReceiveTask.class, new ReceiveTaskConverter());
+        flowNodeConverterMap.put(SubProcess.class, new SubProcessConverter());
+        flowNodeConverterMap.put(CallActivity.class, new CallActivityConverter());
+        flowNodeConverterMap.put(TransactionConverter.class, new TransactionConverter());
 
         flowNodeConverterMap.put(ExclusiveGateway.class, new ExclusiveGatewayConverter());
         flowNodeConverterMap.put(InclusiveGateway.class, new InclusiveGatewayConverter());
@@ -181,7 +189,7 @@ public class BpmnConverter {
                 }
                 Map<String, Object> node = nodeConverter.convert((FlowNode) flowElement, bpmnModel, flowDef);
                 nodeList.add(node);
-                // 顺序流
+                // Sequence flow
             } else if (flowElement instanceof SequenceFlow) {
                 continue;
             } else {
@@ -274,6 +282,10 @@ public class BpmnConverter {
             }
         }
         return null;
+    }
+
+    public static Map<Class, FlowNodeConverter> getFlowNodeConverterMap() {
+        return flowNodeConverterMap;
     }
 
 }

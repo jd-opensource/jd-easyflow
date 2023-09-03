@@ -2,7 +2,6 @@ package com.jd.easyflow.fsm.cases.parser;
 
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.jd.easyflow.fsm.Fsm;
 import com.jd.easyflow.fsm.parser.FsmParser;
+import com.jd.easyflow.fsm.util.FsmIOUtil;
 import com.jd.easyflow.fsm.util.JsonUtil;
 
 /**
@@ -30,17 +30,12 @@ public class FsmParserTest {
         InputStream is = null;
         resources = resolver.getResources("classpath:fsm/cases/parser/fsm_parser_test.json");
         for (Resource resource : resources) {
-            try {
-                logger.info("Start parse definition file:" + resource.getURI());
-                is = resource.getInputStream();
-                String fsmConfigStr = IOUtils.toString(is);
-                Fsm fsm = FsmParser.parse(fsmConfigStr);
-                logger.info("Parse end, model is:" + JsonUtil.toJsonString(fsm));
-            } finally {
-                if (is != null) {
-                    IOUtils.closeQuietly(is);
-                }
-            }
+            logger.info("Start parse definition file:" + resource.getURI());
+            is = resource.getInputStream();
+            String fsmConfigStr = FsmIOUtil.toString(is);
+            Fsm fsm = FsmParser.parse(fsmConfigStr);
+            logger.info("Parse end, model is:" + JsonUtil.toJsonString(fsm));
+            is.close();
         }
     }
     
@@ -51,18 +46,12 @@ public class FsmParserTest {
         InputStream is = null;
         resources = resolver.getResources("classpath:fsm/cases/parser/fsm_parser_test_create_exp.json");
         for (Resource resource : resources) {
-            try {
-                logger.info("Start parse definition file:" + resource.getURI());
-                is = resource.getInputStream();
-                String fsmConfigStr = IOUtils.toString(is);
-                Fsm fsm = FsmParser.parse(fsmConfigStr);
-                Assert.assertNotNull(fsm.getTransitionList().get(0));
-                logger.info("Parse end, model is:" + JsonUtil.toJsonString(fsm));
-            } finally {
-                if (is != null) {
-                    IOUtils.closeQuietly(is);
-                }
-            }
-        }       
+            logger.info("Start parse definition file:" + resource.getURI());
+            is = resource.getInputStream();
+            String fsmConfigStr = FsmIOUtil.toString(is);
+            Fsm fsm = FsmParser.parse(fsmConfigStr);
+            Assert.assertNotNull(fsm.getTransitionList().get(0));
+            logger.info("Parse end, model is:" + JsonUtil.toJsonString(fsm));
+        }
     }
 }

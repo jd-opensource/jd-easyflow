@@ -1,9 +1,11 @@
-import { terser } from 'rollup-plugin-terser';
+/* eslint-env node */
+
+import terser from '@rollup/plugin-terser';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import json from 'rollup-plugin-json';
+import json from '@rollup/plugin-json';
+import replace from '@rollup/plugin-replace';
 import license from 'rollup-plugin-license';
-import replace from 'rollup-plugin-replace';
 
 import {
   readFileSync
@@ -25,7 +27,7 @@ const distros = [
   {
     input: 'Modeler',
     output: 'bpmn-modeler'
-  } 
+  }
 ];
 
 const configs = distros.reduce(function(configs, distro) {
@@ -45,7 +47,7 @@ const configs = distros.reduce(function(configs, distro) {
       },
       plugins: pgl([
         banner(output)
-      ])
+      ], 'development')
     },
     {
       input: `./lib/${input}.js`,
@@ -61,7 +63,7 @@ const configs = distros.reduce(function(configs, distro) {
             comments: /license|@preserve/
           }
         })
-      ])
+      ], 'production')
     }
   ];
 }, []);
@@ -92,18 +94,13 @@ function banner(bundleName, minified) {
   });
 }
 
-function pgl(plugins=[]) {
+function pgl(plugins = [], env = 'production') {
   return [
     replace({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      preventAssignment: true,
+      'process.env.NODE_ENV': JSON.stringify(env)
     }),
-    nodeResolve({
-      mainFields: [
-        'browser',
-        'module',
-        'main'
-      ]
-    }),
+    nodeResolve(),
     commonjs(),
     json(),
     ...plugins

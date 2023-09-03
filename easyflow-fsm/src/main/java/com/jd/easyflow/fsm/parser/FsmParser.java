@@ -423,7 +423,7 @@ public class FsmParser {
         throw new IllegalArgumentException("Param illegal:" + post);
     }
     
-    private static List<FsmParseEventListener> parseParseListeners(Map<String, Object> map, Fsm fsm, boolean parseEl) {
+    protected static List<FsmParseEventListener> parseParseListeners(Map<String, Object> map, Fsm fsm, boolean parseEl) {
         List<String> parseListenerExpList = (List<String>) map.get(DefConstants.FSM_PROP_PARSE_LISTENERS);
         if (parseListenerExpList == null || !parseEl) {
             return null;

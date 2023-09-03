@@ -1,12 +1,23 @@
 package com.jd.easyflow.flow.model.action;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.impl.FlowContextImpl;
+import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.FlowNode;
+import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.definition.DefConstants;
+import com.jd.easyflow.flow.model.parser.param.ActionParseParam;
+import com.jd.easyflow.flow.model.parser.param.FlowParseParam;
+import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
  * 
@@ -19,17 +30,14 @@ import com.jd.easyflow.flow.model.NodeContext;
 
 public class FlowNodeAction implements NodeAction {
 
-    public static final String PARENT_NODE_CONTEXT = "parentNodeContext";
-    public static final String PARENT_CONTEXT = "parentContext";
-
     private String flowId;
     private String[] startNodeIds;
-    private boolean inherit = true;
-    
+    private Boolean inherit;
+
     public FlowNodeAction() {
         // NOOP
     }
-    
+
     public FlowNodeAction(String flowId, String[] startNodeIds, boolean inherit) {
         this.flowId = flowId;
         this.startNodeIds = startNodeIds;
@@ -51,9 +59,9 @@ public class FlowNodeAction implements NodeAction {
         if (inherit) {
             subContext.setData(context.getData());
         } else {
-            subContext.put(PARENT_CONTEXT, context);
+            subContext.put(FlowConstants.CTX_PARENT_CONTEXT, context);
         }
-        subContext.put(PARENT_NODE_CONTEXT, nodeContext);
+        subContext.put(FlowConstants.CTX_PARENT_NODE_CONTEXT, nodeContext);
         // init result.
         FlowResult result = new FlowResult();
         if (inherit) {
@@ -75,7 +83,6 @@ public class FlowNodeAction implements NodeAction {
         this.flowId = flowId;
     }
 
-
     public String[] getStartNodeIds() {
         return startNodeIds;
     }
@@ -90,6 +97,41 @@ public class FlowNodeAction implements NodeAction {
 
     public void setInherit(boolean inherit) {
         this.inherit = inherit;
+    }
+
+    public void init(InitContext initContext, FlowNode node) {
+        if (flowId == null) {
+            flowId = node.getProperty(DefConstants.COMMON_PROP_FLOW_ID);
+            if (flowId == null) {
+                Map<String, Object> flowDef = (Map<String, Object>) node.getProperty(DefConstants.COMMON_PROP_FLOW);
+                if (flowDef != null) {
+                    FlowParseParam param = new FlowParseParam();
+                    param.setObjectDefinition(flowDef);
+                    param.setParseEl(initContext.isParseEl());
+                    List<Flow> flowList = initContext.getFlowParser().parse(param);
+                    Flow flow = flowList.get(0);
+                    initContext.getFlowList().add(flow);
+                    flowId = flow.getId();
+                }
+            }
+        }
+        if (startNodeIds == null) {
+            Object startNodeId = node.getProperty(DefConstants.NODE_ACTION_PROP_START_NODE_ID);
+            if (startNodeId != null) {
+                if (startNodeId instanceof String) {
+                    startNodeIds = new String[] { (String) startNodeId };
+                } else {
+                    startNodeIds = ((List<String>) startNodeId).toArray(new String[] {});
+                }
+            }
+        }
+
+        if (inherit == null) {
+            inherit = node.getProperty(DefConstants.NODE_ACTION_PROP_INHERIT);
+        }
+        if (inherit == null) {
+            inherit = true;
+        }
     }
 
 }

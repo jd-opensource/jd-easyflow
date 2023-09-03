@@ -1,0 +1,21 @@
+{
+    "id": "loop_test_001",
+    "name": "Loop Test 001",
+    "nodes": [
+        {
+            "id": "node001",
+            "name": "Node001",
+            "start": true,
+            "action": {
+                "createExp": "new com.jd.easyflow.flow.ext.model.action.LoopNodeAction()"
+            },
+            "properties": {
+                "loopMaximumExp":"param.get('loopMaximum')",
+                "loopAction":{
+                    "exp":"T(java.lang.System).out.println(param.get('data').get(nodeContext.get('currentLoopIndex')))"
+                }
+                
+            }
+        }
+    ]
+}
