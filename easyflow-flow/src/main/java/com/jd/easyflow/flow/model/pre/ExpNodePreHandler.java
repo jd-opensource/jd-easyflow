@@ -11,6 +11,7 @@ import com.jd.easyflow.flow.model.post.ExpNodePostHandler;
 
 /**
  * 
+ * IMPORTANT NOTICE! This class should not be singleton!
  * @author liyuliang5
  *
  */
@@ -30,7 +31,7 @@ public class ExpNodePreHandler implements NodePreHandler {
 	@Override
 	public boolean preHandle(NodeContext nodeContext, FlowContext context) {
 		boolean result = ElFactory.get().eval(exp, nodeContext, context, null);
-		if (logger.isInfoEnabled()) {
+		if (context.isLogOn() && logger.isInfoEnabled()) {
 		    logger.info("Exp:" + exp + " result:" + result);
 		}
 		return result;

@@ -1,6 +1,7 @@
 package com.jd.easyflow.flow.bpmn.cases.converter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class BpmnConverterTest {
     public void testConvert() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource resource = resolver.getResource("classpath:flow/cases/converter/process_1.bpmn");
-        Map<String, Object> model = BpmnConverter.convert(resource.getInputStream());
+        List<Map<String, Object>> model = BpmnConverter.convert(resource.getInputStream());
         String flowPrettyConf =  FlowIOUtil.toString(BpmnConverterTest.class.getResourceAsStream("/pretty/pretty-flow.json"));
         String pretty = JsonPrettyHelper.pretty(model, JsonUtil.parseObject(flowPrettyConf, Map.class));
         logger.info("Model is:" + pretty);
@@ -49,8 +50,21 @@ public class BpmnConverterTest {
     public void testConvertSimple() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource resource = resolver.getResource("classpath:flow/cases/converter/process_1_simple.bpmn");
-        Map<String, Object> model = BpmnConverter.convert(resource.getInputStream());
+        List<Map<String, Object>> model = BpmnConverter.convert(resource.getInputStream());
         logger.info("Model is:" + JsonUtil.toJsonString(model));
+    }
+    
+    /**
+     * Converter bpmn with multiple process.
+     * @throws IOException
+     */
+    @Test
+    public void testConvertMultiple() throws IOException {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource resource = resolver.getResource("classpath:flow/cases/converter/flow_multiple_001.bpmn");
+        String modelString = BpmnConverter.convert(FlowIOUtil.toString(resource.getInputStream()));
+        logger.info("Model is:" + modelString);
+        List<Map<String, Object>> model = JsonUtil.parseObject(modelString, List.class);
     }
     
     /**

@@ -69,6 +69,8 @@ public class FlowContextImpl implements FlowContext {
     private volatile boolean interrupted = false;
     
     private Boolean preResult;
+    
+    private Boolean logFlag;
 
     @Override
     public void put(String key, Object value) {
@@ -215,6 +217,18 @@ public class FlowContextImpl implements FlowContext {
 
     public void setPreResult(Boolean preResult) {
         this.preResult = preResult;
+    }
+
+    public Boolean getLogFlag() {
+        return logFlag;
+    }
+
+    public void setLogFlag(Boolean logFlag) {
+        this.logFlag = logFlag;
+    }
+    
+    public boolean isLogOn() {
+        return logFlag == null || this.logFlag.booleanValue();
     }
 
 }

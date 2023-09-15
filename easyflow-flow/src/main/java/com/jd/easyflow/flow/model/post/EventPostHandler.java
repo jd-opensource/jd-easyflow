@@ -32,7 +32,7 @@ public class EventPostHandler implements NodePostHandler {
     @Override
     public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
         String event = nodeContext.get(FlowConstants.NODE_CONTEXT_DATA_EVENT);
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Event:" + event);
         }
         if (event == null) {
@@ -43,7 +43,7 @@ public class EventPostHandler implements NodePostHandler {
                 .getProperty(FlowConstants.PROP_RUNTIME_EVENT_POST_HANDLER_MAP);
         NodePostHandler postHandler = eventPostHandlerMap.get(event);
         if (postHandler == null) {
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("Event post handler is null");
             }
             return null;

@@ -32,7 +32,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
     @Override
     public void runNodes(FlowContextImpl context) {
         String runId = startId++ + "";
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Start running flow node, runId:" + runId);
         }
         CountDownLatch lock = new CountDownLatch(1);
@@ -73,7 +73,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
             counter.addAndGet(1);
             executor.execute(() -> {
                 try {
-                    if (logger.isInfoEnabled()) {
+                    if (context.isLogOn() && logger.isInfoEnabled()) {
                         logger.info("Start execute flow node:" + finalCurrentNode.getNodeId() + ", runId:" + runId);
                     }
                     NodeContext[] nextNodes = runOneNode(finalCurrentNode, context);
@@ -81,7 +81,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                         context.addNodes(nextNodes);
                     }
                     if (context.isInterrupted()) {
-                        if (logger.isInfoEnabled()) {
+                        if (context.isLogOn() && logger.isInfoEnabled()) {
                             logger.info("Flow state is interrupted");
                         }
                         lock.countDown();

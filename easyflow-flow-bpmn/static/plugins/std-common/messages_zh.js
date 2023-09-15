@@ -52,6 +52,7 @@ $.extend(J.msg, {
     "flow.newFlowDef":"新流程定义",
     "flow.oldFlowDef":"旧流程定义",
     "flow.noJsonDataTip":"无JSON流程定义数据",
+    "flow.id":"流程ID",        
     "flow.nodeId":"节点ID",
     "flow.nodeName":"节点名称",
     "flow.flowDefId":"流程定义ID",
@@ -149,7 +150,12 @@ $.extend(J.msg, {
     "bpmn.calledElementTooltip":"子流程ID",
     "bpmn.flow":"流程信息",
     "bpmn.flowTooltip":"流程信息,至少需配置id",
-    "bpmn.calledElement":"调用ID"
+    "bpmn.calledElement":"调用ID",
+    "bpmn.logFlag":"打印日志开关",
+    "bpmn.logFlagTooltip":"打印日志开关，缺省开",
+    "bpmn.default":"缺省",
+    "bpmn.true":"是",
+    "bpmn.false":"否"    
 });
 
 
@@ -183,6 +189,7 @@ $.extend(J.msg, {
         "Connect using Association": "文本关联",
         "Connect using DataInputAssociation": "数据关联",
         "Connect using Sequence/MessageFlow or Association": "连接",
+        "Create DataStoreReference": "创建数据存储(仅用于展示)",
         "Create IntermediateThrowEvent/BoundaryEvent": "创建中间抛出/边界事件",
         "Create Pool/Participant": "创建池/参与者",
         "Create expanded SubProcess": "创建可折叠子流程",
@@ -192,8 +199,12 @@ $.extend(J.msg, {
         "Create Gateway": "创建网关",
         "Create Group": "创建分组",
         "Default Flow": "缺省流转",
+        "Data Store Reference": "数据存储",
+        "Data Object Reference": "数据对象",
         "Divide into three Lanes": "分成三条通道",
         "Divide into two Lanes": "分成两条通道",
+        "Empty Pool": "空池",
+        "Empty Pool (removes content)":"空池(清空内容)",
         "End Event": "结束事件",
         "Error Boundary Event": "错误边界事件",
         "Error End Event": "结束错误事件",

@@ -28,7 +28,7 @@ public class SingleThreadFlowRunner extends BaseFlowRunner {
         // Loop execute.
         while ((currentNode = contextImpl.getNextNode()) != null) {
             if (context.isInterrupted()) {
-                if (logger.isInfoEnabled()) {
+                if (context.isLogOn() && logger.isInfoEnabled()) {
                     logger.info("Flow interrupted!");
                 }
                 break;

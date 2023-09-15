@@ -17,6 +17,9 @@ import javax.xml.stream.XMLStreamReader;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.CallActivity;
+import org.activiti.bpmn.model.ComplexGateway;
+import org.activiti.bpmn.model.DataObject;
+import org.activiti.bpmn.model.DataStoreReference;
 import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.ExclusiveGateway;
 import org.activiti.bpmn.model.ExtensionElement;
@@ -45,6 +48,7 @@ import com.jd.easyflow.flow.bpmn.converter.activity.UserTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.EndEventConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.IntermediateCatchEventConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.StartEventConverter;
+import com.jd.easyflow.flow.bpmn.converter.gateway.ComplexGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.ExclusiveGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.InclusiveGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.ParallelGatewayConverter;
@@ -67,7 +71,7 @@ public class BpmnConverter {
     
     private static String defaultFlowPrettyConfigPath = "/pretty/pretty-flow.json";
     
-    public static String defaultFlowPrettyConfigStr = "{\"endNewLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}";
+    public static String defaultFlowPrettyConfigStr = "{\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]},{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}";
     
     private static Map<String, Object> defaultFlowPrettyConfig;
 
@@ -86,6 +90,7 @@ public class BpmnConverter {
         flowNodeConverterMap.put(ExclusiveGateway.class, new ExclusiveGatewayConverter());
         flowNodeConverterMap.put(InclusiveGateway.class, new InclusiveGatewayConverter());
         flowNodeConverterMap.put(ParallelGateway.class, new ParallelGatewayConverter());
+        flowNodeConverterMap.put(ComplexGateway.class, new ComplexGatewayConverter());
         
         defaultFlowPrettyConfig = JsonUtil.parseObject(defaultFlowPrettyConfigStr, Map.class);
         //Steps: Modify pretty-flow.json，then use JSONUtil to convert to string.
@@ -112,16 +117,16 @@ public class BpmnConverter {
      * @return
      */
     public static String convert(String bpmnXmlData, Map<String, Object> flowPrettyConfig) {
-        Map<String, Object> model;
+        List<Map<String, Object>> model;
         try {
             model = convert(new ByteArrayInputStream(bpmnXmlData.getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
             throw new FlowException(e);
         }
         if (flowPrettyConfig == null) {
-            return JsonUtil.toJsonString(model);
+            return JsonUtil.toJsonString(model.size() == 1 ? model.get(0) : model);
         } else {
-            return JsonPrettyHelper.pretty(model, flowPrettyConfig);
+            return JsonPrettyHelper.pretty(model.size() == 1 ? model.get(0) : model, flowPrettyConfig);
         }
     }
 
@@ -131,7 +136,7 @@ public class BpmnConverter {
      * @param inputStream
      * @return
      */
-    public static Map<String, Object> convert(InputStream inputStream) {
+    public static List<Map<String, Object>> convert(InputStream inputStream) {
         // Get xml data.
         XMLStreamReader reader = null;
         try {
@@ -145,10 +150,14 @@ public class BpmnConverter {
         BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
         BpmnModel bpmnModel = bpmnXmlConverter.convertToBpmnModel(reader);
         // Convert java BPMN model to EasyFlow model.
-        Process process = bpmnModel.getProcesses().get(0);
-        Map<String, Object> flowDef = new HashMap<>();
-        convertProcess(process, bpmnModel, flowDef);
-        return flowDef;
+        List<Map<String, Object>> flowDefList = new ArrayList<>();
+        for (Process process : bpmnModel.getProcesses()) {
+            Map<String, Object> flowDef = new HashMap<String, Object>();
+            convertProcess(process, bpmnModel, flowDef);
+            flowDefList.add(flowDef);
+        }
+        
+        return flowDefList;
     }
 
     /**
@@ -191,6 +200,8 @@ public class BpmnConverter {
                 nodeList.add(node);
                 // Sequence flow
             } else if (flowElement instanceof SequenceFlow) {
+                continue;
+            } else if (flowElement instanceof DataStoreReference || flowElement instanceof DataObject) {
                 continue;
             } else {
                 throw new FlowException(
@@ -269,6 +280,14 @@ public class BpmnConverter {
             List<String> list = JsonUtil.parseObject(elementText, List.class);
             flowDef.put(DefConstants.FLOW_PROP_PARSE_LISTENERS, list);
         }   
+        // logFlag
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.LOG_FLAG)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.LOG_FLAG).get(0);
+            String elementText = element.getElementText();
+            if (StringUtils.isNotEmpty(elementText)) {
+                flowDef.put(DefConstants.FLOW_PROP_LOG_FLAG, Boolean.valueOf(elementText));
+            }
+        }          
     }
 
     private static Map<String, Object> getNodeDef(String nodeId, Map<String, Object> flowDef) {

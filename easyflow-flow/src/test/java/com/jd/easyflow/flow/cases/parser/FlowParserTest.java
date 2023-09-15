@@ -1,6 +1,7 @@
 package com.jd.easyflow.flow.cases.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import com.jd.easyflow.flow.engine.FlowParam;
+import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.parser.FlowParserImpl;
 import com.jd.easyflow.flow.util.FlowIOUtil;
@@ -64,5 +67,19 @@ public class FlowParserTest {
         assertEquals("node001", flow.getNodeList().get(0).getName());
         assertEquals("node001", flow.getStartNodeIds()[0]);
 
+    }
+	
+	@Test
+    public void testMultiple() throws Exception {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/parser/flow_multiple001.json");
+        flowEngine.init();
+        assertTrue(flowEngine.getFlowMap().size() == 2);
+
+        FlowParam param1 = new FlowParam("flow_multiple0011");
+        flowEngine.execute(param1);
+
+        FlowParam param2 = new FlowParam("flow_multiple0012");
+        flowEngine.execute(param2);
     }
 }

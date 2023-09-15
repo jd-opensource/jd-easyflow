@@ -64,6 +64,7 @@ if (!window.J) {
     "flow.newFlowDef":"New Flow Definition",
     "flow.oldFlowDef":"Old Flow Definition",
     "flow.noJsonDataTip":"No JSON flow definition data",
+    "flow.id":"Flow ID",    
     "flow.nodeId":"Node ID",
     "flow.nodeName":"Node Name",
     "flow.flowDefId":"Flow Definition ID",
@@ -161,7 +162,12 @@ if (!window.J) {
     "bpmn.calledElementTooltip":"Sub Flow ID",
     "bpmn.flow":"Flow Info",
     "bpmn.flowTooltip":"Flow info, id is required",
-    "bpmn.calledElement":"Called ID"
+    "bpmn.calledElement":"Called ID",
+    "bpmn.logFlag":"Log flag",
+    "bpmn.logFlagTooltip":"Print log flag, default true",
+    "bpmn.default":"Default",
+    "bpmn.true":"True",
+    "bpmn.false":"False"
     });
     
     J.bpmnIOTranslations = {};

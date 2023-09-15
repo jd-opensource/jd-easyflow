@@ -15,12 +15,15 @@
             this.bpmnControl = new J.BpmnControl({
                 data: {bpmnXmlData: this.data.bpmnXmlData},
                 mode: cfg.mode,
-                openDiagramCallBack: function (processElement) {
+                openDiagramCallBack: function (processElements) {
                     if (_self.$flowContainer.find("[name='format']").val() != 'FLOW-bpmn') {
                         return;
                     }
-                    _self.$flowContainer.find("[name='defId']").val(processElement.businessObject.id);
-                    _self.$flowContainer.find("[name='defName']").val(processElement.businessObject.name);
+                    if (processElements.length==0) {
+                        return;
+                    }
+                    _self.$flowContainer.find("[name='defId']").val(processElements[0].businessObject.id);
+                    _self.$flowContainer.find("[name='defName']").val(processElements[0].businessObject.name);
                 },
                 onBpmnDefinitionChange: function (bo, key, newVal, oldVal) {
                     if (_self.$flowContainer.find("[name='format']").val()!='FLOW-bpmn') {
@@ -96,10 +99,22 @@
                     $dialog.find(".jsonDef").val(_self.data.jsonData);
                     // Render buttons
                     $dialog.find(".j-btn-json-render").click(function () {
-                        _self.data.jsonData = $dialog.find(".jsonDef").val();
+                        var dataStr = $dialog.find(".jsonDef").val();
+                        var data;
+                        try {
+                           data =  JSON.parse(dataStr);
+                        } catch (e) {
+                            $.jMessage({msg:J.msg['jqueryValidate.json']});
+                            return;
+                        }
+                        
+                        _self.data.jsonData = dataStr;
                         _self._renderJsonDataContainer();
-                        _self.$flowContainer.find("[name='defId']").val(JSON.parse(_self.data.jsonData).id);
-                        _self.$flowContainer.find("[name='defName']").val(JSON.parse(_self.data.jsonData).name);
+                        if (data instanceof Array) {
+                            data = data[0];
+                        }
+                        _self.$flowContainer.find("[name='defId']").val(data.id);
+                        _self.$flowContainer.find("[name='defName']").val(data.name);
                         $dialog.modal("hide");
                     });
                     // Compare
@@ -127,16 +142,24 @@
         }
         var def = JSON.parse(jsonData);
         // Node pannel
-        var table = '<table class="table table-striped table-bordered"><thead><tr><th>' + J.msg['flow.nodeId'] + '</th><th>' + J.msg['flow.nodeName'] + '</th></tr></thead>';
+        var table = '<table class="table table-striped table-bordered"><thead><tr><th>' + J.msg['flow.id'] + '</th><th>' + J.msg['flow.nodeId'] + '</th><th>' + J.msg['flow.nodeName'] + '</th></tr></thead>';
         var format = this.$flowContainer.find("[name='format']").val();
         ;
         if (format == 'FSM-easy') {
             for (var i = 0; i < def.states.length; i++) {
-                table += "<tr><td>" + def.states[i].id + "</td><td>" + (def.states[i].name ? def.states[i].name : '') + "</td></tr>";
+                table += "<tr><td>" + def.id + "</td><td>" + def.states[i].id + "</td><td>" + (def.states[i].name ? def.states[i].name : '') + "</td></tr>";
             }
         } else {
+            if (def instanceof Array) {
+             for (var j in def) {
+              for (var i = 0; i < def[j].nodes.length; i++) {
+                table += "<tr><td>" + def[j].id + "</td><td>" + def[j].nodes[i].id + "</td><td>" + (def[j].nodes[i].name ? def[j].nodes[i].name : '') + "</td></tr>";
+              }
+                }
+            } else {
             for (var i = 0; i < def.nodes.length; i++) {
-                table += "<tr><td>" + def.nodes[i].id + "</td><td>" + (def.nodes[i].name ? def.nodes[i].name : '') + "</td></tr>";
+                table += "<tr><td>" + def.id + "</td><td>" + def.nodes[i].id + "</td><td>" + (def.nodes[i].name ? def.nodes[i].name : '') + "</td></tr>";
+            }
             }
         }
         table += "</table>";

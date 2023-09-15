@@ -28,7 +28,7 @@ public class ExpFlowPreHandler implements FlowPreHandler {
     @Override
     public boolean preHandle(FlowContext context) {
         boolean result = ElFactory.get().eval(exp, null, context, null);
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }
         return result;

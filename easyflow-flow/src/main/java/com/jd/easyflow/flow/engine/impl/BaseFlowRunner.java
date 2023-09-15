@@ -66,7 +66,7 @@ public abstract class BaseFlowRunner implements FlowRunner {
      * @return next nodes
      */
     protected NodeContext[] runOneNode(NodeContext currentNode, FlowContextImpl context) {
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("EXECUTE NODE:" + currentNode.getNodeId());
         }
         FlowNode node = context.getFlow().getNode(currentNode.getNodeId());
@@ -87,16 +87,14 @@ public abstract class BaseFlowRunner implements FlowRunner {
             }
         }
         // print nodes info
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             StringBuilder builder = new StringBuilder();
             if (nextNodes != null) {
                 for (NodeContext n : nextNodes) {
                     builder.append(n.getNodeId() + ",");
                 }
             }
-            if (logger.isInfoEnabled()) {
-                logger.info("NEXT NODES:" + (builder.length() == 0 ? "" : builder.substring(0, builder.length() - 1)));
-            }
+            logger.info("NEXT NODES:" + (builder.length() == 0 ? "" : builder.substring(0, builder.length() - 1)));
         }
         // Clear previous node to avoid OOM
         if (Boolean.FALSE.equals(context.getFlow().getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY))) {

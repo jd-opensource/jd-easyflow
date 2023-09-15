@@ -30,6 +30,7 @@ public class DefConstants {
     public static final String FLOW_PROP_NODE_ACTION_FILTERS = "nodeActionFilters";
     public static final String FLOW_PROP_NODE_POST_HANDLER_FILTERS = "nodePostHandlerFilters";
     public static final String FLOW_PROP_RUNNER = "runner";
+    public static final String FLOW_PROP_LOG_FLAG = "logFlag";
     
     // Node property
     

@@ -53,7 +53,7 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
             CountDownLatch lock, String runId) {
         NodeContext[] nextNodes = null;
         try {
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("Start execute flow node:" + node.getNodeId() + ", runId:" + runId);
             }
             nextNodes = super.runOneNode(node, context);
@@ -68,7 +68,7 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
             lock.countDown();
         }
         if (context.isInterrupted()) {
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("Flow state is interrupted");
             }
             lock.countDown();

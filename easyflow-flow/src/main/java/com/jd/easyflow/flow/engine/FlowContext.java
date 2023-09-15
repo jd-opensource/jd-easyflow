@@ -133,5 +133,24 @@ public interface FlowContext {
 	 * @return
 	 */
 	Boolean getPreResult();
+	
+	/**
+	 * Get log flag.
+	 * @return
+	 */
+	Boolean getLogFlag();
+
+	/**
+	 * Set log flag.
+	 * @param logFlag
+	 */
+	void setLogFlag(Boolean logFlag);
+	   
+	/**
+	 * 
+	 * @return
+	 */
+	boolean isLogOn();
+
 
 }

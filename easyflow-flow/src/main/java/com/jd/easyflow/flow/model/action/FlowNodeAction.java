@@ -1,6 +1,5 @@
 package com.jd.easyflow.flow.model.action;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,13 +14,14 @@ import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.definition.DefConstants;
-import com.jd.easyflow.flow.model.parser.param.ActionParseParam;
 import com.jd.easyflow.flow.model.parser.param.FlowParseParam;
 import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
  * 
- * Sub flow NodeAction
+ * Sub flow NodeAction.
+ * 
+ * IMPORTANT NOTICE! This class should not be singleton!
  * 
  * @author liyuliang5
  * @version 1.0
@@ -53,11 +53,14 @@ public class FlowNodeAction implements NodeAction {
         param.setNodeIds(startNodeIds);
         if (inherit) {
             param.setParam(context.getParam().getParam());
+            param.setLogFlag(context.getParam().getLogFlag());
         }
         // init context.
         FlowContext subContext = new FlowContextImpl();
+        
         if (inherit) {
             subContext.setData(context.getData());
+            subContext.setLogFlag(context.getLogFlag());
         } else {
             subContext.put(FlowConstants.CTX_PARENT_CONTEXT, context);
         }

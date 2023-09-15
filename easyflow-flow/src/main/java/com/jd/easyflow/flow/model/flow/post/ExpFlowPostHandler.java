@@ -28,7 +28,7 @@ public class ExpFlowPostHandler implements FlowPostHandler {
     @Override
     public void postHandle(FlowContext context) {
         Object result = ElFactory.get().eval(exp, null, context, null);
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }
     }

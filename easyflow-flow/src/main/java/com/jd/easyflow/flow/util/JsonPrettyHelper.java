@@ -25,7 +25,7 @@ public class JsonPrettyHelper {
     private static final String KEY_TYPE = "keyType";
 
     public static String pretty(String valueStr, String prettyConfStr) {
-        Map<String, Object> value = JsonUtil.parseObject(valueStr, Map.class);
+        Object value = JsonUtil.parseObject(valueStr, Object.class);
         Map<String, Object> prettyConf = JsonUtil.parseObject(prettyConfStr, Map.class);
         StringBuilder builder = new StringBuilder();
         pretty(value, prettyConf, (Map<String, Object>) prettyConf.get("default"), builder, 0);
@@ -97,6 +97,8 @@ public class JsonPrettyHelper {
                 keys = Arrays.asList(confKey);
             } else if ("OTHER".equals(keyType)) {
                 keys = subtract(new ArrayList<String>(value.keySet()), processedKey);
+            } else if (subConf.containsKey("subList")){
+                continue;
             } else {
                 throw new IllegalArgumentException("Config error," + subConf);
             }

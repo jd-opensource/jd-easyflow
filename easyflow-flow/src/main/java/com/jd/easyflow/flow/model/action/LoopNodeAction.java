@@ -1,4 +1,4 @@
-package com.jd.easyflow.flow.ext.model.action;
+package com.jd.easyflow.flow.model.action;
 
 import java.util.Map;
 
@@ -16,48 +16,46 @@ import com.jd.easyflow.flow.model.NodeExecutor;
 import com.jd.easyflow.flow.model.parser.param.ActionParseParam;
 
 /**
- * Loop node action
  * 
+ * IMPORTANT NOTICE! This class should not be singleton!
  * @author liyuliang5
- *
  */
 public class LoopNodeAction implements NodeAction {
 
     private static final Logger logger = LoggerFactory.getLogger(LoopNodeAction.class);
 
     // Condition
-    private boolean testBefore = false;
+    private Boolean testBefore;
     private String loopConditionExp;
-    private NodeExecutor<Boolean> loopConditionExecutor;
+    private NodeExecutor<Boolean> loopConditionExecutor;  
+
+    // MaxCount
+    private Long loopMaxCount;
+    private String loopMaxCountExp;
+    private NodeExecutor<Long> loopMaxCountExecutor;
+
+    // Action
+    protected NodeAction loopAction;
     
     private String loopPreExp;
     private NodeExecutor<Object> loopPreExecutor;
 
     private String loopPostExp;
     private NodeExecutor<Object> loopPostExecutor;
-    
-
-    // Maximum
-    private Long loopMaximum;
-    private String loopMaximumExp;
-    private NodeExecutor<Long> loopMaximumExecutor;
-
-    // Action
-    protected NodeAction loopAction;
 
     @Override
     public <T> T execute(NodeContext nodeContext, FlowContext context) {
         // compute loop maximum
         Long maximum = null;
-        if (loopMaximumExecutor != null) {
-            maximum = loopMaximumExecutor.execute(nodeContext, context);
-        } else if (loopMaximumExp != null) {
-            maximum = ((Number) ElFactory.get().eval(loopMaximumExp, nodeContext, context, null)).longValue();
-        } else if (loopMaximum != null) {
-            maximum = loopMaximum;
+        if (loopMaxCountExecutor != null) {
+            maximum = loopMaxCountExecutor.execute(nodeContext, context);
+        } else if (loopMaxCountExp != null) {
+            maximum = ((Number) ElFactory.get().eval(loopMaxCountExp, nodeContext, context, null)).longValue();
+        } else if (loopMaxCount != null) {
+            maximum = loopMaxCount;
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Loop maximum:" + loopMaximum);
+            logger.debug("Loop maximum:" + loopMaxCount);
         }
 
         if (maximum == null && loopConditionExp == null && loopConditionExecutor == null) {
@@ -116,9 +114,9 @@ public class LoopNodeAction implements NodeAction {
     }
 
     public void init(InitContext initContext, FlowNode node) {
-        Boolean testBeforeConf = node.getProperty("loopTestBefore");
-        if (testBeforeConf != null) {
-            testBefore = testBeforeConf;
+        testBefore = node.getProperty("loopTestBefore");
+        if (testBefore == null) {
+            throw new FlowException("Test before can not be null");
         }
         loopConditionExp = node.getProperty("loopConditionExp");
         Map<String, Object> loopConditionExecutorConf = (Map<String, Object>) node
@@ -151,16 +149,16 @@ public class LoopNodeAction implements NodeAction {
         }  
         
         
-        Object loopMaximumConf = node.getProperty("loopMaximum");
-        if (loopMaximumConf != null) {
-            loopMaximum = ((Number)loopMaximum).longValue();
+        Object loopMaxCountConf = node.getProperty("loopMaxCount");
+        if (loopMaxCountConf != null) {
+            loopMaxCount = ((Number)loopMaxCount).longValue();
         }
-        loopMaximumExp = node.getProperty("loopMaximumExp");
-        Map<String, Object> loopMaximumExecutorConf = (Map<String, Object>) node.getProperty("loopMaximumExecutor");
-        if (loopMaximumExecutorConf != null) {
-            String createExp = (String) loopMaximumExecutorConf.get("createExp");
+        loopMaxCountExp = node.getProperty("loopMaxCountExp");
+        Map<String, Object> loopMaxCountExecutorConf = (Map<String, Object>) node.getProperty("loopMaxCountExecutor");
+        if (loopMaxCountExecutorConf != null) {
+            String createExp = (String) loopMaxCountExecutorConf.get("createExp");
             if (initContext.isParseEl() && createExp != null) {
-                loopMaximumExecutor = ElFactory.get().evalWithDefaultContext(createExp, initContext, false);
+                loopMaxCountExecutor = ElFactory.get().evalWithDefaultContext(createExp, initContext, false);
             }
         }
         Object loopActionConf = node.getProperty("loopAction");
@@ -174,7 +172,7 @@ public class LoopNodeAction implements NodeAction {
             throw new FlowException("Loop node action can not be null");
         }
         loopAction.init(initContext, node);
-        if (loopMaximum == null && loopMaximumExp == null && loopMaximumExecutor == null && loopConditionExp == null && loopConditionExecutor == null) {
+        if (loopMaxCount == null && loopMaxCountExp == null && loopMaxCountExecutor == null && loopConditionExp == null && loopConditionExecutor == null) {
             throw new FlowException("Loop maximum and loop condition can not both be null");
         }
         

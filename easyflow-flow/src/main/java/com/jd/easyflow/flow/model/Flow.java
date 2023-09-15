@@ -68,6 +68,8 @@ public class Flow {
     private List<Filter<Pair<NodeContext, FlowContext>, NodeContext[]>> nodePostHandlerFilters;
 
     private FlowParser flowParser;
+    
+    private Boolean logFlag;
 
     public void init(InitContext initContext) {
         if (preHandler != null) {
@@ -307,7 +309,14 @@ public class Flow {
     public void setPostHandler(FlowPostHandler postHandler) {
         this.postHandler = postHandler;
     }
-    
-    
+
+    public Boolean getLogFlag() {
+        return logFlag;
+    }
+
+    public void setLogFlag(Boolean logFlag) {
+        this.logFlag = logFlag;
+    }
+
 
 }

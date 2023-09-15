@@ -113,6 +113,8 @@
                         }
                     },
                     'create.exclusive-gateway': entries['create.exclusive-gateway'],
+                    "create.data-store": entries['create.data-store'],
+                    "create.participant-expanded": entries['create.participant-expanded'],
                     'create.group': entries['create.group'],
                     "lasso-tool": entries['lasso-tool'],
                 }
@@ -166,17 +168,26 @@
                 } else if (element.type == 'bpmn:ExclusiveGateway') {
                     return {
                         "replace-with-parallel-gateway": entries['replace-with-parallel-gateway'],
-                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"]
+                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"],
+                        "replace-with-complex-gateway": entries["replace-with-complex-gateway"]
                     };
                 } else if (element.type == 'bpmn:ParallelGateway') {
                     return {
                         "replace-with-exclusive-gateway": entries['replace-with-exclusive-gateway'],
-                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"]
+                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"],
+                        "replace-with-complex-gateway": entries["replace-with-complex-gateway"]
                     };
                 } else if (element.type == 'bpmn:InclusiveGateway') {
                     return {
                         "replace-with-exclusive-gateway": entries["replace-with-exclusive-gateway"],
-                        "replace-with-parallel-gateway": entries['replace-with-parallel-gateway']
+                        "replace-with-parallel-gateway": entries['replace-with-parallel-gateway'],
+                        "replace-with-complex-gateway": entries["replace-with-complex-gateway"]
+                    };
+                } else if (element.type == 'bpmn:ComplexGateway') {
+                    return {
+                        "replace-with-exclusive-gateway": entries["replace-with-exclusive-gateway"],                        
+                        "replace-with-parallel-gateway": entries['replace-with-parallel-gateway'],
+                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"],                        
                     };
                 } else if (element.type == 'bpmn:ScriptTask') {
                     return {
@@ -202,7 +213,7 @@
                         "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],                        
                         "replace-with-call-activity": entries['replace-with-call-activity']
                     };
-                } else if (element.type == 'bpmn:SubProcess') {
+                }  else if (element.type == 'bpmn:SubProcess') {
                    var newEntries = {};
                    if (entries['replace-with-transaction']) {newEntries['replace-with-transaction']=entries['replace-with-transaction']};
                    if (entries['replace-with-expanded-subprocess']) {newEntries['replace-with-expanded-subprocess']=entries['replace-with-expanded-subprocess']};
@@ -453,9 +464,9 @@
         canvas.zoom('fit-viewport');
         this._initPropertiesPannel();
         this._commentAll();
-        var processElement = _findProcessElement(bpmnModeler);
+        var processElements = _findProcessElement(bpmnModeler);
         var callback = this.cfg.openDiagramCallBack;
-        callback && callback.call(this, processElement);
+        callback && callback.call(this, processElements);
     }
 
     /**
@@ -477,7 +488,7 @@
         this.bpmnModeler.saveSVG({ format: true }).then(function(obj) {
             var svg = obj.svg;
             var encodedData = encodeURIComponent(svg);
-            var processId = _findProcessElement(_self.bpmnModeler).businessObject.id;
+            var processId = _findProcessElement(_self.bpmnModeler)[0].businessObject.id;
             var fileName = processId + "-" + J.getNowDatetime("", "-", "") + '.svg';
             var downloadLink = document.createElement('a');
             downloadLink.download = fileName;
@@ -537,8 +548,11 @@
     */
     J.BpmnControl.prototype._initPropertiesPannel = function() {
         // Show flow definition pannel
-        var processElement = _findProcessElement(this.bpmnModeler);
-        this._elementPannelRender['bpmn:Process'].call(this, this.$bpmnContainer.find(".infoPannel").find("form"), processElement);
+        var processElements = _findProcessElement(this.bpmnModeler);
+        if (processElements.length != 1) {
+            return;
+        }
+        this._elementPannelRender['bpmn:Process'].call(this, this.$bpmnContainer.find(".infoPannel").find("form"), processElements[0]);
     }
 
     J.BpmnControl.prototype._elementPannelRender = {};
@@ -753,6 +767,36 @@
 
     }
 
+    // Collaboration
+    J.BpmnControl.prototype._elementPannelRender["bpmn:Collaboration"] = function($infoPannel, element) {
+        var participants = element.businessObject.participants;
+        if (participants && participants.length == 1) {
+          var processBusinessObject= participants[0].processRef;
+          if (! processBusinessObject) {
+              return;
+          }
+          var processElement = {};
+          processElement.businessObject = processBusinessObject;
+          this._elementPannelRender["bpmn:Process"].call(this, $infoPannel, processElement);
+        }
+    }
+    
+    // Participant
+    J.BpmnControl.prototype._elementPannelRender["bpmn:Participant"] = function($infoPannel, element) {
+        var processBusinessObject = element.businessObject.processRef;
+        if (! processBusinessObject) {
+            return;
+        }
+        var processElement = {};
+        processElement.businessObject = processBusinessObject;
+        this._elementPannelRender["bpmn:Process"].call(this, $infoPannel, processElement);
+    }
+
+    // Lane
+    J.BpmnControl.prototype._elementPannelRender["bpmn:Lane"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Participant"].call(this, $infoPannel, element.parent);
+    }    
+
     // Flow
     J.BpmnControl.prototype._elementPannelRender["bpmn:Process"] = function($infoPannel, element) {
         var _self = this;
@@ -899,7 +943,25 @@
         $parseListeners.blur(function() {
             var newParseListeners = $parseListeners.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:ParseListeners", newParseListeners);
-        });                
+        });  
+        // Log flag
+        var logFlag = getExtensionBody(bo, "easyflow:LogFlag");
+        var logFlagHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.logFlag'] + ':</label> ' +
+               '<select class="form-control j-bpmn-logflag">' +
+               '<option value="">' + J.msg['bpmn.default'] + '</option>' +
+               '<option value="true">' + J.msg['bpmn.true'] + '</option>' +
+               '<option value="false">' + J.msg['bpmn.false'] + '</option>' +
+            '</select>' +
+            '</div>';
+        var $logFlagElement = $(logFlagHtml).appendTo($infoPannel);
+        $logFlagElement.tooltip({ title: J.msg['bpmn.logFlagTooltip'] });
+        var $logFlag = $logFlagElement.find(".j-bpmn-logflag");
+        $logFlag.val(logFlag);
+        $logFlag.blur(function() {
+            var newLogFlag = $logFlag.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:LogFlag", newLogFlag);
+        });              
     }
     // Script task
     J.BpmnControl.prototype._elementPannelRender["bpmn:ScriptTask"] = function($infoPannel, element) {
@@ -1083,6 +1145,13 @@
         this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
+    // Complex gateway
+    J.BpmnControl.prototype._elementPannelRender["bpmn:ComplexGateway"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }    
     // Sequence flow
     J.BpmnControl.prototype._elementPannelRender["bpmn:SequenceFlow"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
@@ -1162,6 +1231,12 @@
             if (!commentType.includes("node")) {
                 return;
             }
+        }
+        
+        var elementRegistry = this.bpmnModeler.get('elementRegistry');
+        var element = elementRegistry.get(element.id);
+        if (! element) {
+            return;
         }
         
         var commentId = "comment_" + $.jSequence.next();
@@ -1325,15 +1400,16 @@
         + '</bpmndi:BPMNShape>' + '</bpmndi:BPMNPlane>'
         + '</bpmndi:BPMNDiagram>' + '</bpmn:definitions>';
 
-    /**
+/**
 * Find BPMN Element
 */
     function _findProcessElement(bpmnModeler) {
         var elementRegistry = bpmnModeler.get('elementRegistry');
-        return elementRegistry.find(function(element) {
+        return elementRegistry.filter(function(element) {
             return element.type == 'bpmn:Process';
         });
     }
+    
 
     /**
      * Read extension field
@@ -1574,7 +1650,18 @@
                         "type": "String"
                     }
                 ]
-            }            
+            },
+            {
+                "name": "LogFlag",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            }                    
         ]
     };
 

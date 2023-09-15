@@ -1,6 +1,7 @@
 package com.jd.easyflow.flow.bpmn.cases.extension;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -49,7 +50,7 @@ public class BpmnExtensionTest {
     public void testConvert() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource resource = resolver.getResource("classpath:flow/cases/extension/process_1.bpmn");
-        Map<String, Object> model = BpmnConverter.convert(resource.getInputStream());
+        List<Map<String, Object>> model = BpmnConverter.convert(resource.getInputStream());
         logger.info("Model is:" + JsonUtil.toJsonString(model));
     }
 }

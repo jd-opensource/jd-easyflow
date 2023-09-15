@@ -101,11 +101,11 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
         }
 
         try {
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("function input:" + inputMap);
             }
             Map<String, Object> outputMap = (Map<String, Object>) method.invoke(instance, inputMap);
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("function output:" + outputMap);
             }
 
@@ -133,7 +133,7 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
                     }
                 }
             }
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("function result:" + resultMap);
             }
             Map<String, Object> info = new HashMap<>();

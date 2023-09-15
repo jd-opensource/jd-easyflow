@@ -1,0 +1,14 @@
+[
+{
+    "id": "flow_multiple0011","name": "0011",
+    "nodes": [
+        {"id": "START_NODE1", "start":true}
+    ]
+},
+{
+    "id": "flow_multiple0012","name": "0012",
+    "nodes": [{"id": "START_NODE2", "start":true}
+    ]
+}    
+    
+]

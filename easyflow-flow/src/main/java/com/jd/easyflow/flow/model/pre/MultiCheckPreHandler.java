@@ -14,6 +14,7 @@ import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
  * 
+ * IMPORTANT NOTICE! This class should not be singleton!
  * @author liyuliang5
  *
  */

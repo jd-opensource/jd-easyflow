@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.jd.easyflow.flow.cases.action.ActionTest;
+import com.jd.easyflow.flow.cases.action.LoopNodeActionTest;
 import com.jd.easyflow.flow.cases.event.EventFlowTest;
 import com.jd.easyflow.flow.cases.flowengine.FlowEngineImplTest;
 import com.jd.easyflow.flow.cases.mockbiz.MockLoanTest;
@@ -39,7 +41,9 @@ import com.jd.easyflow.flow.quickstart.QuickStartTest;
     SubFlowTest.class,
     ParallelTest.class,
     PreHandlerTest.class,
-    FlowDefPrettyHelperTest.class
+    FlowDefPrettyHelperTest.class,
+    LoopNodeActionTest.class,
+    ActionTest.class
 })
 public class FlowTestSuite {
 

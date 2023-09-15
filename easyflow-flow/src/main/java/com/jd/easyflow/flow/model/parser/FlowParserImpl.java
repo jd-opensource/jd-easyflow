@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +56,11 @@ public class FlowParserImpl implements FlowParser {
     private static final Logger logger = LoggerFactory.getLogger(FlowParser.class);
 
     private static final String FLOW_STRING_KEY = "_flow_string";
+    
+    private static final String PARENT_FLOW_ID_KEY = "_parent_flow_id";
+    
+    private static final String MAIN_FLOW_ID_KEY = "_main_flow_id";
+
 
     @Override
     public List<Flow> parse(String data) {
@@ -77,25 +81,54 @@ public class FlowParserImpl implements FlowParser {
     public List<Flow> parse(Map<String, Object> map, boolean parseEl) {
         return parse(new FlowParseParam(map, parseEl));
     }
-
+    
     @Override
     public List<Flow> parse(FlowParseParam param) {
         String stringDef = param.getStringDefinition();
-        Map<String, Object> mapDef = (Map<String, Object>) param.getObjectDefinition();
-        if (mapDef == null) {
-            if (StringUtils.isEmpty(stringDef)) {
-                throw new FlowException("definition is empty");
-            }
-            mapDef = JsonUtil.parseObject(stringDef, Map.class);
+        Object defObj = param.getObjectDefinition();
+
+        if (stringDef == null && defObj == null) {
+            throw new FlowException("definition is empty");
+        }
+               
+        Object stringDefObj = stringDef == null ? null : JsonUtil.parseObject(stringDef, Object.class);;
+        
+        if (defObj == null) {
+            defObj = stringDefObj;
         }
         if (stringDef == null) {
-            stringDef = JsonUtil.toJsonString(mapDef);
+            stringDef = JsonUtil.toJsonString(defObj);
         }
+        
+        List<Flow> allFlowList = null;
+        
+        if (defObj instanceof Map) {
+            allFlowList = parseMapDef((Map<String, Object>) defObj, param.isParseEl());
+        } else {
+            allFlowList = new ArrayList<Flow>();
+            for (int i = 0; i < ((List) defObj).size(); i++) {
+                Map<String, Object> defMap = ((List<Map<String, Object>>) defObj).get(i);
+                List<Flow> flowList = parseMapDef(defMap, param.isParseEl());
+                allFlowList.addAll(flowList);
+                for (int j = 1; j < flowList.size(); j++) {
+                    flowList.get(j).setProperty(PARENT_FLOW_ID_KEY, flowList.get(0).getId());
+                }
+                if (i > 0) {
+                    flowList.get(0).setProperty(FLOW_STRING_KEY, JsonUtil.toJsonString(defMap));
+                    flowList.get(0).setProperty(MAIN_FLOW_ID_KEY, allFlowList.get(0).getId());
+                }
+            }
+        }
+        allFlowList.get(0).setProperty(FLOW_STRING_KEY, stringDef);
+        return allFlowList;
+    }
+    
+    private List<Flow> parseMapDef(Map<String, Object> mapDef, boolean parseEl) {
         List<Flow> flowList = new ArrayList<Flow>();
-        parse(mapDef, flowList, param.isParseEl());
-        flowList.get(0).setProperty(FLOW_STRING_KEY, stringDef);
+        parse(mapDef, flowList, parseEl);
         return flowList;
     }
+
 
     private Flow parse(Map<String, Object> map, List<Flow> flowList, boolean parseEl) {        
         Flow flow = new Flow();
@@ -107,6 +140,7 @@ public class FlowParserImpl implements FlowParser {
         
         flow.setId((String) map.get(DefConstants.COMMON_PROP_ID));
         flow.setName((String) map.get(DefConstants.COMMON_PROP_NAME));
+        flow.setLogFlag((Boolean) map.get(DefConstants.FLOW_PROP_LOG_FLAG));
         // Parse property
         Map<String, Object> properties = (Map<String, Object>) map.get(DefConstants.COMMON_PROP_PROPERTIES);
         flow.putProperties(properties);
@@ -529,6 +563,7 @@ public class FlowParserImpl implements FlowParser {
             if (action.containsKey(DefConstants.COMMON_PROP_FLOW)) {
                 Flow flow = parse((Map<String, Object>) action.get(DefConstants.COMMON_PROP_FLOW), param.getFlowList(),
                         param.isParseEl());
+                flow.setProperty(FLOW_STRING_KEY, JsonUtil.toJsonString(action.get(DefConstants.COMMON_PROP_FLOW)));
                 nodeAction.setFlowId(flow.getId());
             } else if (action.containsKey(DefConstants.COMMON_PROP_FLOW_ID)) {
                 nodeAction.setFlowId((String) action.get(DefConstants.COMMON_PROP_FLOW_ID));

@@ -55,7 +55,7 @@ public class FlowParam {
     private Object param;
 
     /**
-     * Flow context.
+     * flow context.
      */
     @JsonIgnore
     private FlowContext context;
@@ -63,7 +63,12 @@ public class FlowParam {
      * common param data.
      */
     private Map<String, Object> dataMap;
-
+    
+    /**
+     * log flag
+     */
+    private Boolean logFlag;
+    
     public String getFlowId() {
         return flowId;
     }
@@ -184,4 +189,12 @@ public class FlowParam {
         }
     }
 
+    public Boolean getLogFlag() {
+        return logFlag;
+    }
+
+    public void setLogFlag(Boolean logFlag) {
+        this.logFlag = logFlag;
+    }
+    
 }

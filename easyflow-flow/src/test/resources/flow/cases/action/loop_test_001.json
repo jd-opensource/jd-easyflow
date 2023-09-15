@@ -7,10 +7,11 @@
             "name": "Node001",
             "start": true,
             "action": {
-                "createExp": "new com.jd.easyflow.flow.ext.model.action.LoopNodeAction()"
+                "createExp": "new com.jd.easyflow.flow.model.action.LoopNodeAction()"
             },
             "properties": {
-                "loopMaximumExp":"param.get('loopMaximum')",
+                "loopTestBefore":false,
+                "loopMaxCountExp":"param.get('loopMaxCount')",
                 "loopAction":{
                     "exp":"T(java.lang.System).out.println(param.get('data').get(nodeContext.get('currentLoopIndex')))"
                 }

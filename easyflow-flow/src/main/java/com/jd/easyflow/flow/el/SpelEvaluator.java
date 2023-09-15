@@ -27,7 +27,7 @@ public class SpelEvaluator implements ElEvaluator {
     
     @Override
     public <T>T eval(String exp, NodeContext nodeContext, FlowContext flowContext, Map<String, Object> data) {
-        if (logger.isInfoEnabled()) {
+        if (flowContext.isLogOn() && logger.isInfoEnabled()) {
             logger.info("EVAL SPEL:" + exp);
         }
         Map<String, Object> root = new HashMap<>();
@@ -53,7 +53,7 @@ public class SpelEvaluator implements ElEvaluator {
             root.putAll(data);
         }
         Object result = SpelHelper.evalWithDefaultContext(exp, root, true);
-        if (logger.isInfoEnabled()) {
+        if (flowContext.isLogOn() && logger.isInfoEnabled()) {
             logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
         }
         return (T) result;

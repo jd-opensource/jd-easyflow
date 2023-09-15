@@ -36,7 +36,7 @@ public class EventFlowListener implements FlowEventListener {
             String eventId = event.getContext().getParam().get(FlowConstants.PARAM_DATA_EVENT);
             if (StringUtils.isNotEmpty(eventId)) {
                 List<NodeContext> startNodes = event.getContext().getStartNodes();
-                if (logger.isInfoEnabled()) {
+                if (event.getContext().isLogOn() && logger.isInfoEnabled()) {
                     logger.info("EVENT ID:" + eventId);
                 }
                 if (startNodes != null && ! startNodes.isEmpty()) {

@@ -22,6 +22,7 @@ public class BpmnXmlConstants {
     public static final String ACTION = "action";
     public static final String POST = "post";
     public static final String FLOW = "flow";
+    public static final String LOG_FLAG = "logFlag";
 
     
 }

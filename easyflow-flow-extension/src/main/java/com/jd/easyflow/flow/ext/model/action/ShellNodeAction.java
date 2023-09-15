@@ -36,7 +36,7 @@ public class ShellNodeAction implements NodeAction {
             command = shellCommand;
         }
         // execute shell
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Shell command is:" + command);
         }
         

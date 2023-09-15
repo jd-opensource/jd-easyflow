@@ -35,7 +35,7 @@ public class EventNodeAction implements NodeAction {
     @Override
     public Object execute(NodeContext nodeContext, FlowContext context) {
         String event = nodeContext.get(FlowConstants.NODE_CONTEXT_DATA_EVENT);
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Event is:" + event);
         }
         if (event == null) {
@@ -54,7 +54,7 @@ public class EventNodeAction implements NodeAction {
         }
         NodeAction nodeAction = eventActionMap.get(event);
         if (nodeAction == null) {
-            if (logger.isInfoEnabled()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("Event node action is null");
             }
             return null;
