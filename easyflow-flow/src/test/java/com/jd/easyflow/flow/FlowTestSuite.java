@@ -8,6 +8,8 @@ import com.jd.easyflow.flow.cases.action.ActionTest;
 import com.jd.easyflow.flow.cases.action.LoopNodeActionTest;
 import com.jd.easyflow.flow.cases.event.EventFlowTest;
 import com.jd.easyflow.flow.cases.flowengine.FlowEngineImplTest;
+import com.jd.easyflow.flow.cases.inclusive.InclusiveTest;
+import com.jd.easyflow.flow.cases.listener.InterruptFlowListenerTest;
 import com.jd.easyflow.flow.cases.mockbiz.MockLoanTest;
 import com.jd.easyflow.flow.cases.parallel.ParallelTest;
 import com.jd.easyflow.flow.cases.parser.FlowParserTest;
@@ -43,7 +45,10 @@ import com.jd.easyflow.flow.quickstart.QuickStartTest;
     PreHandlerTest.class,
     FlowDefPrettyHelperTest.class,
     LoopNodeActionTest.class,
-    ActionTest.class
+    ActionTest.class,
+    LoopNodeActionTest.class,
+    InclusiveTest.class,
+    InterruptFlowListenerTest.class
 })
 public class FlowTestSuite {
 

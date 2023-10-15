@@ -29,7 +29,7 @@ public class BpmnConverterTest {
     private static final Logger logger = LoggerFactory.getLogger(BpmnConverterTest.class);
 
     /**
-     * 验证转换过程
+     * test convert.
      * @throws IOException
      */
     @Test

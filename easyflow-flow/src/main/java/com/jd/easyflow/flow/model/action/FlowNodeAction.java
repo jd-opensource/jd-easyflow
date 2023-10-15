@@ -75,6 +75,11 @@ public class FlowNodeAction implements NodeAction {
         subContext.setResult(result);
 
         FlowResult subResult = engine.execute(param);
+        if (inherit) {
+            if (subResult != null && subResult.getContext() != null && subResult.getContext().isInterrupted()) {
+                context.setInterrupted();
+            }
+        }
         return (T) subResult;
     }
 

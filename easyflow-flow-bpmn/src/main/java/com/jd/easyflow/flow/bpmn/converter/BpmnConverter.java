@@ -15,40 +15,59 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.model.AdhocSubProcess;
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.BusinessRuleTask;
 import org.activiti.bpmn.model.CallActivity;
 import org.activiti.bpmn.model.ComplexGateway;
 import org.activiti.bpmn.model.DataObject;
 import org.activiti.bpmn.model.DataStoreReference;
 import org.activiti.bpmn.model.EndEvent;
+import org.activiti.bpmn.model.EventGateway;
+import org.activiti.bpmn.model.EventSubProcess;
 import org.activiti.bpmn.model.ExclusiveGateway;
 import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.InclusiveGateway;
 import org.activiti.bpmn.model.IntermediateCatchEvent;
+import org.activiti.bpmn.model.ManualTask;
 import org.activiti.bpmn.model.ParallelGateway;
 import org.activiti.bpmn.model.Process;
 import org.activiti.bpmn.model.ReceiveTask;
 import org.activiti.bpmn.model.ScriptTask;
+import org.activiti.bpmn.model.SendTask;
 import org.activiti.bpmn.model.SequenceFlow;
+import org.activiti.bpmn.model.ServiceTask;
 import org.activiti.bpmn.model.StartEvent;
 import org.activiti.bpmn.model.SubProcess;
+import org.activiti.bpmn.model.Task;
+import org.activiti.bpmn.model.ThrowEvent;
+import org.activiti.bpmn.model.Transaction;
 import org.activiti.bpmn.model.UserTask;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jd.easyflow.flow.bpmn.converter.activity.AdhocSubProcessConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.BusinessRuleTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.CallActivityConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.EventSubProcessConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.ManualTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.ReceiveTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.ScriptTaskConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.SendTaskConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.ServiceTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.SubProcessConverter;
+import com.jd.easyflow.flow.bpmn.converter.activity.TaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.TransactionConverter;
 import com.jd.easyflow.flow.bpmn.converter.activity.UserTaskConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.EndEventConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.IntermediateCatchEventConverter;
 import com.jd.easyflow.flow.bpmn.converter.event.StartEventConverter;
+import com.jd.easyflow.flow.bpmn.converter.event.ThrowEventConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.ComplexGatewayConverter;
+import com.jd.easyflow.flow.bpmn.converter.gateway.EventGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.ExclusiveGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.InclusiveGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.ParallelGatewayConverter;
@@ -71,13 +90,14 @@ public class BpmnConverter {
     
     private static String defaultFlowPrettyConfigPath = "/pretty/pretty-flow.json";
     
-    public static String defaultFlowPrettyConfigStr = "{\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]},{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}";
+    public static String defaultFlowPrettyConfigStr = "{\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"key\":\"default\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]},{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\",\"subList\":[{\"key\":\"flow\",\"subList\":[{\"key\":\"id\"},{\"key\":\"name\",\"newLine\":true},{\"key\":\"pre\",\"newLine\":true},{\"key\":\"nodes\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true,\"subList\":[{\"key\":\"id\"},{\"key\":\"name\"},{\"key\":\"start\"},{\"key\":\"pre\"},{\"key\":\"action\"},{\"key\":\"post\"},{\"key\":\"properties\"}]}]},{\"key\":\"post\",\"newLine\":true}]}]},{\"key\":\"post\",\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"},{\"key\":\"conditions\",\"subList\":[{\"subList\":[{\"key\":\"when\"},{\"key\":\"to\"}]}]},{\"key\":\"defaultTo\"}]},{\"key\":\"properties\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}]},{\"key\":\"post\",\"newLine\":true},{\"key\":\"listeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"filters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePreHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodeActionFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"nodePostHandlerFilters\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"key\":\"properties\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"keyType\":\"OTHER\",\"newLine\":true}],\"default\":{\"newLine\":true,\"endNewLine\":true}},{\"key\":\"parseListeners\",\"newLine\":true,\"endNewLine\":true,\"subList\":[{\"newLine\":true}]},{\"keyType\":\"OTHER\",\"default\":{\"newLine\":true,\"endNewLine\":true}}]}";
     
     private static Map<String, Object> defaultFlowPrettyConfig;
 
     static {
         flowNodeConverterMap.put(StartEvent.class, new StartEventConverter());
         flowNodeConverterMap.put(IntermediateCatchEvent.class, new IntermediateCatchEventConverter());
+        flowNodeConverterMap.put(ThrowEvent.class, new ThrowEventConverter());
         flowNodeConverterMap.put(EndEvent.class, new EndEventConverter());
 
         flowNodeConverterMap.put(ScriptTask.class, new ScriptTaskConverter());
@@ -85,12 +105,20 @@ public class BpmnConverter {
         flowNodeConverterMap.put(ReceiveTask.class, new ReceiveTaskConverter());
         flowNodeConverterMap.put(SubProcess.class, new SubProcessConverter());
         flowNodeConverterMap.put(CallActivity.class, new CallActivityConverter());
-        flowNodeConverterMap.put(TransactionConverter.class, new TransactionConverter());
+        flowNodeConverterMap.put(Transaction.class, new TransactionConverter());
+        flowNodeConverterMap.put(AdhocSubProcess.class, new AdhocSubProcessConverter());
+        flowNodeConverterMap.put(EventSubProcess.class, new EventSubProcessConverter());
+        flowNodeConverterMap.put(BusinessRuleTask.class, new BusinessRuleTaskConverter());
+        flowNodeConverterMap.put(ManualTask.class, new ManualTaskConverter());
+        flowNodeConverterMap.put(SendTask.class, new SendTaskConverter());
+        flowNodeConverterMap.put(ServiceTask.class, new ServiceTaskConverter());
+        flowNodeConverterMap.put(Task.class, new TaskConverter());
 
         flowNodeConverterMap.put(ExclusiveGateway.class, new ExclusiveGatewayConverter());
         flowNodeConverterMap.put(InclusiveGateway.class, new InclusiveGatewayConverter());
         flowNodeConverterMap.put(ParallelGateway.class, new ParallelGatewayConverter());
         flowNodeConverterMap.put(ComplexGateway.class, new ComplexGatewayConverter());
+        flowNodeConverterMap.put(EventGateway.class, new EventGatewayConverter());
         
         defaultFlowPrettyConfig = JsonUtil.parseObject(defaultFlowPrettyConfigStr, Map.class);
         //Steps: Modify pretty-flow.json，then use JSONUtil to convert to string.

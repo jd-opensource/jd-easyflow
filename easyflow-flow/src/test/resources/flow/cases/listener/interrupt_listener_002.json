@@ -4,10 +4,9 @@
         {"id": "node001","name": "Node001","start": true,
             "post": {"to": ["node002", "node003"]}},   
         {"id": "node002", "name": "Node002"}, 
-        {"id": "node003", "name": "Node003"}
+        {"id": "node003", "name": "Node003", "properties":{"interrupt":true}}
         ],
     "listeners":[
         {"createExp":"new com.jd.easyflow.flow.engine.event.impl.InterruptFlowListener()"}
-    ],
-    "properties":{"interrupt":true}
+    ]
 }

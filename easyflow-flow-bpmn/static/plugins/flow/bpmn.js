@@ -154,85 +154,6 @@
 
         this.getPopupMenuEntries = function(element) {
             return function(entries) {
-                if (element.type == 'bpmn:StartEvent') {
-                    return { "replace-with-none-end": entries['replace-with-none-end'] }
-                } else if (element.type == 'bpmn:EndEvent') {
-                    var newEntries = {};
-                    if (entries['replace-with-terminate-end']) {newEntries['replace-with-terminate-end']=entries['replace-with-terminate-end']};
-                    if (entries['replace-with-error-end']) {newEntries['replace-with-error-end']=entries['replace-with-error-end']};
-                    if (entries['replace-with-none-end']) {newEntries['replace-with-none-end']=entries['replace-with-none-end']};
-                    if (entries['replace-with-none-start']) {newEntries['replace-with-none-start']=entries['replace-with-none-start']};
-                    return newEntries;
-                } else if (element.type == 'bpmn:IntermediateCatchEvent') {
-                    return {};
-                } else if (element.type == 'bpmn:ExclusiveGateway') {
-                    return {
-                        "replace-with-parallel-gateway": entries['replace-with-parallel-gateway'],
-                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"],
-                        "replace-with-complex-gateway": entries["replace-with-complex-gateway"]
-                    };
-                } else if (element.type == 'bpmn:ParallelGateway') {
-                    return {
-                        "replace-with-exclusive-gateway": entries['replace-with-exclusive-gateway'],
-                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"],
-                        "replace-with-complex-gateway": entries["replace-with-complex-gateway"]
-                    };
-                } else if (element.type == 'bpmn:InclusiveGateway') {
-                    return {
-                        "replace-with-exclusive-gateway": entries["replace-with-exclusive-gateway"],
-                        "replace-with-parallel-gateway": entries['replace-with-parallel-gateway'],
-                        "replace-with-complex-gateway": entries["replace-with-complex-gateway"]
-                    };
-                } else if (element.type == 'bpmn:ComplexGateway') {
-                    return {
-                        "replace-with-exclusive-gateway": entries["replace-with-exclusive-gateway"],                        
-                        "replace-with-parallel-gateway": entries['replace-with-parallel-gateway'],
-                        "replace-with-inclusive-gateway": entries["replace-with-inclusive-gateway"],                        
-                    };
-                } else if (element.type == 'bpmn:ScriptTask') {
-                    return {
-                        "replace-with-receive-task": entries["replace-with-receive-task"],
-                        "replace-with-user-task": entries['replace-with-user-task'],
-                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
-                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],
-                        "replace-with-call-activity": entries['replace-with-call-activity']
-                    };
-                } else if (element.type == 'bpmn:UserTask') {
-                    return {
-                        "replace-with-receive-task": entries["replace-with-receive-task"],
-                        "replace-with-script-task": entries['replace-with-script-task'],
-                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
-                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],
-                        "replace-with-call-activity": entries['replace-with-call-activity']
-                    };
-                } else if (element.type == 'bpmn:ReceiveTask') {
-                    return {
-                        "replace-with-user-task": entries["replace-with-user-task"],
-                        "replace-with-script-task": entries['replace-with-script-task'],
-                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
-                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess'],                        
-                        "replace-with-call-activity": entries['replace-with-call-activity']
-                    };
-                }  else if (element.type == 'bpmn:SubProcess') {
-                   var newEntries = {};
-                   if (entries['replace-with-transaction']) {newEntries['replace-with-transaction']=entries['replace-with-transaction']};
-                   if (entries['replace-with-expanded-subprocess']) {newEntries['replace-with-expanded-subprocess']=entries['replace-with-expanded-subprocess']};
-                   if (entries['replace-with-collapsed-subprocess']) {newEntries['replace-with-collapsed-subprocess']=entries['replace-with-collapsed-subprocess']};
-                   return newEntries;
-                } else if (element.type == 'bpmn:Transaction') {
-                   var newEntries = {};
-                   if (entries['replace-with-subprocess']) {newEntries['replace-with-subprocess']=entries['replace-with-subprocess']};
-                   return newEntries;
-                } else if (element.type == 'bpmn:CallActivity') {
-                    return {
-                        "replace-with-script-task": entries['replace-with-script-task'],
-                        "replace-with-receive-task": entries["replace-with-receive-task"],
-                        "replace-with-user-task": entries["replace-with-user-task"],
-                        "replace-with-expanded-subprocess": entries['replace-with-expanded-subprocess'],
-                        "replace-with-collapsed-subprocess": entries['replace-with-collapsed-subprocess']
-                    };
-                }
-                
                 return entries;
             }
         }
@@ -1028,6 +949,51 @@
         this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
+    // Task
+    J.BpmnControl.prototype._elementPannelRender["bpmn:Task"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }      
+    // Send task
+    J.BpmnControl.prototype._elementPannelRender["bpmn:SendTask"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }    
+    // Manual Task
+    J.BpmnControl.prototype._elementPannelRender["bpmn:ManualTask"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }   
+    // BusinessRuleTask Task
+    J.BpmnControl.prototype._elementPannelRender["bpmn:BusinessRuleTask"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }   
+    // Service Task
+    J.BpmnControl.prototype._elementPannelRender["bpmn:ServiceTask"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }             
     // Call activity
     J.BpmnControl.prototype._elementPannelRender["bpmn:CallActivity"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
@@ -1124,6 +1090,14 @@
         this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
     }
+    // Throw event
+    J.BpmnControl.prototype._elementPannelRender["bpmn:IntermediateThrowEvent"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }    
     // Exclusive gateway
     J.BpmnControl.prototype._elementPannelRender["bpmn:ExclusiveGateway"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
@@ -1151,7 +1125,14 @@
         this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
         this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
-    }    
+    }  
+    // Event based gateway
+    J.BpmnControl.prototype._elementPannelRender["bpmn:EventBasedGateway"] = function($infoPannel, element) {
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    }       
     // Sequence flow
     J.BpmnControl.prototype._elementPannelRender["bpmn:SequenceFlow"] = function($infoPannel, element) {
         this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
@@ -1185,9 +1166,10 @@
         var commentType = this.$bpmnContainer.find(".j-bpmn-comment-select").val();
         var _self = this;
         var elementRegistry = this.bpmnModeler.get('elementRegistry');
-        var commentTypes = ["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent",
-            "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway",
+        var commentTypes = ["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent","bpmn:IntermediateThrowEvent",
+            "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway", "bpmn:ComplexGateway",, "bpmn:EventBasedGateway",
             "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:UserTask","bpmn:CallActivity","bpmn:SubProcess","bpmn:Transaction",
+            "bpmn:Task","bpmn:SendTask","bpmn:ManualTask","bpmn:BusinessRuleTask","bpmn:ServiceTask",
             "bpmn:SequenceFlow"];
         var commentElements = elementRegistry.filter(function(e) {
             return commentTypes.indexOf(e.type) >= 0;
@@ -1201,9 +1183,10 @@
      * Comment
      */
     J.BpmnControl.prototype._comment = function(element, commentType) {
-        var commentTypes = ["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent",
-            "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway",
+        var commentTypes = ["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent","bpmn:IntermediateThrowEvent",
+            "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway", "bpmn:ComplexGateway",, "bpmn:EventBasedGateway",
             "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:CallActivity","bpmn:SubProcess","bpmn:Transaction",
+           "bpmn:Task", "bpmn:SendTask","bpmn:ManualTask","bpmn:BusinessRuleTask","bpmn:ServiceTask",
             "bpmn:SequenceFlow"];
             if (! commentTypes.includes(element.type)) {
                 return;
@@ -1224,9 +1207,10 @@
                 return;
             }
         }
-        if (["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent",
-            "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway",
-            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:CallActivity",
+        if (["bpmn:StartEvent", "bpmn:EndEvent", "bpmn:IntermediateCatchEvent","bpmn:IntermediateThrowEvent",
+            "bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ParallelGateway", "bpmn:ComplexGateway",, "bpmn:EventBasedGateway",
+            "bpmn:ScriptTask", "bpmn:ReceiveTask", "bpmn:UserTask","bpmn:CallActivity","bpmn:SubProcess","bpmn:Transaction",
+            "bpmn:Task","bpmn:SendTask","bpmn:ManualTask","bpmn:BusinessRuleTask","bpmn:ServiceTask",
             "bpmn:SubProcess","bpmn:Transaction"].includes(element.type)) {
             if (!commentType.includes("node")) {
                 return;
@@ -1269,6 +1253,21 @@
                 html += '<dt>' + J.msg['bpmn.startNode'] + ':</dt><dd>' + J.msg['bpmn.startNode.true'] + '</dd>';
             }            
         }
+        
+        var nodePre = getExtensionBody(bo, "easyflow:Pre");
+        if (nodePre) {
+            html += '<dt>' + J.msg['bpmn.selfPre'] + ':</dt><dd>' + nodePre + '</dd>';
+        }
+         var nodeAction = getExtensionBody(bo, "easyflow:Action");
+        if (nodeAction) {
+            html += '<dt>' + J.msg['bpmn.selfAction'] + ':</dt><dd>' + nodeAction + '</dd>';
+        }    
+         var nodePost = getExtensionBody(bo, "easyflow:Post");
+        if (nodePost) {
+            html += '<dt>' + J.msg['bpmn.selfPost'] + ':</dt><dd>' + nodePost + '</dd>';
+        }               
+ 
+        
         html += '</dl></div>';
         // attach an overlay to a node
         var extPropertiesStr = getExtensionBody(bo, "easyflow:ExtProperties");

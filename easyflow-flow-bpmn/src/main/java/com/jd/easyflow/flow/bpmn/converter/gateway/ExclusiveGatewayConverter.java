@@ -24,9 +24,6 @@ public class ExclusiveGatewayConverter extends BaseFlowNodeConverter {
         ExclusiveGateway exclusiveGateway = (ExclusiveGateway) flowNode;
         Map<String, Object> post = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_POST);
         post.remove(DefConstants.NODE_POST_PROP_CONDITION_TYPE);
-        if (StringUtils.isNotEmpty(exclusiveGateway.getDefaultFlow())) {
-            post.put(DefConstants.NODE_POST_PROP_DEFAULT_TO, exclusiveGateway.getDefaultFlow());
-        }
         return node;
     }
 

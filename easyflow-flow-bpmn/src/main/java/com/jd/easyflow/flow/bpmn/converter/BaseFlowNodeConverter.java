@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.bpmn.model.Activity;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.bpmn.model.FlowNode;
+import org.activiti.bpmn.model.Gateway;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -78,6 +80,12 @@ public class BaseFlowNodeConverter implements FlowNodeConverter {
             String elementText = element.getElementText();
             node.put(DefConstants.NODE_PROP_POST, JsonUtil.parseObject(elementText, Map.class));
         }  else {
+            String defaultFlow = null;
+            if (flowNode instanceof Activity) {
+                defaultFlow = ((Activity) flowNode).getDefaultFlow();
+            } else if (flowNode instanceof Gateway) {
+                defaultFlow = ((Gateway) flowNode).getDefaultFlow();
+            }
             List<SequenceFlow> sequenceFlowList = flowNode.getOutgoingFlows();
             if (sequenceFlowList.size() == 1) {
                 Map<String, Object> post = new HashMap<>();
@@ -94,12 +102,16 @@ public class BaseFlowNodeConverter implements FlowNodeConverter {
                 List<Map<String, Object>> conditionList = new ArrayList<>();
                 post.put(DefConstants.NODE_POST_PROP_CONDITIONS, conditionList);
                 for (SequenceFlow sequenceFlow : sequenceFlowList) {
-                    Map<String, Object> condition = new HashMap<>();
-                    if (StringUtils.isNotEmpty(sequenceFlow.getConditionExpression())) {
-                        condition.put(DefConstants.NODE_POST_PROP_WHEN, sequenceFlow.getConditionExpression());
+                    if (sequenceFlow.getId().equals(defaultFlow)) {
+                        post.put(DefConstants.NODE_POST_PROP_DEFAULT_TO, sequenceFlow.getTargetRef());
+                    } else {
+                        Map<String, Object> condition = new HashMap<>();
+                        if (StringUtils.isNotEmpty(sequenceFlow.getConditionExpression())) {
+                            condition.put(DefConstants.NODE_POST_PROP_WHEN, sequenceFlow.getConditionExpression());
+                        }
+                        condition.put(DefConstants.NODE_POST_PROP_TO, sequenceFlow.getTargetRef());
+                        conditionList.add(condition);
                     }
-                    condition.put(DefConstants.NODE_POST_PROP_TO, sequenceFlow.getTargetRef());
-                    conditionList.add(condition);
                 }
     
                 // conditionType

@@ -334,7 +334,6 @@
                                     "key": "conditions",
                                     "subList": [
                                         {
-                                            "key": "default",
                                             "subList": [
                                                 {
                                                     "key": "when"
@@ -345,6 +344,9 @@
                                             ]
                                         }
                                     ]
+                                },
+                                {
+                                    "key": "defaultTo"
                                 }
                             ]
                         },
