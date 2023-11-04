@@ -480,7 +480,7 @@
     /**
      * Basic element render
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Element"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPannelRender["bpmn:Element"] = function($infoPannel, element, hasProperties) {
         this.$bpmnContainer.find(".infoPannel").find("form").empty();
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
@@ -540,8 +540,11 @@
                 bo.documentation[0].text = newDocumentation;
             }
         });
-
+        
         // Property
+        if (hasProperties === false) {
+            return;
+        }
         var properties = getExtensionBody(bo, "easyflow:Properties");
         var propertiesHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.property'] + ':</label> <textarea class="form-control j-properties" name="j-properties"></textarea></div>'
@@ -756,11 +759,11 @@
         // Listener
         var listeners = getExtensionBody(bo, "easyflow:Listeners");
         var listenersHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.listener'] + ':</label> <textarea class="form-control j-listeners" name="j-listeners"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.listeners'] + ':</label> <textarea class="form-control j-listeners" name="j-listeners"></textarea></div>'
             + '</div>';
         var $listenersElement = $(listenersHtml).appendTo($infoPannel);
         var $listeners = $listenersElement.find(".j-listeners");
-        $listeners.tooltip({ title: J.msg['bpmn.listenerTooltip'] })
+        $listeners.tooltip({ title: J.msg['bpmn.listenersTooltip'] })
         $listeners.rules('add', { json: true });
         $listeners.text(listeners);
         $listeners.blur(function() {
@@ -770,11 +773,11 @@
         // Filter
         var filters = getExtensionBody(bo, "easyflow:Filters");
         var filtersHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.filter'] + ':</label> <textarea class="form-control j-filters" name="j-filters"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.filters'] + ':</label> <textarea class="form-control j-filters" name="j-filters"></textarea></div>'
             + '</div>';
         var $filtersElement = $(filtersHtml).appendTo($infoPannel);
         var $filters = $filtersElement.find(".j-filters");
-        $filters.tooltip({ title: J.msg['bpmn.filterTooltip'] });
+        $filters.tooltip({ title: J.msg['bpmn.filtersTooltip'] });
         $filters.rules('add', { json: true });
         $filters.text(filters);
         $filters.blur(function() {
@@ -784,11 +787,11 @@
         // Node filter
         var nodeFilters = getExtensionBody(bo, "easyflow:NodeFilters");
         var nodeFiltersHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.nodeFilter'] + ':</label> <textarea class="form-control j-nodefilters" name="j-nodefilters"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.nodeFilters'] + ':</label> <textarea class="form-control j-nodefilters" name="j-nodefilters"></textarea></div>'
             + '</div>';
         var $nodeFiltersElement = $(nodeFiltersHtml).appendTo($infoPannel);
         var $nodeFilters = $nodeFiltersElement.find(".j-nodefilters");
-        $nodeFilters.tooltip({ title: J.msg['bpmn.nodeFilterTooltip'] });
+        $nodeFilters.tooltip({ title: J.msg['bpmn.nodeFiltersTooltip'] });
         $nodeFilters.rules('add', { json: true });
         $nodeFilters.text(nodeFilters);
         $nodeFilters.blur(function() {
@@ -798,11 +801,11 @@
         // Node pre handler filter
         var nodePreHandlerFilters = getExtensionBody(bo, "easyflow:NodePreHandlerFilters");
         var nodePreHandlerFiltersHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.nodePreHandlerFilter'] + ':</label> <textarea class="form-control j-nodeprehandlerfilters" name="j-nodeprehandlerfilters"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.nodePreHandlerFilters'] + ':</label> <textarea class="form-control j-nodeprehandlerfilters" name="j-nodeprehandlerfilters"></textarea></div>'
             + '</div>';
         var $nodePreHandlerFiltersElement = $(nodePreHandlerFiltersHtml).appendTo($infoPannel);
         var $nodePreHandlerFilters = $nodePreHandlerFiltersElement.find(".j-nodeprehandlerfilters");
-        $nodePreHandlerFilters.tooltip({ title: J.msg['bpmn.nodePreHandlerFilterTooltip'] })
+        $nodePreHandlerFilters.tooltip({ title: J.msg['bpmn.nodePreHandlerFiltersTooltip'] })
         $nodePreHandlerFilters.rules('add', { json: true });
         $nodePreHandlerFilters.text(nodePreHandlerFilters);
         $nodePreHandlerFilters.blur(function() {
@@ -812,11 +815,11 @@
         // Node action filter
         var nodeActionFilters = getExtensionBody(bo, "easyflow:NodeActionFilters");
         var nodeActionFiltersHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.nodeActionFilter'] + ':</label> <textarea class="form-control j-nodeactionfilters" name="j-nodeactionfilters"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.nodeActionFilters'] + ':</label> <textarea class="form-control j-nodeactionfilters" name="j-nodeactionfilters"></textarea></div>'
             + '</div>';
         var $nodeActionFiltersElement = $(nodeActionFiltersHtml).appendTo($infoPannel);
         var $nodeActionFilters = $nodeActionFiltersElement.find(".j-nodeactionfilters");
-        $nodeActionFilters.tooltip({ title: J.msg['bpmn.nodeActionFilterTooltip'] })
+        $nodeActionFilters.tooltip({ title: J.msg['bpmn.nodeActionFiltersTooltip'] })
         $nodeActionFilters.rules('add', { json: true });
         $nodeActionFilters.text(nodeActionFilters);
         $nodeActionFilters.blur(function() {
@@ -826,11 +829,11 @@
         // Node post handler filter
         var nodePostHandlerFilters = getExtensionBody(bo, "easyflow:NodePostHandlerFilters");
         var nodePostHandlerFiltersHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.nodePostHandlerFilter'] + ':</label> <textarea class="form-control j-nodeposthandlerfilters" name="j-nodeposthandlerfilters"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.nodePostHandlerFilters'] + ':</label> <textarea class="form-control j-nodeposthandlerfilters" name="j-nodeposthandlerfilters"></textarea></div>'
             + '</div>';
         var $nodePostHandlerFiltersElement = $(nodePostHandlerFiltersHtml).appendTo($infoPannel);
         var $nodePostHandlerFilters = $nodePostHandlerFiltersElement.find(".j-nodeposthandlerfilters");
-        $nodePostHandlerFilters.tooltip({ title: J.msg['bpmn.nodePostHandlerFilterTooltip'] })
+        $nodePostHandlerFilters.tooltip({ title: J.msg['bpmn.nodePostHandlerFiltersTooltip'] })
         $nodePostHandlerFilters.rules('add', { json: true });
         $nodePostHandlerFilters.text(nodePostHandlerFilters);
         $nodePostHandlerFilters.blur(function() {
@@ -1135,7 +1138,7 @@
     }       
     // Sequence flow
     J.BpmnControl.prototype._elementPannelRender["bpmn:SequenceFlow"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element, false);
         var bo = element.businessObject;
         var _self = this;
         // Conditional expression

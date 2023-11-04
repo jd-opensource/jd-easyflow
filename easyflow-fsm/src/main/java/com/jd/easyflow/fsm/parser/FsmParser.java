@@ -32,6 +32,7 @@ import com.jd.easyflow.fsm.model.impl.post.ConditionalTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.post.ExpTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.post.FixedTransitionPostHandler;
 import com.jd.easyflow.fsm.model.impl.pre.ExpTransitionPreHandler;
+import com.jd.easyflow.fsm.parser.event.ExpFsmParseEventListener;
 import com.jd.easyflow.fsm.parser.event.FsmParseEvent;
 import com.jd.easyflow.fsm.parser.event.FsmParseEventListener;
 import com.jd.easyflow.fsm.parser.event.FsmParseEventTypes;
@@ -423,22 +424,36 @@ public class FsmParser {
         throw new IllegalArgumentException("Param illegal:" + post);
     }
     
-    protected static List<FsmParseEventListener> parseParseListeners(Map<String, Object> map, Fsm fsm, boolean parseEl) {
-        List<String> parseListenerExpList = (List<String>) map.get(DefConstants.FSM_PROP_PARSE_LISTENERS);
-        if (parseListenerExpList == null || !parseEl) {
+    protected static List<FsmParseEventListener> parseParseListeners(Map<String, Object> map, Fsm fsm,
+            boolean parseEl) {
+        List<Object> parseListenerConfList = (List<Object>) map.get(DefConstants.FSM_PROP_PARSE_LISTENERS);
+        if (parseListenerConfList == null) {
             return null;
         }
-        List<FsmParseEventListener> listeners = new ArrayList<>();
-        for (String exp : parseListenerExpList) {
-            Map<String, Object> elContext = new HashMap<>();
-            elContext.put("def", map);
-            elContext.put("fsm", fsm);
-            FsmParseEventListener listener = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
-            if (listener != null) {
-                listeners.add(listener);
+
+        List<FsmParseEventListener> parseListeners = new ArrayList<>();
+        for (Object listenerObj : parseListenerConfList) {
+            if (listenerObj instanceof String) {
+                ExpFsmParseEventListener parseListener = new ExpFsmParseEventListener((String) listenerObj);
+                parseListeners.add(parseListener);
+            } else {
+                Map<String, Object> listener = (Map<String, Object>) listenerObj;
+                String type = (String) listener.get(DefConstants.COMMON_PROP_TYPE);
+                if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                        || listener.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                    if (parseEl) {
+                        String exp = (String) listener.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                        Map<String, Object> elContext = new HashMap<>();
+                        elContext.put("def", map);
+                        elContext.put("fsm", fsm);
+                        FsmParseEventListener parseListener = ElFactory.get().evalWithDefaultContext(exp, elContext,
+                                false);
+                        parseListeners.add(parseListener);
+                    }
+                }
             }
         }
-        return listeners;
+        return parseListeners;
     }
 
     private static void triggerParseEvent(List<FsmParseEventListener> listeners, String eventType,

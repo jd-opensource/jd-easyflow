@@ -31,6 +31,7 @@ import com.jd.easyflow.flow.model.definition.DefConstants;
 import com.jd.easyflow.flow.model.flow.post.ExpFlowPostHandler;
 import com.jd.easyflow.flow.model.flow.pre.ExpFlowPreHandler;
 import com.jd.easyflow.flow.model.node.NodeImpl;
+import com.jd.easyflow.flow.model.parser.event.ExpFlowParseEventListener;
 import com.jd.easyflow.flow.model.parser.event.FlowParseEvent;
 import com.jd.easyflow.flow.model.parser.event.FlowParseEventListener;
 import com.jd.easyflow.flow.model.parser.event.FlowParseEventTypes;
@@ -653,19 +654,32 @@ public class FlowParserImpl implements FlowParser {
     }
     
     protected List<FlowParseEventListener> parseParseListeners(Map<String, Object> map, Flow flow, boolean parseEl) {
-        List<String> parseListenerExpList = (List<String>) map.get(DefConstants.FLOW_PROP_PARSE_LISTENERS);
-        if (parseListenerExpList == null || !parseEl) {
+        List<Map<String, Object>> parseListenerConfList = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_PARSE_LISTENERS);
+        if (parseListenerConfList == null) {
             return null;
         }
-        List<FlowParseEventListener> listeners = new ArrayList<>();
-        for (String exp : parseListenerExpList) {
-            Map<String, Object> elContext = createElContext(map, null, flow);
-            FlowParseEventListener listener = ElFactory.get().evalWithDefaultContext(exp, elContext, false);
-            if (listener != null) {
-                listeners.add(listener);
+        List<FlowParseEventListener> parseListeners = new ArrayList<>();
+        for (Object listenerObj : parseListenerConfList) {
+            if (listenerObj instanceof String) {
+                ExpFlowParseEventListener parseListener = new ExpFlowParseEventListener((String) listenerObj);
+                parseListeners.add(parseListener);
+            } else {
+                Map<String, Object> listener = (Map<String, Object>) listenerObj;
+                String type = (String) listener.get(DefConstants.COMMON_PROP_TYPE);
+                if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                        || listener.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                    if (parseEl) {
+                        String exp = (String) listener.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                        Map<String, Object> elContext = createElContext(listener, null, flow);
+                        FlowParseEventListener parseListener = ElFactory.get().evalWithDefaultContext(exp, elContext,
+                                false);
+                        parseListeners.add(parseListener);
+                    }
+                }
             }
         }
-        return listeners;
+        return parseListeners;
     }
 
     private void triggerParseEvent(List<FlowParseEventListener> listeners, String eventType,

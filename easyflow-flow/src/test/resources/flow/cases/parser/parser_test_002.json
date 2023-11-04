@@ -5,5 +5,5 @@
         {"id": "node002","name": "Node002","action": {"createExp": "new com.jd.easyflow.flow.quickstart.QuickStart002Node01Action()"},"post": {"to": "node003"}},
         {"id": "node003","name": "Node003"}
     ],
-    "parseListeners":["new com.jd.easyflow.flow.cases.parser.TestFlowParseListener()"]
+    "parseListeners":[{"createExp":"new com.jd.easyflow.flow.cases.parser.TestFlowParseListener()"}]
 }
