@@ -107,7 +107,9 @@ public class FlowNodeAction implements NodeAction {
         this.inherit = inherit;
     }
 
-    public void init(InitContext initContext, FlowNode node) {
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        FlowNode node = (FlowNode) parent;
         if (flowId == null) {
             flowId = node.getProperty(DefConstants.COMMON_PROP_FLOW_ID);
             if (flowId == null) {
@@ -117,9 +119,9 @@ public class FlowNodeAction implements NodeAction {
                     param.setObjectDefinition(flowDef);
                     param.setParseEl(initContext.isParseEl());
                     List<Flow> flowList = initContext.getFlowParser().parse(param);
-                    Flow flow = flowList.get(0);
-                    initContext.getFlowList().add(flow);
-                    flowId = flow.getId();
+                    Flow subFlow = flowList.get(0);
+                    initContext.getFlowList().add(subFlow);
+                    flowId = subFlow.getId();
                 }
             }
         }

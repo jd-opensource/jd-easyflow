@@ -1,5 +1,7 @@
 package com.jd.easyflow.flow.filter;
 
+import com.jd.easyflow.flow.model.FlowLifeCycle;
+
 /**
  * 
  * @author liyuliang5
@@ -7,7 +9,7 @@ package com.jd.easyflow.flow.filter;
  * @param <T>
  * @param <R>
  */
-public interface Filter<T,R> {
+public interface Filter<T,R> extends FlowLifeCycle {
 
     /**
      * Do filter.
@@ -16,4 +18,5 @@ public interface Filter<T,R> {
      * @return
      */
     R doFilter(T request, FilterChain<T, R> chain);
+    
 }

@@ -12,7 +12,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jd.easyflow.fsm.Fsm;
 import com.jd.easyflow.fsm.FsmContext;
+import com.jd.easyflow.fsm.model.InitContext;
 
 /**
  * 
@@ -28,6 +30,22 @@ public class FsmEventTrigger {
     private List<FsmEventListener> listenerList;
 
     private Map<String, TreeMap<Integer, List<FsmEventListener>>> listenerMap;
+    
+    public void init(InitContext initContext, Fsm fsm) {
+        if (listenerList != null) {
+            for (FsmEventListener listener : listenerList) {
+                listener.init(initContext, fsm);
+            }
+        }
+    }
+    
+    public void destroy() {
+        if (listenerList != null) {
+            for (FsmEventListener listener : listenerList) {
+                listener.destroy();
+            }            
+        }
+    }
 
     public void addListener(FsmEventListener listener) {
         if (listenerList == null) {

@@ -7,7 +7,7 @@ import com.jd.easyflow.flow.engine.FlowContext;
  * @author liyuliang5
  *
  */
-public interface NodeAction {
+public interface NodeAction extends FlowLifeCycle {
     
     /**
      * Execute node action.
@@ -17,13 +17,5 @@ public interface NodeAction {
      * @return
      */
     <T>T execute(NodeContext nodeContext, FlowContext context);
-    
-    /**
-     * Init node action.
-     * @param initContext
-     * @param node
-     */
-    default void init(InitContext initContext, FlowNode node) {
-    }
     
 }

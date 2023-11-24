@@ -7,11 +7,8 @@ import com.jd.easyflow.flow.engine.FlowContext;
  * @author liyuliang5
  *
  */
-public interface FlowPreHandler {
+public interface FlowPreHandler extends FlowLifeCycle {
 
     boolean preHandle(FlowContext context);
     
-    default void init(InitContext initContext, Flow flow) {
-
-    }
 }

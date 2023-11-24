@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
+import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
@@ -113,7 +114,9 @@ public class LoopNodeAction implements NodeAction {
         return null;
     }
 
-    public void init(InitContext initContext, FlowNode node) {
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        FlowNode node = (FlowNode) parent;
         testBefore = node.getProperty("loopTestBefore");
         if (testBefore == null) {
             throw new FlowException("Test before can not be null");

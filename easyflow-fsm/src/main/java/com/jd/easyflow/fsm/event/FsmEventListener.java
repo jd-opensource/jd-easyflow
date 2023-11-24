@@ -2,12 +2,14 @@ package com.jd.easyflow.fsm.event;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.jd.easyflow.fsm.model.FsmLifeCycle;
+
 /**
  * 
  * @author liyuliang5
  *
  */
-public interface FsmEventListener {
+public interface FsmEventListener extends FsmLifeCycle {
 	
 	/**
 	 * Get accepted events.
@@ -30,4 +32,5 @@ public interface FsmEventListener {
 	 * @param event
 	 */
     public void on(FsmEvent event);
+
 }

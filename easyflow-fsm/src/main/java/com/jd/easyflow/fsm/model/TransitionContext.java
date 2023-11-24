@@ -14,7 +14,7 @@ public class TransitionContext {
      */
     private Transition transition;
     
-    private boolean preResult;
+    private Boolean preResult;
     
     private Object actionResult;
     
@@ -57,11 +57,11 @@ public class TransitionContext {
         this.throwable = throwable;
     }
 
-    public boolean isPreResult() {
+    public Boolean getPreResult() {
         return preResult;
     }
 
-    public void setPreResult(boolean preResult) {
+    public void setPreResult(Boolean preResult) {
         this.preResult = preResult;
     }
 

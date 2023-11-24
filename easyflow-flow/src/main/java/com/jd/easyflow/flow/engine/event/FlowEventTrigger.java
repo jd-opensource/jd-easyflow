@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.InitContext;
 
 /**
  * 
@@ -20,6 +22,7 @@ import com.jd.easyflow.flow.engine.FlowContext;
  *
  */
 public class FlowEventTrigger {
+    
     public static final Logger logger = LoggerFactory.getLogger(FlowEventTrigger.class);
 
     public static final String NULL_KEY = null;
@@ -27,6 +30,23 @@ public class FlowEventTrigger {
     private List<FlowEventListener> listenerList;
 
     private Map<String, TreeMap<Integer, List<FlowEventListener>>> listenerMap;
+    
+    public void init(InitContext initContext, Flow flow) {
+        if (listenerList != null) {
+            for (FlowEventListener listener : listenerList) {
+                listener.init(initContext, flow);
+            }
+        }
+    }
+    
+    public void destroy () {
+        if (listenerList != null) {
+            for (FlowEventListener listener : listenerList) {
+                listener.destroy();
+            }
+        }
+    }
+
 
     public void addListener(FlowEventListener listener) {
         if (listenerList == null) {

@@ -2,12 +2,14 @@ package com.jd.easyflow.flow.engine.event;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.jd.easyflow.flow.model.FlowLifeCycle;
+
 /**
  * 
  * @author liyuliang5
  *
  */
-public interface FlowEventListener {
+public interface FlowEventListener extends FlowLifeCycle {
 	
     /**
      * 
@@ -30,4 +32,6 @@ public interface FlowEventListener {
      * @param flowEvent
      */
     public void on(FlowEvent flowEvent);
+    
+
 }

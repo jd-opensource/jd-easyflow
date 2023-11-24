@@ -68,6 +68,11 @@ public class FlowConstants {
     public static final String NODE_PRE_CHECK_TYPE_MULTICHECK = "multiCheck";
     public static final String NODE_PRE_CHECK_TYPE_INCLUSIVECHECK = "inclusiveCheck";
     
+    /**
+     * initContextKey
+     */
+    public static final String INIT_CONTEXT_KEY = "initContext";
+    
 
 
 }

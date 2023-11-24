@@ -7,11 +7,8 @@ import com.jd.easyflow.flow.engine.FlowContext;
  * @author liyuliang5
  *
  */
-public interface FlowPostHandler {
+public interface FlowPostHandler extends FlowLifeCycle {
 
     void postHandle(FlowContext context);
     
-    default void init(InitContext initContext, Flow flow) {
-
-    }
 }

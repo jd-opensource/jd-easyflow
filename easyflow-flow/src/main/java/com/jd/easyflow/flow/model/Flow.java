@@ -16,13 +16,14 @@ import com.jd.easyflow.flow.engine.event.FlowEventTrigger;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.model.parser.FlowParser;
+import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
  * 
  * @author liyuliang5
  *
  */
-public class Flow {
+public class Flow implements FlowLifeCycle {
 
     public static final String DOLLAR = "$";
 
@@ -71,7 +72,9 @@ public class Flow {
     
     private Boolean logFlag;
 
-    public void init(InitContext initContext) {
+
+    @Override
+    public void init(InitContext initContext, Object parent) {
         if (preHandler != null) {
             preHandler.init(initContext, this);
         }
@@ -82,6 +85,82 @@ public class Flow {
         }
         if (postHandler != null) {
             postHandler.init(initContext, this);
+        }
+        
+        eventTrigger.init(initContext, this);
+        if (filters != null) {
+            for (Filter filter: filters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (nodeFilters != null) {
+            for (Filter filter: nodeFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (nodeActionFilters != null) {
+            for (Filter filter: nodeActionFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (nodePreHandlerFilters != null) {
+            for (Filter filter: nodePreHandlerFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (nodePostHandlerFilters != null) {
+            for (Filter filter: nodePostHandlerFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (runner != null) {
+            runner.init(initContext, this);
+        }
+        
+    }
+    
+    @Override
+    public void destroy() {
+        if (preHandler != null) {
+            preHandler.destroy();
+        }
+        if (nodeList != null) {
+            for (FlowNode flowNode : nodeList) {
+                flowNode.destroy();
+            }
+        }
+        if (postHandler != null) {
+            postHandler.destroy();
+        }
+        
+        eventTrigger.destroy();
+        if (filters != null) {
+            for (Filter filter: filters) {
+                filter.destroy();
+            }
+        }
+        if (nodeFilters != null) {
+            for (Filter filter: nodeFilters) {
+                filter.destroy();
+            }
+        }
+        if (nodeActionFilters != null) {
+            for (Filter filter: nodeActionFilters) {
+                filter.destroy();
+            }
+        }
+        if (nodePreHandlerFilters != null) {
+            for (Filter filter: nodePreHandlerFilters) {
+                filter.destroy();
+            }
+        }
+        if (nodePostHandlerFilters != null) {
+            for (Filter filter: nodePostHandlerFilters) {
+                filter.destroy();
+            }
+        }
+        if (runner != null) {
+            runner.destroy();
         }
     }
 

@@ -38,8 +38,9 @@ public class JavaScriptNodeAction implements NodeAction {
         return (T) result;
     }
 
-    public void init(InitContext initContext, FlowNode node) {
-        javaScript = node.getProperty("javascript");
+    @Override
+    public void init(InitContext initContext, Object node) {
+        javaScript = ((FlowNode) node).getProperty("javascript");
 
     }
 

@@ -18,6 +18,7 @@ import com.jd.easyflow.fsm.filter.ExpFilter;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.model.FsmPostHandler;
 import com.jd.easyflow.fsm.model.FsmPreHandler;
+import com.jd.easyflow.fsm.model.InitContext;
 import com.jd.easyflow.fsm.model.Transition;
 import com.jd.easyflow.fsm.model.TransitionAction;
 import com.jd.easyflow.fsm.model.TransitionPostHandler;
@@ -46,7 +47,6 @@ import com.jd.easyflow.fsm.util.JsonUtil;
  * @version 1.0
  * @since 1.0
  */
-
 public class FsmParser {
 
     private static final Logger logger = LoggerFactory.getLogger(FsmParser.class);
@@ -126,7 +126,10 @@ public class FsmParser {
                         TransitionBuilder transBuilder = TransitionBuilder.create();
                         Transition trans = transBuilder.fromId(fromId).eventId(eventId).toIdList(toList)
                                 .preHandler(preHandler).action(transAction).postHandler(postHandler).build();
-                        builder.transition(trans);
+                        if (trans != null) {
+                            trans.postConstruct(transition, null);
+                            builder.transition(trans);
+                        }
                     }
                 }
 
@@ -138,14 +141,28 @@ public class FsmParser {
         parseFilters(map, builder, parseEl);
         // Transition Filter.
         parseTransitionFilters(map, builder, parseEl);
+        // Transition PreHandler Filter.
+        parseTransitionPreHandlerFilters(map, builder, parseEl);
         // Transition Action Filter.
         parseTransitionActionFilters(map, builder, parseEl);
+        // Transition PostHandler Filter.
+        parseTransitionPostHandlerFilters(map, builder, parseEl);
 
-        Fsm fsm = builder.build();
         
-        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_END, map, builder.build(), null);
-
+        Fsm fsm = builder.build();
         fsm.setProperty(FSM_STRING_KEY, data);
+        
+        fsm.postConstruct(map, null);
+        
+        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_END, map, fsm, null);
+        
+        triggerParseEvent(parseListeners, FsmParseEventTypes.INIT_FSM_START, map, fsm, null);
+        InitContext initContext = new InitContext();
+        initContext.setParseEl(parseEl);
+        initContext.setFsm(fsm);
+        initContext.setFsmDefinitionMap(map);
+        fsm.init(initContext, null);
+        triggerParseEvent(parseListeners, FsmParseEventTypes.INIT_FSM_END, map, fsm, null);
                 
         return fsm;
     }
@@ -171,8 +188,12 @@ public class FsmParser {
                             || listener.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) listener.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            FsmEventListener eventListener = ElFactory.get().evalWithDefaultContext(exp, null, false);
-                            builder.listener(eventListener);
+                            Map<String, Object> createElContext = createElContext(listener);
+                            FsmEventListener eventListener = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+                            if (eventListener != null) {
+                                eventListener.postConstruct(listener, null);
+                                builder.listener(eventListener);
+                            }
                         }
                     }
                 }
@@ -201,8 +222,12 @@ public class FsmParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
-                            builder.filter(fsmFilter);
+                            Map<String, Object> createElContext = createElContext(filter);
+                            Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+                            if (fsmFilter != null) {
+                                fsmFilter.postConstruct(filter, null);
+                                builder.filter(fsmFilter);
+                            }
                         }
                     }
                 }
@@ -232,8 +257,12 @@ public class FsmParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
-                            builder.transitionFilter(fsmFilter);
+                            Map<String, Object> createElContext = createElContext(filter);
+                            Filter transitionFilter = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+                            if (transitionFilter != null) {
+                                transitionFilter.postConstruct(filter, null);
+                                builder.transitionFilter(transitionFilter);
+                            }
                         }
                     }
                 }
@@ -263,8 +292,82 @@ public class FsmParser {
                             || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
                         if (parseEl) {
                             String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
-                            Filter fsmFilter = ElFactory.get().evalWithDefaultContext(exp, null, false);
-                            builder.transitionActionFilter(fsmFilter);
+                            Map<String, Object> createElContext = createElContext(filter);
+                            Filter transitionActionFilter = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+                            if (transitionActionFilter != null) {
+                                transitionActionFilter.postConstruct(filter, null);
+                                builder.transitionActionFilter(transitionActionFilter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Transition preHandler filter.
+     * 
+     * @param map
+     * @param builder
+     * @param parseEl
+     */
+    private static void parseTransitionPreHandlerFilters(Map<String, Object> map, FsmBuilder builder, boolean parseEl) {
+        List<Map<String, Object>> transitionPreHandlerFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FSM_PROP_TRANSITION_PRE_HANDLER_FILTERS);
+        if (transitionPreHandlerFilters != null) {
+            for (Object filterObj : transitionPreHandlerFilters) {
+                if (filterObj instanceof String) {
+                    ExpFilter expFilter = new ExpFilter<>((String) filterObj);
+                    builder.transitionPreHandlerFilter(expFilter);
+                } else {
+                    Map<String, Object> filter = (Map<String, Object>) filterObj;
+                    String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                        if (parseEl) {
+                            String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Map<String, Object> createElContext = createElContext(filter);
+                            Filter transitionPreHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+                            if (transitionPreHandlerFilter != null) {
+                                transitionPreHandlerFilter.postConstruct(filter, null);
+                                builder.transitionPreHandlerFilter(transitionPreHandlerFilter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Transition postHandler filter.
+     * 
+     * @param map
+     * @param builder
+     * @param parseEl
+     */
+    private static void parseTransitionPostHandlerFilters(Map<String, Object> map, FsmBuilder builder, boolean parseEl) {
+        List<Map<String, Object>> transitionPostHandlerFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FSM_PROP_TRANSITION_POST_HANDLER_FILTERS);
+        if (transitionPostHandlerFilters != null) {
+            for (Object filterObj : transitionPostHandlerFilters) {
+                if (filterObj instanceof String) {
+                    ExpFilter expFilter = new ExpFilter<>((String) filterObj);
+                    builder.transitionPostHandlerFilter(expFilter);
+                } else {
+                    Map<String, Object> filter = (Map<String, Object>) filterObj;
+                    String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                        if (parseEl) {
+                            String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Map<String, Object> createElContext = createElContext(filter);
+                            Filter transitionPostHandlerFilter = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+                            if (transitionPostHandlerFilter != null) {
+                                transitionPostHandlerFilter.postConstruct(filter, null);
+                                builder.transitionPostHandlerFilter(transitionPostHandlerFilter);
+                            }
                         }
                     }
                 }
@@ -288,12 +391,17 @@ public class FsmParser {
                 return null;
             }
             String exp = (String) pre.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            FsmPreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> createElContext = createElContext(pre);
+            FsmPreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+            if (preHandler != null) {
+                preHandler.postConstruct(pre, null);
+            }
             return preHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpFsmPreHandler preHandler = new ExpFsmPreHandler();
             String exp = (String) pre.get(DefConstants.COMMON_PROP_EXP);
             preHandler.setExp(exp);
+            preHandler.postConstruct(pre, null);
             return preHandler;
         }
         throw new IllegalArgumentException("Param illegal:" + pre);
@@ -315,12 +423,17 @@ public class FsmParser {
                 return null;
             }
             String exp = (String) post.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            FsmPostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> createElContext = createElContext(post);
+            FsmPostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+            if (postHandler != null) {
+                postHandler.postConstruct(post, null);
+            }
             return postHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || post.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpFsmPostHandler postHandler = new ExpFsmPostHandler();
             String exp = (String) post.get(DefConstants.COMMON_PROP_EXP);
             postHandler.setExp(exp);
+            postHandler.postConstruct(post, null);
             return postHandler;
         }
         throw new IllegalArgumentException("Param illegal:" + post);
@@ -342,12 +455,17 @@ public class FsmParser {
                 return null;
             }
             String exp = (String) pre.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            TransitionPreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> createElContext = createElContext(pre);
+            TransitionPreHandler preHandler = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+            if (preHandler != null) {
+                preHandler.postConstruct(pre, null);
+            }
             return preHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || pre.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpTransitionPreHandler preHandler = new ExpTransitionPreHandler();
             String exp = (String) pre.get(DefConstants.COMMON_PROP_EXP);
             preHandler.setExp(exp);
+            preHandler.postConstruct(pre, null);
             return preHandler;
         }
         throw new IllegalArgumentException("Param illegal:" + pre);
@@ -370,12 +488,17 @@ public class FsmParser {
                 return null;
             }
             String exp = (String) action.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            TransitionAction nodeAction = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> createElContext = createElContext(action);
+            TransitionAction nodeAction = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+            if (nodeAction != null) {
+                nodeAction.postConstruct(action, null);
+            }
             return nodeAction;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || action.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpTransitionAction transAction = new ExpTransitionAction();
             String exp = (String) action.get(DefConstants.COMMON_PROP_EXP);
             transAction.setExp(exp);
+            transAction.postConstruct(action, null);
             return transAction;
         }
         throw new IllegalArgumentException("Param illegal:" + action);
@@ -397,12 +520,17 @@ public class FsmParser {
                 return null;
             }
             String exp = (String) post.get(DefConstants.COMMON_PROP_CREATE_EXP);
-            TransitionPostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, null, false);
+            Map<String, Object> createElContext = createElContext(post);
+            TransitionPostHandler postHandler = ElFactory.get().evalWithDefaultContext(exp, createElContext, false);
+            if (postHandler != null) {
+                postHandler.postConstruct(post, null);
+            }
             return postHandler;
         } else if (DefConstants.COMMON_PROP_EXP.equals(type) || post.containsKey(DefConstants.COMMON_PROP_EXP)) {
             ExpTransitionPostHandler postHandler = new ExpTransitionPostHandler();
             String exp = (String) post.get(DefConstants.COMMON_PROP_EXP);
             postHandler.setExp(exp);
+            postHandler.postConstruct(post, null);
             return postHandler;
         } else if (DefConstants.TST_POST_TYPE_CONDITION.equals(type)
                 || post.containsKey(DefConstants.TST_POST_PROP_CONDITIONS)
@@ -414,6 +542,7 @@ public class FsmParser {
                 conditionList = Arrays.asList(post);
             }
             ConditionalTransitionPostHandler postHandler = new ConditionalTransitionPostHandler(conditionList);
+            postHandler.postConstruct(post, null);
             return postHandler;
 
         } else if (DefConstants.TST_POST_TYPE_FIXED.equals(type) || post.containsKey(DefConstants.TST_POST_PROP_TO)) {
@@ -448,7 +577,10 @@ public class FsmParser {
                         elContext.put("fsm", fsm);
                         FsmParseEventListener parseListener = ElFactory.get().evalWithDefaultContext(exp, elContext,
                                 false);
-                        parseListeners.add(parseListener);
+                        if (parseListener != null) {
+                            parseListener.postConstruct(listener, null);
+                            parseListeners.add(parseListener);
+                        }
                     }
                 }
             }
@@ -484,5 +616,11 @@ public class FsmParser {
         }
         logger.warn("Original fsm string definition not found，unsupported now. fsmId:" + fsm.getId());
         return null;
+    }
+    
+    private static Map<String, Object> createElContext(Map<String, Object> currentDef) {
+        Map<String, Object> context = new HashMap<>(3);
+        context.put("definition", currentDef);
+        return context;
     }
 }

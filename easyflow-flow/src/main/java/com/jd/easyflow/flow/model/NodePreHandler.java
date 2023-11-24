@@ -7,7 +7,7 @@ import com.jd.easyflow.flow.engine.FlowContext;
  * @author liyuliang5
  *
  */
-public interface NodePreHandler {
+public interface NodePreHandler extends FlowLifeCycle {
 	
     /**
      * Pre handle.
@@ -16,14 +16,5 @@ public interface NodePreHandler {
      * @return
      */
 	boolean preHandle(NodeContext nodeContext, FlowContext context);
-	
-	/**
-	 * Init.
-	 * @param initContext
-	 * @param node
-	 */
-	default void init(InitContext initContext, FlowNode node) {
-	    
-	}
 	
 }

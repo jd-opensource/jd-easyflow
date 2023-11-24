@@ -25,8 +25,8 @@ public class EventPostHandler implements NodePostHandler {
     private static final Logger logger = LoggerFactory.getLogger(EventPostHandler.class);
 
     @Override
-    public void init(InitContext initContext, FlowNode flowNode) {
-        initEventPostHandlerMap(initContext, flowNode);
+    public void init(InitContext initContext, Object flowNode) {
+        initEventPostHandlerMap(initContext, (FlowNode) flowNode);
     }
 
     @Override

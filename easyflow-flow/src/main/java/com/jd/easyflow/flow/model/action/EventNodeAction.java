@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
@@ -28,8 +29,8 @@ public class EventNodeAction implements NodeAction {
     private static final Logger logger = LoggerFactory.getLogger(EventNodeAction.class);
 
     @Override
-    public void init(InitContext initContext, FlowNode flowNode) {
-        initEventActionMap(initContext, flowNode);
+    public void init(InitContext initContext, Object flowNode) {
+        initEventActionMap(initContext, (FlowNode) flowNode);
     }
 
     @Override

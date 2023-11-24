@@ -55,7 +55,9 @@ public class ShellNodeAction implements NodeAction {
         return result;
     }
     
-    public void init(InitContext initContext, FlowNode node) {
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        FlowNode node = (FlowNode) parent;
         shellCommand = node.getProperty("shellCommand");
         shellCommandExp = node.getProperty("shellCommandExp");
         timeoutSeconds = node.getProperty("shellTimeoutSeconds");

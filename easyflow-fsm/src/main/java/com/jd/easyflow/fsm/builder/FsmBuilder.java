@@ -16,6 +16,7 @@ import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.model.Event;
 import com.jd.easyflow.fsm.model.FsmPostHandler;
 import com.jd.easyflow.fsm.model.FsmPreHandler;
+import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.Transition;
 import com.jd.easyflow.fsm.model.TransitionAction;
@@ -192,8 +193,18 @@ public class FsmBuilder {
         return this;
     }
     
-    public FsmBuilder transitionActionFilter(Filter<Pair<TransitionContext, FsmContext>, Void> filter) {
+    public FsmBuilder transitionActionFilter(Filter<Pair<TransitionContext, FsmContext>, Object> filter) {
         fsm.addTransitionActionFilter(filter);
+        return this;
+    }
+    
+    public FsmBuilder transitionPreHandlerFilter(Filter<Pair<TransitionContext, FsmContext>, Boolean> filter) {
+        fsm.addTransitionPreHandlerFilter(filter);
+        return this;
+    }
+    
+    public FsmBuilder transitionPostHandlerFilter(Filter<Pair<TransitionContext, FsmContext>, PostHandleResult> filter) {
+        fsm.addTransitionPostHandlerFilter(filter);
         return this;
     }
     

@@ -15,8 +15,11 @@ import com.jd.easyflow.fsm.event.FsmEventTrigger;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.model.Event;
+import com.jd.easyflow.fsm.model.FsmLifeCycle;
 import com.jd.easyflow.fsm.model.FsmPostHandler;
 import com.jd.easyflow.fsm.model.FsmPreHandler;
+import com.jd.easyflow.fsm.model.InitContext;
+import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.Transition;
 import com.jd.easyflow.fsm.model.TransitionContext;
@@ -29,7 +32,7 @@ import com.jd.easyflow.fsm.util.JsonUtil;
  * @author liyuliang5
  *
  */
-public class Fsm {
+public class Fsm implements FsmLifeCycle {
 
     public static final Logger logger = LoggerFactory.getLogger(Fsm.class);
 
@@ -66,8 +69,54 @@ public class Fsm {
     private List<Filter<FsmContext, FsmResult>> filters;
 
     private List<Filter<Triple<Transition, TransitionContext, FsmContext>, Void>> transitionFilters;
+    
+    private List<Filter<Pair<TransitionContext, FsmContext>, Object>> transitionActionFilters;   
 
-    private List<Filter<Pair<TransitionContext, FsmContext>, Void>> transitionActionFilters;
+    private List<Filter<Pair<TransitionContext, FsmContext>, Boolean>> transitionPreHandlerFilters;
+    
+    private List<Filter<Pair<TransitionContext, FsmContext>, PostHandleResult>> transitionPostHandlerFilters;
+    
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        if (preHandler != null) {
+            preHandler.init(initContext, this);
+        }
+        if (transitionList != null) {
+            for (Transition transition : transitionList) {
+                transition.init(initContext, this);
+            }
+        }
+        if (postHandler != null) {
+            postHandler.init(initContext, this);
+        }
+        eventTrigger.init(initContext, this);
+        if (filters != null) {
+            for (Filter filter : filters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (transitionFilters != null) {
+            for (Filter filter : transitionFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (transitionActionFilters != null) {
+            for (Filter filter : transitionActionFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (transitionPreHandlerFilters != null) {
+            for (Filter filter : transitionPreHandlerFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (transitionPostHandlerFilters != null) {
+            for (Filter filter : transitionPostHandlerFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        
+    }
 
     /**
      * 执行状态机时，外层负责查找执行哪个状态机
@@ -250,6 +299,47 @@ public class Fsm {
 
         return result;
     }
+    
+    public void destroy() {
+        if (preHandler != null) {
+            preHandler.destroy();
+        }
+        if (transitionList != null) {
+            for (Transition transition : transitionList) {
+                transition.destroy();
+            }
+        }
+        if (postHandler != null) {
+            postHandler.destroy();
+        }
+        eventTrigger.destroy();
+        if (filters != null) {
+            for (Filter filter : filters) {
+                filter.destroy();
+            }
+        }
+        if (transitionFilters != null) {
+            for (Filter filter : transitionFilters) {
+                filter.destroy();
+            }
+        }
+        if (transitionActionFilters != null) {
+            for (Filter filter : transitionActionFilters) {
+                filter.destroy();
+            }
+        }
+        if (transitionPreHandlerFilters != null) {
+            for (Filter filter : transitionPreHandlerFilters) {
+                filter.destroy();
+            }
+        }
+        if (transitionPostHandlerFilters != null) {
+            for (Filter filter : transitionPostHandlerFilters) {
+                filter.destroy();
+            }
+        }
+        
+    }
 
     public String getId() {
         return id;
@@ -428,20 +518,52 @@ public class Fsm {
         this.filters.add(filter);
     }
 
-    public List<Filter<Pair<TransitionContext, FsmContext>, Void>> getTransitionActionFilters() {
+    public List<Filter<Pair<TransitionContext, FsmContext>, Object>> getTransitionActionFilters() {
         return transitionActionFilters;
     }
 
     public void setTransitionActionFilters(
-            List<Filter<Pair<TransitionContext, FsmContext>, Void>> transitionActionFilters) {
+            List<Filter<Pair<TransitionContext, FsmContext>, Object>> transitionActionFilters) {
         this.transitionActionFilters = transitionActionFilters;
     }
+    
+    public List<Filter<Pair<TransitionContext, FsmContext>, Boolean>> getTransitionPreHandlerFilters() {
+        return transitionPreHandlerFilters;
+    }
 
-    public void addTransitionActionFilter(Filter<Pair<TransitionContext, FsmContext>, Void> filter) {
+    public void setTransitionPreHandlerFilters(
+            List<Filter<Pair<TransitionContext, FsmContext>, Boolean>> transitionPreHandlerFilters) {
+        this.transitionPreHandlerFilters = transitionPreHandlerFilters;
+    }
+
+    public List<Filter<Pair<TransitionContext, FsmContext>, PostHandleResult>> getTransitionPostHandlerFilters() {
+        return transitionPostHandlerFilters;
+    }
+
+    public void setTransitionPostHandlerFilters(
+            List<Filter<Pair<TransitionContext, FsmContext>, PostHandleResult>> transitionPostHandlerFilters) {
+        this.transitionPostHandlerFilters = transitionPostHandlerFilters;
+    }
+
+    public void addTransitionActionFilter(Filter<Pair<TransitionContext, FsmContext>, Object> filter) {
         if (this.transitionActionFilters == null) {
-            this.transitionActionFilters = new ArrayList<Filter<Pair<TransitionContext, FsmContext>, Void>>();
+            this.transitionActionFilters = new ArrayList<Filter<Pair<TransitionContext, FsmContext>, Object>>();
         }
         this.transitionActionFilters.add(filter);
+    }
+    
+    public void addTransitionPreHandlerFilter(Filter<Pair<TransitionContext, FsmContext>, Boolean> filter) {
+        if (this.transitionPreHandlerFilters == null) {
+            this.transitionPreHandlerFilters = new ArrayList<Filter<Pair<TransitionContext, FsmContext>, Boolean>>();
+        }
+        this.transitionPreHandlerFilters.add(filter);
+    }
+    
+    public void addTransitionPostHandlerFilter(Filter<Pair<TransitionContext, FsmContext>, PostHandleResult> filter) {
+        if (this.transitionPostHandlerFilters == null) {
+            this.transitionPostHandlerFilters = new ArrayList<Filter<Pair<TransitionContext, FsmContext>, PostHandleResult>>();
+        }
+        this.transitionPostHandlerFilters.add(filter);
     }
 
     public List<Filter<Triple<Transition, TransitionContext, FsmContext>, Void>> getTransitionFilters() {
@@ -479,5 +601,6 @@ public class Fsm {
     public void setPostHandler(FsmPostHandler postHandler) {
         this.postHandler = postHandler;
     }
+
 
 }

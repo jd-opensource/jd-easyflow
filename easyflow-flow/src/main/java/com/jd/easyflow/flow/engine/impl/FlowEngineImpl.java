@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -84,7 +85,18 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
         }
         loadFlow();
         if (listeners != null) {
-            listeners.forEach(listener -> eventTrigger.addListener(listener));
+            listeners.forEach(listener -> {
+                eventTrigger.addListener(listener);
+            });
+        }
+        eventTrigger.init(null, null);
+        if (filters != null) {
+            filters.forEach(filter -> {
+                filter.init(null, null);
+            });
+        }
+        if (defaultFlowRunner != null) {
+            defaultFlowRunner.init(null, null);
         }
         inited = true;
     }
@@ -282,6 +294,8 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
         }
         context.getFlow().triggerEvent(FlowEventTypes.INIT_END, context);
     }
+    
+    
 
     public void addFlow(Flow flow) {
         flowMap.put(flow.getId(), flow);
@@ -290,6 +304,23 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     private FlowResult wrapResult(FlowContext context) {
         FlowResult result = context.getResult();
         return result;
+    }
+    
+    public void destroy() {
+        if (defaultFlowRunner != null) {
+            defaultFlowRunner.destroy();
+        }
+        if (flowMap != null && flowMap.size() > 0) {
+            for (Entry<String, Flow> entry : flowMap.entrySet()) {
+                entry.getValue().destroy();
+            }
+        }
+        this.eventTrigger.destroy();
+        if (this.filters != null) {
+            filters.forEach( filter -> {
+                filter.destroy();
+            });
+        }
     }
 
     public String getFlowPath() {
@@ -384,6 +415,7 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     @Override
     public void stop() {
         isRunning = false;
+        destroy();
     }
     
     @Override

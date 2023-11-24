@@ -9,7 +9,7 @@ import com.jd.easyflow.fsm.FsmContext;
  * @author liyuliang5
  *
  */
-public interface Transition {
+public interface Transition extends FsmLifeCycle {
     
     /**
      * Get from node ID.

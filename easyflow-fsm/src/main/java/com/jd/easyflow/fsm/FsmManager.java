@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,7 @@ public class FsmManager implements SmartLifecycle {
 
     private volatile boolean inited = false;
 
-    private List<Filter<FsmParam, FsmResult>> filters;
+    private List<Filter<Pair<FsmParam, FsmManager>, FsmResult>> filters;
 
     private  int phase = Integer.MIN_VALUE;
     
@@ -68,7 +70,27 @@ public class FsmManager implements SmartLifecycle {
         if (listeners != null) {
             listeners.forEach(listener -> eventTrigger.addListener(listener));
         }
+        eventTrigger.init(null, null);
+        if (filters != null) {
+            filters.forEach(filter -> {
+                filter.init(null, null);
+            });
+        }
         inited = true;
+    }
+    
+    public void destroy () {
+        if (fsmMap != null) {
+            for (Entry<String, Fsm> entry : fsmMap.entrySet()) {
+                entry.getValue().destroy();
+            }
+        }
+        eventTrigger.destroy();
+        if (filters != null) {
+            filters.forEach(filter -> {
+                filter.destroy();
+            });
+        }
     }
 
     /**
@@ -119,8 +141,8 @@ public class FsmManager implements SmartLifecycle {
         if (filters == null || filters.size() == 0) {
             return invokeFsm(param);
         } else {
-            FilterChain<FsmParam, FsmResult> chain = new FilterChain<FsmParam, FsmResult>(filters, p -> invokeFsm(p));
-            return chain.doFilter(param);
+            FilterChain<Pair<FsmParam, FsmManager>, FsmResult> chain = new FilterChain<Pair<FsmParam, FsmManager>, FsmResult>(filters, p -> invokeFsm(p.getLeft()));
+            return chain.doFilter(Pair.of(param, this));
         }
     }
 
@@ -201,11 +223,11 @@ public class FsmManager implements SmartLifecycle {
         this.inited = inited;
     }
 
-    public List<Filter<FsmParam, FsmResult>> getFilters() {
+    public List<Filter<Pair<FsmParam, FsmManager>, FsmResult>> getFilters() {
         return filters;
     }
 
-    public void setFilters(List<Filter<FsmParam, FsmResult>> filters) {
+    public void setFilters(List<Filter<Pair<FsmParam, FsmManager>, FsmResult>> filters) {
         this.filters = filters;
     }
 

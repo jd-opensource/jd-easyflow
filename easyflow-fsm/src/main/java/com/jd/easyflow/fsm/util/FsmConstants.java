@@ -23,5 +23,10 @@ public class FsmConstants {
     public static final String CTX_PARENT_CONTEXT = "parentContext";
     
     public static final String CTX_PARENT_TRANSITION_CONTEXT = "parentTransitionContext";
+    
+    /**
+     * initContextKey
+     */
+    public static final String INIT_CONTEXT_KEY = "initContext";
 
 }

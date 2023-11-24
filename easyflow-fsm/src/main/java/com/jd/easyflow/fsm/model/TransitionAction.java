@@ -7,7 +7,7 @@ import com.jd.easyflow.fsm.FsmContext;
  * @author liyuliang5
  *
  */
-public interface TransitionAction {
+public interface TransitionAction extends FsmLifeCycle {
 
     /**
      * Execute transition.

@@ -1,13 +1,13 @@
 {    "id": "funcall_test_002",
     "name": "Function Call Test 002",
     
-    "pre":{"createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallFlowPreHandler(def)", 
+    "pre":{"createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallFlowPreHandler(definition)", 
          "param":[{"key":"A", "value":"bizParam.a"},{"key":"B", "value":"bizParam.b"}, {"key":"C", "value":"'static'"} ]},
          
     "nodes": [
         {"id": "node001","name": "Node001","start": true,
                 "action": {
-                    "createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallNodeAction(def, node)",
+                    "createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallNodeAction(definition, node)",
                     
                     "classMethod": "com.jd.easyflow.flow.ext.cases.funcall.MockActionClass::method1", 
                     "param":[{"key":"A", "value":"bizParam.A"},{"key":"B", "value":"bizParam.B"}], 
@@ -20,7 +20,7 @@
             
         {"id": "node003","name": "Node003",
         "action": {
-                    "createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallNodeAction(def, node)",
+                    "createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallNodeAction(definition, node)",
                     
                     "classMethod": "com.jd.easyflow.flow.ext.cases.funcall.MockActionClass::method3", 
                     "param":[{"key":"A", "value":"node['node001'].res.r1"},{"key":"B", "value":"bizParam.C"}], 
@@ -28,7 +28,7 @@
                 }}
         ],
         
-     "post":{"createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallFlowPostHandler(def)", 
+     "post":{"createExp":"new com.jd.easyflow.flow.ext.funcall.FunCallFlowPostHandler(definition)", 
          "result":[{"key":"result1", "value":"node['node003'].res.r3"},{"key":"result2", "value":"node['node001'].res.r2"}]}
 
 }

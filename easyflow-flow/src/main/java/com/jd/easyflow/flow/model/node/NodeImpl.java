@@ -38,15 +38,28 @@ public class NodeImpl implements FlowNode {
     private NodePostHandler postHandler;
 
     @Override
-    public void init(InitContext initContext, Flow flow) {
+    public void init(InitContext initContext, Object parent) {
         if (preHandler != null) {
             preHandler.init(initContext, this);
         }
         if (action != null) {
-            action.init(initContext, this);
+            action.init(initContext,  this);
         }
         if (postHandler != null) {
             postHandler.init(initContext, this);
+        }
+    }
+    
+    @Override
+    public void destroy() {
+        if (preHandler != null) {
+            preHandler.destroy();
+        }
+        if (action != null) {
+            action.destroy();
+        }
+        if (postHandler != null) {
+            postHandler.destroy();
         }
     }
 

@@ -7,7 +7,7 @@ import com.jd.easyflow.fsm.FsmContext;
  * @author liyuliang5
  *
  */
-public interface TransitionPostHandler {
+public interface TransitionPostHandler extends FsmLifeCycle {
     
     /**
      * Post handle.

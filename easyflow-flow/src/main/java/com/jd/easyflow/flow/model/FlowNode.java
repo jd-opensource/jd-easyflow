@@ -9,7 +9,7 @@ import com.jd.easyflow.flow.engine.FlowContext;
  * @author liyuliang5
  *
  */
-public interface FlowNode {
+public interface FlowNode extends FlowLifeCycle {
 
     /**
      * Execute node.
@@ -18,15 +18,6 @@ public interface FlowNode {
      * @return
      */
     NodeContext execute(NodeContext nodeContext, FlowContext context);
-
-    /**
-     * Init method, used in parsing.
-     * @param initContext
-     * @param flow
-     */
-    default void init(InitContext initContext, Flow flow) {
-
-    }
     
     /**
      * Get node ID

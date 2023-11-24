@@ -278,6 +278,20 @@
                     _self._elementPannelRender[elementType].call(_self, $form, e.element);
                 }
             });
+            eventBus.on("selection.changed", function(e) {
+                var selectedElements = e.newSelection;
+                if (!selectedElements || selectedElements.length!=1) {
+                    $form.empty();
+                    return;
+                }
+                var element = selectedElements[0];
+                var elementType = element.businessObject.$type;
+                console.log('click on ' + element.id + " type:" + element.businessObject.$type);
+                $form.empty();
+                if (_self._elementPannelRender[elementType]) {
+                    _self._elementPannelRender[elementType].call(_self, $form, element);
+                }
+            });            
             eventBus.on("element.changed", function(e) {
                 console.log("change");
                 _self._comment(e.element);
@@ -338,7 +352,7 @@
                 var html =
                     '<div class="row">        ' +
     '<div class="form-group col"> ' +
-        '<label><span class="j-require">*</span>' + J.msg['"bpmn.flowJsonDefinition"'] + ':</label>' +
+        '<label><span class="j-require">*</span>' + J.msg['bpmn.flowJsonDefinition'] + ':</label>' +
         '<textarea class="jsonDef form-control" rows="30" readonly="readonly"></textarea>' +
     '</div>' +
 '</div>';
@@ -471,6 +485,9 @@
         // Show flow definition pannel
         var processElements = _findProcessElement(this.bpmnModeler);
         if (processElements.length != 1) {
+            var $infoPannel = this.$bpmnContainer.find(".infoPannel");
+            var $form = $infoPannel.find('form');
+             $form.empty();
             return;
         }
         this._elementPannelRender['bpmn:Process'].call(this, this.$bpmnContainer.find(".infoPannel").find("form"), processElements[0]);
@@ -498,10 +515,21 @@
         $elementId.blur(function() {
             var newElementId = $elementId.val();
             if (!newElementId) {
-                alert(J.msg['bpmn.idError']);
+                alert(J.msg['bpmn.idEmptyError']);
                 $elementId.val(elementId);
                 return;
             }
+            var elementRegistry = _self.bpmnModeler.get('elementRegistry');
+            var exists = elementRegistry.find(function(element){
+                return element.businessObject.id==newElementId;
+            });
+            if (exists) {
+                alert(J.msg['bpmn.idExistsError']);
+                $elementId.val(elementId);
+                return; 
+            }
+            
+            
             bo.id = newElementId;
             _self.cfg.onBpmnDefinitionChange && _self.cfg.onBpmnDefinitionChange.call(_self, bo, "id", newElementId, elementId);
             _self._comment(element);
@@ -1407,9 +1435,22 @@
 */
     function _findProcessElement(bpmnModeler) {
         var elementRegistry = bpmnModeler.get('elementRegistry');
-        return elementRegistry.filter(function(element) {
+        var processes = elementRegistry.filter(function(element) {
             return element.type == 'bpmn:Process';
         });
+        if (processes.length>0) {
+            return processes;
+        }
+        var participants = elementRegistry.filter(function(element) {
+            return element.type == 'bpmn:Participant';
+        });
+        participants.forEach(function(element){
+            var processBusinessObject = element.businessObject.processRef;
+            if (processBusinessObject) {
+              processes.push({businessObject:processBusinessObject});
+            }
+        });
+        return processes;
     }
     
 

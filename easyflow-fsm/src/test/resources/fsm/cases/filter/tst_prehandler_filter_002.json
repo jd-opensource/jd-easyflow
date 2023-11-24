@@ -1,0 +1,19 @@
+{
+    "id": "tst_prehandler_filter_002",
+    "states": [
+        {"id": "A1","name": "A1"},
+        {"id": "A2","name": "A2"},
+        {"id": "B","name": "B"},
+        {"id": "C","name": "C"}
+    ],
+    "events": [
+        {"id": "E1","name": "Event1"}
+    ],
+    "transitions": [
+        {"from": ["A1", "A2"],"event": "E1", "post":{"to":"B"}}
+    ],
+    "listeners":[
+    {"createExp":"new com.jd.easyflow.fsm.listener.FsmCommonListener()"}
+    ],
+    "transitionPreHandlerFilters":[{"createExp":"new com.jd.easyflow.fsm.cases.filter.StateTransitionPreHandlerTestFilter(definition)", "states":["A1"]}]
+}
