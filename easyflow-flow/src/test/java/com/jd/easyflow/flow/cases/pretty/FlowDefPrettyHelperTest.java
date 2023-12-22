@@ -1,5 +1,8 @@
 package com.jd.easyflow.flow.cases.pretty;
 
+import static org.junit.Assert.assertEquals;
+
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -54,4 +57,13 @@ public class FlowDefPrettyHelperTest {
         String prettyStr = JsonPrettyHelper.pretty(origin, flowPrettyConf);
         logger.info("Output:\n" + prettyStr);
     }
+    
+    @Test
+    public void testQuoteEscapse() throws Exception {
+        Method method = JsonPrettyHelper.class.getDeclaredMethod("quote", new Class[] {String.class});
+        method.setAccessible(true);
+        String result = (String) method.invoke(null, "a\\b\nc");
+        assertEquals(result, "\"a\\\\b\\nc\"");
+    }
+    
 }

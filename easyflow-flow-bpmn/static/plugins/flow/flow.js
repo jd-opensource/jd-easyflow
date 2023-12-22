@@ -47,9 +47,12 @@
             $flowContainer.find("[name='defId']").val(this.data.defId);
             $flowContainer.find("[name='defName']").val(this.data.defName);
             this.data.format && $flowContainer.find("[name='format']").val(this.data.format);
+            this.data.bizType && $flowContainer.find("[name='bizType']").val(this.data.bizType);
+            this.data.category && $flowContainer.find("[name='category']").val(this.data.category);
             if (this.cfg.mode == 'view') {
                 $flowContainer.find("[name='format']").attr("disabled", true);
                 $flowContainer.find("[name='bizType']").attr("disabled", true);
+                $flowContainer.find("[name='category']").attr("disabled", true);
             }
 
             var _self = this;
@@ -190,6 +193,7 @@
         this.data.defId = this.$flowContainer.find("[name='defId']").val();
         this.data.defName = this.$flowContainer.find("[name='defName']").val();
         this.data.bizType = this.$flowContainer.find("[name='bizType']").val();
+        this.data.category = this.$flowContainer.find("[name='category']").val();
         this.data.format = this.$flowContainer.find("[name='format']").val();
         // JSON Data has been set
         this.data.bpmnXmlData = await this.bpmnControl.collect();
@@ -208,6 +212,12 @@
         if (window.flowBizType) {
             for (var field in window.flowBizType) {
                 bizTypeHtml += "<option value='" + field + "'>" + window.flowBizType[field] + "</option>";
+            }
+        }
+        var categoryHtml = "";
+        if (window.flowCategory) {
+            for (var field in window.flowCategory) {
+                categoryHtml += "<option value='" + field + "'>" + window.flowCategory[field] + "</option>";
             }
         }
             return  '    <div class=" container-fluid">                                                                   ' +
@@ -231,6 +241,11 @@
                 '            <div class="form-group col">                                                             ' +
                 '                <label>' + J.msg['flow.bizType'] + ':</label> <select class="form-control" name="bizType"' +
                 '                         class="form-control"/>                ' + bizTypeHtml +
+                '                         </select>              ' +
+                '            </div>                                                                                   ' +
+                '            <div class="form-group col">                                                             ' +
+                '                <label>' + J.msg['flow.category'] + ':</label> <select class="form-control" name="category"' +
+                '                         class="form-control"/>                ' + categoryHtml +
                 '                         </select>              ' +
                 '            </div>                                                                                   ' +
                 '        </div>                                                                                        '+

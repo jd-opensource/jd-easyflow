@@ -62,6 +62,7 @@ $.extend(J.msg, {
     "flow.flowDefType.flowJson":"流程引擎-JSON",
     "flow.flowDefType.fsmJson":"状态机-JSON",
     "flow.bizType":"业务类型",
+    "flow.category":"流程类别",
     "flow.flowDefinition":"流程定义",
     "flow.flowDiagram":"流程图",
     "flow.jsonDefinition":"JSON定义",

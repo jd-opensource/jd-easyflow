@@ -8,16 +8,20 @@ CREATE TABLE `process_definition` (
   `name` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition name',
   `format` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition format',
   `biz_type` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition biz type',
+  `category` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition category',
   `content` mediumtext COLLATE utf8mb4_bin COMMENT 'definition content',
   `json_content` mediumtext COLLATE utf8mb4_bin COMMENT 'json definition content',
   `latest` tinyint(4) DEFAULT NULL COMMENT 'latest flag, 1 is latest',
   `def_source` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition source',
   `ext_data` json DEFAULT NULL COMMENT 'extension data',
+  `created_by` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition created by',
+  `modified_by` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'definition modified by',
   `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
   `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
   `deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'delete flag',
   PRIMARY KEY (`id`),
-  INDEX `idx_defId_defVersion` (`def_id`,`def_version`)
+  INDEX `idx_defId_defVersion` (`def_id`,`def_version`),
+  INDEX `idx_category` (``category`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='process definition table';
 -- process instance
 CREATE TABLE `process_instance` (
@@ -37,6 +41,8 @@ CREATE TABLE `process_instance` (
   `current_node_ids` VARCHAR(512) NULL COMMENT 'current node id list',
   `biz_status` VARCHAR(64) NULL COMMENT 'instance biz status',
   `biz_data` TEXT NULL COMMENT 'instance biz data',
+  `key_field` VARCHAR(128) NULL COMMENT 'key field',
+  `key_field2` VARCHAR(128) NULL COMMENT 'key field2',
   `vars` JSON NULL COMMENT 'instance variables',
   `ext_data` JSON NULL COMMENT 'extension data',
   `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
@@ -134,6 +140,8 @@ CREATE TABLE `process_task` (
   `creator` VARCHAR(64) NULL COMMENT 'creator',
   `status` VARCHAR(32) NULL COMMENT 'task status',
   `ext_data` JSON NULL COMMENT 'extension data',
+  `process_instance_key_field` VARCHAR(128) NULL COMMENT 'process instance key field',
+  `process_instance_key_field2` VARCHAR(128) NULL COMMENT 'process instance key field2',
   `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
   `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
   `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',

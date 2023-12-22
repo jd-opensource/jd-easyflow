@@ -74,6 +74,7 @@ if (!window.J) {
     "flow.flowDefType.flowJson":"FlowEngine-JSON",
     "flow.flowDefType.fsmJson":"StateMachine-JSON",
     "flow.bizType":"Business Type",
+    "flow.category":"Category",
     "flow.flowDefinition":"Flow Definition",
     "flow.flowDiagram":"Flow Diagram",
     "flow.jsonDefinition":"JSON Definition",

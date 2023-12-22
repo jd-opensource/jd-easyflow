@@ -824,7 +824,7 @@ J.jp = {
                 var parts = exp.split(/[\.|\[]/);
                 var result = [];
                 for (var i in parts) {
-                    if (parts[i] == "$") {
+                    if (parts[i] == "$" || parts[i]=="") {
                         continue;
                     }
                     // Array

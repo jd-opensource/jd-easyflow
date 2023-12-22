@@ -151,7 +151,7 @@ public class BpmnConverter {
         } catch (UnsupportedEncodingException e) {
             throw new FlowException(e);
         }
-        if (flowPrettyConfig == null) {
+        if (flowPrettyConfig == null || flowPrettyConfig.isEmpty()) {
             return JsonUtil.toJsonString(model.size() == 1 ? model.get(0) : model);
         } else {
             return JsonPrettyHelper.pretty(model.size() == 1 ? model.get(0) : model, flowPrettyConfig);

@@ -200,5 +200,9 @@ public class SpelHelper {
         SpelHelper.applicationContext = applicationContext;
         context.setBeanResolver(new BeanFactoryResolver(applicationContext));
     }
+    
+    public static StandardEvaluationContext getDefaultContext() {
+        return context;
+    }
 
 }

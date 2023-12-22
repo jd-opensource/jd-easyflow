@@ -43,7 +43,7 @@ public class JsonPrettyHelper {
         if (value == null) {
             builder.append("null");
         } else if (value instanceof String) {
-            builder.append(quote(value));
+            builder.append(quote((String) value));
         } else if (value instanceof Number || value instanceof Boolean) {
             builder.append(value);
         } else if (value instanceof Map) {
@@ -216,12 +216,8 @@ public class JsonPrettyHelper {
         return StringUtils.repeat(' ', num);
     }
 
-    private static String quote(Object s) {
-        String str = s.toString();
-        if (str.indexOf("\"") > 0) {
-            str = str.replace("\"", "\\\"");
-        }
-        return "\"" + str + "\"";
+    private static String quote(String str) {
+        return JsonUtil.toJsonString(str);
     }
 
     private static String quoteColon(String s) {
