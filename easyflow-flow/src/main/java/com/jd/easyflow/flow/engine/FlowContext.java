@@ -151,6 +151,19 @@ public interface FlowContext {
 	 * @return
 	 */
 	boolean isLogOn();
+	
+	/**
+	 * Get business context.
+	 * @param <T>
+	 * @return
+	 */
+    <T>T getContext();
+
+    /**
+     * Set business context.
+     * @param context
+     */
+    void setContext(Object context);
 
 
 }

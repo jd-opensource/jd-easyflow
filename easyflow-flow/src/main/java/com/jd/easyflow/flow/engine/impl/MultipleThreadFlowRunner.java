@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -28,6 +29,17 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
     protected static long startId = System.currentTimeMillis();
 
     protected Executor executor;
+    
+    protected long timeout = 0;
+    
+    public MultipleThreadFlowRunner() {
+        
+    }
+    
+    public MultipleThreadFlowRunner(Executor executor, long timeout) {
+        this.executor = executor;
+        this.timeout = timeout;
+    }
 
     @Override
     public void runNodes(FlowContextImpl context) {
@@ -39,7 +51,15 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         AtomicInteger counter = new AtomicInteger();
         scheduleNodes(context, counter, lock, runId);
         try {
-            lock.await();
+            if (timeout == 0) {
+                lock.await();
+            } else {
+                boolean result = lock.await(timeout, TimeUnit.MILLISECONDS);
+                context.put(FlowConstants.FLOW_CTX_MULTI_AWAIT_RESULT, result);
+                if (result == false) {
+                    context.setInterrupted();
+                }
+            }
         } catch (InterruptedException e) {
             throw new FlowException(e);
         }
@@ -135,6 +155,14 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
 
     public void setExecutor(Executor executor) {
         this.executor = executor;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 
 }

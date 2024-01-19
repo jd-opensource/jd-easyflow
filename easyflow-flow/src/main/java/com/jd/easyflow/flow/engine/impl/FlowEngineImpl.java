@@ -75,6 +75,8 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     private boolean autoStartup = true;
 
     private volatile boolean isRunning = false;
+    
+    private Map<String, Object> properties = new ConcurrentHashMap<>();
 
     public void init() {
         if (inited) {
@@ -445,6 +447,23 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
 
     public void setAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+    
+    @Override
+    public <T>T getProperty(String key) {
+        return (T) properties.get(key);
+    }
+    
+    public void setProperty(String key, Object value) {
+        properties.put(key, value);
     }
     
 }

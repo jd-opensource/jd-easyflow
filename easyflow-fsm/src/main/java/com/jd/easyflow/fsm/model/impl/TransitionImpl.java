@@ -23,17 +23,17 @@ import com.jd.easyflow.fsm.util.FsmEventTypes;
  */
 public class TransitionImpl implements Transition {
 
-    private String fromId;
+    protected String fromId;
 
-    private String eventId;
+    protected String eventId;
 
-    private List<String> toIdList;
+    protected List<String> toIdList;
 
-    private TransitionPreHandler preHandler;
+    protected TransitionPreHandler preHandler;
 
-    private TransitionAction action;
+    protected TransitionAction action;
 
-    private TransitionPostHandler postHandler;
+    protected TransitionPostHandler postHandler;
     
     @Override
     public void init(InitContext initContext, Object parent) {

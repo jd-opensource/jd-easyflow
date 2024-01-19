@@ -1,12 +1,20 @@
 package com.jd.easyflow.flow.cases.performance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jd.easyflow.flow.el.SpelEvaluator;
+import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
+import com.jd.easyflow.flow.engine.impl.FlowContextImpl;
 import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
+import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.util.SpelHelper;
 
 /**
  * 
@@ -85,5 +93,61 @@ public class PerformanceTest {
         long time = System.currentTimeMillis() - t1;
         log.info("execute " + count + " times, elpase " + time + "ms");
     }
+    
+//    @Test
+//    public void testBuildSpelRoot() {
+//        NodeContext nodeContext = new NodeContext();
+//        FlowContext context = new FlowContextImpl();
+//        FlowParam param = new FlowParam();
+//        FlowResult result = new FlowResult();
+//        context.setParam(param);
+//        context.setResult(result);
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("node", "node");
+//        
+//        SpelEvaluator evaluator = new SpelEvaluator();
+//        long t1 = System.currentTimeMillis();
+//        for (int i = 0; i < 1000000; i++) {
+//            evaluator.buildHashMapRoot(nodeContext, context, data);
+//        }
+//        long t2 = System.currentTimeMillis();
+//        for (int i = 0; i < 1000000; i++) {
+//            evaluator.buildRootMapRoot(nodeContext, context, data);
+//        }  
+//        long t3 = System.currentTimeMillis();
+//        log.info((t2 - t1) + " " + (t3 - t2));
+//    }
+//    
+//    @Test
+//    public void testExecuteSpel() {
+//        NodeContext nodeContext = new NodeContext();
+//        FlowContext context = new FlowContextImpl();
+//        FlowParam param = new FlowParam();
+//        FlowResult result = new FlowResult();
+//        context.setParam(param);
+//        context.setResult(result);
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("node", "node");
+//        
+//        SpelEvaluator evaluator = new SpelEvaluator();
+//        Object root1 = evaluator.buildHashMapRoot(nodeContext, context, data);
+//        Object root2 = evaluator.buildRootMapRoot(nodeContext, context, data);
+//        SpelHelper.evalWithDefaultContext("context.param", root1, true);
+//        SpelHelper.evalWithDefaultContext("context.param", root2, true);
+//        long t1 = System.currentTimeMillis();
+//        for (int i = 0; i < 1000000; i++) {
+//            SpelHelper.evalWithDefaultContext("context.param", root1, true);
+//        }
+//        long t2 = System.currentTimeMillis();
+//        for (int i = 0; i < 1000000; i++) {
+//            SpelHelper.evalWithDefaultContext("context.param", root1, true);
+//        }  
+//        long t3 = System.currentTimeMillis();
+//        for (int i = 0; i < 1000000; i++) {
+//            SpelHelper.evalWithDefaultContext("context.param", root1, true);
+//        }  
+//        long t4 = System.currentTimeMillis();
+//        log.info((t2 - t1) + " " + (t3 - t2) + " " + (t4 - t3));
+//    }
 
 }

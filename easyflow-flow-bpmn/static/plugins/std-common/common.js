@@ -990,6 +990,204 @@ J.eval = function(js, ctxData) {
     }
 }
 
+ $.fn.jJsonPropertyEditor=function(option, arg) { 
+        // Create listSelect
+    if (typeof option !== 'string') {
+        option = option ? option : {}
+        option.$originalControl = $(this);
+        var jJsonPropertyEditor =  $(this).data("j-json-property-editor");
+        if (! jJsonPropertyEditor) {
+            jJsonPropertyEditor = new JJsonPropertyEditor(option);
+            $(this).data("j-json-property-editor",jJsonPropertyEditor);
+        }
+        jJsonPropertyEditor.render();
+      } else {
+        var jJsonPropertyEditor = $(this).data("j-json-property-editor");
+        var result = jJsonPropertyEditor[option](arg);
+        return result;
+      }
+}; 
+
+/**
+ * JSON property control
+ */
+var JJsonPropertyEditor = function(option) {
+    this.$originalControl = option.$originalControl;
+    this.$container = option.$container ? option.$container : this.$originalControl.parent();
+    this.mode = option.mode ? option.mode : "ROW";
+    this.render = function() {
+        var _this = this;
+        this.$control = $("<div class='container-fluid'></div>").appendTo(this.$container);
+       this.$control.on("click", ".j-row-add", function(){
+          _this.addRow($(this).parent().parent());
+       });   
+       this.$control.on("click", ".j-row-del", function(){
+           if (_this.$control.find(".j-prop-record").length==1){
+               $(this).parent().parent().find("input,textarea").val("");
+           } else {
+           $(this).parent().parent().remove();
+           }
+       });  
+       this.$control.on("blur", ".j-prop-key,.j-prop-type,.j-prop-val", function(){
+           var newVal = _this.collect();
+           if (Array.isArray(newVal)) {
+               alert(newVal + " " + J.msg['bpmn.property.valueFormatInvalid']);
+               return false;
+           }
+           _this.$originalControl.val(Object.keys(newVal).length==0 ? "" : JSON.stringify(newVal, null, 2));
+           _this.$originalControl.blur();
+       });  
+        this.$control.on("change", ".j-prop-type", function(){
+           $(this).parent().parent().find(".j-prop-val").val("");
+       });      
+       this._innerRender();           
+    }
+    
+    this._innerRender = function() {
+                if (this.mode == "JSON") {
+            this.$originalControl.show();
+            this.$control.hide();
+        } else {
+            this.$originalControl.hide();
+            this.$control.show();
+            this.$control.empty();
+            var valStr = this.$originalControl.val();
+            var value = {};
+            try {
+                value = valStr ? JSON.parse(valStr) : {};
+            } catch (e) {
+                alert(J.msg['jqueryValidate.json'] + "," + valStr);
+            } 
+            var keys = Object.keys(value);
+          if (keys.length==0) {
+            this.addRow();
+        } else {
+            for (var key in value) {
+                this.addRow(null, key, value[key]);
+            }
+        }  
+        } 
+    }
+    
+    this.changeMode = function(mode) {
+        if (mode == this.mode) {
+            return;
+        } else {
+            this.mode = mode;
+            this._innerRender();
+        }
+    }
+    
+    this.addRow = function($after, key, val) {
+        var $html = $("<div class='row j-prop-record'>"
+         + "<div class='col-3 p-0'><input class='form-control p-0 j-prop-key' placeholder='" + J.msg['bpmn.property.propertyKey'] + "'></input></div>"
+         + "<div class='col-2 p-0'><select class='form-control p-0 j-prop-type'>"
+            + "<option value='string' selected='selected'>" + J.msg['bpmn.property.typeString'] + "</option>"
+            + "<option value='number'>" + J.msg['bpmn.property.typeNumber'] + "</option>"
+            + "<option value='boolean'>" + J.msg['bpmn.property.typeBoolean'] + "</option>"
+            + "<option value='object'>" + J.msg['bpmn.property.typeObject'] + "</option>"
+            + "<option value='array'>" + J.msg['bpmn.property.typeArray'] + "</option>"
+            + "<option value='null'>" + J.msg['bpmn.property.typeNull'] + "</option></select></div>" 
+        + "<div class='col-6 p-0'><textarea wrap='off' class='form-control p-0 j-prop-val' placeholder='" + J.msg['bpmn.property.propertyValue'] + "'></textarea></div>"
+        + "<div class='col-1 p-0'><i class='fa fa-plus j-row-add' style='cursor:pointer'>"
+        + "</i><i class='fa fa-trash j-row-del' style='cursor:pointer'></i></div></div>");
+         var $row = $after ? $html.insertAfter($after) : $html.appendTo(this.$control);
+          var $key = $row.find(".j-prop-key");
+          $key.tooltip({title:function(){return $(this).val()}});
+          var $val = $row.find(".j-prop-val");
+          $val.tooltip({title:function(){return $(this).val()}});          
+        if (key) {
+          var $type = $row.find(".j-prop-type");
+          $key.val(key);
+          var type = $.type(val);
+          if (type == "object" && Array.isArray(val)) {
+              type = "array";
+          }
+          $type.val(type);
+          if (type == "null") {
+          } else if (type == "string") {
+              $val.val(val);
+          } else if (type == "number") {
+              $val.val(val); 
+          } else if (type == "boolean") {
+              $val.val(val);               
+          } else if (type == "object") {
+              $val.val(JSON.stringify(val, null, 2));                             
+          } else if (type == "array") {
+              $val.val(JSON.stringify(val, null, 2));                             
+          } else {
+              throw "invalid type:" + type;
+          }
+        }
+        
+    }
+
+    this.collect = function () {
+        var result = {};
+        var errorKeys = [];
+        this.$control.find(".j-prop-record").each(function(){
+          var key = $(this).find(".j-prop-key").val();
+          var type = $(this).find(".j-prop-type").val();
+          var val = $(this).find(".j-prop-val").val();
+          var valObj = null;
+          //var isJsonPath = key.indexOf("$")==0;
+            if (key) {
+                if (val == "") {
+                    return;
+                }
+                if (type == "null") {
+                    valObj = null;
+                    if (val.trim() !== "") {
+                        errorKeys.push(key);
+                        return;
+                    }
+                } else if (type == "string") {
+                    valObj = val.trim();
+                } else if (type == "number") {
+                    valObj = Number(val.trim());
+                    if (Number.isNaN(valObj)) {
+                        errorKeys.push(key);
+                        return;
+                    }
+                } else if (type == "boolean") {
+                    if (val.trim() == 'true') {
+                        valObj = true;
+                    } else if (val.trim()=='false') {
+                        valObj = false;
+                    } else {
+                        errorKeys.push(key);
+                        return;
+                    }
+                } else if (type == "object") {
+                    try {
+                      valObj = JSON.parse(val);
+                      } catch (e) {
+                        errorKeys.push(key);
+                        return; 
+                      }
+                      if (Array.isArray(valObj)) {
+                          errorKeys.push(key);
+                          return;
+                      }
+                } else if (type == "array") {
+                    try {
+                    valObj = JSON.parse(val);
+                    } catch (e) {
+                        errorKeys.push(key);
+                        return; 
+                    }
+                    if (! Array.isArray(valObj)) {
+                          errorKeys.push(key);
+                          return;
+                      }
+                }
+                result[key] = valObj;
+            }
+        });
+        return errorKeys.length>0 ? errorKeys : result;
+    }
+}
+
 
 
 

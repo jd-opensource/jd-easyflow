@@ -169,7 +169,18 @@ if (!window.J) {
     "bpmn.logFlagTooltip":"Print log flag, default true",
     "bpmn.default":"Default",
     "bpmn.true":"True",
-    "bpmn.false":"False"
+    "bpmn.false":"False",
+    "bpmn.switchRowMode":"Switch Row Mode",
+    "bpmn.switchJsonMode":"Switch JSON Mode",
+    "bpmn.property.propertyKey":"Key",    
+    "bpmn.property.propertyValue":"Value",    
+    "bpmn.property.typeString":"String",    
+    "bpmn.property.typeNumber":"Number",    
+    "bpmn.property.typeBoolean":"Boolean",    
+    "bpmn.property.typeObject":"Object",    
+    "bpmn.property.typeArray":"Array",    
+    "bpmn.property.typeNull":"Null",       
+    "bpmn.property.valueFormatInvalid":"Value Format Invalid!",      
     });
     
     J.bpmnIOTranslations = {};

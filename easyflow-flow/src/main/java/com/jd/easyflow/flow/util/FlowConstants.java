@@ -28,6 +28,8 @@ public class FlowConstants {
      */
     public static final String FLOW_CTX_MULTI_EXCEPTIONS = "flow.multi.exceptions";
     
+    public static final String FLOW_CTX_MULTI_AWAIT_RESULT = "flow.multi.await.result";
+    
     public static final String NODE_CTX_MULTI_EXCEPTION = "flow.multi.exception";
     
     

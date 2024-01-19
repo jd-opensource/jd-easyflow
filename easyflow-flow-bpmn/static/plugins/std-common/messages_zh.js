@@ -157,7 +157,18 @@ $.extend(J.msg, {
     "bpmn.logFlagTooltip":"打印日志开关，缺省开",
     "bpmn.default":"缺省",
     "bpmn.true":"是",
-    "bpmn.false":"否"    
+    "bpmn.false":"否",
+    "bpmn.switchRowMode":"切换行模式",
+    "bpmn.switchJsonMode":"切换JSON模式",
+    "bpmn.property.propertyKey":"属性键",    
+    "bpmn.property.propertyValue":"属性值",    
+    "bpmn.property.typeString":"字符",    
+    "bpmn.property.typeNumber":"数值",    
+    "bpmn.property.typeBoolean":"真假",    
+    "bpmn.property.typeObject":"对象",    
+    "bpmn.property.typeArray":"数组",    
+    "bpmn.property.typeNull":"空值",   
+    "bpmn.property.valueFormatInvalid":"值格式不正确!"    
 });
 
 

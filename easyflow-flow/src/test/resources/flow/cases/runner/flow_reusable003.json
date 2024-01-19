@@ -1,0 +1,9 @@
+{
+    "id": "flow_reusable003",
+    "nodes": [
+        {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+         "properties":{"sleep":5}
+        }
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestReusableThreadRunner(2)"}
+}

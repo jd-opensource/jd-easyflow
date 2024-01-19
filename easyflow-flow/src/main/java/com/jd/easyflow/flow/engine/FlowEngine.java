@@ -1,5 +1,7 @@
 package com.jd.easyflow.flow.engine;
 
+import java.util.Map;
+
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.parser.FlowParser;
 
@@ -29,5 +31,21 @@ public interface FlowEngine {
      * @return
      */
     FlowParser getFlowParser();
+    
+    
+    /**
+     * Get engine properties.
+     * @return
+     */
+    Map<String, Object> getProperties();
+    
+    
+    /**
+     * Get engine property.
+     * @param <T>
+     * @param key
+     * @return
+     */
+    <T>T getProperty(String key);
     
 }

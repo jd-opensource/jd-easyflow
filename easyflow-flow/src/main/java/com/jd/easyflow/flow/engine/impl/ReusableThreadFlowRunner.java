@@ -2,6 +2,7 @@ package com.jd.easyflow.flow.engine.impl;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -19,6 +20,15 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(ReusableThreadFlowRunner.class);
 
+    public ReusableThreadFlowRunner() {
+
+    }
+
+    public ReusableThreadFlowRunner(Executor executor, long timeout) {
+        this.executor = executor;
+        this.timeout = timeout;
+    }
+
     @Override
     protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock, String runId) {
         List<NodeContext> startNodes = context.getStartNodes();
@@ -27,7 +37,13 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
             return;
         }
         counter.addAndGet(startNodes.size());
-        runNodes(startNodes.toArray(new NodeContext[startNodes.size()]), context, counter, lock, runId);
+        if (timeout == 0) {
+            runNodes(startNodes.toArray(new NodeContext[startNodes.size()]), context, counter, lock, runId);
+        } else {
+            executor.execute(() -> {
+                runNodes(startNodes.toArray(new NodeContext[startNodes.size()]), context, counter, lock, runId);  
+            });
+        }
     }
 
     private void runNodes(NodeContext[] nodes, FlowContextImpl context, AtomicInteger counter, CountDownLatch lock,

@@ -47,6 +47,10 @@
 .infoPannel form {
 	width:300px;
 }
+.infoPannel .col {
+    padding-left:0px;
+    padding-right: 0px;
+}
 
 .infoPannel textarea.form-control {
     height:30px;
@@ -96,4 +100,16 @@
 
 select.j-bpmn-comment-btn {
    display:inline;width:90px 
+}
+
+.j-prop-key {
+    font-size: 11px;
+}
+
+.j-prop-type {
+    font-size: 11px;
+}
+
+.j-prop-val {
+   font-size: 11px; 
 }

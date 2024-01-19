@@ -1,5 +1,5 @@
 {
-    "id": "flow_reusable001","name": "Reusable thread flow test 001",
+    "id": "flow_reusable001",
     "nodes": [
         {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
             "post":{"to":["EMPTY_NODE2","EMPTY_NODE3"]}, "properties":{"sleep":300}

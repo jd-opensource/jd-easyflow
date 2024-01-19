@@ -9,7 +9,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
-import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
@@ -25,17 +24,17 @@ import com.jd.easyflow.flow.util.FlowEventTypes;
  */
 public class NodeImpl implements FlowNode {
 
-    private String id;
+    protected String id;
 
-    private String name;
+    protected String name;
 
-    private Map<String, Object> properties = new ConcurrentHashMap<>();
+    protected Map<String, Object> properties = new ConcurrentHashMap<>();
 
-    private NodePreHandler preHandler;
+    protected NodePreHandler preHandler;
 
-    private NodeAction action;
+    protected NodeAction action;
 
-    private NodePostHandler postHandler;
+    protected NodePostHandler postHandler;
 
     @Override
     public void init(InitContext initContext, Object parent) {

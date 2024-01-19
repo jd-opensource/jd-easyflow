@@ -575,7 +575,7 @@
         }
         var properties = getExtensionBody(bo, "easyflow:Properties");
         var propertiesHtml = '<div class="row">' +
-            '<div class="form-group col"><label>' + J.msg['bpmn.property'] + ':</label> <textarea class="form-control j-properties" name="j-properties"></textarea></div>'
+            '<div class="form-group col"><label>' + J.msg['bpmn.property'] + '(<button type="button" class="j-properties-mode btn btn-link p-0">' + J.msg['bpmn.switchJsonMode'] + '</button>):</label> <textarea class="form-control j-properties" name="j-properties"></textarea></div>'
             + '</div>';
         var $propertiesElement = $(propertiesHtml).appendTo($infoPannel);
         var $properties = $propertiesElement.find(".j-properties");
@@ -586,6 +586,20 @@
             var newProperties = $properties.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Properties", newProperties);
             _self._comment(element);
+        });
+        
+        $properties.jJsonPropertyEditor({mode:"ROW"});
+        var $propertiesMode = $propertiesElement.find(".j-properties-mode");
+        $propertiesMode.click(function(){
+            if (!$(this).data('j-properties-mode') || $(this).data('j-properties-mode')=='ROW') {
+                $(this).text(J.msg['bpmn.switchRowMode']);
+                $properties.jJsonPropertyEditor("changeMode", "JSON");
+                $(this).data('j-properties-mode', "JSON");
+            } else {
+                $(this).text(J.msg['bpmn.switchJsonMode']);
+                $properties.jJsonPropertyEditor("changeMode", "ROW");     
+                $(this).data('j-properties-mode', "ROW");           
+            }
         });
 
     }

@@ -24,4 +24,8 @@ public class ElFactory {
     public static void setDefaultEvaluator(ElEvaluator evaluator) {
         defaultEvaluator = evaluator;
     }
+    
+    public void setDefault(ElEvaluator evaluator) {
+        ElFactory.defaultEvaluator = evaluator;
+    }
 }

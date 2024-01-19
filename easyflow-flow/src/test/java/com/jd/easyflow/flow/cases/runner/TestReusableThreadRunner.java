@@ -19,5 +19,11 @@ public class TestReusableThreadRunner extends ReusableThreadFlowRunner {
         this.executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<Runnable>(), Executors.defaultThreadFactory(), new AbortPolicy());
     }
+    
+    public TestReusableThreadRunner(long timeout) {
+        this.executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>(), Executors.defaultThreadFactory(), new AbortPolicy());
+        this.timeout = timeout;
+    }    
 
 }

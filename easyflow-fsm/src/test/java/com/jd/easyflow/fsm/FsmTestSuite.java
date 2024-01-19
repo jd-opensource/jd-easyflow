@@ -6,9 +6,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.jd.easyflow.fsm.cases.event.MultipleEventTest;
 import com.jd.easyflow.fsm.cases.filter.FsmFilterTest;
-import com.jd.easyflow.fsm.cases.filter.TransitionPreHandlerTestFilter;
 import com.jd.easyflow.fsm.cases.mockbiz.FsmMockBizTest;
 import com.jd.easyflow.fsm.cases.parser.FsmParserTest;
+import com.jd.easyflow.fsm.cases.post.PostTest;
 import com.jd.easyflow.fsm.cases.postevent.PostEventTest;
 import com.jd.easyflow.fsm.quickstart.FsmQuickStartTest;
 
@@ -24,7 +24,8 @@ import com.jd.easyflow.fsm.quickstart.FsmQuickStartTest;
     FsmParserTest.class,
     MultipleEventTest.class,
     PostEventTest.class,
-    FsmFilterTest.class})
+    FsmFilterTest.class,
+    PostTest.class})
 public class FsmTestSuite {
 
 }

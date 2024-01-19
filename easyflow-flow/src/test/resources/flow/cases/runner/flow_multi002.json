@@ -1,5 +1,5 @@
 {
-    "id": "flow_multi002","name": "Multiple thread flow 001",
+    "id": "flow_multi002",
     "nodes": [
         {"id": "EMPTY_NODE","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
             "post":{"to":["EMPTY_NODE2","EMPTY_NODE3"]}, "properties":{"sleep":3}

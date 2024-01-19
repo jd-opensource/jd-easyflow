@@ -188,6 +188,13 @@ public class FlowParam {
             context.put(key, value);
         }
     }
+    
+    public void setBizContext(Object bizContext) {
+        if (context == null) {
+            context = new FlowContextImpl();
+        }
+        context.setContext(bizContext);
+    }
 
     public Boolean getLogFlag() {
         return logFlag;

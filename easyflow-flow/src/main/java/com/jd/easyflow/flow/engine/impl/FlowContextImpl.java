@@ -1,6 +1,8 @@
 package com.jd.easyflow.flow.engine.impl;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -52,12 +54,18 @@ public class FlowContextImpl implements FlowContext {
     /**
      * Node context list waiting execute.
      */
-    private Stack<NodeContext> nodeStack = new Stack<NodeContext>();
+    private Deque<NodeContext> nodeStack = new ArrayDeque<NodeContext>();
 
     /**
      * Common data map.
      */
     private Map<String, Object> data = new ConcurrentHashMap<String, Object>();
+
+    /**
+     * business context
+     */
+    private Object context;
+    
     /**
      * Flow engine.
      */
@@ -93,7 +101,7 @@ public class FlowContextImpl implements FlowContext {
 
     public synchronized void addNodes(NodeContext[] nodes) {
         for (int i = 0; i < nodes.length; i++) {
-            nodeStack.add(nodes[nodes.length - 1 - i]);
+            nodeStack.push(nodes[nodes.length - 1 - i]);
         }
     }
 
@@ -101,9 +109,6 @@ public class FlowContextImpl implements FlowContext {
      * Get next node.
      */
     public synchronized NodeContext getNextNode() {
-        if (nodeStack == null) {
-            return null;
-        }
         if (nodeStack.isEmpty()) {
             return null;
         }
@@ -230,5 +235,14 @@ public class FlowContextImpl implements FlowContext {
     public boolean isLogOn() {
         return logFlag == null || this.logFlag.booleanValue();
     }
+
+    public <T>T getContext() {
+        return (T) context;
+    }
+
+    public void setContext(Object context) {
+        this.context = context;
+    }
+    
 
 }

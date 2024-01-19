@@ -28,6 +28,8 @@ public class TransitionContext {
     private Map<String, Object> dataMap = new HashMap<String, Object>();
     
     private Throwable throwable;
+    
+    private Object transitionContext;
 
     public Map<String, Object> getDataMap() {
         return dataMap;
@@ -96,7 +98,13 @@ public class TransitionContext {
     public void setPostEventId(String postEventId) {
         this.postEventId = postEventId;
     }
-    
-    
-    
+
+    public <T>T getTransitionContext() {
+        return (T) transitionContext;
+    }
+
+    public void setTransitionContext(Object transitionContext) {
+        this.transitionContext = transitionContext;
+    }
+
 }

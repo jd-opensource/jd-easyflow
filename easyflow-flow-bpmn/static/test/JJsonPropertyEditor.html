@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8" />
+<title>JJsonPropertyEditor</title>
+
+<!-- required modeler styles -->
+<link rel="stylesheet" href="../plugins/fontawesome/css/all.css">
+<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" href="../plugins/std-common/common.css" />
+<style>
+body {margin-top: 5px}
+</style>
+</head>
+
+<body>
+<div class="container-fluid">
+<div class="row">
+    <div class="col">
+        <textarea id="textarea1"></textarea>
+        <div id="control1"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <button id="switchJson">JSON模式</button>
+        <button id="switchRow">行模式</button>
+        <button id="viewValue">查看JSON值</button>
+    </div>
+   
+</div>
+</div>
+</body>
+<script>
+//window.jLocale="en_US";
+</script>
+<script src="../plugins/jquery/jquery-3.6.0.js"></script>
+<script src="../plugins/jquery-validation/jquery.validate.js"></script>
+<script src="../plugins/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../plugins/std-common/messages_default.js"></script>
+<script src="../plugins/std-common/messages_zh.js"></script>
+<script src="../plugins/std-common/common.js"></script>
+<script>
+var val = {"a":1, "b":"2", "c":true, "d":{"d":1}, "e":[1,2,3], "f":null};
+$("#textarea1").val(JSON.stringify(val));
+$("#textarea1").jJsonPropertyEditor();
+$("#switchJson").click(function(){$("#textarea1").jJsonPropertyEditor("changeMode", "JSON")});
+$("#switchRow").click(function(){$("#textarea1").jJsonPropertyEditor("changeMode", "ROW")});
+$("#viewValue").click(function() {
+  var val = $("#textarea1").jJsonPropertyEditor("collect");
+  alert(JSON.stringify(val));
+});
+</script>
+</html>

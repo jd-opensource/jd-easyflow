@@ -29,10 +29,12 @@ public class NodeContext {
 
     private Throwable throwable;
 
-    /**
-     * 通用数据Map;
-     */
     private Map<String, Object> dataMap;
+    
+    /**
+     * business context
+     */
+    private Object nodeContext;
 
     public Object getActionResult() {
         return actionResult;
@@ -128,6 +130,14 @@ public class NodeContext {
 
     public void setPreResult(Boolean preResult) {
         this.preResult = preResult;
+    }
+
+    public <T>T getNodeContext() {
+        return (T) nodeContext;
+    }
+
+    public void setNodeContext(Object nodeContext) {
+        this.nodeContext = nodeContext;
     }
 
 }

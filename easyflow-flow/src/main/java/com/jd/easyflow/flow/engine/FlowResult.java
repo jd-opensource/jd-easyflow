@@ -18,6 +18,11 @@ public class FlowResult {
     private FlowContext context;
 
     private Object result;
+    
+    /**
+     * common result data.
+     */
+    private Map<String, Object> dataMap;
 
     public FlowContext getContext() {
         return context;
@@ -78,6 +83,32 @@ public class FlowResult {
             return null;
         }
         return (T) ((List<Object>) result).get(index);
+    }
+    
+    public Map<String, Object> getDataMap() {
+        return dataMap;
+    }
+
+    public void seDataMap(Map<String, Object> dataMap) {
+        this.dataMap = dataMap;
+    }
+
+    public void put(String key, Object value) {
+        if (dataMap == null) {
+            dataMap = new ConcurrentHashMap<>();
+        }
+        if (value == null) {
+            dataMap.remove(key);
+        } else {
+            dataMap.put(key, value);
+        }
+    }
+
+    public <T> T get(String key) {
+        if (dataMap == null) {
+            return null;
+        }
+        return (T) dataMap.get(key);
     }
 
 }

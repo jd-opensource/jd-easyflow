@@ -1,0 +1,12 @@
+{
+    "id": "post_manually",
+    "states": [
+        {"id": "S1", "start":true},
+        {"id": "S2"}
+    ],
+    "transitions": [
+        {"from": "S1","event": "_state_enter"}
+        ],    
+    "listeners":[{"createExp":"new com.jd.easyflow.fsm.listener.FsmCommonListener()"}],
+    "transitionPreHandlerFilters":[{"createExp":"new com.jd.easyflow.fsm.cases.post.TestPostManuallyTransitionPreHandlerFilter()"}]
+}

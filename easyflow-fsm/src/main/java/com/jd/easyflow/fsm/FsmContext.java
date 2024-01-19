@@ -75,6 +75,8 @@ public class FsmContext {
     private volatile boolean interrupted = false;
     
     private Boolean preResult;
+    
+    private Object context;
 
     public Object getStateInstance() {
         return stateInstance;
@@ -274,5 +276,15 @@ public class FsmContext {
     public void setPreResult(Boolean preResult) {
         this.preResult = preResult;
     }
+
+    public <T>T getContext() {
+        return (T) context;
+    }
+
+    public void setContext(Object context) {
+        this.context = context;
+    }
+    
+    
 
 }

@@ -40,7 +40,7 @@ public class FsmParam {
     private String eventId;
     @JsonIgnore
     private FsmContext context;
-    
+    // business param
     private Object param;
     
     private Map<String, Object> dataMap;
@@ -142,6 +142,20 @@ public class FsmParam {
             return null;
         }
         return (T) dataMap.get(key);
+    }
+    
+    public void putContextData(String key, Object value) {
+        if (context == null) {
+            context = new FsmContext();
+        }
+        context.putData(key, value);
+    }
+    
+    public void setBizContext(Object bizContext) {
+        if (context == null) {
+            context = new FsmContext();
+        }
+        context.setContext(bizContext);
     }
     
 }

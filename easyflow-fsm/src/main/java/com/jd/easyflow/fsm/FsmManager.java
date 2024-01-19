@@ -58,6 +58,8 @@ public class FsmManager implements SmartLifecycle {
     private boolean autoStartup = true;
 
     private volatile boolean isRunning = false;
+    
+    private Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
 
     public void init() {
         if (inited) {
@@ -271,6 +273,22 @@ public class FsmManager implements SmartLifecycle {
 
     public void setAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+    
+    public <T>T getProperty(String key) {
+        return (T) properties.get(key);
+    }
+    
+    public void setProperty(String key, Object value) {
+        properties.put(key, value);
     }
 
 

@@ -17,7 +17,7 @@ public class FsmUtil {
      * @param transitionContext
      * @param context
      */
-    public State state(TransitionContext transitionContext, FsmContext context) {
+    public static State state(TransitionContext transitionContext, FsmContext context) {
         return context.getFsm().getState(transitionContext.getTransition().getFromId());
     }
 
@@ -30,7 +30,8 @@ public class FsmUtil {
      * @param context
      * @return
      */
-    public <T> T stateProperty(String key, TransitionContext transitionContext, FsmContext context) {
+    public static <T> T stateProperty(String key, TransitionContext transitionContext, FsmContext context) {
         return (T) state(transitionContext, context).getProperty(key);
     }
+    
 }
