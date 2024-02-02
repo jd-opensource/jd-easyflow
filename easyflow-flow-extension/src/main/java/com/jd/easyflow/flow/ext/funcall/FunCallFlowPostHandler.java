@@ -30,7 +30,7 @@ public class FunCallFlowPostHandler implements FlowPostHandler {
             for (Map<String, Object> result : resultList) {
                 String key = (String) result.get("key");
                 String valueExp = (String) result.get("value");
-                Object value = ElFactory.get().eval(valueExp, null, context, contextMap);
+                Object value = context.getElEvaluator().eval(valueExp, null, context, contextMap);
                 outputMap.put(key, value);
             }
             context.getResult().setResult(outputMap);

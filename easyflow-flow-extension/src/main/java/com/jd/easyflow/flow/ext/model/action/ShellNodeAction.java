@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.FlowNode;
@@ -31,7 +30,7 @@ public class ShellNodeAction implements NodeAction {
     public String execute(NodeContext nodeContext, FlowContext context) {
         List<String> command = null;
         if (StringUtils.isNotEmpty(shellCommandExp)) {
-            command = ElFactory.get().eval(shellCommandExp, nodeContext, context, null);
+            command = context.getElEvaluator().eval(shellCommandExp, nodeContext, context, null);
         } else {
             command = shellCommand;
         }

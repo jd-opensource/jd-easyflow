@@ -10,8 +10,8 @@ import com.jd.easyflow.flow.model.NodeExecutor;
  */
 public class ActionResultEl implements NodeExecutor<Boolean> {
 
-    public static final String OP_EQ = "eq";
-    public static final String OP_NEQ = "neq";
+    public static final String OP_EQ = "==";
+    public static final String OP_NEQ = "!=";
 
     private String operator;
 

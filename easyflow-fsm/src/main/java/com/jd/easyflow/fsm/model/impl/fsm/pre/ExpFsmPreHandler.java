@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.FsmContext;
-import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.model.FsmPreHandler;
 import com.jd.easyflow.fsm.model.impl.fsm.post.ExpFsmPostHandler;
 
@@ -23,7 +22,7 @@ public class ExpFsmPreHandler implements FsmPreHandler {
 
     @Override
     public boolean preHandle(FsmContext context) {
-        boolean result = ElFactory.get().eval(exp, null, context, null);
+        boolean result = context.getElEvaluator().eval(exp, null, context, null);
         if (logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }

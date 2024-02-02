@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.FsmContext;
-import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.TransitionContext;
 
@@ -29,7 +28,7 @@ public class ExpTransitionPostHandler extends AbstractTransitionPostHandler {
 	@Override
 	public PostHandleResult postHandle(TransitionContext transitionContext, FsmContext context) {
 		logger.info("EVAL SPEL:" + exp);
-		String result = ElFactory.get().eval(exp, transitionContext, context, null);
+		String result = context.getElEvaluator().eval(exp, transitionContext, context, null);
 		logger.info("SPEL RESULT:" + result);
 		return new PostHandleResult(result);
 	}

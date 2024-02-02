@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.FsmContext;
-import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.model.TransitionAction;
 import com.jd.easyflow.fsm.model.TransitionContext;
 
@@ -28,7 +27,7 @@ public class ExpTransitionAction  implements TransitionAction {
 
 	@Override
 	public Object execute(TransitionContext transitionContext, FsmContext context) {
-		Object result = ElFactory.get().eval(exp, transitionContext, context, null);
+		Object result = context.getElEvaluator().eval(exp, transitionContext, context, null);
 		return result;
 	}
 

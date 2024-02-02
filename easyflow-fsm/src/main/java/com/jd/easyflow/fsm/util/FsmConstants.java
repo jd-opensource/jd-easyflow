@@ -28,5 +28,7 @@ public class FsmConstants {
      * initContextKey
      */
     public static final String INIT_CONTEXT_KEY = "initContext";
+    
+    public static final String PARAM_KEY_EL_EVALUATOR = "fsm.elEvaluator";
 
 }

@@ -39,12 +39,12 @@ public class InterruptFlowListener implements FlowEventListener {
             if (interrupt == null) {
                 String interruptExp = FlowUtil.nodeProperty(FlowConstants.PROP_INTERRUPT_EXP, nodeContext, context);
                 if (interruptExp != null) {
-                    interrupt = ElFactory.get().eval(interruptExp, nodeContext, context, null);
+                    interrupt = context.getElEvaluator().eval(interruptExp, nodeContext, context, null);
                 }
                 if (interrupt == null) {
                     String flowInterruptExp = context.getFlow().getProperty(FlowConstants.PROP_INTERRUPT_EXP);
                     if (flowInterruptExp != null) {
-                        interrupt = ElFactory.get().eval(flowInterruptExp, nodeContext, context, null);
+                        interrupt = context.getElEvaluator().eval(flowInterruptExp, nodeContext, context, null);
                     }
                 }
             }

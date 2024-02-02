@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.FlowPreHandler;
 
@@ -36,7 +35,7 @@ public class FunCallFlowPreHandler implements FlowPreHandler {
             for (Map<String, Object> param : paramList) {
                 String key = (String) param.get("key");
                 String valueExp = (String) param.get("value");
-                Object value = ElFactory.get().eval(valueExp, null, context, null);
+                Object value = context.getElEvaluator().eval(valueExp, null, context, null);
                 paramMap.put(key, value);
             }
             context.getParam().setParam(paramMap);

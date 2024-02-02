@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
@@ -20,7 +19,7 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
 
     private static final String IDX_VAR_PREFIX = "$";
 
-    protected NodeContext[] parseToNodes(Object to, NodeContext nodeContext, FlowContext flowContext) {
+    protected NodeContext[] parseToNodes(Object to, NodeContext nodeContext, FlowContext context) {
         if (to == null) {
             return null;
         }
@@ -30,17 +29,17 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
             if (!toStr.startsWith(IDX_VAR_PREFIX)) {
                 return new NodeContext[] { nodeId2Node(toStr) };
             } else {
-                return new NodeContext[] { nodeId2Node(parseIndexVar(toStr, nodeContext, flowContext)) };
+                return new NodeContext[] { nodeId2Node(parseIndexVar(toStr, nodeContext, context)) };
             }
         } else if (to instanceof Integer) {
             int toIdx = (Integer) to;
-            return new NodeContext[] { nodeId2Node(flowContext.getFlow().getNodeList().get(toIdx).getId()) };
+            return new NodeContext[] { nodeId2Node(context.getFlow().getNodeList().get(toIdx).getId()) };
             // List type
         } else if (to instanceof List) {
             List<Object> toList = (List) to;
             List<NodeContext> toResult = new ArrayList<>(toList.size());
             for (Object toObj : toList) {
-                NodeContext[] nodes = parseToNodes(toObj, nodeContext, flowContext);
+                NodeContext[] nodes = parseToNodes(toObj, nodeContext, context);
                 addArray2List(nodes, toResult);
             }
             NodeContext[] result = new NodeContext[toResult.size()];
@@ -51,24 +50,24 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
             String toExp = (String) toMap.get("exp");
             if (toExp != null) {
                 // parse exp
-                Object result = ElFactory.get().eval(toExp, nodeContext, flowContext, null);
+                Object result = context.getElEvaluator().eval(toExp, nodeContext, context, null);
                 if (result == null) {
                     return null;
                 } else if (result instanceof NodeContext[]) {
                     toNodes = (NodeContext[]) result;
                 } else {
-                    toNodes = parseToNodes(result, nodeContext, flowContext);
+                    toNodes = parseToNodes(result, nodeContext, context);
                 }
             } else {
                 // parse node
                 Object node = toMap.get("node");
-                toNodes = parseToNodes(node, nodeContext, flowContext);
+                toNodes = parseToNodes(node, nodeContext, context);
             }
             // fill context data
             Map<String, String> dataConf = (Map<String, String>) toMap.get("data");
             if (dataConf != null && toNodes != null) {
                 for (Entry<String, String> entry : dataConf.entrySet()) {
-                    Object value = ElFactory.get().eval(entry.getValue(), nodeContext, flowContext, null);
+                    Object value = context.getElEvaluator().eval(entry.getValue(), nodeContext, context, null);
                     for (NodeContext node : toNodes) {
                         node.put(entry.getKey(), value);
                     }

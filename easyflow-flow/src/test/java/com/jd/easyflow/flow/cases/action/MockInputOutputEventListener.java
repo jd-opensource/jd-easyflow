@@ -49,7 +49,7 @@ public class MockInputOutputEventListener implements FlowEventListener {
             for (Map<String, Object> param : paramList) {
                 String key = (String) param.get("key");
                 String valueExp = (String) param.get("value");
-                String value = ElFactory.get().eval(valueExp, null, context, contextMap);
+                String value = context.getElEvaluator().eval(valueExp, null, context, contextMap);
                 paramMap.put(key, value);
             }
             context.getParam().setParam(paramMap);
@@ -62,7 +62,7 @@ public class MockInputOutputEventListener implements FlowEventListener {
             for (Map<String, Object> result : resultList) {
                 String key = (String) result.get("key");
                 String valueExp = (String) result.get("value");
-                String value = ElFactory.get().eval(valueExp, null, context, contextMap);
+                String value = context.getElEvaluator().eval(valueExp, null, context, contextMap);
                 outputMap.put(key, value);
             }
             context.getResult().setResult(outputMap);

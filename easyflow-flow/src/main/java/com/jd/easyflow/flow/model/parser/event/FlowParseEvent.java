@@ -3,6 +3,7 @@ package com.jd.easyflow.flow.model.parser.event;
 import java.util.Map;
 
 import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.parser.FlowParser;
 
 /**
  * 
@@ -18,6 +19,8 @@ public class FlowParseEvent {
     private Flow flow;
     
     private Object data;
+    
+    private FlowParser flowParser;
     
     
     public Flow getFlow() {
@@ -51,9 +54,14 @@ public class FlowParseEvent {
     public void setData(Object data) {
         this.data = data;
     }
-    
-    
-    
+
+    public FlowParser getFlowParser() {
+        return flowParser;
+    }
+
+    public void setFlowParser(FlowParser flowParser) {
+        this.flowParser = flowParser;
+    }
     
 
 }

@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
 import com.jd.easyflow.flow.engine.event.FlowEventListener;
@@ -54,7 +53,7 @@ public class FunCallEventListener implements FlowEventListener {
                 for (Map<String, Object> param : paramList) {
                     String key = (String) param.get("key");
                     String valueExp = (String) param.get("value");
-                    Object value = ElFactory.get().eval(valueExp, null, context, null);
+                    Object value = context.getElEvaluator().eval(valueExp, null, context, null);
                     paramMap.put(key, value);
                 }
                 context.getParam().setParam(paramMap);
@@ -69,7 +68,7 @@ public class FunCallEventListener implements FlowEventListener {
                 for (Map<String, Object> result : resultList) {
                     String key = (String) result.get("key");
                     String valueExp = (String) result.get("value");
-                    Object value = ElFactory.get().eval(valueExp, null, context, contextMap);
+                    Object value = context.getElEvaluator().eval(valueExp, null, context, contextMap);
                     outputMap.put(key, value);
                 }
                 context.getResult().setResult(outputMap);

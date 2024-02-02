@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowParam;
 
 /**
@@ -25,6 +27,15 @@ public class FlowParamBuilder {
 		builder.param = param;
 		return builder;
 	}
+	
+	   public static FlowParamBuilder create(String flowId, String[] nodeIds) {
+	        FlowParam param = new FlowParam();
+	        param.setFlowId(flowId);
+	        param.setNodeIds(nodeIds);
+	        FlowParamBuilder builder = new FlowParamBuilder();
+	        builder.param = param;
+	        return builder;
+	    }
 	
 	public FlowParamBuilder putParam(String key, Object value) {
 		if (param.getParam() == null) {
@@ -54,6 +65,25 @@ public class FlowParamBuilder {
 		param.setParam(o);
 		return this;
 	}
+	
+    public FlowParamBuilder putData(String key, Object value) {
+        param.put(key, value);
+        return this;
+    }
+    
+    public FlowParamBuilder putData(Map<String, Object> dataMap) {
+        if (dataMap != null) {
+            for (Entry<String, Object> entry : dataMap.entrySet()) {
+                param.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return this;
+    }
+    
+    public FlowParamBuilder setContext(FlowContext context) {
+        param.setContext(context);
+        return this;
+    }
 	
 	public FlowParam build() {
 		return param;

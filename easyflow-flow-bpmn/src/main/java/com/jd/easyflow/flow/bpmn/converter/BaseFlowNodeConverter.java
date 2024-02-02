@@ -30,6 +30,11 @@ import com.jd.easyflow.flow.util.JsonUtil;
 public class BaseFlowNodeConverter implements FlowNodeConverter {
     
     private static final Logger logger = LoggerFactory.getLogger(BaseFlowNodeConverter.class);
+    
+    private static final String CONDITION_TYPE_CREATE_EXP = "createExp";
+    private static final String CONDITION_TYPE_CREATE_EXP_PREFIX = CONDITION_TYPE_CREATE_EXP + ":";
+    
+    
 
     @Override
     public Map<String, Object> convert(FlowNode flowNode, BpmnModel bpmnModel, Map<String, Object> flowDef) {
@@ -93,7 +98,13 @@ public class BaseFlowNodeConverter implements FlowNodeConverter {
                 SequenceFlow sequenceFlow = sequenceFlowList.get(0);
                 String conditionExp = sequenceFlow.getConditionExpression();
                 if (StringUtils.isNotEmpty(conditionExp)) {
-                    post.put(DefConstants.NODE_POST_PROP_WHEN, sequenceFlow.getConditionExpression());
+                    conditionExp = conditionExp.trim();
+                    if (conditionExp.startsWith(CONDITION_TYPE_CREATE_EXP_PREFIX)) {
+                        Map<String, Object> condition = new HashMap<String, Object>();
+                        condition.put(CONDITION_TYPE_CREATE_EXP, conditionExp.substring(CONDITION_TYPE_CREATE_EXP_PREFIX.length()));
+                    } else {
+                        post.put(DefConstants.NODE_POST_PROP_WHEN, conditionExp);
+                    }
                 }
                 post.put(DefConstants.NODE_POST_PROP_TO, sequenceFlow.getTargetRef());
             } else if (sequenceFlowList.size() > 1) {

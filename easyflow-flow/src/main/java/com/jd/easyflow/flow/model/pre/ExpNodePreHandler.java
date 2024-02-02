@@ -3,7 +3,6 @@ package com.jd.easyflow.flow.model.pre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePreHandler;
@@ -30,7 +29,7 @@ public class ExpNodePreHandler implements NodePreHandler {
 
 	@Override
 	public boolean preHandle(NodeContext nodeContext, FlowContext context) {
-		boolean result = ElFactory.get().eval(exp, nodeContext, context, null);
+		boolean result = context.getElEvaluator().eval(exp, nodeContext, context, null);
 		if (context.isLogOn() && logger.isInfoEnabled()) {
 		    logger.info("Exp:" + exp + " result:" + result);
 		}

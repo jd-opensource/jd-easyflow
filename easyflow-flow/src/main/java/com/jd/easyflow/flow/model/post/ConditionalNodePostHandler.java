@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodeExecutor;
@@ -95,7 +94,7 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
             return true;
         }
         if (condition instanceof String) {
-            return ElFactory.get().eval((String) condition, nodeContext, context, null);
+            return context.getElEvaluator().eval((String) condition, nodeContext, context, null);
         }
         return ((NodeExecutor<Boolean>) condition).execute(nodeContext, context);
     }

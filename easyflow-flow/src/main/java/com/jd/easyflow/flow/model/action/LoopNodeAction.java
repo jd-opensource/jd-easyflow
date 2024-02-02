@@ -5,10 +5,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
-import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
@@ -51,7 +49,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopMaxCountExecutor != null) {
             maximum = loopMaxCountExecutor.execute(nodeContext, context);
         } else if (loopMaxCountExp != null) {
-            maximum = ((Number) ElFactory.get().eval(loopMaxCountExp, nodeContext, context, null)).longValue();
+            maximum = ((Number) context.getElEvaluator().eval(loopMaxCountExp, nodeContext, context, null)).longValue();
         } else if (loopMaxCount != null) {
             maximum = loopMaxCount;
         }
@@ -66,7 +64,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopPreExecutor != null) {
             loopPreExecutor.execute(nodeContext, context);
         } else if (loopPreExp != null) {
-            ElFactory.get().eval(loopPreExp, nodeContext, context, null);
+            context.getElEvaluator().eval(loopPreExp, nodeContext, context, null);
         }
         
         for (int i = 0; maximum == null || i < maximum; i++) {
@@ -79,7 +77,7 @@ public class LoopNodeAction implements NodeAction {
                         break;
                     }
                 } else if (loopConditionExp != null) {
-                    boolean testResult = ElFactory.get().eval(loopConditionExp, nodeContext, context, null);
+                    boolean testResult = context.getElEvaluator().eval(loopConditionExp, nodeContext, context, null);
                     if (!testResult) {
                         break;
                     }
@@ -97,7 +95,7 @@ public class LoopNodeAction implements NodeAction {
                         break;
                     }
                 } else if (loopConditionExp != null) {
-                    boolean testResult = ElFactory.get().eval(loopConditionExp, nodeContext, context, null);
+                    boolean testResult = context.getElEvaluator().eval(loopConditionExp, nodeContext, context, null);
                     if (!testResult) {
                         break;
                     }
@@ -108,7 +106,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopPostExecutor != null) {
             loopPostExecutor.execute(nodeContext, context);
         } else if (loopPostExp != null) {
-            ElFactory.get().eval(loopPostExp, nodeContext, context, null);
+            context.getElEvaluator().eval(loopPostExp, nodeContext, context, null);
         }
         // result put to NodeContext
         return null;
@@ -127,7 +125,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopConditionExecutorConf != null) {
             String createExp = (String) loopConditionExecutorConf.get("createExp");
             if (initContext.isParseEl() && createExp != null) {
-                loopConditionExecutor = ElFactory.get().evalWithDefaultContext(createExp, initContext, false);
+                loopConditionExecutor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, initContext, false);
             }
         }
         
@@ -137,7 +135,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopPreExecutorConf != null) {
             String createExp = (String) loopPreExecutorConf.get("createExp");
             if (initContext.isParseEl() && createExp != null) {
-                loopPreExecutor = ElFactory.get().evalWithDefaultContext(createExp, initContext, false);
+                loopPreExecutor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, initContext, false);
             }
         }        
 
@@ -147,7 +145,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopPostExecutorConf != null) {
             String createExp = (String) loopPostExecutorConf.get("createExp");
             if (initContext.isParseEl() && createExp != null) {
-                loopPostExecutor = ElFactory.get().evalWithDefaultContext(createExp, initContext, false);
+                loopPostExecutor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, initContext, false);
             }
         }  
         
@@ -161,7 +159,7 @@ public class LoopNodeAction implements NodeAction {
         if (loopMaxCountExecutorConf != null) {
             String createExp = (String) loopMaxCountExecutorConf.get("createExp");
             if (initContext.isParseEl() && createExp != null) {
-                loopMaxCountExecutor = ElFactory.get().evalWithDefaultContext(createExp, initContext, false);
+                loopMaxCountExecutor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, initContext, false);
             }
         }
         Object loopActionConf = node.getProperty("loopAction");

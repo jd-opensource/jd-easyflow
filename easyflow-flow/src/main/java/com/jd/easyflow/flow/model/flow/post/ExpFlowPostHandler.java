@@ -3,7 +3,6 @@ package com.jd.easyflow.flow.model.flow.post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.FlowPostHandler;
 
@@ -27,7 +26,7 @@ public class ExpFlowPostHandler implements FlowPostHandler {
 
     @Override
     public void postHandle(FlowContext context) {
-        Object result = ElFactory.get().eval(exp, null, context, null);
+        Object result = context.getElEvaluator().eval(exp, null, context, null);
         if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }

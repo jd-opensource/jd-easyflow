@@ -58,7 +58,7 @@ public class ElRootMap implements Map<String, Object> {
         if (key == null) {
             return data == null ? false : data.containsKey(key);
         }
-        if (key instanceof String) {
+        if (key.getClass() == String.class) {
             switch ((String) key) {
             case KEY_NODE_CONTEXT:
             case KEY_ACTION_RESULT:
@@ -83,35 +83,50 @@ public class ElRootMap implements Map<String, Object> {
         if (key == null) {
             return data == null ? null : data.get(key);
         }
-        if (key instanceof String) {
+        if (key.getClass() == String.class) {
+            Object value = null;
             switch ((String) key) {
             case KEY_NODE_CONTEXT:
-                return nodeContext;
+                value = nodeContext;
+                break;
             case KEY_ACTION_RESULT:
-                return actionResult;
+                value = actionResult;
+                break;
             case KEY_NODE_BIZ_CONTEXT:
-                return nodeBizContext;
+                value = nodeBizContext;
+                break;
             case KEY_CONTEXT:
-                return context;
+                value = context;
+                break;
             case KEY_BIZ_CONTEXT:
-                return bizContext;
+                value = bizContext;
+                break;
             case KEY_PARAM:
-                return param;
+                value = param;
+                break;
             case KEY_BIZ_PARAM:
-                return bizParam;
+                value = bizParam;
+                break;
             case KEY_PARAM_DATA:
-                return paramData;
+                value = paramData;
+                break;
             case KEY_RESULT:
-                return result;
+                value = result;
+                break;
             case KEY_BIZ_RESULT:
-                return bizResult;
+                value = bizResult;
+                break;
             default:
-                return data == null ? null : data.get(key);
+                // NOOP
             }
+            if (value == null && data != null) {
+                value = data.get(key);
+            }
+            return value;
         }
-        return false;
+        return null;
     }
-    
+
     @Override
     public int size() {
         throw new UnsupportedOperationException();

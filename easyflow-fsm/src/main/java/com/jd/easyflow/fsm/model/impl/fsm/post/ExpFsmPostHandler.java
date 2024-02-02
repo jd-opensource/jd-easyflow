@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.FsmContext;
-import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.model.FsmPostHandler;
 
 public class ExpFsmPostHandler implements FsmPostHandler {
@@ -22,7 +21,7 @@ public class ExpFsmPostHandler implements FsmPostHandler {
 
     @Override
     public void postHandle(FsmContext context) {
-        Object result = ElFactory.get().eval(exp, null, context, null);
+        Object result = context.getElEvaluator().eval(exp, null, context, null);
         if (logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }

@@ -18,13 +18,25 @@ public class ElFactory {
     }
 
     public static ElEvaluator get(String type) {
+        if (type == null) {
+            return defaultEvaluator;
+        }
         return evaluatorMap.get(type);
     }
     
     public static void setDefaultEvaluator(ElEvaluator evaluator) {
         defaultEvaluator = evaluator;
     }
+      
     
+    public static Map<String, ElEvaluator> getEvaluatorMap() {
+        return evaluatorMap;
+    }
+
+    public static void setEvaluatorMap(Map<String, ElEvaluator> evaluatorMap) {
+        ElFactory.evaluatorMap = evaluatorMap;
+    }
+
     public void setDefault(ElEvaluator evaluator) {
         ElFactory.defaultEvaluator = evaluator;
     }

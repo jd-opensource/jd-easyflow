@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.FsmContext;
-import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.model.TransitionExecutor;
@@ -52,7 +51,7 @@ public class ConditionalTransitionPostHandler  extends AbstractTransitionPostHan
             return true;
         }
         if (condition instanceof String) {
-            return ElFactory.get().eval((String) condition, transitionContext, context, null);
+            return context.getElEvaluator().eval((String) condition, transitionContext, context, null);
         }
         return ((TransitionExecutor<Boolean>) condition).execute(transitionContext, context);
     }

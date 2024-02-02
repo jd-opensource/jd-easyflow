@@ -1,6 +1,5 @@
 package com.jd.easyflow.flow.engine.impl;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowRunner;
 
@@ -23,7 +22,7 @@ public class ExpFlowRunner implements FlowRunner{
 
     @Override
     public void run(FlowContext context) {
-        ElFactory.get().eval(exp, null, context, null);
+        context.getElEvaluator().eval(exp, null, context, null);
     }
 
 }

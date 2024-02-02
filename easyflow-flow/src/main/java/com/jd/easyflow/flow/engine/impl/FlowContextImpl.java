@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.jd.easyflow.flow.el.ElEvaluator;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
-import com.jd.easyflow.flow.engine.event.FlowEventTrigger;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
 
@@ -39,10 +38,6 @@ public class FlowContextImpl implements FlowContext {
      * Flow result.
      */
     private FlowResult result;
-    /**
-     * Event trigger.
-     */
-    private FlowEventTrigger eventTrigger;
     /**
      * Start nodes.
      */
@@ -79,6 +74,8 @@ public class FlowContextImpl implements FlowContext {
     private Boolean preResult;
     
     private Boolean logFlag;
+    
+    private ElEvaluator elEvaluator;
 
     @Override
     public void put(String key, Object value) {
@@ -153,14 +150,6 @@ public class FlowContextImpl implements FlowContext {
     @Override
     public void setFlow(Flow flow) {
         this.flow = flow;
-    }
-
-    public FlowEventTrigger getEventTrigger() {
-        return eventTrigger;
-    }
-
-    public void setEventTrigger(FlowEventTrigger eventTrigger) {
-        this.eventTrigger = eventTrigger;
     }
 
     @Override
@@ -243,6 +232,16 @@ public class FlowContextImpl implements FlowContext {
     public void setContext(Object context) {
         this.context = context;
     }
+
+    public ElEvaluator getElEvaluator() {
+        return elEvaluator;
+    }
+
+    public void setElEvaluator(ElEvaluator elEvaluator) {
+        this.elEvaluator = elEvaluator;
+    }
+    
+    
     
 
 }

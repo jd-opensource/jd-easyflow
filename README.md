@@ -24,6 +24,7 @@ There are test cases in the test package of source code. You can run or debug di
         <version>{latestVersion}</version>
     </dependency>
 ```
+
 2. Write flow definition. For example, the sequence is node001->node002->node003:
 ```
 {"id": "quickstart_001", "name": "Quick Start 001",
@@ -35,18 +36,21 @@ There are test cases in the test package of source code. You can run or debug di
 }
 ```
 QuickStart001Node01Action and so on is java node action class.
+
 3. Write the code of loading flow engine when application start.
 ```
         FlowEngineImpl flowEngine = new FlowEngineImpl();
         flowEngine.setFlowPath("classpath:flow/quickstart/quickstart_001.json");
         flowEngine.init();
 ```     
-You can define FlowEngineImpl bean in Spring.    
-4. Write invoke flow engine code.
+You can define FlowEngineImpl bean in Spring.  
+  
+4. Write the code of invoking flow engine.
 ```
        FlowParam param = new FlowParam("quickstart_001");
         FlowResult result = flowEngine.execute(param);
 ```
+
 The executing log are as follows:
 ```
 [main            ] INFO  FlowEngineImpl          - Start parsing definition files:easyflow-flow/target/test-classes/flow/quickstart/quickstart_001.json
@@ -69,7 +73,7 @@ You only need set flowPaser of FlowEngineImpl to BpmnFlowParser when use.
 ### More
 Above is simple usecase, JDEasyFlow support many configurations and use cases. More can be seen in wiki doc.
 
-JDEasyFlow has very flexible extension ability. You can implement more feature based on current component. For example flow data persistence、auditting、exception retry. 
+JDEasyFlow has very flexible extension ability. You can implement more features based on current component. For example flow data persistence、auditting、exception retry. 
 
 ### Contact US
 mailTo: liyuliang5@jd.com

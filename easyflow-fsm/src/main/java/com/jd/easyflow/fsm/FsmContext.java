@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jd.easyflow.fsm.el.ElEvaluator;
 import com.jd.easyflow.fsm.model.Event;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.TransitionContext;
@@ -77,6 +78,8 @@ public class FsmContext {
     private Boolean preResult;
     
     private Object context;
+    
+    private ElEvaluator elEvaluator;
 
     public Object getStateInstance() {
         return stateInstance;
@@ -284,6 +287,15 @@ public class FsmContext {
     public void setContext(Object context) {
         this.context = context;
     }
+
+    public ElEvaluator getElEvaluator() {
+        return elEvaluator;
+    }
+
+    public void setElEvaluator(ElEvaluator elEvaluator) {
+        this.elEvaluator = elEvaluator;
+    }
+    
     
     
 

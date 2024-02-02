@@ -10,8 +10,8 @@ import com.jd.easyflow.fsm.model.TransitionExecutor;
  */
 public class ActionResultEl implements TransitionExecutor<Boolean> {
 
-    public static final String OP_EQ = "eq";
-    public static final String OP_NEQ = "neq";
+    public static final String OP_EQ = "==";
+    public static final String OP_NEQ = "!=";
 
     private String operator;
 

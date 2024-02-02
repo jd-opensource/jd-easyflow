@@ -10,6 +10,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jd.easyflow.fsm.el.ElEvaluator;
+import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.event.FsmEventListener;
 import com.jd.easyflow.fsm.event.FsmEventTrigger;
 import com.jd.easyflow.fsm.filter.Filter;
@@ -266,6 +268,13 @@ public class Fsm implements FsmLifeCycle {
                 logger.warn("Event:" + param.getEventId() + " not exists");
             }
             context.setCurrentEvent(event);
+        }
+        if (context.getElEvaluator() == null) {
+            ElEvaluator elEvaluator = param.get(FsmConstants.PARAM_KEY_EL_EVALUATOR);
+            if (elEvaluator == null) {
+                elEvaluator = ElFactory.get();
+            }
+            context.setElEvaluator(elEvaluator);
         }
         return context;
     }
@@ -602,5 +611,6 @@ public class Fsm implements FsmLifeCycle {
         this.postHandler = postHandler;
     }
 
+    
 
 }

@@ -3,6 +3,7 @@ package com.jd.easyflow.fsm.parser.event;
 import java.util.Map;
 
 import com.jd.easyflow.fsm.Fsm;
+import com.jd.easyflow.fsm.el.ElEvaluator;
 
 /**
  * 
@@ -18,6 +19,8 @@ public class FsmParseEvent {
     private Fsm fsm;
     
     private Object data;
+    
+    private ElEvaluator elEvaluator;
 
     public String getType() {
         return type;
@@ -50,6 +53,16 @@ public class FsmParseEvent {
     public void setData(Object data) {
         this.data = data;
     }
+
+    public ElEvaluator getElEvaluator() {
+        return elEvaluator;
+    }
+
+    public void setElEvaluator(ElEvaluator elEvaluator) {
+        this.elEvaluator = elEvaluator;
+    }
+    
+    
     
     
     

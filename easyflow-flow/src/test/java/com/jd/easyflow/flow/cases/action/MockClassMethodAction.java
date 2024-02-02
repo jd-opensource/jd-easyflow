@@ -60,7 +60,7 @@ public class MockClassMethodAction implements NodeAction {
             String valueExp = (String) param.get("value");
             Map<String, Object> contextMap = new HashMap<>();
             contextMap.put("node", nodeActionMap);
-            String value = ElFactory.get().eval(valueExp, nodeContext, context, contextMap);
+            String value = context.getElEvaluator().eval(valueExp, nodeContext, context, contextMap);
             paramMap.put(key, value);
         }
         try {

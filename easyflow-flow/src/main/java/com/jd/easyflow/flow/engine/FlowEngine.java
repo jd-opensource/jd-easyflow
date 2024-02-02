@@ -2,6 +2,7 @@ package com.jd.easyflow.flow.engine;
 
 import java.util.Map;
 
+import com.jd.easyflow.flow.el.ElEvaluator;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.parser.FlowParser;
 
@@ -47,5 +48,11 @@ public interface FlowEngine {
      * @return
      */
     <T>T getProperty(String key);
+    
+    /**
+     * 
+     * @return
+     */
+    ElEvaluator getElEvaluator();
     
 }

@@ -3,6 +3,9 @@
     "nodes": [
         {"id": "EMPTY_NODE","name": "Empty node 1","action":{"exp":"new com.jd.easyflow.flow.cases.performance.EmptyStepAction().execute(nodeContext, context)"}},
         {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.performance.EmptyStepAction()"}},
-        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.performance.LoopStepAction()"}}
+        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.performance.LoopStepAction()"}},
+        {"id": "EMPTY_NODE4","name": "Empty node 4", "post":{"when":"actionResult==true", "to":"EMPTY_NODE2"}},
+        {"id": "EMPTY_NODE5","name": "Empty node 5", "post":{"when":{"createExp":"T(com.jd.easyflow.flow.model.action.ActionResultEl).create('==',true)"}, "to":"EMPTY_NODE2"}}
+
     ]
 }

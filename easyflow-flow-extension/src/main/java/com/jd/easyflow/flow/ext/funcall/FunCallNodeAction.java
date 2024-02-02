@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ClassUtils;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.FlowNode;
@@ -95,7 +94,7 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
                 String valueExp = (String) param.get("value");
                 Map<String, Object> contextMap = new HashMap<>();
                 contextMap.put("node", nodeActionMap);
-                String value = ElFactory.get().eval(valueExp, nodeContext, context, contextMap);
+                String value = context.getElEvaluator().eval(valueExp, nodeContext, context, contextMap);
                 inputMap.put(key, value);
             }
         }
@@ -119,7 +118,7 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
                     String valueExp = (String) result.get("value");
                     Object value = null;
                     if (StringUtils.isNotEmpty(valueExp)) {
-                        value = ElFactory.get().eval(valueExp, null, context, contextMap);
+                        value = context.getElEvaluator().eval(valueExp, null, context, contextMap);
                     } else {
                         value = result.get(key);
                     }

@@ -56,11 +56,12 @@ public class FlowNodeAction implements NodeAction {
             param.setLogFlag(context.getParam().getLogFlag());
         }
         // init context.
-        FlowContext subContext = new FlowContextImpl();
+        FlowContextImpl subContext = new FlowContextImpl();
         
         if (inherit) {
             subContext.setData(context.getData());
             subContext.setLogFlag(context.getLogFlag());
+            subContext.setElEvaluator(context.getElEvaluator());
         } else {
             subContext.put(FlowConstants.CTX_PARENT_CONTEXT, context);
         }

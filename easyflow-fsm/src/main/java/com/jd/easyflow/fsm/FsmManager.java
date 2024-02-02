@@ -17,12 +17,15 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import com.jd.easyflow.fsm.el.ElEvaluator;
+import com.jd.easyflow.fsm.el.ElFactory;
 import com.jd.easyflow.fsm.event.FsmEventListener;
 import com.jd.easyflow.fsm.event.FsmEventTrigger;
 import com.jd.easyflow.fsm.exception.FsmException;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.parser.FsmParser;
+import com.jd.easyflow.fsm.util.FsmConstants;
 import com.jd.easyflow.fsm.util.FsmEventTypes;
 import com.jd.easyflow.fsm.util.FsmIOUtil;
 import com.jd.easyflow.fsm.util.SpelHelper;
@@ -60,6 +63,8 @@ public class FsmManager implements SmartLifecycle {
     private volatile boolean isRunning = false;
     
     private Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
+    
+    private ElEvaluator elEvaluator;
 
     public void init() {
         if (inited) {
@@ -67,6 +72,9 @@ public class FsmManager implements SmartLifecycle {
         }
         if (applicationContext != null) {
             SpelHelper.setApplicationContext(applicationContext);
+        }
+        if (elEvaluator == null) {
+            elEvaluator = ElFactory.get();
         }
         loadFsm();
         if (listeners != null) {
@@ -109,7 +117,7 @@ public class FsmManager implements SmartLifecycle {
                 logger.info("Start parse fsm definition file:" + resource.getURI());
                 try (InputStream is = resource.getInputStream()) {
                     String fsmDefinition = FsmIOUtil.toString(is);
-                    Fsm fsm = FsmParser.parse(fsmDefinition);
+                    Fsm fsm = FsmParser.parse(fsmDefinition, true, elEvaluator);
                     if (fsmDefinitionMap.containsKey(fsm.getId())) {
                         throw new FsmException();
                     }
@@ -140,6 +148,7 @@ public class FsmManager implements SmartLifecycle {
             logger.info("FSM MANAGER RUN. fsmId: " + param.getFsmId() + " event:" + param.getEventId() + " currentStateId:"
                     + param.getCurrentStateId() + " opType:" + param.getOpType());
         }
+        param.put(FsmConstants.PARAM_KEY_EL_EVALUATOR, this.getElEvaluator());
         if (filters == null || filters.size() == 0) {
             return invokeFsm(param);
         } else {
@@ -290,6 +299,16 @@ public class FsmManager implements SmartLifecycle {
     public void setProperty(String key, Object value) {
         properties.put(key, value);
     }
+
+    public ElEvaluator getElEvaluator() {
+        return elEvaluator;
+    }
+
+    public void setElEvaluator(ElEvaluator elEvaluator) {
+        this.elEvaluator = elEvaluator;
+    }
+    
+    
 
 
     

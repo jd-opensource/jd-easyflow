@@ -18,6 +18,8 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import com.jd.easyflow.flow.el.ElEvaluator;
+import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
 import com.jd.easyflow.flow.engine.FlowParam;
@@ -77,6 +79,8 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     private volatile boolean isRunning = false;
     
     private Map<String, Object> properties = new ConcurrentHashMap<>();
+    
+    private ElEvaluator elEvaluator;
 
     public void init() {
         if (inited) {
@@ -84,6 +88,12 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
         }
         if (applicationContext != null) {
             SpelHelper.setApplicationContext(applicationContext);
+        }
+        if (elEvaluator == null) {
+            elEvaluator = ElFactory.get();
+        }
+        if (flowParser instanceof FlowParserImpl) {
+            ((FlowParserImpl) flowParser).setElEvaluator(elEvaluator);
         }
         loadFlow();
         if (listeners != null) {
@@ -231,6 +241,9 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
             context.setFlowId(param.getFlowId());
         }
         ((FlowContextImpl) context).setFlowEngine(this);
+        if (context.getElEvaluator() == null) {
+            ((FlowContextImpl) context).setElEvaluator(getElEvaluator());
+        }
         return context;
     }
 
@@ -465,5 +478,15 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     public void setProperty(String key, Object value) {
         properties.put(key, value);
     }
+
+    public ElEvaluator getElEvaluator() {
+        return elEvaluator;
+    }
+
+    public void setElEvaluator(ElEvaluator elEvaluator) {
+        this.elEvaluator = elEvaluator;
+    }
+    
+    
     
 }

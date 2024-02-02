@@ -3,6 +3,7 @@ package com.jd.easyflow.flow.engine;
 import java.util.List;
 import java.util.Map;
 
+import com.jd.easyflow.flow.el.ElEvaluator;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
 
@@ -164,6 +165,8 @@ public interface FlowContext {
      * @param context
      */
     void setContext(Object context);
+    
+    ElEvaluator getElEvaluator();
 
 
 }
