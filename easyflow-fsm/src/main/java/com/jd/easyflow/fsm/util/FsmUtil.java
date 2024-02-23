@@ -33,5 +33,5 @@ public class FsmUtil {
     public static <T> T stateProperty(String key, TransitionContext transitionContext, FsmContext context) {
         return (T) state(transitionContext, context).getProperty(key);
     }
-    
+
 }

@@ -27,9 +27,13 @@ public class ExpTransitionPostHandler extends AbstractTransitionPostHandler {
 
 	@Override
 	public PostHandleResult postHandle(TransitionContext transitionContext, FsmContext context) {
-		logger.info("EVAL SPEL:" + exp);
+	    if (context.isLogOn() && logger.isInfoEnabled()) {
+	        logger.info("EVAL SPEL:" + exp);
+	    }
 		String result = context.getElEvaluator().eval(exp, transitionContext, context, null);
-		logger.info("SPEL RESULT:" + result);
+		if (context.isLogOn() && logger.isInfoEnabled()) {
+		    logger.info("SPEL RESULT:" + result);
+		}
 		return new PostHandleResult(result);
 	}
 

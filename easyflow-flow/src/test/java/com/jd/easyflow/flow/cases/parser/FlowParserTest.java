@@ -82,4 +82,17 @@ public class FlowParserTest {
         FlowParam param2 = new FlowParam("flow_multiple0012");
         flowEngine.execute(param2);
     }
+	
+	   @Test
+	    public void testAddFilterForAllFlow() throws Exception {
+	        FlowEngineImpl flowEngine = new FlowEngineImpl();
+	        flowEngine.setFlowPath("classpath:flow/cases/parser/parser_test_003.json");
+	        flowEngine.setFlowParser(new TestFlowParserImpl());
+	        flowEngine.init();
+	        
+	        FlowParam param = new FlowParam("parser_test_003", new String[] {}, null);
+	        flowEngine.execute(param);
+	    }
+	
+	
 }

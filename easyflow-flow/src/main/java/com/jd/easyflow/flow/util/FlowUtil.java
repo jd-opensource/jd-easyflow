@@ -100,5 +100,13 @@ public class FlowUtil {
         }
         return nodeIds;
     }
+    
+    public static String nsKey(String key) {
+        return FlowConstants.NS_SEP + key;
+    }
+    
+    public static String nsKey(String ns, String key) {
+        return ns + FlowConstants.NS_SEP + key;
+    }
 
 }

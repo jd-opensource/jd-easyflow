@@ -22,7 +22,7 @@ public class ExpFsmPostHandler implements FsmPostHandler {
     @Override
     public void postHandle(FsmContext context) {
         Object result = context.getElEvaluator().eval(exp, null, context, null);
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }
     }

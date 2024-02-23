@@ -109,17 +109,17 @@ public class TransitionImpl implements Transition {
                 filters, p -> {
                     return invokePreHandler(transitionContext, context);
                 });
-        Boolean result = chain.doFilter(Pair.of(transitionContext, context));
-        transitionContext.setPreResult(result);
-        return result == null ? true : result;
+        Boolean preResult = chain.doFilter(Pair.of(transitionContext, context));
+        transitionContext.setPreResult(preResult);
+        return preResult == null ? true : preResult;
     }
     
     protected boolean invokePreHandler(TransitionContext transitionContext, FsmContext context) {
         if (preHandler != null) {
             context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_PRE_START, transitionContext, context,
                     false);
-            boolean result = preHandler.preHandle(transitionContext, context);
-            transitionContext.setPreResult(result);
+            boolean preResult = preHandler.preHandle(transitionContext, context);
+            transitionContext.setPreResult(preResult);
             context.getFsm().getEventTrigger().triggerEvent(FsmEventTypes.TST_PRE_END, transitionContext, context,
                     false);
         }

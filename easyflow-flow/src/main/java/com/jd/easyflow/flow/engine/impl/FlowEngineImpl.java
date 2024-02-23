@@ -171,6 +171,12 @@ public class FlowEngineImpl implements FlowEngine, SmartLifecycle {
     }
 
     protected FlowResult invokeFlowEngine(FlowParam param) {
+        // No flow engine listener scenario
+        if (eventTrigger.getListenerList() == null || eventTrigger.getListenerList().size() == 0) {
+            FlowResult result = executeFlow(param);
+            return result;
+        }
+        // Has flow engine listener scenario
         Map<String, Object> data = new HashMap<>();
         data.put("param", param);
         data.put("flowEngine", this);

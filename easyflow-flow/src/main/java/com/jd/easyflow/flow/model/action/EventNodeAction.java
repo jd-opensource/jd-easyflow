@@ -49,6 +49,7 @@ public class EventNodeAction implements NodeAction {
             InitContext initContext = new InitContext();
             initContext.setFlowParser(context.getFlowEngine().getFlowParser());
             initContext.setParseEl(true);
+            initContext.setFlow(context.getFlow());
             initEventActionMap(initContext, context.getFlow().getNode(nodeContext.getNodeId()));
             eventActionMap = context.getFlow().getNode(nodeContext.getNodeId())
                     .getProperty(FlowConstants.PROP_RUNTIME_EVENT_NODE_ACTION_MAP);

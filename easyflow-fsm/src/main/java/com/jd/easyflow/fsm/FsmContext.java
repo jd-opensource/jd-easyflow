@@ -9,6 +9,7 @@ import com.jd.easyflow.fsm.el.ElEvaluator;
 import com.jd.easyflow.fsm.model.Event;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.TransitionContext;
+import com.jd.easyflow.fsm.util.FsmConstants;
 
 /**
  * 
@@ -80,6 +81,10 @@ public class FsmContext {
     private Object context;
     
     private ElEvaluator elEvaluator;
+    
+    private Boolean logFlag;
+    
+    private Boolean recordHistory;
 
     public Object getStateInstance() {
         return stateInstance;
@@ -295,8 +300,24 @@ public class FsmContext {
     public void setElEvaluator(ElEvaluator elEvaluator) {
         this.elEvaluator = elEvaluator;
     }
-    
-    
-    
 
+    public Boolean getLogFlag() {
+        return logFlag;
+    }
+
+    public void setLogFlag(Boolean logFlag) {
+        this.logFlag = logFlag;
+    }
+    
+    public boolean isLogOn() {
+        return logFlag == null || this.logFlag.booleanValue();
+    }
+    
+    public boolean isRecordHistory() {
+        if (recordHistory == null) {
+            recordHistory = ! Boolean.FALSE.equals(fsm.getProperty(FsmConstants.FSM_PROPERTY_RECORD_HISTORY));
+        }
+        return recordHistory;
+    }
+    
 }

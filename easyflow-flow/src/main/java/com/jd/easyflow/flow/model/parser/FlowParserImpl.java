@@ -148,6 +148,7 @@ public class FlowParserImpl implements FlowParser {
         // Parse property
         Map<String, Object> properties = (Map<String, Object>) map.get(DefConstants.COMMON_PROP_PROPERTIES);
         flow.putProperties(properties);
+        
         // Parse flow pre handler
         parseFlowPreHandler(map.get(DefConstants.FLOW_PROP_PRE), flow, parseEl);
         // Parse node
@@ -225,6 +226,7 @@ public class FlowParserImpl implements FlowParser {
         initContext.setParseEl(parseEl);
         initContext.setFlowList(flowList);
         initContext.setFlowDefinitionMap(map);
+        initContext.setFlow(flow);
         flow.init(initContext, null);
         triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_END, map, flow, null);
         return flow;

@@ -16,7 +16,6 @@ import com.jd.easyflow.flow.engine.event.FlowEventTrigger;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.model.parser.FlowParser;
-import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
  * 
@@ -71,7 +70,6 @@ public class Flow implements FlowLifeCycle {
     private FlowParser flowParser;
     
     private Boolean logFlag;
-
 
     @Override
     public void init(InitContext initContext, Object parent) {
@@ -207,6 +205,7 @@ public class Flow implements FlowLifeCycle {
     public void setProperty(String key, Object value) {
         properties.put(key, value);
     }
+    
 
     public <T> T getProperty(String key) {
         return (T) properties.get(key);
@@ -396,6 +395,5 @@ public class Flow implements FlowLifeCycle {
     public void setLogFlag(Boolean logFlag) {
         this.logFlag = logFlag;
     }
-
-
+    
 }

@@ -23,7 +23,7 @@ public class ExpFsmPreHandler implements FsmPreHandler {
     @Override
     public boolean preHandle(FsmContext context) {
         boolean result = context.getElEvaluator().eval(exp, null, context, null);
-        if (logger.isInfoEnabled()) {
+        if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Exp:" + exp + " result:" + result);
         }
         return result;

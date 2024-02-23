@@ -73,13 +73,14 @@ public class FsmParser {
         String fsmId = (String) map.get(DefConstants.COMMON_PROP_ID);
         String fsmName = (String) map.get(DefConstants.COMMON_PROP_NAME);
         FsmBuilder builder = FsmBuilder.create(fsmId, fsmName);
-        
+        builder.logFag((Boolean) map.get(DefConstants.FSM_PROP_LOG_FLAG));
         List<FsmParseEventListener> parseListeners = parseParseListeners(map, builder.build(), parseEl, elEvaluator);
         triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_START, map, builder.build(), null, elEvaluator);
         
         // Parse property
         Map<String, Object> properties = (Map<String, Object>) map.get(DefConstants.COMMON_PROP_PROPERTIES);
         builder.properties(properties);
+        
         // Parse pre handler
         FsmPreHandler fsmPreHandler = parseFsmPreHandler(map.get(DefConstants.FSM_PROP_PRE), parseEl, elEvaluator);
         builder.fsmPreHandler(fsmPreHandler);

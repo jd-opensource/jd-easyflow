@@ -144,7 +144,8 @@ public class FsmManager implements SmartLifecycle {
         if (! inited) {
             throw new FsmException("Fsm is not inited. fsmId:" + param.getFsmId());
         }
-        if (logger.isInfoEnabled()) {
+        boolean logFlag = param.getContext() != null ? param.getContext().isLogOn() : (param.getLogFlag() == null || param.getLogFlag().booleanValue());
+        if (logFlag && logger.isInfoEnabled()) {
             logger.info("FSM MANAGER RUN. fsmId: " + param.getFsmId() + " event:" + param.getEventId() + " currentStateId:"
                     + param.getCurrentStateId() + " opType:" + param.getOpType());
         }
@@ -158,6 +159,16 @@ public class FsmManager implements SmartLifecycle {
     }
 
     protected FsmResult invokeFsm(FsmParam param) {
+        // No fsm manager listener scenario.
+        if (eventTrigger.getListenerList() == null || eventTrigger.getListenerList().size() == 0) {
+            Fsm fsm = getFsm(param.getFsmId());
+            if (fsm == null) {
+                throw new RuntimeException("FSM:" + param.getFsmId() + " not exists");
+            }
+            FsmResult result = fsm.run(param);
+            return result;
+        }
+        // Has fsm manager listener scenario.
         Map<String, Object> data = new HashMap<>();
         data.put("param", param);
         data.put("fsmManager", this);

@@ -160,8 +160,5 @@ public class FlowEventTrigger {
         return listenerList;
     }
 
-    public void setListenerList(List<FlowEventListener> listenerList) {
-        this.listenerList = listenerList;
-    }
     
 }

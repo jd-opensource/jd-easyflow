@@ -927,7 +927,7 @@
         $logFlag.blur(function() {
             var newLogFlag = $logFlag.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:LogFlag", newLogFlag);
-        });              
+        });  
     }
     // Script task
     J.BpmnControl.prototype._elementPannelRender["bpmn:ScriptTask"] = function($infoPannel, element) {
@@ -1718,7 +1718,7 @@
                         "type": "String"
                     }
                 ]
-            }                    
+            }                                
         ]
     };
 

@@ -31,6 +31,7 @@ public class DefConstants {
     public static final String FSM_PROP_TRANSITION_ACTION_FILTERS = "transitionActionFilters";
     public static final String FSM_PROP_TRANSITION_PRE_HANDLER_FILTERS = "transitionPreHandlerFilters";
     public static final String FSM_PROP_TRANSITION_POST_HANDLER_FILTERS = "transitionPostHandlerFilters";
+    public static final String FSM_PROP_LOG_FLAG = "logFlag";
     
     public static final String TST_PROP_ACTION = "action";
     public static final String TST_PROP_PRE = "pre";

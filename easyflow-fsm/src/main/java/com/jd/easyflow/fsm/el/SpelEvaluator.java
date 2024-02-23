@@ -25,7 +25,7 @@ public class SpelEvaluator implements ElEvaluator {
     // Performance is higher than HashMap
     public static final int ROOT_TYPE_ROOT_MAP = 1;
 
-    private int rootType = ROOT_TYPE_HASH_MAP;
+    private int rootType = ROOT_TYPE_ROOT_MAP;
     
     private boolean cache = true;
 
@@ -37,7 +37,7 @@ public class SpelEvaluator implements ElEvaluator {
     @Override
     public <T> T eval(String exp, TransitionContext transitionContext, FsmContext fsmContext,
             Map<String, Object> data) {
-        if (logger.isInfoEnabled()) {
+        if ((fsmContext == null || fsmContext.isLogOn()) && logger.isInfoEnabled()) {
             logger.info("EVAL SPEL:" + exp);
         }
         Object root = null;
@@ -51,7 +51,7 @@ public class SpelEvaluator implements ElEvaluator {
         }
 
         Object result = SpelHelper.evalWithDefaultContext(exp, root, cache);
-        if (logger.isInfoEnabled()) {
+        if ((fsmContext == null || fsmContext.isLogOn()) && logger.isInfoEnabled()) {
             logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
         }
         return (T) result;

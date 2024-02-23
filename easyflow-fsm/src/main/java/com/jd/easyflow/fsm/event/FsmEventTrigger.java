@@ -159,10 +159,5 @@ public class FsmEventTrigger {
         return listenerList;
     }
 
-    public void setListenerList(List<FsmEventListener> listenerList) {
-        this.listenerList = listenerList;
-    }
-    
-    
 
 }

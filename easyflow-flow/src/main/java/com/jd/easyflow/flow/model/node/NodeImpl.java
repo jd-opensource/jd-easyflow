@@ -81,16 +81,16 @@ public class NodeImpl implements FlowNode {
                 filters, p -> {
                     return invokePreHandler(nodeContext, context);
                 });
-        Boolean result = chain.doFilter(Pair.of(nodeContext, context));
-        nodeContext.setPreResult(result);
-        return result == null ? true : result;
+        Boolean preResult = chain.doFilter(Pair.of(nodeContext, context));
+        nodeContext.setPreResult(preResult);
+        return preResult == null ? true : preResult;
     }
 
     protected boolean invokePreHandler(NodeContext nodeContext, FlowContext context) {
         if (preHandler != null) {
             context.getFlow().triggerEvent(FlowEventTypes.NODE_PRE_START, nodeContext, context, false);
-            boolean result = preHandler.preHandle(nodeContext, context);
-            nodeContext.setPreResult(result);
+            boolean preResult = preHandler.preHandle(nodeContext, context);
+            nodeContext.setPreResult(preResult);
             context.getFlow().triggerEvent(FlowEventTypes.NODE_PRE_END, nodeContext, context, false);
         }
         return nodeContext.getPreResult() == null ? true : nodeContext.getPreResult();

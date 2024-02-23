@@ -315,7 +315,7 @@ public class BpmnConverter {
             if (StringUtils.isNotEmpty(elementText)) {
                 flowDef.put(DefConstants.FLOW_PROP_LOG_FLAG, Boolean.valueOf(elementText));
             }
-        }          
+        }
     }
 
     private static Map<String, Object> getNodeDef(String nodeId, Map<String, Object> flowDef) {

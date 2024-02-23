@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElEvaluator;
 import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.el.SpelEvaluator;
 import com.jd.easyflow.flow.engine.FlowParam;
@@ -34,7 +33,7 @@ public class PerformanceTest {
 
         // start test
         log.info("start test");
-        int count = 10000;
+        int count = 1000;
         param = new FlowParam("flow_performance001", "EMPTY_NODE2", null);
         param.setLogFlag(false);
         long t1 = System.currentTimeMillis();

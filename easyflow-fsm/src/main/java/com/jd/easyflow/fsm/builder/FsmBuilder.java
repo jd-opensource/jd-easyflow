@@ -222,7 +222,12 @@ public class FsmBuilder {
         fsm.setPostHandler(postHandler);
         return this;
     }
-
+    
+    public FsmBuilder logFag(Boolean logFlag) {
+        fsm.setLogFlag(logFlag);;
+        return this;
+    }
+    
     public Fsm build() {
         return fsm;
     }

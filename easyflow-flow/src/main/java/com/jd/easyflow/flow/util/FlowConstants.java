@@ -6,6 +6,12 @@ package com.jd.easyflow.flow.util;
  *
  */
 public class FlowConstants {
+    
+    public static final String NS_SEP = ":";
+    
+    public static final String NS_EASYFLOW = "easyflow";
+    
+    public static final String EASYFLOW_NS_PREFIX = NS_EASYFLOW + NS_EASYFLOW;
 
 	/**
 	 * Param keys.
@@ -26,20 +32,20 @@ public class FlowConstants {
     /**
      * Exceptions in multiple thread scenario.
      */
-    public static final String FLOW_CTX_MULTI_EXCEPTIONS = "flow.multi.exceptions";
+    public static final String FLOW_CTX_MULTI_EXCEPTIONS = "_flow.multi.exceptions";
     
-    public static final String FLOW_CTX_MULTI_AWAIT_RESULT = "flow.multi.await.result";
+    public static final String FLOW_CTX_MULTI_AWAIT_RESULT = "_flow.multi.await.result";
     
-    public static final String NODE_CTX_MULTI_EXCEPTION = "flow.multi.exception";
+    public static final String NODE_CTX_MULTI_EXCEPTION = "_flow.multi.exception";
     
     
     public static final String CTX_LOCK_PREFIX = "_node_lock_";
     
     public static final String CTX_PRE_NODES_PREFIX = "_pre_nodes_";
     
-    public static final String CTX_PARENT_CONTEXT = "parentContext";
+    public static final String CTX_PARENT_CONTEXT = "_parentContext";
     
-    public static final String CTX_PARENT_NODE_CONTEXT = "parentNodeContext";
+    public static final String CTX_PARENT_NODE_CONTEXT = "_parentNodeContext";
     
     public static final String NODECTX_PRE_RESULT = "_preResult";
     
@@ -50,17 +56,17 @@ public class FlowConstants {
     public static final String PROP_INTERRUPT_EXP = "interruptExp";
     
     
-    public static final String PROP_RUNTIME_EVENT_NODE_ACTION_MAP = "$eventNodeActionMap";
-    public static final String PROP_RUNTIME_EVENT_POST_HANDLER_MAP = "$eventPostHandlerMap";
+    public static final String PROP_RUNTIME_EVENT_NODE_ACTION_MAP = "_$eventNodeActionMap";
+    public static final String PROP_RUNTIME_EVENT_POST_HANDLER_MAP = "_$eventPostHandlerMap";
     
     /**
      * Event param.
      */
-    public static final String NODE_CONTEXT_DATA_EVENT = "EVENT";
+    public static final String NODE_CONTEXT_DATA_EVENT = "_EVENT";
 
     public static final String NODE_PROP_EVENTS = "events";
     
-    public static final String PARAM_DATA_EVENT = "EVENT";
+    public static final String PARAM_DATA_EVENT = "_EVENT";
     
     public static final String NONE_EVENT = "NONE";
     

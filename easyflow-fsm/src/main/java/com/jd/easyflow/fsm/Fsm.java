@@ -78,6 +78,8 @@ public class Fsm implements FsmLifeCycle {
     
     private List<Filter<Pair<TransitionContext, FsmContext>, PostHandleResult>> transitionPostHandlerFilters;
     
+    private Boolean logFlag;
+    
     @Override
     public void init(InitContext initContext, Object parent) {
         if (preHandler != null) {
@@ -121,17 +123,17 @@ public class Fsm implements FsmLifeCycle {
     }
 
     /**
-     * 执行状态机时，外层负责查找执行哪个状态机
      * 
      * @param event
      * @param context
      */
     public FsmResult run(FsmParam param) {
-        if (logger.isInfoEnabled()) {
+        boolean logFlag = param.getContext() != null ? param.getContext().isLogOn() : (param.getLogFlag() == null || param.getLogFlag().booleanValue());
+        if (logFlag && logger.isInfoEnabled()) {
             logger.info("FSM START,fsmId: " + param.getFsmId() + " event:" + param.getEventId() + " currentStateId:"
                     + param.getCurrentStateId() + " opType:" + param.getOpType());
         }
-        if (logger.isDebugEnabled()) {
+        if (logFlag && logger.isDebugEnabled()) {
             logger.debug("Param:" + JsonUtil.toJsonString(param));
         }
         FsmContext context = initContext(param);
@@ -154,39 +156,43 @@ public class Fsm implements FsmLifeCycle {
                 boolean preResult = this.preHandler.preHandle(context);
                 context.setPreResult(preResult);
                 if (!preResult) {
-                    logger.info("pre result false");
+                    if (context.isLogOn()) {
+                        logger.info("pre result false");
+                    }
                     eventTrigger.triggerEvent(FsmEventTypes.FSM_END, context);
                     return wrapResult(context);
                 }
             }
             while (true) {
                 if (context.isInterrupted()) {
-                    if (logger.isInfoEnabled()) {
+                    if (context.isLogOn() && logger.isInfoEnabled()) {
                         logger.info("fsm interrupted");
                         break;
                     }
                 }
 
                 State currentState = context.getCurrentState();
-                Event event = context.getCurrentEvent();
-                if (logger.isInfoEnabled()) {
+                Event currentEvent = context.getCurrentEvent();
+                if (context.isLogOn() && logger.isInfoEnabled()) {
                     logger.info("Current state:" + currentState.getId() + ", Current event:"
-                            + (event == null ? null : event.getId()));
+                            + (currentEvent == null ? null : currentEvent.getId()));
                 }
-                if (event == null) {
+                if (currentEvent == null) {
                     break;
                 }
-                String transitionKey = createTransitionKey(currentState, event);
+                String transitionKey = createTransitionKey(currentState, currentEvent);
                 Transition transition = transitionMap.get(transitionKey);
                 if (transition == null) {
-                    logger.warn("No transition found, currentState:" + currentState.getId() + " currentEvent:"
-                            + event.getId() + ",EXIT");
+                    if (context.isLogOn()) {
+                        logger.warn("No transition found, currentState:" + currentState.getId() + " currentEvent:"
+                                + currentEvent.getId() + ", EXIT");
+                    }
                     break;
                 }
                 beforeTransition(context);
                 TransitionContext transitionContext = new TransitionContext();
                 transitionContext.setTransition(transition);
-                if (!Boolean.FALSE.equals(this.getProperty(FsmConstants.FSM_PROPERTY_RECORD_HISTORY))) {
+                if (context.isRecordHistory()) {
                     context.addTransition(transitionContext);
                 }
                 try {
@@ -275,6 +281,14 @@ public class Fsm implements FsmLifeCycle {
                 elEvaluator = ElFactory.get();
             }
             context.setElEvaluator(elEvaluator);
+        }
+        // set log flag
+        if (context.getLogFlag() == null) {
+            if (param.getLogFlag() != null) {
+                context.setLogFlag(param.getLogFlag());
+            } else {
+                context.setLogFlag(this.getLogFlag());
+            }
         }
         return context;
     }
@@ -611,6 +625,12 @@ public class Fsm implements FsmLifeCycle {
         this.postHandler = postHandler;
     }
 
-    
+    public Boolean getLogFlag() {
+        return logFlag;
+    }
+
+    public void setLogFlag(Boolean logFlag) {
+        this.logFlag = logFlag;
+    }
 
 }

@@ -14,6 +14,7 @@ import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
  * Flow Context.
@@ -76,6 +77,8 @@ public class FlowContextImpl implements FlowContext {
     private Boolean logFlag;
     
     private ElEvaluator elEvaluator;
+    
+    private Boolean recordHistory;
 
     @Override
     public void put(String key, Object value) {
@@ -239,6 +242,14 @@ public class FlowContextImpl implements FlowContext {
 
     public void setElEvaluator(ElEvaluator elEvaluator) {
         this.elEvaluator = elEvaluator;
+    }
+
+    @Override
+    public boolean isRecordHistory() {
+        if (recordHistory == null) {
+            recordHistory = ! Boolean.FALSE.equals(flow.getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY));
+        }
+        return recordHistory;
     }
     
     

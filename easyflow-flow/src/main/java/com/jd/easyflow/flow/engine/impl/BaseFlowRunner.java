@@ -88,16 +88,20 @@ public abstract class BaseFlowRunner implements FlowRunner {
         }
         // print nodes info
         if (context.isLogOn() && logger.isInfoEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            if (nextNodes != null) {
+            if (nextNodes == null || nextNodes.length == 0) {
+                logger.info("NEXT NODES:");
+            } else if (nextNodes.length == 1) {
+                logger.info("NEXT NODES:" + nextNodes[0].getNodeId());
+            } else {
+                StringBuilder builder = new StringBuilder();
                 for (NodeContext n : nextNodes) {
-                    builder.append(n.getNodeId() + ",");
+                    builder.append(n.getNodeId()).append(",");
                 }
+                logger.info("NEXT NODES:" + (builder.length() == 0 ? "" : builder.substring(0, builder.length() - 1)));
             }
-            logger.info("NEXT NODES:" + (builder.length() == 0 ? "" : builder.substring(0, builder.length() - 1)));
         }
         // Clear previous node to avoid OOM
-        if (Boolean.FALSE.equals(context.getFlow().getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY))) {
+        if (!context.isRecordHistory()) {
             currentNode.setPreviousNode(null);
             currentNode.setNextNodes(null);
         }

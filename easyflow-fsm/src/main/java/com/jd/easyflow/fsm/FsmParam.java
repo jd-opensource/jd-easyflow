@@ -44,6 +44,8 @@ public class FsmParam {
     private Object param;
     
     private Map<String, Object> dataMap;
+    
+    private Boolean logFlag;
 
     public String getInstanceId() {
         return instanceId;
@@ -157,5 +159,14 @@ public class FsmParam {
         }
         context.setContext(bizContext);
     }
+
+    public Boolean getLogFlag() {
+        return logFlag;
+    }
+
+    public void setLogFlag(Boolean logFlag) {
+        this.logFlag = logFlag;
+    }
+    
     
 }

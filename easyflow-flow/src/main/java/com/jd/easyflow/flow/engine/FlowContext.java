@@ -167,6 +167,8 @@ public interface FlowContext {
     void setContext(Object context);
     
     ElEvaluator getElEvaluator();
+    
+    boolean isRecordHistory();
 
 
 }
