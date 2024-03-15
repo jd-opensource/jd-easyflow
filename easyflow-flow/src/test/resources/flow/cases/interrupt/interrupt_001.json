@@ -1,0 +1,11 @@
+{   "id": "interrupt_001",
+    "nodes": [
+        {"id": "node001","action":{"createExp":"new com.jd.easyflow.flow.cases.interrupt.TestInterruptBizNodeAction(1000, false)"}, "start":true}, 
+          
+        {"id": "node0021","action":{"createExp":"new com.jd.easyflow.flow.cases.interrupt.TestInterruptBizNodeAction(2000, true)"}, "post":{"when":"actionResult", "to":"node022"}, "start":true},   
+        {"id": "node0022","action":{"createExp":"new com.jd.easyflow.flow.cases.interrupt.TestInterruptBizNodeAction(1000, false)"}}, 
+        
+        {"id": "node003","action":{"createExp":"new com.jd.easyflow.flow.cases.interrupt.TestInterruptBizNodeAction(3000, false)"}, "start":true} 
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestReusableThreadRunner(10000)"}
+}

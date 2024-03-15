@@ -21,7 +21,7 @@ CREATE TABLE `process_definition` (
   `deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'delete flag',
   PRIMARY KEY (`id`),
   INDEX `idx_defId_defVersion` (`def_id`,`def_version`),
-  INDEX `idx_category` (``category`)
+  INDEX `idx_category` (`category`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='process definition table';
 -- process instance
 CREATE TABLE `process_instance` (

@@ -166,9 +166,28 @@ public interface FlowContext {
      */
     void setContext(Object context);
     
+    /**
+     * Get ElEvaluator.
+     * @return
+     */
     ElEvaluator getElEvaluator();
     
+    /**
+     * Whether record history.
+     * @return
+     */
     boolean isRecordHistory();
-
-
+    
+    /**
+     * Get FlowContext of parent flow.
+     * @return
+     */
+    FlowContext getParentContext();
+    
+    /**
+     * Get nodeContext of parent flow.
+     * @return
+     */
+    NodeContext getParentNodeContext();
+    
 }

@@ -1,5 +1,8 @@
 package com.jd.easyflow.fsm;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jd.easyflow.fsm.model.Event;
 import com.jd.easyflow.fsm.model.State;
@@ -50,6 +53,11 @@ public class FsmResult {
     private Object lastTransitionResult;
     @JsonIgnore
     private FsmContext context;
+    
+    /**
+     * common result data.
+     */
+    private Map<String, Object> dataMap;
     
 
     public String getInstanceId() {
@@ -156,7 +164,31 @@ public class FsmResult {
         this.lastTransitionResult = lastTransitionResult;
     }
 
-    
+    public Map<String, Object> getDataMap() {
+        return dataMap;
+    }
+
+    public void setDataMap(Map<String, Object> dataMap) {
+        this.dataMap = dataMap;
+    }
+
+    public void put(String key, Object value) {
+        if (dataMap == null) {
+            dataMap = new ConcurrentHashMap<>();
+        }
+        if (value == null) {
+            dataMap.remove(key);
+        } else {
+            dataMap.put(key, value);
+        }
+    }
+
+    public <T> T get(String key) {
+        if (dataMap == null) {
+            return null;
+        }
+        return (T) dataMap.get(key);
+    }
     
     
 }

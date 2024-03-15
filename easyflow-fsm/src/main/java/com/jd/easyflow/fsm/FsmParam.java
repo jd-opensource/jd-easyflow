@@ -124,7 +124,7 @@ public class FsmParam {
         return dataMap;
     }
 
-    public void seDataMap(Map<String, Object> dataMap) {
+    public void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
     }
 

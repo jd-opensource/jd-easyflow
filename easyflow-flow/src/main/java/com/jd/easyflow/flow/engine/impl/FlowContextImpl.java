@@ -79,6 +79,10 @@ public class FlowContextImpl implements FlowContext {
     private ElEvaluator elEvaluator;
     
     private Boolean recordHistory;
+    
+    private FlowContext parentContext;
+    
+    private NodeContext parentNodeContext;
 
     @Override
     public void put(String key, Object value) {
@@ -251,8 +255,31 @@ public class FlowContextImpl implements FlowContext {
         }
         return recordHistory;
     }
-    
-    
-    
 
+    public Boolean getRecordHistory() {
+        return recordHistory;
+    }
+
+    public void setRecordHistory(Boolean recordHistory) {
+        this.recordHistory = recordHistory;
+    }
+
+    @Override
+    public FlowContext getParentContext() {
+        return parentContext;
+    }
+
+    public void setParentContext(FlowContext parentContext) {
+        this.parentContext = parentContext;
+    }
+
+    @Override
+    public NodeContext getParentNodeContext() {
+        return parentNodeContext;
+    }
+
+    public void setParentNodeContext(NodeContext parentNodeContext) {
+        this.parentNodeContext = parentNodeContext;
+    }
+    
 }
