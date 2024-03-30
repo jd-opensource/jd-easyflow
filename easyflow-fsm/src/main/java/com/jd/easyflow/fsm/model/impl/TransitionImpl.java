@@ -2,8 +2,6 @@ package com.jd.easyflow.fsm.model.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
@@ -15,6 +13,7 @@ import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.model.TransitionPostHandler;
 import com.jd.easyflow.fsm.model.TransitionPreHandler;
 import com.jd.easyflow.fsm.util.FsmEventTypes;
+import com.jd.easyflow.fsm.util.Pair;
 
 /**
  * 

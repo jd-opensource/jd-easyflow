@@ -1,13 +1,12 @@
 package com.jd.easyflow.fsm.cases.post;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.util.FsmUtil;
+import com.jd.easyflow.fsm.util.Pair;
 import com.jd.easyflow.fsm.util.TransitionUtil;
 
 /**

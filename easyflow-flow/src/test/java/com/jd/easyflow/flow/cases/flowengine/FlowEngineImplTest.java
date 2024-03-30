@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.action.ExecutorNodeAction;
 import com.jd.easyflow.flow.model.builder.FlowBuilder;
+import com.jd.easyflow.flow.util.Pair;
 
 /**
  * 

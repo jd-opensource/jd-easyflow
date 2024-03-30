@@ -3,7 +3,6 @@ package com.jd.easyflow.fsm.cases.filter;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +10,7 @@ import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.model.TransitionContext;
+import com.jd.easyflow.fsm.util.Pair;
 
 /**
  * 

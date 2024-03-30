@@ -29,6 +29,9 @@ public class DefConstants {
     public static final String FLOW_PROP_NODE_PRE_HANDLER_FILTERS = "nodePreHandlerFilters";
     public static final String FLOW_PROP_NODE_ACTION_FILTERS = "nodeActionFilters";
     public static final String FLOW_PROP_NODE_POST_HANDLER_FILTERS = "nodePostHandlerFilters";
+    public static final String FLOW_PROP_FLOW_PRE_HANDLER_FILTERS = "flowPreHandlerFilters";
+    public static final String FLOW_PROP_FLOW_POST_HANDLER_FILTERS = "flowPostHandlerFilters";
+
     public static final String FLOW_PROP_RUNNER = "runner";
     public static final String FLOW_PROP_LOG_FLAG = "logFlag";
     

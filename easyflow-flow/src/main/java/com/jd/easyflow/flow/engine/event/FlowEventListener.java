@@ -1,8 +1,7 @@
 package com.jd.easyflow.flow.engine.event;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jd.easyflow.flow.model.FlowLifeCycle;
+import com.jd.easyflow.flow.util.Pair;
 
 /**
  * 

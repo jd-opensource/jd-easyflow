@@ -293,7 +293,21 @@ public class BpmnConverter {
             String elementText = element.getElementText();
             List<Object> list = JsonUtil.parseObject(elementText, List.class);
             flowDef.put(DefConstants.FLOW_PROP_NODE_POST_HANDLER_FILTERS, list);
-        }        
+        }   
+        // flowPreHandlerFilters
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.FLOW_PRE_HANDLER_FILTERS)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.FLOW_PRE_HANDLER_FILTERS).get(0);
+            String elementText = element.getElementText();
+            List<Object> list = JsonUtil.parseObject(elementText, List.class);
+            flowDef.put(DefConstants.FLOW_PROP_FLOW_PRE_HANDLER_FILTERS, list);
+        }  
+        // flowPostHandlerFilters
+        if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.FLOW_POST_HANDLER_FILTERS)) {
+            ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.FLOW_POST_HANDLER_FILTERS).get(0);
+            String elementText = element.getElementText();
+            List<Object> list = JsonUtil.parseObject(elementText, List.class);
+            flowDef.put(DefConstants.FLOW_PROP_FLOW_POST_HANDLER_FILTERS, list);
+        }         
         // runner
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.RUNNER)) {
             ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.RUNNER).get(0);

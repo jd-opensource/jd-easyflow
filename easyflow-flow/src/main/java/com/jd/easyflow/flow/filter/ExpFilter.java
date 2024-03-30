@@ -3,8 +3,6 @@ package com.jd.easyflow.flow.filter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +11,8 @@ import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
 import com.jd.easyflow.flow.util.JsonUtil;
+import com.jd.easyflow.flow.util.Pair;
+import com.jd.easyflow.flow.util.Triple;
 
 /**
  * 

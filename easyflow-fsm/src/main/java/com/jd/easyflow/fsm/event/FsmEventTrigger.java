@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.fsm.Fsm;
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.model.InitContext;
+import com.jd.easyflow.fsm.util.Pair;
 
 /**
  * 

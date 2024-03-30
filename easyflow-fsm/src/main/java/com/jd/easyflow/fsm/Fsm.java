@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +26,8 @@ import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.util.FsmConstants;
 import com.jd.easyflow.fsm.util.FsmEventTypes;
 import com.jd.easyflow.fsm.util.JsonUtil;
+import com.jd.easyflow.fsm.util.Pair;
+import com.jd.easyflow.fsm.util.Triple;
 
 /**
  * 

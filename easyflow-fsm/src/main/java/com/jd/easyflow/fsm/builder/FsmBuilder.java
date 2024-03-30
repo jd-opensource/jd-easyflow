@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import com.jd.easyflow.fsm.Fsm;
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.FsmResult;
@@ -26,6 +23,8 @@ import com.jd.easyflow.fsm.model.TransitionPreHandler;
 import com.jd.easyflow.fsm.model.builder.TransitionBuilder;
 import com.jd.easyflow.fsm.model.impl.EventImpl;
 import com.jd.easyflow.fsm.model.impl.StateImpl;
+import com.jd.easyflow.fsm.util.Pair;
+import com.jd.easyflow.fsm.util.Triple;
 
 /**
  * 

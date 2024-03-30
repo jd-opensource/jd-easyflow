@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.FlowRunner;
@@ -16,6 +13,8 @@ import com.jd.easyflow.flow.engine.event.FlowEventTrigger;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.model.parser.FlowParser;
+import com.jd.easyflow.flow.util.Pair;
+import com.jd.easyflow.flow.util.Triple;
 
 /**
  * 
@@ -66,6 +65,10 @@ public class Flow implements FlowLifeCycle {
      * nodePostHandler is not standard model. define here for performance.
      */
     private List<Filter<Pair<NodeContext, FlowContext>, NodeContext[]>> nodePostHandlerFilters;
+    
+    private List<Filter<FlowContext, Boolean>> flowPreHandlerFilters;
+    
+    private List<Filter<FlowContext, Void>> flowPostHandlerFilters;
 
     private FlowParser flowParser;
     
@@ -108,6 +111,16 @@ public class Flow implements FlowLifeCycle {
         }
         if (nodePostHandlerFilters != null) {
             for (Filter filter: nodePostHandlerFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (flowPreHandlerFilters != null) {
+            for (Filter filter: flowPreHandlerFilters) {
+                filter.init(initContext, this);
+            }
+        }
+        if (flowPostHandlerFilters != null) {
+            for (Filter filter: flowPostHandlerFilters) {
                 filter.init(initContext, this);
             }
         }
@@ -157,6 +170,16 @@ public class Flow implements FlowLifeCycle {
                 filter.destroy();
             }
         }
+        if (flowPreHandlerFilters != null) {
+            for (Filter filter: flowPreHandlerFilters) {
+                filter.destroy();
+            }
+        }
+        if (flowPostHandlerFilters != null) {
+            for (Filter filter: flowPostHandlerFilters) {
+                filter.destroy();
+            }
+        }        
         if (runner != null) {
             runner.destroy();
         }
@@ -326,6 +349,20 @@ public class Flow implements FlowLifeCycle {
         }
         this.nodePostHandlerFilters.add(filter);
     }
+    
+    public void addFlowPreHandlerFilter(Filter<FlowContext, Boolean> filter) {
+        if (this.flowPreHandlerFilters == null) {
+            this.flowPreHandlerFilters = new ArrayList<Filter<FlowContext, Boolean>>();
+        }
+        this.flowPreHandlerFilters.add(filter);
+    }
+
+    public void addFlowPostHandlerFilter(Filter<FlowContext, Void> filter) {
+        if (this.flowPostHandlerFilters == null) {
+            this.flowPostHandlerFilters = new ArrayList<Filter<FlowContext, Void>>();
+        }
+        this.flowPostHandlerFilters.add(filter);
+    }
 
     public FlowRunner getRunner() {
         return runner;
@@ -370,6 +407,22 @@ public class Flow implements FlowLifeCycle {
     public void setNodePostHandlerFilters(
             List<Filter<Pair<NodeContext, FlowContext>, NodeContext[]>> nodePostHandlerFilters) {
         this.nodePostHandlerFilters = nodePostHandlerFilters;
+    }
+    
+    public List<Filter<FlowContext, Boolean>> getFlowPreHandlerFilters() {
+        return flowPreHandlerFilters;
+    }
+
+    public void setFlowPreHandlerFilters(List<Filter<FlowContext, Boolean>> flowPreHandlerFilters) {
+        this.flowPreHandlerFilters = flowPreHandlerFilters;
+    }
+
+    public List<Filter<FlowContext, Void>> getFlowPostHandlerFilters() {
+        return flowPostHandlerFilters;
+    }
+
+    public void setFlowPostHandlerFilters(List<Filter<FlowContext, Void>> flowPostHandlerFilters) {
+        this.flowPostHandlerFilters = flowPostHandlerFilters;
     }
 
     public FlowPreHandler getPreHandler() {

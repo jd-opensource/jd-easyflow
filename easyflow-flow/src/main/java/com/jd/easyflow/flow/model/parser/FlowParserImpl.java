@@ -211,6 +211,11 @@ public class FlowParserImpl implements FlowParser {
         parseNodeActionFilter(map, flow, parseEl);
         // Node post handler filter
         parseNodePostHandlerFilter(map, flow, parseEl);
+        
+        // Flow pre handler filter
+        parseFlowPreHandlerFilter(map, flow, parseEl);
+        // Flow post handler filter
+        parseFlowPostHandlerFilter(map, flow, parseEl);        
 
         // Flow runner
         parseRunner(map, flow, parseEl);
@@ -419,6 +424,76 @@ public class FlowParserImpl implements FlowParser {
                             if (nodePreHandlerFilter != null) {
                                 nodePreHandlerFilter.postConstruct(filter, null);
                                 flow.addNodePreHandlerFilter(nodePreHandlerFilter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Parse flow pre handler filter.
+     * 
+     * @param map
+     * @param flow
+     * @param parseEl
+     */
+    private void parseFlowPreHandlerFilter(Map<String, Object> map, Flow flow, boolean parseEl) {
+        List<Map<String, Object>> flowPreHandlerFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_FLOW_PRE_HANDLER_FILTERS);
+        if (flowPreHandlerFilters != null) {
+            for (Object filterObj : flowPreHandlerFilters) {
+                if (filterObj instanceof String) {
+                    ExpFilter expFilter = new ExpFilter<>((String) filterObj);
+                    flow.addFilter(expFilter);
+                } else {
+                    Map<String, Object> filter = (Map<String, Object>) filterObj;
+                    String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                        if (parseEl) {
+                            String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter flowPreHandlerFilter = getElEvaluator().evalWithDefaultContext(exp, elContext, false);
+                            if (flowPreHandlerFilter != null) {
+                                flowPreHandlerFilter.postConstruct(filter, null);
+                                flow.addFlowPreHandlerFilter(flowPreHandlerFilter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Parse flow pre handler filter.
+     * 
+     * @param map
+     * @param flow
+     * @param parseEl
+     */
+    private void parseFlowPostHandlerFilter(Map<String, Object> map, Flow flow, boolean parseEl) {
+        List<Map<String, Object>> flowPostHandlerFilters = (List<Map<String, Object>>) map
+                .get(DefConstants.FLOW_PROP_FLOW_POST_HANDLER_FILTERS);
+        if (flowPostHandlerFilters != null) {
+            for (Object filterObj : flowPostHandlerFilters) {
+                if (filterObj instanceof String) {
+                    ExpFilter expFilter = new ExpFilter<>((String) filterObj);
+                    flow.addFilter(expFilter);
+                } else {
+                    Map<String, Object> filter = (Map<String, Object>) filterObj;
+                    String type = (String) filter.get(DefConstants.COMMON_PROP_TYPE);
+                    if (DefConstants.COMMON_PROP_CREATE.equals(type)
+                            || filter.containsKey(DefConstants.COMMON_PROP_CREATE_EXP)) {
+                        if (parseEl) {
+                            String exp = (String) filter.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                            Map<String, Object> elContext = createElContext(filter, null, flow);
+                            Filter flowPostHandlerFilter = getElEvaluator().evalWithDefaultContext(exp, elContext, false);
+                            if (flowPostHandlerFilter != null) {
+                                flowPostHandlerFilter.postConstruct(filter, null);
+                                flow.addFlowPostHandlerFilter(flowPostHandlerFilter);
                             }
                         }
                     }

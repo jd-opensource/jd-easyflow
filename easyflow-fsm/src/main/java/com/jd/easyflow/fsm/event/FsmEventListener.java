@@ -1,8 +1,7 @@
 package com.jd.easyflow.fsm.event;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jd.easyflow.fsm.model.FsmLifeCycle;
+import com.jd.easyflow.fsm.util.Pair;
 
 /**
  * 

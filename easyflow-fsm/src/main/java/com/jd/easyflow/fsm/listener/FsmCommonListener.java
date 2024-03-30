@@ -1,11 +1,10 @@
 package com.jd.easyflow.fsm.listener;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jd.easyflow.fsm.event.FsmEvent;
 import com.jd.easyflow.fsm.event.FsmEventListener;
 import com.jd.easyflow.fsm.util.FsmConstants;
 import com.jd.easyflow.fsm.util.FsmEventTypes;
+import com.jd.easyflow.fsm.util.Pair;
 
 /**
  * 

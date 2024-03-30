@@ -2,13 +2,7 @@ package com.jd.easyflow.fsm;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,54 +11,28 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.jd.easyflow.fsm.el.ElEvaluator;
-import com.jd.easyflow.fsm.el.ElFactory;
-import com.jd.easyflow.fsm.event.FsmEventListener;
-import com.jd.easyflow.fsm.event.FsmEventTrigger;
 import com.jd.easyflow.fsm.exception.FsmException;
-import com.jd.easyflow.fsm.filter.Filter;
-import com.jd.easyflow.fsm.filter.FilterChain;
 import com.jd.easyflow.fsm.parser.FsmParser;
-import com.jd.easyflow.fsm.util.FsmConstants;
-import com.jd.easyflow.fsm.util.FsmEventTypes;
 import com.jd.easyflow.fsm.util.FsmIOUtil;
 import com.jd.easyflow.fsm.util.SpelHelper;
 
 /**
- * 
+ * Fsm Manager. Adding spring integration based on CoreFsmManager.
  * @author liyuliang5
  *
  */
-public class FsmManager implements SmartLifecycle {
+public class FsmManager extends CoreFsmManager implements SmartLifecycle {
 
     public static final Logger logger = LoggerFactory.getLogger(FsmManager.class);
-
-    protected Map<String, Fsm> fsmMap = new ConcurrentHashMap<>();
-
-    protected Map<String, String> fsmDefinitionMap = new ConcurrentHashMap<String, String>();
-
-    private String fsmPath;
-
-    private FsmEventTrigger eventTrigger = new FsmEventTrigger();
-
-    private List<FsmEventListener> listeners;
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    private volatile boolean inited = false;
+    private int phase = Integer.MIN_VALUE;
 
-    private List<Filter<Pair<FsmParam, FsmManager>, FsmResult>> filters;
-
-    private  int phase = Integer.MIN_VALUE;
-    
     private boolean autoStartup = true;
 
     private volatile boolean isRunning = false;
-    
-    private Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
-    
-    private ElEvaluator elEvaluator;
 
     public void init() {
         if (inited) {
@@ -73,34 +41,8 @@ public class FsmManager implements SmartLifecycle {
         if (applicationContext != null) {
             SpelHelper.setApplicationContext(applicationContext);
         }
-        if (elEvaluator == null) {
-            elEvaluator = ElFactory.get();
-        }
-        loadFsm();
-        if (listeners != null) {
-            listeners.forEach(listener -> eventTrigger.addListener(listener));
-        }
-        eventTrigger.init(null, null);
-        if (filters != null) {
-            filters.forEach(filter -> {
-                filter.init(null, null);
-            });
-        }
+        super.init();
         inited = true;
-    }
-    
-    public void destroy () {
-        if (fsmMap != null) {
-            for (Entry<String, Fsm> entry : fsmMap.entrySet()) {
-                entry.getValue().destroy();
-            }
-        }
-        eventTrigger.destroy();
-        if (filters != null) {
-            filters.forEach(filter -> {
-                filter.destroy();
-            });
-        }
     }
 
     /**
@@ -116,118 +58,13 @@ public class FsmManager implements SmartLifecycle {
             for (Resource resource : resources) {
                 logger.info("Start parse fsm definition file:" + resource.getURI());
                 try (InputStream is = resource.getInputStream()) {
-                    String fsmDefinition = FsmIOUtil.toString(is);
-                    Fsm fsm = FsmParser.parse(fsmDefinition, true, elEvaluator);
-                    if (fsmDefinitionMap.containsKey(fsm.getId())) {
-                        throw new FsmException();
-                    }
-                    fsmDefinitionMap.put(fsm.getId(), fsmDefinition);
-                    fsmMap.put(fsm.getId(), fsm);
+                   loadFsmInputStream(is);
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Fsm definition file load exception", e);
         }
     }
-
-    public void add(Fsm fsm) {
-        if (!fsmMap.containsKey(fsm.getId())) {
-            fsmMap.put(fsm.getId(), fsm);
-        }
-    }
-
-    public Fsm getFsm(String id) {
-        return fsmMap.get(id);
-    }
-
-    public FsmResult run(FsmParam param) {
-        if (! inited) {
-            throw new FsmException("Fsm is not inited. fsmId:" + param.getFsmId());
-        }
-        boolean logFlag = param.getContext() != null ? param.getContext().isLogOn() : (param.getLogFlag() == null || param.getLogFlag().booleanValue());
-        if (logFlag && logger.isInfoEnabled()) {
-            logger.info("FSM MANAGER RUN. fsmId: " + param.getFsmId() + " event:" + param.getEventId() + " currentStateId:"
-                    + param.getCurrentStateId() + " opType:" + param.getOpType());
-        }
-        param.put(FsmConstants.PARAM_KEY_EL_EVALUATOR, this.getElEvaluator());
-        if (filters == null || filters.size() == 0) {
-            return invokeFsm(param);
-        } else {
-            FilterChain<Pair<FsmParam, FsmManager>, FsmResult> chain = new FilterChain<Pair<FsmParam, FsmManager>, FsmResult>(filters, p -> invokeFsm(p.getLeft()));
-            return chain.doFilter(Pair.of(param, this));
-        }
-    }
-
-    protected FsmResult invokeFsm(FsmParam param) {
-        // No fsm manager listener scenario.
-        if (eventTrigger.getListenerList() == null || eventTrigger.getListenerList().size() == 0) {
-            Fsm fsm = getFsm(param.getFsmId());
-            if (fsm == null) {
-                throw new RuntimeException("FSM:" + param.getFsmId() + " not exists");
-            }
-            FsmResult result = fsm.run(param);
-            return result;
-        }
-        // Has fsm manager listener scenario.
-        Map<String, Object> data = new HashMap<>();
-        data.put("param", param);
-        data.put("fsmManager", this);
-        eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_START, data, null, false);
-        try {
-            Fsm fsm = getFsm(param.getFsmId());
-            if (fsm == null) {
-                throw new RuntimeException("FSM:" + param.getFsmId() + " not exists");
-            }
-            FsmResult result = fsm.run(param);
-            data.put("result", result);
-            eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_END, data, null, false);
-            return result;
-        } finally {
-            eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_COMPLETE, data, null, true);
-        }
-    }
-
-    public String getFsmPath() {
-        return fsmPath;
-    }
-
-    public void setFsmPath(String fsmPath) {
-        this.fsmPath = fsmPath;
-    }
-
-    public List<FsmEventListener> getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(List<FsmEventListener> listeners) {
-        this.listeners = listeners;
-    }
-
-    public Map<String, Fsm> getFsmMap() {
-        return fsmMap;
-    }
-
-    public void setFsmMap(Map<String, Fsm> fsmMap) {
-        this.fsmMap = fsmMap;
-    }
-
-    public FsmEventTrigger getEventTrigger() {
-        return eventTrigger;
-    }
-
-    public void setEventTrigger(FsmEventTrigger eventTrigger) {
-        this.eventTrigger = eventTrigger;
-    }
-
-    public Map<String, String> getFsmDefinitionMap() {
-        return fsmDefinitionMap;
-    }
-
-    public void setFsmDefinitionMap(Map<String, String> fsmDefinitionMap) {
-        this.fsmDefinitionMap = fsmDefinitionMap;
-    }
-
-
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -236,23 +73,6 @@ public class FsmManager implements SmartLifecycle {
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
-
-    public boolean isInited() {
-        return inited;
-    }
-
-    public void setInited(boolean inited) {
-        this.inited = inited;
-    }
-
-    public List<Filter<Pair<FsmParam, FsmManager>, FsmResult>> getFilters() {
-        return filters;
-    }
-
-    public void setFilters(List<Filter<Pair<FsmParam, FsmManager>, FsmResult>> filters) {
-        this.filters = filters;
-    }
-
 
     @Override
     public void start() {
@@ -263,29 +83,29 @@ public class FsmManager implements SmartLifecycle {
     @Override
     public void stop() {
         isRunning = false;
+        destroy();
     }
 
     @Override
     public boolean isRunning() {
         return isRunning;
     }
-    
+
     @Override
     public boolean isAutoStartup() {
         return autoStartup;
     }
-    
+
     @Override
     public void stop(Runnable callback) {
         stop();
         callback.run();
     }
-    
+
     @Override
     public int getPhase() {
         return phase;
     }
-
 
     public void setPhase(int phase) {
         this.phase = phase;
@@ -295,33 +115,4 @@ public class FsmManager implements SmartLifecycle {
         this.autoStartup = autoStartup;
     }
 
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
-    
-    public <T>T getProperty(String key) {
-        return (T) properties.get(key);
-    }
-    
-    public void setProperty(String key, Object value) {
-        properties.put(key, value);
-    }
-
-    public ElEvaluator getElEvaluator() {
-        return elEvaluator;
-    }
-
-    public void setElEvaluator(ElEvaluator elEvaluator) {
-        this.elEvaluator = elEvaluator;
-    }
-    
-    
-
-
-    
-    
 }

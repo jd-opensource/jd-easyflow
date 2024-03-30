@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
@@ -16,6 +14,7 @@ import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.NodePreHandler;
 import com.jd.easyflow.flow.util.FlowEventTypes;
+import com.jd.easyflow.flow.util.Pair;
 
 /**
  * 

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,6 +18,7 @@ import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 
 /**
  * Function call node action.
@@ -63,7 +63,7 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
         String classMethod = (String) actionConf.get("classMethod");
         String methodName = null;
         Class clazz = null;
-        if (StringUtils.isNotEmpty(classMethod)) {
+        if (FlowStringUtil.isNotEmpty(classMethod)) {
             String[] info = classMethod.split("::");
             String clazzName = info[0];
             methodName = info[1];
@@ -72,7 +72,7 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
         }
         if (instance == null) {
             String beanMethod = (String) actionConf.get("beanMethod");
-            if (StringUtils.isEmpty(beanMethod)) {
+            if (FlowStringUtil.isEmpty(beanMethod)) {
                 String[] info = classMethod.split("::");
                 methodName = info[1];
                 instance = applicationContext.getBean(methodName);
@@ -117,7 +117,7 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
                     String key = (String) result.get("key");
                     String valueExp = (String) result.get("value");
                     Object value = null;
-                    if (StringUtils.isNotEmpty(valueExp)) {
+                    if (FlowStringUtil.isNotEmpty(valueExp)) {
                         value = context.getElEvaluator().eval(valueExp, null, context, contextMap);
                     } else {
                         value = result.get(key);

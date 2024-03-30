@@ -2,8 +2,6 @@ package com.jd.easyflow.flow.engine.event.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +10,8 @@ import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
+import com.jd.easyflow.flow.util.Pair;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 
 /**
  * Listener of event node.
@@ -34,7 +34,7 @@ public class EventFlowListener implements FlowEventListener {
         switch (event.getType()) {
         case FlowEventTypes.INIT_END: {
             String eventId = event.getContext().getParam().get(FlowConstants.PARAM_DATA_EVENT);
-            if (StringUtils.isNotEmpty(eventId)) {
+            if (FlowStringUtil.isNotEmpty(eventId)) {
                 List<NodeContext> startNodes = event.getContext().getStartNodes();
                 if (event.getContext().isLogOn() && logger.isInfoEnabled()) {
                     logger.info("EVENT ID:" + eventId);

@@ -3,13 +3,12 @@ package com.jd.easyflow.fsm.filter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.FsmManager;
 import com.jd.easyflow.fsm.el.ElEvaluator;
 import com.jd.easyflow.fsm.el.ElFactory;
+import com.jd.easyflow.fsm.util.Pair;
+import com.jd.easyflow.fsm.util.Triple;
 
 /**
  * 

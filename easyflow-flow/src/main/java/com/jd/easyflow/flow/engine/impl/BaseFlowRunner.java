@@ -1,18 +1,20 @@
 package com.jd.easyflow.flow.engine.impl;
 
-import org.apache.commons.lang3.tuple.Triple;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowRunner;
 import com.jd.easyflow.flow.exception.FlowException;
+import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeContext;
-import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
+import com.jd.easyflow.flow.util.Triple;
 
 /**
  * 
@@ -27,18 +29,12 @@ public abstract class BaseFlowRunner implements FlowRunner {
     public void run(FlowContext context) {
         Flow flow = context.getFlow();
         flow.triggerEvent(FlowEventTypes.RUN_START, context);
-        if (flow.getPreHandler() != null) {
-            boolean preResult = flow.getPreHandler().preHandle(context);
-            ((FlowContextImpl) context).setPreResult(preResult);
-            if (!preResult) {
-                flow.triggerEvent(FlowEventTypes.RUN_END, context);
-                return;
-            }
-        }
+       if (! executePreHandler(flow, context)) {
+           flow.triggerEvent(FlowEventTypes.RUN_END, context);
+           return;
+       }
         runNodes((FlowContextImpl) context);
-        if (flow.getPostHandler() != null) {
-            flow.getPostHandler().postHandle(context);
-        }
+        executePostHandler(flow, context);
         flow.triggerEvent(FlowEventTypes.RUN_END, context);
     }
 
@@ -137,6 +133,52 @@ public abstract class BaseFlowRunner implements FlowRunner {
         } finally {
             currentNode.setThrowable(throwable);
             flow.triggerEvent(FlowEventTypes.NODE_COMPLETE, currentNode, context, true);
+        }
+    }
+    
+    
+    private boolean executePreHandler(Flow flow, FlowContext context) {
+        List<Filter<FlowContext, Boolean>> filters = flow.getFlowPreHandlerFilters();
+        if (filters == null || filters.size() == 0) {
+            return invokePreHandler(flow, context);
+        }
+        FilterChain<FlowContext, Boolean> chain = new FilterChain<FlowContext, Boolean>(
+                filters, p -> {
+                    return invokePreHandler(flow, context);
+                });
+        Boolean preResult = chain.doFilter(context);
+        ((FlowContextImpl) context).setPreResult(preResult);
+        return preResult == null ? true : preResult;
+    }
+    
+    private boolean invokePreHandler(Flow flow, FlowContext context) {
+        if (flow.getPreHandler() != null) {
+            flow.triggerEvent(FlowEventTypes.FLOW_PRE_START, context);
+            boolean preResult = flow.getPreHandler().preHandle(context);
+            flow.triggerEvent(FlowEventTypes.FLOW_PRE_END, context);
+            ((FlowContextImpl) context).setPreResult(preResult);
+        }
+        return context.getPreResult() == null ? true : context.getPreResult();
+    }
+    
+    private void executePostHandler(Flow flow, FlowContext context) {
+        List<Filter<FlowContext, Void>> filters = flow.getFlowPostHandlerFilters();
+        if (filters == null || filters.size() == 0) {
+            invokePostHandler(flow, context);
+            return;
+        }
+        FilterChain<FlowContext, Void> chain = new FilterChain<FlowContext, Void>(filters, p -> {
+            invokePostHandler(flow, context);
+            return null;
+        });
+    }
+    
+    
+    private void invokePostHandler(Flow flow, FlowContext context) {
+        if (flow.getPostHandler() != null) {
+            flow.triggerEvent(FlowEventTypes.FLOW_POST_START, context);
+            flow.getPostHandler().postHandle(context);
+            flow.triggerEvent(FlowEventTypes.FLOW_POST_END, context);
         }
     }
 }

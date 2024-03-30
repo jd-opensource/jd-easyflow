@@ -1,6 +1,5 @@
 package com.jd.easyflow.flow.cases.posthandler;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +7,7 @@ import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.util.Pair;
 
 /**
  * Test node post handler filter.

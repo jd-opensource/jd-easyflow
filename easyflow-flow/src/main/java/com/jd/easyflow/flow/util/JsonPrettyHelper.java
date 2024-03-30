@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +92,7 @@ public class JsonPrettyHelper {
             List<String> keys = null;
             String confKey = (String) subConf.get("key");
             String keyType = (String) subConf.get("keyType");
-            if (StringUtils.isNotEmpty(confKey)) {
+            if (FlowStringUtil.isNotEmpty(confKey)) {
                 keys = Arrays.asList(confKey);
             } else if ("OTHER".equals(keyType)) {
                 keys = subtract(new ArrayList<String>(value.keySet()), processedKey);
@@ -209,11 +208,11 @@ public class JsonPrettyHelper {
     }
 
     private static String newLine(int indent) {
-        return "\n" + StringUtils.repeat(' ', indent);
+        return "\n" + FlowStringUtil.repeat(' ', indent);
     }
 
     private static String blank(int num) {
-        return StringUtils.repeat(' ', num);
+        return FlowStringUtil.repeat(' ', num);
     }
 
     private static String quote(String str) {
@@ -235,7 +234,7 @@ public class JsonPrettyHelper {
         String[] lines = s.split("\n");
         StringBuilder builder = new StringBuilder();
         for (String line : lines) {
-            builder.append(StringUtils.repeat(' ', indent) + line);
+            builder.append(FlowStringUtil.repeat(' ', indent) + line);
         }
         return builder.toString();
     }
@@ -250,7 +249,7 @@ public class JsonPrettyHelper {
     private static String indent(String[] lines, int indent) {
         StringBuilder builder = new StringBuilder();
         for (String line : lines) {
-            builder.append(StringUtils.repeat(' ', indent) + line);
+            builder.append(FlowStringUtil.repeat(' ', indent) + line);
         }
         return builder.toString();
     }

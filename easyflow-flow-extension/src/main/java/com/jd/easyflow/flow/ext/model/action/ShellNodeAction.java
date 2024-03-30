@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +14,7 @@ import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.util.FlowIOUtil;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 
 public class ShellNodeAction implements NodeAction {
     
@@ -29,7 +29,7 @@ public class ShellNodeAction implements NodeAction {
     @Override
     public String execute(NodeContext nodeContext, FlowContext context) {
         List<String> command = null;
-        if (StringUtils.isNotEmpty(shellCommandExp)) {
+        if (FlowStringUtil.isNotEmpty(shellCommandExp)) {
             command = context.getElEvaluator().eval(shellCommandExp, nodeContext, context, null);
         } else {
             command = shellCommand;

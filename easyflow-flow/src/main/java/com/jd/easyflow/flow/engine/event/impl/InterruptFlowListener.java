@@ -1,10 +1,8 @@
 package com.jd.easyflow.flow.engine.event.impl;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.easyflow.flow.el.ElFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
 import com.jd.easyflow.flow.engine.event.FlowEventListener;
@@ -12,6 +10,7 @@ import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
 import com.jd.easyflow.flow.util.FlowUtil;
+import com.jd.easyflow.flow.util.Pair;
 
 /**
  * Listen node end event, process interrupt scene.

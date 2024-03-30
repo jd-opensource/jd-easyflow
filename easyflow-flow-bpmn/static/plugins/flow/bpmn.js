@@ -519,6 +519,9 @@
                 $elementId.val(elementId);
                 return;
             }
+            if (newElementId == elementId) {
+                return;
+            }
             var elementRegistry = _self.bpmnModeler.get('elementRegistry');
             var exists = elementRegistry.find(function(element){
                 return element.businessObject.id==newElementId;
@@ -881,7 +884,35 @@
         $nodePostHandlerFilters.blur(function() {
             var newNodePostHandlerFilters = $nodePostHandlerFilters.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:NodePostHandlerFilters", newNodePostHandlerFilters);
-        });        
+        });  
+        // Flow pre handler filter
+        var flowPreHandlerFilters = getExtensionBody(bo, "easyflow:FlowPreHandlerFilters");
+        var flowPreHandlerFiltersHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.flowPreHandlerFilters'] + ':</label> <textarea class="form-control j-flowprehandlerfilters" name="j-flowprehandlerfilters"></textarea></div>'
+            + '</div>';
+        var $flowPreHandlerFiltersElement = $(flowPreHandlerFiltersHtml).appendTo($infoPannel);
+        var $flowPreHandlerFilters = $flowPreHandlerFiltersElement.find(".j-flowprehandlerfilters");
+        $flowPreHandlerFilters.tooltip({ title: J.msg['bpmn.flowPreHandlerFiltersTooltip'] })
+        $flowPreHandlerFilters.rules('add', { json: true });
+        $flowPreHandlerFilters.text(flowPreHandlerFilters);
+        $flowPreHandlerFilters.blur(function() {
+            var newFlowPreHandlerFilters = $flowPreHandlerFilters.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:FlowPreHandlerFilters", newFlowPreHandlerFilters);
+        }); 
+        // Flow post handler filter
+        var flowPostHandlerFilters = getExtensionBody(bo, "easyflow:FlowPostHandlerFilters");
+        var flowPostHandlerFiltersHtml = '<div class="row">' +
+            '<div class="form-group col"><label>' + J.msg['bpmn.flowPostHandlerFilters'] + ':</label> <textarea class="form-control j-flowposthandlerfilters" name="j-flowposthandlerfilters"></textarea></div>'
+            + '</div>';
+        var $flowPostHandlerFiltersElement = $(flowPostHandlerFiltersHtml).appendTo($infoPannel);
+        var $flowPostHandlerFilters = $flowPostHandlerFiltersElement.find(".j-flowposthandlerfilters");
+        $flowPostHandlerFilters.tooltip({ title: J.msg['bpmn.flowPostHandlerFiltersTooltip'] })
+        $flowPostHandlerFilters.rules('add', { json: true });
+        $flowPostHandlerFilters.text(flowPostHandlerFilters);
+        $flowPostHandlerFilters.blur(function() {
+            var newFlowPostHandlerFilters = $flowPostHandlerFilters.val();
+            updateExtensionBody(_self.bpmnModeler, bo, "easyflow:FlowPostHandlerFilters", newFlowPostHandlerFilters);
+        });                       
         // Flow runner
         var runner = getExtensionBody(bo, "easyflow:Runner");
         var runnerHtml = '<div class="row">' +
@@ -1608,7 +1639,29 @@
                         "type": "String"
                     }
                 ]
-            },                        
+            },   
+            {
+                "name": "FlowPreHandlerFilters",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            }, 
+            {
+                "name": "FlowPostHandlerFilters",
+                "superClass": ["Element"],
+                "properties": [
+                    {
+                        "name": "$body",
+                        "isBody": true,
+                        "type": "String"
+                    }
+                ]
+            },                                              
             {
                 "name": "ConditionType",
                 "superClass": ["Element"],
