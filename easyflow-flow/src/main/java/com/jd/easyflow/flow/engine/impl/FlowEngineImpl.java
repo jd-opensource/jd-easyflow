@@ -5,8 +5,8 @@ import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -18,13 +18,12 @@ import com.jd.easyflow.flow.util.SpelHelper;
  * @author liyuliang5
  *
  */
-public class FlowEngineImpl extends CoreFlowEngine implements SmartLifecycle {
+public class FlowEngineImpl extends CoreFlowEngine implements SmartLifecycle, ApplicationContextAware {
 
     public static final Logger logger = LoggerFactory.getLogger(FlowEngineImpl.class);
-
-    @Autowired
+    
     private ApplicationContext applicationContext;
-
+    
     private  int phase = Integer.MIN_VALUE;
     
     private boolean autoStartup = true;
@@ -71,6 +70,7 @@ public class FlowEngineImpl extends CoreFlowEngine implements SmartLifecycle {
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

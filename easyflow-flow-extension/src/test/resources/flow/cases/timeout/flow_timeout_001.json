@@ -1,0 +1,11 @@
+{"id":"timeout_test_001",
+"nodes":[
+    {"id":"start", "post":{"to":"timeout_node"}, "start":true},
+    {"id":"timeout_node", "action":{"createExp":"new com.jd.easyflow.flow.ext.cases.timeout.TestTimeoutNodeAction()"}, "post":{"to":"end"},
+     "properties":{"timeout":{"timeoutMillisExp":"500", "onTimeoutExp":"new com.jd.easyflow.flow.ext.cases.timeout.TestTimeoutNodeAction().onTimeout()"}}},
+    {"id":"end"}
+],
+"nodeActionFilters":[
+    {"createExp":"new com.jd.easyflow.flow.ext.timeout.TimeoutNodeActionFilter()"}
+]
+}

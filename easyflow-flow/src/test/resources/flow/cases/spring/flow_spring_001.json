@@ -1,0 +1,7 @@
+{    "id": "flow_spring_test_001",
+    "nodes": [
+        {"id": "node001","name": "Node001","action": {"createExp": "@quickStart001Node01Action"},"start": true,"post": {"to": "node002"}},
+        {"id": "node002","name": "Node002","action": {"exp": "@quickStart002Node01Action.execute(nodeContext, context)"},"post": {"to": "node003"}},
+        {"id": "node003","name": "Node003","action": "@quickStart003Node01Action.execute(nodeContext, context)"}
+    ]
+}

@@ -42,15 +42,13 @@ public class InterruptTest {
         
         
         FlowParam param = new FlowParam("interrupt_001");
-        AtomicBoolean bizResult = new AtomicBoolean(true);
-        param.putContextData("bizResult", bizResult);
-        AtomicInteger bizCount = new AtomicInteger(0);
-        param.putContextData("bizCount", bizCount);
+        AtomicInteger successBizCount = new AtomicInteger(0);
+        param.putContextData("successBizCount", successBizCount);
         
         FlowResult result = flowEngine.execute(param);
         
-        logger.info("biz result:" + bizResult.get() + " bizCount:" + bizCount.get());
-        logger.info("final result:" + ((bizResult.get() == true)  && (bizCount.get() == result.getContext().getStartNodes().size())));
+        logger.info("successBizCount:" + successBizCount.get());
+        logger.info("final result:" + (successBizCount.get() == result.getContext().getFlow().getNodeList().size()));
         
         // sleep to see node002 and node003 log.
         Thread.sleep(5000);
@@ -73,15 +71,13 @@ public class InterruptTest {
         
         
         FlowParam param = new FlowParam("interrupt_002");
-        AtomicBoolean bizResult = new AtomicBoolean(true);
-        param.putContextData("bizResult", bizResult);
-        AtomicInteger bizCount = new AtomicInteger(0);
-        param.putContextData("bizCount", bizCount);
+        AtomicInteger successBizCount = new AtomicInteger(0);
+        param.putContextData("successBizCount", successBizCount);
         
         FlowResult result = flowEngine.execute(param);
         
-        logger.info("biz result:" + bizResult.get() + " bizCount:" + bizCount.get());
-        logger.info("final result:" + ((bizResult.get() == true)  && (bizCount.get() == result.getContext().getStartNodes().size())));
+        logger.info("successBizCount:" + successBizCount.get());
+        logger.info("final result:" + ((successBizCount.get() == result.getContext().getFlow().getNodeList().size())));
         
     }
     
@@ -108,9 +104,9 @@ class TestInterruptBizNodeAction implements NodeAction {
             logger.info(FlowUtil.node(nodeContext, context).getId() + " start");
             // biz1 use 1000ms, return result.
             Thread.sleep(sleepMills);
-            ((AtomicBoolean) context.get("bizResult")).compareAndSet(true, result);
-            ((AtomicInteger) context.get("bizCount")).incrementAndGet();
-            if (!result) {
+            if (result) {
+                ((AtomicInteger) context.get("successBizCount")).incrementAndGet();
+            } else {
                 context.setInterrupted();
             }
             logger.info(FlowUtil.node(nodeContext, context).getId() + " end");

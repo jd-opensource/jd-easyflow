@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+    <!-- flow engine bean -->
+    <bean id="flowEngine" class="com.jd.easyflow.flow.engine.impl.FlowEngineImpl">
+        <property name="flowPath" value="classpath:flow/cases/spring/flow_spring_001.json"></property>
+    </bean>  
+    
+    <!-- test node action bean -->
+    <bean id="quickStart001Node01Action" class="com.jd.easyflow.flow.quickstart.QuickStart001Node01Action"></bean> 
+    <bean id="quickStart002Node01Action" class="com.jd.easyflow.flow.quickstart.QuickStart002Node01Action"></bean> 
+    <bean id="quickStart003Node01Action" class="com.jd.easyflow.flow.quickstart.QuickStart003Node01Action"></bean> 
+</beans>
