@@ -87,7 +87,7 @@ public class FlowContextImpl implements FlowContext {
     @Override
     public void put(String key, Object value) {
         if (value == null) {
-            data.remove(value);
+            data.remove(key);
         } else {
             data.put(key, value);
         }

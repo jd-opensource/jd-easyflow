@@ -97,7 +97,7 @@ public abstract class CoreFsmManager {
         String fsmDefinition = FsmIOUtil.toString(inputstream);
         Fsm fsm = FsmParser.parse(fsmDefinition, true, elEvaluator);
         if (fsmDefinitionMap.containsKey(fsm.getId())) {
-            throw new FsmException();
+            throw new FsmException("Fsm id "  + fsm.getId() + " already exists");
         }
         fsmDefinitionMap.put(fsm.getId(), fsmDefinition);
         fsmMap.put(fsm.getId(), fsm);

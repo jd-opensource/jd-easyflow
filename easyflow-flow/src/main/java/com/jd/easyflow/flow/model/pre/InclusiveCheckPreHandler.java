@@ -45,7 +45,9 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
     public boolean preHandle(NodeContext nodeContext, final FlowContext context) {
         Boolean checkResult = nodeContext.get(FlowConstants.NODECTX_PRE_RESULT);
         if (checkResult != null) {
-            logger.info("Pre result checked:" + checkResult);
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("Pre result checked:" + checkResult);
+            }
             return checkResult;
         }
         final Object lockObj;
@@ -65,13 +67,17 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
                 context.put(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId(), preNodes);
             }
             preNodes.add(nodeContext.getPreviousNode().getNodeId());
-            logger.info("Pre nodes executed:" + preNodes);
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("Pre nodes executed:" + preNodes);
+            }
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
             List<String> configPreNodes = this.preNodes != null ? this.preNodes
                     : currentNode.getProperty(FlowConstants.PROP_PRENODES);
             if (nodeContext.getPreviousNode() == null || nodeContext.getPreviousNode().getPreviousNode() == null) {
-                logger.warn("Previous node of " + nodeContext.getNodeId() + "is null");
+                if (context.isLogOn() && logger.isWarnEnabled()) {
+                    logger.warn("Previous node of " + nodeContext.getNodeId() + "is null");
+                }
                 return false;
             }
 
@@ -82,14 +88,18 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
             }
 
             List<String> expectedNodeIds = intersection(nextNodeIds, configPreNodes);
-            logger.info("Expected node ids:" + expectedNodeIds + "(next node ids:" + nextNodeIds + ")");
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("Expected node ids:" + expectedNodeIds + "(next node ids:" + nextNodeIds + ")");
+            }
 
             for (String s : expectedNodeIds) {
                 if (!preNodes.contains(s)) {
                     return false;
                 }
             }
-            logger.info("All expected pre nodes finished");
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("All expected pre nodes finished");
+            }
             context.remove(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
             return true;
 

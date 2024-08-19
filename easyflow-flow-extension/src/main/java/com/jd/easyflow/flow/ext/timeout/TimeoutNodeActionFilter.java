@@ -1,5 +1,6 @@
 package com.jd.easyflow.flow.ext.timeout;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +68,9 @@ public class TimeoutNodeActionFilter implements Filter<Pair<NodeContext, FlowCon
             }, () -> {
                 // timeout method.
                 String onTimeoutExp = (String) timeoutConfig.get("onTimeoutExp");
-                return context.getElEvaluator().eval(onTimeoutExp, nodeContext, context, timeoutConfig);
+                Map<String, Object> timeoutContext = new HashMap<String, Object>();
+                timeoutContext.put("timeoutConfig", timeoutConfig);
+                return context.getElEvaluator().eval(onTimeoutExp, nodeContext, context, timeoutContext);
             }, timeoutMillis, executorService, context.isLogOn());
 
             return actionResult;

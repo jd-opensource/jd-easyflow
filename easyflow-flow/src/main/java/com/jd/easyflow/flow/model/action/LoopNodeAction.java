@@ -67,7 +67,7 @@ public class LoopNodeAction implements NodeAction {
             context.getElEvaluator().eval(loopPreExp, nodeContext, context, null);
         }
         
-        for (int i = 0; maximum == null || i < maximum; i++) {
+        for (long i = 0; maximum == null || i < maximum; i++) {
             nodeContext.put("currentLoopIndex", i);
             // test before
             if (testBefore) {

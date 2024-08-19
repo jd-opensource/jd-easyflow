@@ -1,5 +1,7 @@
 package com.jd.easyflow.flow.ext.cases.timeout;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +28,8 @@ public class TestTimeoutNodeAction implements NodeAction {
         return null;
     }
     
-    public Object onTimeout() {
-        logger.info("timeout!");
+    public Object onTimeout(Map<String, Object> config) {
+        logger.info("timeout!, config:{}", config);
         return "timeout!";
     }
 

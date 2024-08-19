@@ -44,7 +44,9 @@ public class SessionMultiCheckPreHandler implements NodePreHandler {
         }
         Boolean checkResult = nodeContext.get(FlowConstants.NODECTX_PRE_RESULT);
         if (checkResult != null) {
-            logger.info("Pre result checked:" + checkResult);
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("Pre result checked:" + checkResult);
+            }
             return checkResult;
         }
         final Object lockObj;
@@ -68,7 +70,9 @@ public class SessionMultiCheckPreHandler implements NodePreHandler {
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
             List<String> configPreNodes = this.preNodes != null ? this.preNodes
                     : currentNode.getProperty(FlowConstants.PROP_PRENODES);
-            logger.info("Pre nodes executed:" + preNodes);
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("Pre nodes executed:" + preNodes);
+            }
             if (preNodes.size() != configPreNodes.size()) {
                 return false;
             }
@@ -78,7 +82,9 @@ public class SessionMultiCheckPreHandler implements NodePreHandler {
                             "node info inconsistent, config:" + configPreNodes + ", runtime:" + preNodes);
                 }
             }
-            logger.info("All pre nodes finished");
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("All pre nodes finished");
+            }
             session.remove(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
             return true;
 

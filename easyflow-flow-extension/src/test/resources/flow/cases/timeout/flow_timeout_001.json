@@ -2,7 +2,7 @@
 "nodes":[
     {"id":"start", "post":{"to":"timeout_node"}, "start":true},
     {"id":"timeout_node", "action":{"createExp":"new com.jd.easyflow.flow.ext.cases.timeout.TestTimeoutNodeAction()"}, "post":{"to":"end"},
-     "properties":{"timeout":{"timeoutMillisExp":"500", "onTimeoutExp":"new com.jd.easyflow.flow.ext.cases.timeout.TestTimeoutNodeAction().onTimeout()"}}},
+     "properties":{"timeout":{"timeoutMillisExp":"500", "onTimeoutExp":"new com.jd.easyflow.flow.ext.cases.timeout.TestTimeoutNodeAction().onTimeout(timeoutConfig)"}}},
     {"id":"end"}
 ],
 "nodeActionFilters":[
