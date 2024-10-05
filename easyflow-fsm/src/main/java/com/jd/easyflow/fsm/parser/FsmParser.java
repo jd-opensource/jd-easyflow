@@ -621,7 +621,7 @@ public class FsmParser {
         if (fsm.getProperty(FSM_STRING_KEY) != null) {
             return fsm.getProperty(FSM_STRING_KEY);
         }
-        logger.warn("Original fsm string definition not found，unsupported now. fsmId:" + fsm.getId());
+        logger.warn("Original fsm string definition not found, unsupported now. fsmId:" + fsm.getId());
         return null;
     }
     

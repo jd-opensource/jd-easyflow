@@ -40,7 +40,6 @@ public class FunCallEventListener implements FlowEventListener {
         FlowContext context = flowEvent.getContext();
         switch (flowEvent.getType()) {
         case FlowEventTypes.FLOW_START: {
-            // 节点的执行信息
             Map<String, Object> nodeActionDataMap = context.get(FunCallConstants.CTX_NODE_ACTION_DATA_MAP);
             if (nodeActionDataMap == null) {
                 nodeActionDataMap = new ConcurrentHashMap<>();
@@ -75,7 +74,6 @@ public class FunCallEventListener implements FlowEventListener {
             break;
         }
         case FlowEventTypes.FLOW_COMPLETE: {
-            // 最终处理（含异常）
             break;
         }
 

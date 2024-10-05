@@ -7,8 +7,6 @@ import java.util.Map;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.InclusiveGateway;
-import org.activiti.bpmn.model.SequenceFlow;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +33,7 @@ public class InclusiveGatewayConverter extends BaseFlowNodeConverter {
         Map<String, Object> post = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_POST);
         post.put(DefConstants.NODE_POST_PROP_CONDITION_TYPE, ConditionalNodePostHandler.INCLUSIVE_TYPE);
         // Inclusive gateway with multiple incoming flows is limited supported!
-        // Currently only support this pattern: A(Inclusive gateway) -> (B、C、D...) -> E(Inclusive gateway), no checking.
+        // Currently only support this pattern: A(Inclusive gateway) -> (B,C,D...) -> E(Inclusive gateway), no checking.
         // User can implements other patterns by customize pre handler.
         if (inclusiveGateway.getIncomingFlows().size() > 1) {
             logger.warn("Inclusive gateway with multiple incomming flows is limited supported!");

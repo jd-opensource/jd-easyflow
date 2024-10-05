@@ -21,6 +21,10 @@ public class TimeoutTemplate {
     private static final Logger logger = LoggerFactory.getLogger(TimeoutTemplate.class);
     
     public <T>T execute(Callable<T> callable, Callable<T> timeoutCallable, long timeoutMillis, ExecutorService executorService, boolean logOn) {
+        return execute(callable, timeoutCallable, timeoutMillis, executorService, logOn, true);
+    }
+    
+    public <T>T execute(Callable<T> callable, Callable<T> timeoutCallable, long timeoutMillis, ExecutorService executorService, boolean logOn, boolean interruptOnTimeout) {
         ExecutionThreadHolder holder = new ExecutionThreadHolder();
         Future<T> future = executorService.submit(() -> {
             if (holder.timeout) {
@@ -34,9 +38,11 @@ public class TimeoutTemplate {
                 T result = callable.call();
                 return result;
             } finally {
-                synchronized (holder.lock) {
-                    holder.complete = true;
-                    Thread.interrupted();
+                if (interruptOnTimeout) {
+                    synchronized (holder.lock) {
+                        holder.complete = true;
+                        Thread.interrupted();
+                    }
                 }
             }
         });
@@ -52,9 +58,11 @@ public class TimeoutTemplate {
             } catch (Exception e1) {
                 throw ExceptionUtil.throwException(e1);
             }
-            synchronized (holder.lock) {
-                if (!holder.complete && holder.executionThread != null) {
-                    holder.executionThread.interrupt();
+            if (interruptOnTimeout) {
+                synchronized (holder.lock) {
+                    if (!holder.complete && holder.executionThread != null) {
+                        holder.executionThread.interrupt();
+                    }
                 }
             }
         } catch (ExecutionException e) {

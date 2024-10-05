@@ -75,7 +75,7 @@ public class SubProcessConverter extends BaseFlowNodeConverter {
      * @param flowDef
      */
     private static void convertSubProcess(SubProcess process, BpmnModel bpmnModel, Map<String, Object> flowDef) {
-        // Process flow element，convert Gateway、Event、Activity to Node.
+        // Process flow element, convert Gateway,Event,Activity to Node.
         List<Map<String, Object>> nodeList = (List<Map<String, Object>>) flowDef.get(DefConstants.FLOW_PROP_NODES);
         if (nodeList != null) {
             return;

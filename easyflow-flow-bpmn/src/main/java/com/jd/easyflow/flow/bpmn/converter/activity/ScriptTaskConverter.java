@@ -6,11 +6,11 @@ import java.util.Map;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.ScriptTask;
-import org.apache.commons.lang3.StringUtils;
 
 import com.jd.easyflow.flow.bpmn.converter.BaseFlowNodeConverter;
 import com.jd.easyflow.flow.bpmn.converter.util.ConvertUtil;
 import com.jd.easyflow.flow.model.definition.DefConstants;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 
 /**
  * Script Task Converter.
@@ -30,7 +30,7 @@ public class ScriptTaskConverter extends BaseFlowNodeConverter {
         String format = scriptTask.getScriptFormat();
         String script = scriptTask.getScript();
         Map<String, Object> action = new HashMap<>();
-        if (StringUtils.isNotEmpty(script)) {
+        if (FlowStringUtil.isNotEmpty(script)) {
             if (format == null) {
                 format = EXP_FORMAT;
             }

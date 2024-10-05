@@ -25,7 +25,7 @@ public class PostTest {
         manager.setFsmPath("classpath:fsm/cases/post/fsm_post_manually.json");
         manager.init();
         Fsm fsm = manager.getFsm("post_manually");
-        //Empty param，default is create instance, execute from start state.
+        //Empty param, default is create instance, execute from start state.
         FsmParam param = new FsmParam();
         FsmResult result = fsm.run(param);
         logger.info(result.getState().getId());

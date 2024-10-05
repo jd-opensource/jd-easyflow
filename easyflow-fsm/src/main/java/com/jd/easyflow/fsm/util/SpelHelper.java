@@ -1,10 +1,3 @@
-/*
-* @(#)SpelHelper.java 1.0 2019年6月1日
-*
-* Copyright 2014-2019 jd jr All Rights Reserved.
-* PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
-* Author Email: liyuliang5@jd.com
-*/
 package com.jd.easyflow.fsm.util;
 
 import java.util.Map;

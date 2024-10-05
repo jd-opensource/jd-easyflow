@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.InitContext;
@@ -60,7 +61,18 @@ public class TimeoutNodeActionFilter implements Filter<Pair<NodeContext, FlowCon
         } else {
             // has timeout configuration.
             String executorServiceKey = (String) timeoutConfig.get("executorServiceKey");
-            int timeoutMillis = (int) context.getElEvaluator().eval((String) timeoutConfig.get("timeoutMillisExp"), nodeContext, context, timeoutConfig);
+            Integer timeoutMillis = null;
+            String timeoutMillisExp = (String) timeoutConfig.get("timeoutMillisExp");
+            if (timeoutMillisExp != null) {
+                timeoutMillis = (int) context.getElEvaluator().eval(timeoutMillisExp, nodeContext, context, timeoutConfig);
+            }
+            if (timeoutMillis == null) {
+                timeoutMillis = (Integer) timeoutConfig.get("timeoutMillis");
+            }
+            if (timeoutMillis == null) {
+                throw new FlowException("timeoutMills can not be null, check config");
+            }
+            boolean interruptOnTimeout = ! Boolean.FALSE.equals(timeoutConfig.get("interruptOnTimeout"));
             ExecutorService executorService = getExecutorService(executorServiceKey, nodeContext, context);
             Object actionResult = timeoutTemplate.execute(() -> {
                 // normal method.
@@ -71,7 +83,7 @@ public class TimeoutNodeActionFilter implements Filter<Pair<NodeContext, FlowCon
                 Map<String, Object> timeoutContext = new HashMap<String, Object>();
                 timeoutContext.put("timeoutConfig", timeoutConfig);
                 return context.getElEvaluator().eval(onTimeoutExp, nodeContext, context, timeoutContext);
-            }, timeoutMillis, executorService, context.isLogOn());
+            }, timeoutMillis, executorService, context.isLogOn(), interruptOnTimeout);
 
             return actionResult;
         }

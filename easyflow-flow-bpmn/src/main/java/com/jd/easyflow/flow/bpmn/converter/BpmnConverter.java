@@ -45,7 +45,6 @@ import org.activiti.bpmn.model.Task;
 import org.activiti.bpmn.model.ThrowEvent;
 import org.activiti.bpmn.model.Transaction;
 import org.activiti.bpmn.model.UserTask;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +73,7 @@ import com.jd.easyflow.flow.bpmn.converter.gateway.ParallelGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.util.BpmnXmlConstants;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.definition.DefConstants;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 import com.jd.easyflow.flow.util.JsonPrettyHelper;
 import com.jd.easyflow.flow.util.JsonUtil;
 
@@ -121,7 +121,7 @@ public class BpmnConverter {
         flowNodeConverterMap.put(EventGateway.class, new EventGatewayConverter());
         
         defaultFlowPrettyConfig = JsonUtil.parseObject(defaultFlowPrettyConfigStr, Map.class);
-        //Steps: Modify pretty-flow.json，then use JSONUtil to convert to string.
+        //Steps: Modify pretty-flow.json, then use JSONUtil to convert to string.
 //        try {
 //            InputStream inputStream = BpmnFlowParser.class.getResourceAsStream(defaultFlowPrettyConfigPath);
 //            if (inputStream == null) {
@@ -172,7 +172,7 @@ public class BpmnConverter {
             xmlInputFactory.setProperty("javax.xml.stream.isCoalescing", true);
             reader = xmlInputFactory.createXMLStreamReader(inputStream);
         } catch (XMLStreamException | FactoryConfigurationError e) {
-            throw new FlowException("BPMN解析异常", e);
+            throw new FlowException("BPMN Parse Exception", e);
         }
         // Convert to java BPMN model leveraging the activiti ability.
         BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
@@ -196,11 +196,11 @@ public class BpmnConverter {
      * @param flowDef
      */
     private static void convertProcess(Process process, BpmnModel bpmnModel, Map<String, Object> flowDef) {
-        // ID、name and properties
+        // ID,name and properties
         String processId = process.getId();
         String processName = process.getName();
         flowDef.put(DefConstants.COMMON_PROP_ID, processId);
-        if (StringUtils.isNotEmpty(processName)) {
+        if (FlowStringUtil.isNotEmpty(processName)) {
             flowDef.put(DefConstants.COMMON_PROP_NAME, processName);
         }
         Map<String, List<ExtensionElement>> extensionElementMap = process.getExtensionElements();
@@ -213,7 +213,7 @@ public class BpmnConverter {
             flowDef.put(DefConstants.FLOW_PROP_PRE, preHandlerDef);
         }
 
-        // Process flow element，convert Gateway、Event、Activity to Node.
+        // Process flow element, convert Gateway,Event,Activity to Node.
         List<Map<String, Object>> nodeList = new ArrayList<>();
         flowDef.put(DefConstants.FLOW_PROP_NODES, nodeList);
         for (FlowElement flowElement : process.getFlowElements()) {
@@ -326,7 +326,7 @@ public class BpmnConverter {
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.LOG_FLAG)) {
             ExtensionElement element = extensionElementMap.get(BpmnXmlConstants.LOG_FLAG).get(0);
             String elementText = element.getElementText();
-            if (StringUtils.isNotEmpty(elementText)) {
+            if (FlowStringUtil.isNotEmpty(elementText)) {
                 flowDef.put(DefConstants.FLOW_PROP_LOG_FLAG, Boolean.valueOf(elementText));
             }
         }

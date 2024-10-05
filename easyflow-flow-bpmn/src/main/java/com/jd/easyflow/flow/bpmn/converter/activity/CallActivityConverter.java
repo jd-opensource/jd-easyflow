@@ -6,11 +6,11 @@ import java.util.Map;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.CallActivity;
 import org.activiti.bpmn.model.FlowNode;
-import org.apache.commons.lang3.StringUtils;
 
 import com.jd.easyflow.flow.bpmn.converter.BaseFlowNodeConverter;
 import com.jd.easyflow.flow.bpmn.converter.util.ConvertUtil;
 import com.jd.easyflow.flow.model.definition.DefConstants;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class CallActivityConverter extends BaseFlowNodeConverter {
             action.put(DefConstants.COMMON_PROP_FLOW_ID, flowId);
             node.put(DefConstants.NODE_PROP_ACTION, action);
         } else {
-            if (StringUtils.isNotEmpty(flowId)) {
+            if (FlowStringUtil.isNotEmpty(flowId)) {
                 Map<String, Object> properties = ConvertUtil.getMapValue(node, DefConstants.COMMON_PROP_PROPERTIES);
                 properties.put(DefConstants.COMMON_PROP_FLOW_ID, flowId);
             }

@@ -42,7 +42,7 @@ public class FlowParserTest {
             is = resource.getInputStream();
             String flowConfigStr = FlowIOUtil.toString(is);
             List<Flow> flowList = new FlowParserImpl().parse(flowConfigStr);
-            logger.info("Parse end，model:" + JsonUtil.toJsonString(flowList));
+            logger.info("Parse end, model:" + JsonUtil.toJsonString(flowList));
             is.close();
         }
     }
@@ -59,7 +59,7 @@ public class FlowParserTest {
             is = resource.getInputStream();
             String flowConfigStr = FlowIOUtil.toString(is);
             List<Flow> flowList = new FlowParserImpl().parse(flowConfigStr);
-            logger.info("Parse end，model:" + JsonUtil.toJsonString(flowList));
+            logger.info("Parse end, model:" + JsonUtil.toJsonString(flowList));
             flow = flowList.get(0);
 
         }

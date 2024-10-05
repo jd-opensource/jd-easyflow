@@ -249,7 +249,7 @@ public class Fsm implements FsmLifeCycle {
 
     /**
      * 
-     * Init Context，Event and state should in context.
+     * Init Context, Event and state should in context.
      *
      * @param param
      * @return

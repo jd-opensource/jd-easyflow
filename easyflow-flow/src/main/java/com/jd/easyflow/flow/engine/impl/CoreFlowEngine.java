@@ -118,7 +118,7 @@ public abstract class CoreFlowEngine implements FlowEngine {
         if (! inited) {
             throw new FlowException("Flow engine is not inited. flowId:" + param.getFlowId());
         }
-        boolean logOn = param.getContext() != null ? param.getContext().isLogOn() : (param.getLogFlag() == null || param.getLogFlag().booleanValue());
+        boolean logOn = (param.getContext() != null && param.getContext().getLogFlag() != null) ? param.getContext().getLogFlag() : (param.getLogFlag() == null || param.getLogFlag());
         if (logOn && logger.isInfoEnabled()) {
             logger.info("START EXECUTE FLOW, flowId:" + param.getFlowId() + " nodeIds:"
                     + Arrays.toString(param.getNodeIds()));
@@ -261,7 +261,7 @@ public abstract class CoreFlowEngine implements FlowEngine {
         context.getFlow().triggerEvent(FlowEventTypes.INIT_START, context);
         if (context.getStartNodes() == null) {
             String[] nodeIds = context.getParam().getNodeIds();
-            // If nodeIds is null, using startNodeIds；if is empty array，run empty flow
+            // If nodeIds is null, using startNodeIds: if is empty array, run empty flow
             // instance.
             if (nodeIds == null) {
                 nodeIds = context.getFlow().getStartNodeIds();

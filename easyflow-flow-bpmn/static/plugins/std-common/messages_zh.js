@@ -39,7 +39,8 @@ $.extend(J.msg, {
     "jDialog.view":"查看",
     
     "jAjax.requestException":"请求异常",
-    
+ 
+    "jListSelect.select":"选择",   
     "jListSelect.value":"值",
     "jListSelect.info":"信息",
     "jListSelect.inputTip":"请先输入元素值",

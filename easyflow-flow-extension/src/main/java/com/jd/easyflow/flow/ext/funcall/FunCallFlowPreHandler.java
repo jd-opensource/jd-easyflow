@@ -23,7 +23,6 @@ public class FunCallFlowPreHandler implements FlowPreHandler {
 
     @Override
     public boolean preHandle(FlowContext context) {
-        // 节点的执行信息
         Map<String, Object> nodeActionDataMap = context.get(FunCallConstants.CTX_NODE_ACTION_DATA_MAP);
         if (nodeActionDataMap == null) {
             nodeActionDataMap = new ConcurrentHashMap<>();

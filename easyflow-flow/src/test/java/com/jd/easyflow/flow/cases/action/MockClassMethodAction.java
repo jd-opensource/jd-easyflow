@@ -64,9 +64,9 @@ public class MockClassMethodAction implements NodeAction {
             paramMap.put(key, value);
         }
         try {
-            logger.info("入参:" + paramMap);
+            logger.info("Param:" + paramMap);
             Map<String, Object> resultMap = (Map<String, Object>) method.invoke(instance, paramMap);
-            logger.info("结果:" + resultMap);
+            logger.info("Result:" + resultMap);
             Map<String, Object> outputMap = new HashMap<>();
             for (Map<String, Object> result : resultList) {
                 String key = (String) result.get("key");

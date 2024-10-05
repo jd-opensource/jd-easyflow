@@ -5,7 +5,6 @@ import java.util.Map;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.ExclusiveGateway;
 import org.activiti.bpmn.model.FlowNode;
-import org.apache.commons.lang3.StringUtils;
 
 import com.jd.easyflow.flow.bpmn.converter.BaseFlowNodeConverter;
 import com.jd.easyflow.flow.bpmn.converter.util.ConvertUtil;

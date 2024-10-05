@@ -585,16 +585,16 @@ var _ajaxSuccessCallback = function(data, option, $element) {
   var JTableSelect=function(option) {
         this.$container = option.container;
         this.fieldValueName=option.name;//form field name, required
-        this.inputFieldName = option.inputFieldName;//name of input control, not required，jquery validate
+        this.inputFieldName = option.inputFieldName;//name of input control, not required, jquery validate
         this.selectType = option.selectType==="multiple"?"multiple":"single";//select type
-        this.initValue = option.initValue;//init value，single select is tring，multiple select is array
-        this.initInput = option.initInput;//init input，single select is tring，multiple select is array
-        this.valueColumn=option.valueColumn?option.valueColumn:option.name;// value column of table（input back to select）
-        this.inputColumn=option.inputColumn?option.inputColumn:this.valueColumn;// input column of talbe（input back to input）
+        this.initValue = option.initValue;//init value, single select is tring, multiple select is array
+        this.initInput = option.initInput;//init input, single select is tring, multiple select is array
+        this.valueColumn=option.valueColumn?option.valueColumn:option.name;// value column of table(input back to select)
+        this.inputColumn=option.inputColumn?option.inputColumn:this.valueColumn;// input column of talbe(input back to input)
         this.showValue=option.showValue === true ? true:false;
         this.editable = option.editable==true?true:false;
         this.readonly = option.readonly==true?true:false;
-        this.title = option.title||"选择";//dialog title
+        this.title = option.title||J.msg['jListSelect.select'];//dialog title
         this.clearable = option.clearable===true?true:false;
         this.url = option.url;
         this.initUrl = option.initUrl;
@@ -671,7 +671,7 @@ var _ajaxSuccessCallback = function(data, option, $element) {
             this.$inputField = this.$container.find("input");
             this._renderValue(this.initValue);
             this._renderInput(this._inputText(this.initInput, this.initValue));
-            //ajax get init show value.input format {value:value},output format {input:input},single select is string，multiple select is array
+            //ajax get init show value.input format {value:value},output format {input:input},single select is string, multiple select is array
             if (this.initValue !== '' && this.initValue !== null && this.initValue !== undefined && (this.initInput === undefined || this.initInput===''||this.initInput===null) && this.initUrl) {
                 this._renderInput(this.initValue);
                 $.ajax({url: this.initUrl, data:JSON.stringify({value:this.initValue}),
@@ -757,7 +757,7 @@ var _ajaxSuccessCallback = function(data, option, $element) {
  // List select control
  var JListSelect = function (option) {
         this.$container = option.container;
-        this.initValue = option.initValue;//init value，array
+        this.initValue = option.initValue;//init value, array
         this.initUrl = option.initUrl;//init show url
         var _self = this;
         this.render=function() {
@@ -889,17 +889,6 @@ function timestampToTime(timestampMs) {
     let s = date.getSeconds();
     return Y+M+D+h+m+s;
 }
-// Money format
-J.formatMoney = function(money, sysmbol = '', places = 2) {
-    const zero = `${sysmbol}0.00`;
-    if (isNaN(money) || money === '' || money === undefined || money===null) return zero;
-         money = `${money}`;
-         let left=money.split('.')[0]; 
-         let right=money.split('.')[1]; 
-         right = right ? (right.length >= places ? '.' + right.substr(0, places) : '.' + right + '0'.repeat(places - right.length)) : ('.' + '0'.repeat(places));
-         var temp = left.split('').reverse().join('').match(/(\d{1,3})/g); 
-         return (Number(money) < 0 ? '-' : '') + sysmbol + temp.join(',').split('').reverse().join('') + right;
- };
  J.formatTime = function(timestampMs) {
     if(timestampMs === undefined || timestampMs === "") {
         return "";
@@ -963,9 +952,6 @@ J.formatTimestampOrStrTime = function(timesMs) {
     return y+'-'+check(m)+'-'+check(d)+' '+check(h)+':'+check(mm)+':'+check(s);
 };
 
-/**
- * 打开窗口
- */
 J.openWindow=function(url, name, specs, replace) {
     if (self != top) {
         window.location.href=url;
@@ -975,14 +961,14 @@ J.openWindow=function(url, name, specs, replace) {
 }
 
 /**
- * 动态计算js，打印异常信息.
+ * 
  */
 J.eval = function(js, ctxData) {
     try {
         eval(js);
     } catch (err) {
         console.dir(err);
-        console.log("eval异常, js:" + js);
+        console.log("eval exception, js:" + js);
         if (ctxData) {
             console.log("ctxData:" + JSON.stringify(ctxData));
         };

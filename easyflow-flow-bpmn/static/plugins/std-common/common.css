@@ -122,3 +122,38 @@ body {
 .bootstrap-table button.j-op {
     white-space:nowrap;
 }
+
+.contentSider {
+	padding-left: 5px;
+}
+
+.sider-control {
+	position:absolute;
+	left:-10px;
+	top:10px;
+	z-index:200;
+	cursor:pointer;
+}
+
+.j-element-config .form-group.col {
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.j-page-container .card-header {
+	padding:0.5rem 1.25rem
+}
+
+.j-page-container .card-body {
+	margin-bottom: 0;
+	padding:1.25rem 1.25rem 0 1.25rem;
+}
+.j-page-container .form-group {
+	margin-bottom:0.75rem;
+}
+.j-mask-input {
+	cursor:pointer;
+	position:absolute;
+	right:20px;
+	top:32px;
+}

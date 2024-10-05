@@ -27,7 +27,7 @@ public class FsmResult {
      */
     private State state;
     /**
-     * Fist transition result！
+     * Fist transition result!
      * business result.
      */
     private Object result;

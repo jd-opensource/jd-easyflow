@@ -1,7 +1,7 @@
 # JDEasyFlow
 
 ### Introduce
-JDEasyFlow is a general flow orchestration component, suitable for service orchestration、workflow、auditing, etc. The characteristics are easy use、flexible、easy extended. Developer can understand using it in 30 minutes，understand its principle half of the day.
+JDEasyFlow is a general flow orchestration component, suitable for service orchestration, workflow, auditing, etc. The characteristics are easy use, flexible, easy extended. Developer can understand using it in 30 minutes, understand its principle half of the day.
 
 ### Architecture
 JDEasyFlow bottom layer is flow engine/state machine.(select one when use it, flow engine is recommanded), this module supply flow orchestration ability base on JSON format flow definition.
@@ -67,13 +67,13 @@ The executing log are as follows:
 [main            ] INFO  QuickStartTest          - Execute finish, current node is:node003           
 ```
 #### FlowEngine-BPMN
-Open flow designer with path easyflow-flow-bpmn/BPMNDesigner.html. Click import button，import easyflow-flow-bpmn/src/test/resources/flow/quickstart/quickstart_001.bpmn file. You can see bpmn flow definition of equal JSON format.
+Open flow designer with path easyflow-flow-bpmn/BPMNDesigner.html. Click import button, import easyflow-flow-bpmn/src/test/resources/flow/quickstart/quickstart_001.bpmn file. You can see bpmn flow definition of equal JSON format.
 You only need set flowPaser of FlowEngineImpl to BpmnFlowParser when use.
 
 ### More
 Above is simple usecase, JDEasyFlow support many configurations and use cases. More can be seen in wiki doc.
 
-JDEasyFlow has very flexible extension ability. You can implement more features based on current component. For example flow data persistence、auditting、exception retry. 
+JDEasyFlow has very flexible extension ability. You can implement more features based on current component. For example flow data persistence, auditting, exception retry. 
 
 ### Contact US
 mailTo: liyuliang5@jd.com

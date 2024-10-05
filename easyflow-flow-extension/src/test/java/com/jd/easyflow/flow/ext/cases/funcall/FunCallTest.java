@@ -32,10 +32,10 @@ public class FunCallTest {
         Map<String, Object> bizParam = new HashMap<>();
         bizParam.put("a", "a1");
         bizParam.put("b", "b1");
-        logger.info("请求参数:" + bizParam);
+        logger.info("Param:" + bizParam);
         FlowParam param = new FlowParam("funcall_test_001", bizParam);
         FlowResult result = flowEngine.execute(param);
-        logger.info("响应结果:" + result.getResult());
+        logger.info("Result:" + result.getResult());
     }
     
     /**
@@ -50,9 +50,9 @@ public class FunCallTest {
         Map<String, Object> bizParam = new HashMap<>();
         bizParam.put("a", "a1");
         bizParam.put("b", "b1");
-        logger.info("请求参数:" + bizParam);
+        logger.info("Param:" + bizParam);
         FlowParam param = new FlowParam("funcall_test_002", bizParam);
         FlowResult result = flowEngine.execute(param);
-        logger.info("响应结果:" + result.getResult());
+        logger.info("Result:" + result.getResult());
     }
 }

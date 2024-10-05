@@ -35,7 +35,7 @@ public class FsmMockBizTest {
 
         Fsm fsm = manager.getFsm("apply_001");
         
-        //Empty param，default is create instance, execute from start state.
+        //Empty param, default is create instance, execute from start state.
         FsmParam param = new FsmParam();
         FsmResult result = fsm.run(param);
         logger.info(result.getState().getId());

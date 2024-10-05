@@ -37,7 +37,6 @@ public class MockInputOutputEventListener implements FlowEventListener {
         FlowContext context = flowEvent.getContext();
         switch (flowEvent.getType()) {
         case FlowEventTypes.FLOW_START: {
-            // 节点的执行信息
             context.put("nodeActionInfoMap", new ConcurrentHashMap<String, Map>());
 
             Map<String, Object> paramMap = new HashMap<>();
@@ -67,7 +66,6 @@ public class MockInputOutputEventListener implements FlowEventListener {
             break;
         }
         case FlowEventTypes.FLOW_COMPLETE: {
-            // 最终处理（含异常）
             break;
         }
 

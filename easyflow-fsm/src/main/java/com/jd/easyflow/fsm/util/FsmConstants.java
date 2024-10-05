@@ -22,7 +22,7 @@ public class FsmConstants {
     public static final int EVENT_ORDER_START = 10000;
     
     /**
-     * Record execute history， default is true
+     * Record execute history, default is true
      */
     public static final String FSM_PROPERTY_RECORD_HISTORY = "fsm.recordHistory";
     

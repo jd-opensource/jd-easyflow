@@ -5,7 +5,6 @@ import com.jd.easyflow.fsm.model.TransitionAction;
 import com.jd.easyflow.fsm.model.TransitionContext;
 
 /**
- * 测试迁移动作类
  * @author liyuliang5
  *
  */

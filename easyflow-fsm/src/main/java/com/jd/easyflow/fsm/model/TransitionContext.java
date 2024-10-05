@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class TransitionContext {
     /**
-     * Transition definition，for history trace.
+     * Transition definition, for history trace.
      */
     private Transition transition;
     

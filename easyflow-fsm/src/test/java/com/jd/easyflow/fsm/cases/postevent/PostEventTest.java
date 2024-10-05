@@ -28,7 +28,7 @@ public class PostEventTest {
 
         Fsm fsm = manager.getFsm("post_event");
         
-        //Empty param，default is create instance, execute from start state.
+        //Empty param, default is create instance, execute from start state.
         FsmParam param = new FsmParam();
         FsmResult result = fsm.run(param);
         logger.info(result.getState().getId());

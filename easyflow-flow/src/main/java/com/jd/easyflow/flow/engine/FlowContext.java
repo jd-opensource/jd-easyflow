@@ -26,7 +26,7 @@ public interface FlowContext {
     void setStartNodes(List<NodeContext> startNodes);
     /**
      * Get end node context list. 
-     * From every start node，if execute to no next node(Including execute nodes)，we add it to end node list.
+     * From every start node, if execute to no next node(Including execute nodes), we add it to end node list.
      * @return
      */
     List<NodeContext> getEndNodes();

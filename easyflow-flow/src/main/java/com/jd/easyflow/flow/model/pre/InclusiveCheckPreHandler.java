@@ -17,7 +17,7 @@ import com.jd.easyflow.flow.util.FlowConstants;
  * 
  *  IMPORTANT NOTICE! This class should not be singleton!
  *  
- * !!! Currently only support simple mode as below: For example, A->B、C->D, for
+ * !!! Currently only support simple mode as below: For example, A->B,C->D, for
  * node D, we check if all next nodes of node A is finished.
  * 
  * @author liyuliang5

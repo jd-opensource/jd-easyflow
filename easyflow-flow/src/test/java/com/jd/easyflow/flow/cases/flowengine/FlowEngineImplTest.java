@@ -32,7 +32,7 @@ public class FlowEngineImplTest {
     /**
      * 
      * Basic flow engine test.
-     * Steps：define flow, execute flow, validate result
+     * Steps: define flow, execute flow, validate result
      *
      */
 	@Test
