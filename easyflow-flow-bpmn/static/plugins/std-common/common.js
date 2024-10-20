@@ -183,18 +183,18 @@ $.fn.jTabs=function(option, extOption) {
             var tabId = (extOption.id).replace(/\./g,"");
             var $tabs = this.find(".nav-tabs");
             var $content = this.find(".tab-content");
-            var pannelId = "pannel_" + tabId;
+            var panelId = "panel_" + tabId;
             if ($("#"+tabId).length==0) {
                 var tabName = extOption.name ? extOption.name : extOption.id;
                 var closeBtn = extOption.closeable!==false ? "<button type='button' class='close'><span>&times;</span></button>":"";
-                $tabs.append("<li class='nav-item'><a class='nav-link' id='" + tabId +"' data-toggle='tab' href='#" + pannelId +  "' role='tab'>"+tabName+closeBtn + "</a></li>");
-                $content.append("<div class='tab-pane' id='" +  pannelId + "' role='tabpanel'></div>");
+                $tabs.append("<li class='nav-item'><a class='nav-link' id='" + tabId +"' data-toggle='tab' href='#" + panelId +  "' role='tab'>"+tabName+closeBtn + "</a></li>");
+                $content.append("<div class='tab-pane' id='" +  panelId + "' role='tabpanel'></div>");
                 // element is jquery type.
                 if (extOption.element != null) {
-                    $("#"+pannelId).append(extOption.element);
+                    $("#"+panelId).append(extOption.element);
                 // ajax url type
                 } else {
-                $("#"+pannelId).load(extOption.url);
+                $("#"+panelId).load(extOption.url);
                 }
             }
             if ($tabs.children(".nav-item").length>1) {
@@ -210,11 +210,11 @@ $.fn.jTabs=function(option, extOption) {
 $(function(){
     $("body").on("click", ".nav-tabs .close", function(){
     var tab = $(this).parent().parent();
-    var pannel = $($(this).parent().attr("href"));
+    var panel = $($(this).parent().attr("href"));
     var tabs = tab.parent();
     var active = $(this).parent().hasClass("active");
     tab.remove();
-    pannel.remove();
+    panel.remove();
     if (active) {
         tabs.find("[role='tab']:eq(0)").tab("show");
     }

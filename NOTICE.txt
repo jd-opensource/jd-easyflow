@@ -54,3 +54,37 @@ https://github.com/Activiti/Activiti/blob/develop/LICENSE.txt
 
 >>> Joda:
 https://www.joda.org/joda-time/licenses.html
+
+>>> HikariCP:
+https://github.com/brettwooldridge/HikariCP/blob/dev/LICENSE
+
+>>> log4j:
+https://github.com/apache/logging-log4j2/blob/2.x/LICENSE.txt
+
+>>> attoparser:
+https://www.attoparser.org/license.html
+
+>>> tomcat:
+https://github.com/apache/tomcat/blob/main/LICENSE
+
+>>> mybatis:
+https://github.com/mybatis/mybatis-3/blob/master/LICENSE
+
+>>> thymeleaf:
+https://github.com/thymeleaf/thymeleaf/blob/3.1-master/LICENSE.txt
+
+>>> Spring Boot:
+https://github.com/spring-projects/spring-boot/blob/main/LICENSE.txt
+
+>>> unbescapse:
+https://www.unbescape.org/license.html
+
+>>> aspectj:
+https://github.com/eclipse-aspectj/aspectj/blob/master/LICENSE
+
+>>> snakeyml:
+https://github.com/snakeyaml/snakeyaml/blob/master/LICENSE.txt
+
+
+
+

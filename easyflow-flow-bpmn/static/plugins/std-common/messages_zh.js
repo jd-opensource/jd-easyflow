@@ -142,7 +142,7 @@ $.extend(J.msg, {
     "bpmn.zoomOut":"放大",
     "bpmn.fullScreen":"全屏",
     "bpmn.node":"节点",
-    "bpmn.infoPannel":"信息面板",
+    "bpmn.infoPanel":"信息面板",
     "bpmn.flowBpmnDefinition":"流程BPMN定义",
     "bpmn.renderFlowDiagram":"渲染流程图",
     "bpmn.viewFlowDefinition":"查看EasyFlow定义",

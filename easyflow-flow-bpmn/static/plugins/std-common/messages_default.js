@@ -154,7 +154,7 @@ if (!window.J) {
     "bpmn.zoomOut":"Zoom Out",
     "bpmn.fullScreen":"Full Screen",
     "bpmn.node":"Node",
-    "bpmn.infoPannel":"Information Pannel",
+    "bpmn.infoPanel":"Information Panel",
     "bpmn.flowBpmnDefinition":"Flow BPMN Definition",
     "bpmn.renderFlowDiagram":"Render Flow Diagram",
     "bpmn.viewFlowDefinition":"View EasyFlow Definition",

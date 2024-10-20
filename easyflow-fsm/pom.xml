@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyflow-parent</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
     </parent>
     <artifactId>easyflow-fsm</artifactId>
     <name>easyflow-fsm</name>

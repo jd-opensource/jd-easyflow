@@ -1,14 +1,14 @@
-/**BPMN pannel*/
-.j-bpmn-pannel {
+/**BPMN panel*/
+.j-bpmn-panel {
     background-color: white
 }
 
-.j-bpmn-pannel-normal {
+.j-bpmn-panel-normal {
     position:relative;
     height:500px;   
 }
 
-.j-bpmn-pannel-fullscreen {
+.j-bpmn-panel-fullscreen {
     position:fixed;
     top:0;
     bottom:0;
@@ -27,8 +27,8 @@
     bottom:0;
 
 }
-/**info pannel*/
-.infoPannel {
+/**info panel*/
+.infoPanel {
     padding:4px;
     position: absolute;
     right: 0;
@@ -39,20 +39,20 @@
     border: 1px solid #ccc;
 }
 
-.infoPannel-up {
+.infoPanel-up {
 	bottom:auto;
 	overflow:hidden;
 }
 
-.infoPannel form {
+.infoPanel form {
 	width:300px;
 }
-.infoPannel .col {
+.infoPanel .col {
     padding-left:0px;
     padding-right: 0px;
 }
 
-.infoPannel textarea.form-control {
+.infoPanel textarea.form-control {
     height:30px;
 }
 

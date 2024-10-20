@@ -236,7 +236,7 @@
             });
             // fullscreen
             this.$bpmnContainer.find(".j-bpmn-fullscreen").click(function() {
-                _self.$bpmnContainer.find(".j-bpmn-pannel").toggleClass("j-bpmn-pannel-normal j-bpmn-pannel-fullscreen");
+                _self.$bpmnContainer.find(".j-bpmn-panel").toggleClass("j-bpmn-panel-normal j-bpmn-panel-fullscreen");
                 $(this).find("i").toggleClass("fa-expand fa-compress");
             });
             // import
@@ -253,29 +253,29 @@
             this.$bpmnContainer.find(".j-bpmn-comment-select").change(function() {
                 _self._commentAll();
             });
-            // min pannel
+            // min panel
             this.$bpmnContainer.find(".j-bpmn-info-switch").click(function() {
                 _self.$bpmnContainer.find(".j-bpmn-info-title").toggle();
-                _self.$bpmnContainer.find(".infoPannel>form").toggle();
-                _self.$bpmnContainer.find(".infoPannel").toggleClass("infoPannel-up");
+                _self.$bpmnContainer.find(".infoPanel>form").toggle();
+                _self.$bpmnContainer.find(".infoPanel").toggleClass("infoPanel-up");
             })
             if (this.cfg.mode == 'view') {
                 _self.$bpmnContainer.find(".j-bpmn-info-title").toggle();
-                _self.$bpmnContainer.find(".infoPannel>form").toggle();
-                _self.$bpmnContainer.find(".infoPannel").toggleClass("infoPannel-up");
+                _self.$bpmnContainer.find(".infoPanel>form").toggle();
+                _self.$bpmnContainer.find(".infoPanel").toggleClass("infoPanel-up");
             }
             // event bind
             var eventBus = this.bpmnModeler.get('eventBus');
 
-            var $infoPannel = this.$bpmnContainer.find(".infoPannel");
-            var $form = $infoPannel.find('form');
+            var $infoPanel = this.$bpmnContainer.find(".infoPanel");
+            var $form = $infoPanel.find('form');
             $form.validate();
             eventBus.on("element.click", function(e) {
                 var elementType = e.element.businessObject.$type;
                 console.log('click on ' + e.element.id + " type:" + e.element.businessObject.$type);
                 $form.empty();
-                if (_self._elementPannelRender[elementType]) {
-                    _self._elementPannelRender[elementType].call(_self, $form, e.element);
+                if (_self._elementPanelRender[elementType]) {
+                    _self._elementPanelRender[elementType].call(_self, $form, e.element);
                 }
             });
             eventBus.on("selection.changed", function(e) {
@@ -288,15 +288,15 @@
                 var elementType = element.businessObject.$type;
                 console.log('click on ' + element.id + " type:" + element.businessObject.$type);
                 $form.empty();
-                if (_self._elementPannelRender[elementType]) {
-                    _self._elementPannelRender[elementType].call(_self, $form, element);
+                if (_self._elementPanelRender[elementType]) {
+                    _self._elementPanelRender[elementType].call(_self, $form, element);
                 }
             });            
             eventBus.on("element.changed", function(e) {
                 console.log("change");
                 _self._comment(e.element);
             });
-            // BPMN Definition View Pannel
+            // BPMN Definition View Panel
             this.$bpmnContainer.find(".j-bpmn-view").click(function() {
                 _self.exportDiagram().then(function(result) {
                     var elementHtml = _self._bpmnViewHtml();
@@ -397,7 +397,7 @@
         var overlays = bpmnModeler.get('overlays');
         // zoom to fit full viewport
         canvas.zoom('fit-viewport');
-        this._initPropertiesPannel();
+        this._initPropertiesPanel();
         this._commentAll();
         var processElements = _findProcessElement(bpmnModeler);
         var callback = this.cfg.openDiagramCallBack;
@@ -479,26 +479,26 @@
         });
     }
     /**
-    *Init info pannel
+    *Init info panel
     */
-    J.BpmnControl.prototype._initPropertiesPannel = function() {
-        // Show flow definition pannel
+    J.BpmnControl.prototype._initPropertiesPanel = function() {
+        // Show flow definition panel
         var processElements = _findProcessElement(this.bpmnModeler);
         if (processElements.length != 1) {
-            var $infoPannel = this.$bpmnContainer.find(".infoPannel");
-            var $form = $infoPannel.find('form');
+            var $infoPanel = this.$bpmnContainer.find(".infoPanel");
+            var $form = $infoPanel.find('form');
              $form.empty();
             return;
         }
-        this._elementPannelRender['bpmn:Process'].call(this, this.$bpmnContainer.find(".infoPannel").find("form"), processElements[0]);
+        this._elementPanelRender['bpmn:Process'].call(this, this.$bpmnContainer.find(".infoPanel").find("form"), processElements[0]);
     }
 
-    J.BpmnControl.prototype._elementPannelRender = {};
+    J.BpmnControl.prototype._elementPanelRender = {};
     /**
      * Basic element render
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Element"] = function($infoPannel, element, hasProperties) {
-        this.$bpmnContainer.find(".infoPannel").find("form").empty();
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Element"] = function($infoPanel, element, hasProperties) {
+        this.$bpmnContainer.find(".infoPanel").find("form").empty();
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
@@ -508,7 +508,7 @@
         var elementIdHtml = '<div class="row">' +
             '<div class="form-group col"><span class="j-require">*</span><label>ID:</label> <input type="text" class="form-control j-elementId" name="j-elementId" value="' + elementId + '"/></div>'
             + '</div>';
-        var $elementIdElement = $(elementIdHtml).appendTo($infoPannel);
+        var $elementIdElement = $(elementIdHtml).appendTo($infoPanel);
         var $elementId = $elementIdElement.find(".j-elementId");
         $elementId.tooltip({ title: J.msg['bpmn.idTooltip'] });
         $elementId.rules('add', { required: true });
@@ -536,13 +536,14 @@
             bo.id = newElementId;
             _self.cfg.onBpmnDefinitionChange && _self.cfg.onBpmnDefinitionChange.call(_self, bo, "id", newElementId, elementId);
             _self._comment(element);
+			elementId = newElementId;
         });
         // Name
         var elementName = bo.name;
         var elementNameHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.name'] + ':</label> <input type="text" class="form-control j-elementName" name="j-elementName" value="' + (elementName ? elementName : '') + '"/></div>'
             + '</div>';
-        var $elementNameElement = $(elementNameHtml).appendTo($infoPannel);
+        var $elementNameElement = $(elementNameHtml).appendTo($infoPanel);
         var $elementName = $elementNameElement.find(".j-elementName");
         $elementName.tooltip({ title: J.msg['bpmn.nameTooltip'] })
         $elementName.blur(function() {
@@ -556,7 +557,7 @@
         var documentationHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.documentation'] + ':</label> <textarea class="form-control j-documentation" name="j-documentation"></textarea></div>'
             + '</div>';
-        var $documentationElement = $(documentationHtml).appendTo($infoPannel);
+        var $documentationElement = $(documentationHtml).appendTo($infoPanel);
         var $documentation = $documentationElement.find(".j-documentation");
         $documentation.tooltip({ title: J.msg['bpmn.documentationTooltip'] })
         $documentation.text(documentation);
@@ -580,7 +581,7 @@
         var propertiesHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.property'] + '(<button type="button" class="j-properties-mode btn btn-link p-0">' + J.msg['bpmn.switchJsonMode'] + '</button>):</label> <textarea class="form-control j-properties" name="j-properties"></textarea></div>'
             + '</div>';
-        var $propertiesElement = $(propertiesHtml).appendTo($infoPannel);
+        var $propertiesElement = $(propertiesHtml).appendTo($infoPanel);
         var $properties = $propertiesElement.find(".j-properties");
         $properties.tooltip({ title: J.msg['bpmn.propertyTooltip'] });
         $properties.rules('add', { json: true });
@@ -610,7 +611,7 @@
     /**
      * Condition type
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ExtConditionType"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ExtConditionType"] = function($infoPanel, element) {
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
@@ -625,7 +626,7 @@
             '</select>' +
             '</div>' +
            '</div>';
-        var $conditionTypeElement = $(conditionTypeHtml).appendTo($infoPannel);
+        var $conditionTypeElement = $(conditionTypeHtml).appendTo($infoPanel);
         var $conditionType = $conditionTypeElement.find(".j-bpmn-conditionType");
         $conditionType.tooltip({ title: J.msg['bpmn.conditionTypeTooltip'] });
         $conditionType.val(conditionType);
@@ -640,7 +641,7 @@
      /**
      * Start node
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:NodeStart"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:NodeStart"] = function($infoPanel, element) {
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
@@ -655,7 +656,7 @@
             '</select>' +
             '</div>' +
            '</div>';
-        var $startElement = $(startHtml).appendTo($infoPannel);
+        var $startElement = $(startHtml).appendTo($infoPanel);
         var $start = $startElement.find(".j-bpmn-start");
         $start.tooltip({ title: J.msg['bpmn.startNodeTooltip'] });
         $start.val(start);
@@ -670,7 +671,7 @@
     /**
      * Pre
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:NodePre"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:NodePre"] = function($infoPanel, element) {
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
@@ -678,7 +679,7 @@
         // Property
         var pre = getExtensionBody(bo, "easyflow:Pre");
         var preHtml = '<div class="row"><div class="form-group col"><label>' + J.msg['bpmn.selfPre'] + ':</label> <textarea class="form-control j-bpmn-pre" name="j-bpmn-pre"></textarea></div></div>';
-        var $preElement = $(preHtml).appendTo($infoPannel);
+        var $preElement = $(preHtml).appendTo($infoPanel);
         var $pre = $preElement.find(".j-bpmn-pre");
         $pre.tooltip({ title: J.msg['bpmn.selfPreTooltip'] });
         $pre.val(pre);
@@ -693,7 +694,7 @@
     /**
      * Action
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:NodeAction"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:NodeAction"] = function($infoPanel, element) {
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
@@ -701,7 +702,7 @@
         // Property
         var action = getExtensionBody(bo, "easyflow:Action");
         var actionHtml = '<div class="row"><div class="form-group col"><label>' + J.msg['bpmn.selfAction'] + ':</label> <textarea class="form-control j-bpmn-action" name="j-bpmn-action"></textarea></div></div>';
-        var $actionElement = $(actionHtml).appendTo($infoPannel);
+        var $actionElement = $(actionHtml).appendTo($infoPanel);
         var $action = $actionElement.find(".j-bpmn-action");
         $action.tooltip({ title: J.msg['bpmn.selfActionTooltip'] });
         $action.val(action);
@@ -716,7 +717,7 @@
     /**
      * Post
      */
-    J.BpmnControl.prototype._elementPannelRender["bpmn:NodePost"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:NodePost"] = function($infoPanel, element) {
         const moddle = this.bpmnModeler.get('moddle');
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
@@ -724,7 +725,7 @@
         // Property
         var post = getExtensionBody(bo, "easyflow:Post");
         var postHtml = '<div class="row"><div class="form-group col"><label>' + J.msg['bpmn.selfPost'] + ':</label> <textarea class="form-control j-bpmn-post" name="j-bpmn-post"></textarea></div></div>';
-        var $postElement = $(postHtml).appendTo($infoPannel);
+        var $postElement = $(postHtml).appendTo($infoPanel);
         var $post = $postElement.find(".j-bpmn-post");
         $post.tooltip({ title: J.msg['bpmn.selfPostTooltip'] });
         $post.val(post);
@@ -737,7 +738,7 @@
     }
 
     // Collaboration
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Collaboration"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Collaboration"] = function($infoPanel, element) {
         var participants = element.businessObject.participants;
         if (participants && participants.length == 1) {
           var processBusinessObject= participants[0].processRef;
@@ -746,30 +747,30 @@
           }
           var processElement = {};
           processElement.businessObject = processBusinessObject;
-          this._elementPannelRender["bpmn:Process"].call(this, $infoPannel, processElement);
+          this._elementPanelRender["bpmn:Process"].call(this, $infoPanel, processElement);
         }
     }
     
     // Participant
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Participant"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Participant"] = function($infoPanel, element) {
         var processBusinessObject = element.businessObject.processRef;
         if (! processBusinessObject) {
             return;
         }
         var processElement = {};
         processElement.businessObject = processBusinessObject;
-        this._elementPannelRender["bpmn:Process"].call(this, $infoPannel, processElement);
+        this._elementPanelRender["bpmn:Process"].call(this, $infoPanel, processElement);
     }
 
     // Lane
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Lane"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Participant"].call(this, $infoPannel, element.parent);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Lane"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Participant"].call(this, $infoPanel, element.parent);
     }    
 
     // Flow
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Process"] = function($infoPannel, element) {
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Process"] = function($infoPanel, element) {
         var _self = this;
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
         var bo = element.businessObject;
         var eventBus = this.bpmnModeler.get('eventBus');
         // Flow pre handler
@@ -777,7 +778,7 @@
         var flowPreHandlerHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.flowPreHandler'] + ':</label> <textarea class="form-control j-bpmn-flowprehandler" name="j-bpmn-flowprehandler"></textarea></div>'
             + '</div>';
-        var $flowPreHandlerElement = $(flowPreHandlerHtml).appendTo($infoPannel);
+        var $flowPreHandlerElement = $(flowPreHandlerHtml).appendTo($infoPanel);
         var $flowPreHandler = $flowPreHandlerElement.find(".j-bpmn-flowprehandler");
         $flowPreHandler.tooltip({ title: J.msg['bpmn.flowPreHandlerTooltip'] })
         $flowPreHandler.rules('add', { json: true });
@@ -791,7 +792,7 @@
         var flowPostHandlerHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.flowPostHandler'] + ':</label> <textarea class="form-control j-bpmn-flowposthandler" name="j-bpmn-flowposthandler"></textarea></div>'
             + '</div>';
-        var $flowPostHandlerElement = $(flowPostHandlerHtml).appendTo($infoPannel);
+        var $flowPostHandlerElement = $(flowPostHandlerHtml).appendTo($infoPanel);
         var $flowPostHandler = $flowPostHandlerElement.find(".j-bpmn-flowposthandler");
         $flowPostHandler.tooltip({ title: J.msg['bpmn.flowPostHandlerTooltip'] })
         $flowPostHandler.rules('add', { json: true });
@@ -806,7 +807,7 @@
         var listenersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.listeners'] + ':</label> <textarea class="form-control j-listeners" name="j-listeners"></textarea></div>'
             + '</div>';
-        var $listenersElement = $(listenersHtml).appendTo($infoPannel);
+        var $listenersElement = $(listenersHtml).appendTo($infoPanel);
         var $listeners = $listenersElement.find(".j-listeners");
         $listeners.tooltip({ title: J.msg['bpmn.listenersTooltip'] })
         $listeners.rules('add', { json: true });
@@ -820,7 +821,7 @@
         var filtersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.filters'] + ':</label> <textarea class="form-control j-filters" name="j-filters"></textarea></div>'
             + '</div>';
-        var $filtersElement = $(filtersHtml).appendTo($infoPannel);
+        var $filtersElement = $(filtersHtml).appendTo($infoPanel);
         var $filters = $filtersElement.find(".j-filters");
         $filters.tooltip({ title: J.msg['bpmn.filtersTooltip'] });
         $filters.rules('add', { json: true });
@@ -834,7 +835,7 @@
         var nodeFiltersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.nodeFilters'] + ':</label> <textarea class="form-control j-nodefilters" name="j-nodefilters"></textarea></div>'
             + '</div>';
-        var $nodeFiltersElement = $(nodeFiltersHtml).appendTo($infoPannel);
+        var $nodeFiltersElement = $(nodeFiltersHtml).appendTo($infoPanel);
         var $nodeFilters = $nodeFiltersElement.find(".j-nodefilters");
         $nodeFilters.tooltip({ title: J.msg['bpmn.nodeFiltersTooltip'] });
         $nodeFilters.rules('add', { json: true });
@@ -848,7 +849,7 @@
         var nodePreHandlerFiltersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.nodePreHandlerFilters'] + ':</label> <textarea class="form-control j-nodeprehandlerfilters" name="j-nodeprehandlerfilters"></textarea></div>'
             + '</div>';
-        var $nodePreHandlerFiltersElement = $(nodePreHandlerFiltersHtml).appendTo($infoPannel);
+        var $nodePreHandlerFiltersElement = $(nodePreHandlerFiltersHtml).appendTo($infoPanel);
         var $nodePreHandlerFilters = $nodePreHandlerFiltersElement.find(".j-nodeprehandlerfilters");
         $nodePreHandlerFilters.tooltip({ title: J.msg['bpmn.nodePreHandlerFiltersTooltip'] })
         $nodePreHandlerFilters.rules('add', { json: true });
@@ -862,7 +863,7 @@
         var nodeActionFiltersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.nodeActionFilters'] + ':</label> <textarea class="form-control j-nodeactionfilters" name="j-nodeactionfilters"></textarea></div>'
             + '</div>';
-        var $nodeActionFiltersElement = $(nodeActionFiltersHtml).appendTo($infoPannel);
+        var $nodeActionFiltersElement = $(nodeActionFiltersHtml).appendTo($infoPanel);
         var $nodeActionFilters = $nodeActionFiltersElement.find(".j-nodeactionfilters");
         $nodeActionFilters.tooltip({ title: J.msg['bpmn.nodeActionFiltersTooltip'] })
         $nodeActionFilters.rules('add', { json: true });
@@ -876,7 +877,7 @@
         var nodePostHandlerFiltersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.nodePostHandlerFilters'] + ':</label> <textarea class="form-control j-nodeposthandlerfilters" name="j-nodeposthandlerfilters"></textarea></div>'
             + '</div>';
-        var $nodePostHandlerFiltersElement = $(nodePostHandlerFiltersHtml).appendTo($infoPannel);
+        var $nodePostHandlerFiltersElement = $(nodePostHandlerFiltersHtml).appendTo($infoPanel);
         var $nodePostHandlerFilters = $nodePostHandlerFiltersElement.find(".j-nodeposthandlerfilters");
         $nodePostHandlerFilters.tooltip({ title: J.msg['bpmn.nodePostHandlerFiltersTooltip'] })
         $nodePostHandlerFilters.rules('add', { json: true });
@@ -890,7 +891,7 @@
         var flowPreHandlerFiltersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.flowPreHandlerFilters'] + ':</label> <textarea class="form-control j-flowprehandlerfilters" name="j-flowprehandlerfilters"></textarea></div>'
             + '</div>';
-        var $flowPreHandlerFiltersElement = $(flowPreHandlerFiltersHtml).appendTo($infoPannel);
+        var $flowPreHandlerFiltersElement = $(flowPreHandlerFiltersHtml).appendTo($infoPanel);
         var $flowPreHandlerFilters = $flowPreHandlerFiltersElement.find(".j-flowprehandlerfilters");
         $flowPreHandlerFilters.tooltip({ title: J.msg['bpmn.flowPreHandlerFiltersTooltip'] })
         $flowPreHandlerFilters.rules('add', { json: true });
@@ -904,7 +905,7 @@
         var flowPostHandlerFiltersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.flowPostHandlerFilters'] + ':</label> <textarea class="form-control j-flowposthandlerfilters" name="j-flowposthandlerfilters"></textarea></div>'
             + '</div>';
-        var $flowPostHandlerFiltersElement = $(flowPostHandlerFiltersHtml).appendTo($infoPannel);
+        var $flowPostHandlerFiltersElement = $(flowPostHandlerFiltersHtml).appendTo($infoPanel);
         var $flowPostHandlerFilters = $flowPostHandlerFiltersElement.find(".j-flowposthandlerfilters");
         $flowPostHandlerFilters.tooltip({ title: J.msg['bpmn.flowPostHandlerFiltersTooltip'] })
         $flowPostHandlerFilters.rules('add', { json: true });
@@ -918,7 +919,7 @@
         var runnerHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.runner'] + ':</label> <textarea class="form-control j-bpmn-runner" name="j-bpmn-runner"></textarea></div>'
             + '</div>';
-        var $runnerElement = $(runnerHtml).appendTo($infoPannel);
+        var $runnerElement = $(runnerHtml).appendTo($infoPanel);
         var $runner = $runnerElement.find(".j-bpmn-runner");
         $runner.tooltip({ title: J.msg['bpmn.runnerTooltip'] })
         $runner.rules('add', { json: true });
@@ -932,7 +933,7 @@
         var parseListenersHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.parseListeners'] + ':</label> <textarea class="form-control j-bpmn-parselisteners" name="j-bpmn-parselisteners"></textarea></div>'
             + '</div>';
-        var $parseListenersElement = $(parseListenersHtml).appendTo($infoPannel);
+        var $parseListenersElement = $(parseListenersHtml).appendTo($infoPanel);
         var $parseListeners = $parseListenersElement.find(".j-bpmn-parselisteners");
         $parseListeners.tooltip({ title: J.msg['bpmn.parseListenersTooltip'] })
         $parseListeners.rules('add', { json: true });
@@ -951,7 +952,7 @@
                '<option value="false">' + J.msg['bpmn.false'] + '</option>' +
             '</select>' +
             '</div>';
-        var $logFlagElement = $(logFlagHtml).appendTo($infoPannel);
+        var $logFlagElement = $(logFlagHtml).appendTo($infoPanel);
         $logFlagElement.tooltip({ title: J.msg['bpmn.logFlagTooltip'] });
         var $logFlag = $logFlagElement.find(".j-bpmn-logflag");
         $logFlag.val(logFlag);
@@ -961,8 +962,8 @@
         });  
     }
     // Script task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ScriptTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ScriptTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
         var bo = element.businessObject;
         var _self = this;
         // Script format
@@ -974,7 +975,7 @@
                '<option value="createExp">' + J.msg['bpmn.scriptFormat.createExp'] + '</option>' +
             '</select>' +
             '</div>';
-        var $scriptFormatElement = $(scriptFormatHtml).appendTo($infoPannel);
+        var $scriptFormatElement = $(scriptFormatHtml).appendTo($infoPanel);
         $scriptFormatElement.tooltip({ title: J.msg['bpmn.scriptFormatTooltip'] });
         var $scriptFormat = $scriptFormatElement.find(".j-bpmn-scriptformat");
         $scriptFormat.val(scriptFormat);
@@ -991,7 +992,7 @@
         var scriptHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.script'] + ':</label> <textarea class="form-control j-bpmn-script" name="j-bpmn-script"></textarea></div>'
             + '</div>';
-        var $scriptElement = $(scriptHtml).appendTo($infoPannel);
+        var $scriptElement = $(scriptHtml).appendTo($infoPanel);
         $scriptElement.tooltip({ title: J.msg['bpmn.scriptTooltip'] });
         var $script = $scriptElement.find(".j-bpmn-script");
         $script.text(script);
@@ -1001,78 +1002,78 @@
             _self._comment(element);
         });
         
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // User task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:UserTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:UserTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Receive task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ReceiveTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ReceiveTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Task"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Task"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }      
     // Send task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:SendTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:SendTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }    
     // Manual Task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ManualTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ManualTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }   
     // BusinessRuleTask Task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:BusinessRuleTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:BusinessRuleTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }   
     // Service Task
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ServiceTask"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ServiceTask"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }             
     // Call activity
-    J.BpmnControl.prototype._elementPannelRender["bpmn:CallActivity"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:CallActivity"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
         var bo = element.businessObject;
         var _self = this;
         // Called element
@@ -1081,7 +1082,7 @@
             '<div class="form-group col"><span class="j-require">*</span><label>' + J.msg['bpmn.calledElement'] + ':</label> ' +
                '<input class="form-control j-bpmn-calledelement"/>' +
             '</div>';
-        var $calledElementElement = $(calledElementHtml).appendTo($infoPannel);
+        var $calledElementElement = $(calledElementHtml).appendTo($infoPanel);
         $calledElementElement.tooltip({ title: J.msg['bpmn.calledElementTooltip'] });
         var $calledElement = $calledElementElement.find(".j-bpmn-calledelement");
         $calledElement.val(calledElement);
@@ -1089,15 +1090,15 @@
             var newCalledElement = $calledElement.val();
                 bo.calledElement = newCalledElement;
         });
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Sub process
-    J.BpmnControl.prototype._elementPannelRender["bpmn:SubProcess"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:SubProcess"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
         var bo = element.businessObject;
         var _self = this;
         // Flow
@@ -1105,7 +1106,7 @@
         var flowHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.flow'] + ':</label> <textarea class="form-control j-bpmn-flow" name="j-bpmn-flow"></textarea></div>'
             + '</div>';
-        var $flowElement = $(flowHtml).appendTo($infoPannel);
+        var $flowElement = $(flowHtml).appendTo($infoPanel);
         var $flow = $flowElement.find(".j-bpmn-flow");
         $flow.tooltip({ title: J.msg['bpmn.flowTooltip'] })
         $flow.rules('add', { json: true });
@@ -1114,15 +1115,15 @@
             var newFlow = $flow.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Flow", newFlow);
         });
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }    
     // Transaction
-    J.BpmnControl.prototype._elementPannelRender["bpmn:Transaction"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:Transaction"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
         var bo = element.businessObject;
         var _self = this;
         // Flow
@@ -1130,7 +1131,7 @@
         var flowHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.flow'] + ':</label> <textarea class="form-control j-bpmn-flow" name="j-bpmn-flow"></textarea></div>'
             + '</div>';
-        var $flowElement = $(flowHtml).appendTo($infoPannel);
+        var $flowElement = $(flowHtml).appendTo($infoPanel);
         var $flow = $flowElement.find(".j-bpmn-flow");
         $flow.tooltip({ title: J.msg['bpmn.flowTooltip'] })
         $flow.rules('add', { json: true });
@@ -1139,79 +1140,79 @@
             var newFlow = $flow.val();
             updateExtensionBody(_self.bpmnModeler, bo, "easyflow:Flow", newFlow);
         });
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeStart"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeStart"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }        
     // Start event
-    J.BpmnControl.prototype._elementPannelRender["bpmn:StartEvent"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:StartEvent"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // End event
-    J.BpmnControl.prototype._elementPannelRender["bpmn:EndEvent"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:EndEvent"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
     }
     // Catch event
-    J.BpmnControl.prototype._elementPannelRender["bpmn:IntermediateCatchEvent"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:IntermediateCatchEvent"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Throw event
-    J.BpmnControl.prototype._elementPannelRender["bpmn:IntermediateThrowEvent"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:ExtConditionType"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:IntermediateThrowEvent"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:ExtConditionType"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }    
     // Exclusive gateway
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ExclusiveGateway"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ExclusiveGateway"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Inclusive gateway
-    J.BpmnControl.prototype._elementPannelRender["bpmn:InclusiveGateway"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:InclusiveGateway"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Parallel gateway
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ParallelGateway"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ParallelGateway"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }
     // Complex gateway
-    J.BpmnControl.prototype._elementPannelRender["bpmn:ComplexGateway"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:ComplexGateway"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }  
     // Event based gateway
-    J.BpmnControl.prototype._elementPannelRender["bpmn:EventBasedGateway"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePre"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodeAction"].call(this, $infoPannel, element);
-        this._elementPannelRender["bpmn:NodePost"].call(this, $infoPannel, element);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:EventBasedGateway"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePre"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodeAction"].call(this, $infoPanel, element);
+        this._elementPanelRender["bpmn:NodePost"].call(this, $infoPanel, element);
     }       
     // Sequence flow
-    J.BpmnControl.prototype._elementPannelRender["bpmn:SequenceFlow"] = function($infoPannel, element) {
-        this._elementPannelRender["bpmn:Element"].call(this, $infoPannel, element, false);
+    J.BpmnControl.prototype._elementPanelRender["bpmn:SequenceFlow"] = function($infoPanel, element) {
+        this._elementPanelRender["bpmn:Element"].call(this, $infoPanel, element, false);
         var bo = element.businessObject;
         var _self = this;
         // Conditional expression
@@ -1219,7 +1220,7 @@
         var conditionExpressionHtml = '<div class="row">' +
             '<div class="form-group col"><label>' + J.msg['bpmn.conditionExp'] + ':</label> <textarea class="form-control j-bpmn-conditionExpression" name="j-bpmn-conditionExpression"></textarea></div>'
             + '</div>';
-        var $conditionExpressionElement = $(conditionExpressionHtml).appendTo($infoPannel);
+        var $conditionExpressionElement = $(conditionExpressionHtml).appendTo($infoPanel);
         $conditionExpressionElement.tooltip({ title: J.msg["bpmn.conditionExpTooltip"] });
         var $conditionExpression = $conditionExpressionElement.find(".j-bpmn-conditionExpression");
         $conditionExpression.text(conditionExpression);
@@ -1418,7 +1419,7 @@
      * html of show
      */
     J.BpmnControl.prototype._html = function() {
-        return '<div class="j-bpmn-pannel j-bpmn-pannel-normal">' +                                                           
+        return '<div class="j-bpmn-panel j-bpmn-panel-normal">' +                                                           
           '<div class="j-flow-canvas"></div> ' +    
           '<div class="text-left j-bpmn-btn-group">     ' +                                                                   
               '<button type="button" class="btn btn-primary j-bpmn-view">' + J.msg['bpmn.bpmnDefinition'] + '</button>\n' +
@@ -1433,7 +1434,7 @@
                   '<option value="condition">' + J.msg['bpmn.condition'] + '</option>' +
               '</select></div> ' +
           '</div>  ' +                                                
-         '<div class="infoPannel"><div class="infoPannelHead"><span class="j-bpmn-info-title"><b>' + J.msg['bpmn.infoPannel'] + '</b></span><i class="fa fa-info-circle j-bpmn-info-switch"></i><div style="clear:both"></div></div><form class="container"></form></div>  ' +                                          
+         '<div class="infoPanel"><div class="infoPanelHead"><span class="j-bpmn-info-title"><b>' + J.msg['bpmn.infoPanel'] + '</b></span><i class="fa fa-info-circle j-bpmn-info-switch"></i><div style="clear:both"></div></div><form class="container"></form></div>  ' +                                          
       '</div>    ';
     }
 

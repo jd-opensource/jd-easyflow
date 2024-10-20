@@ -1,6 +1,6 @@
 (function (J) {
     /**
-     * Define pannel control
+     * Define panel control
      */
     J.FlowControl = function (cfg) {
         /**
@@ -65,13 +65,13 @@
             $flowContainer.find('[name="format"]').change(function() {_self._renderTabs();});
             // Show tab
             this._renderTabs();
-            // Render BPMN pannel
-            await this._renderBpmnPannel();
+            // Render BPMN panel
+            await this._renderBpmnPanel();
             $(function(){
             $flowContainer.find(".bpmnContainer").addClass(" tab-pane");
             });
-            // Render JSON Pannel
-            this._renderJsonPannel();
+            // Render JSON Panel
+            this._renderJsonPanel();
             return this;
         }
         this.init(cfg);
@@ -79,17 +79,17 @@
     }
 
     /**
-     * Render BPMN Pannel
+     * Render BPMN Panel
      */
-    J.FlowControl.prototype._renderBpmnPannel = function () {
+    J.FlowControl.prototype._renderBpmnPanel = function () {
         var $bpmnContainer = this.$flowContainer.find(".bpmnContainer");
         this.bpmnControl.render($bpmnContainer);
     }
 
     /**
-     * Render JSON Pannel
+     * Render JSON Panel
      */
-    J.FlowControl.prototype._renderJsonPannel = function () {
+    J.FlowControl.prototype._renderJsonPanel = function () {
         this._renderJsonDataContainer();
         var _self = this;
         this.$flowContainer.find(".jsonContainer").find(".j-json-def").click(function () {
@@ -144,7 +144,7 @@
             return;
         }
         var def = JSON.parse(jsonData);
-        // Node pannel
+        // Node panel
         var table = '<table class="table table-striped table-bordered"><thead><tr><th>' + J.msg['flow.id'] + '</th><th>' + J.msg['flow.nodeId'] + '</th><th>' + J.msg['flow.nodeName'] + '</th></tr></thead>';
         var format = this.$flowContainer.find("[name='format']").val();
         ;
