@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.process.infrastructure.persistence.mapper.ProcessInstanceMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="instance_no" jdbcType="VARCHAR" property="instanceNo" />
+    <result column="instance_name" jdbcType="VARCHAR" property="instanceName" />
+    <result column="instance_no" jdbcType="VARCHAR" property="instanceNo" />
+    <result column="process_type" jdbcType="VARCHAR" property="processType" />
+    <result column="biz_no" jdbcType="VARCHAR" property="bizNo" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="process_def_id" jdbcType="VARCHAR" property="processDefId" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="parent_instance_no" jdbcType="VARCHAR" property="parentInstanceNo" />
+    <result column="parent_node_instance_no" jdbcType="VARCHAR" property="parentNodeInstanceNo" />
+    <result column="current_node_ids" jdbcType="VARCHAR" property="currentNodeIds" />
+    <result column="biz_status" jdbcType="VARCHAR" property="bizStatus" />
+    <result column="biz_data" jdbcType="OTHER" property="bizData" />
+    <result column="vars" jdbcType="OTHER" property="vars" />
+    <result column="ext_data" jdbcType="OTHER" property="extData" />
+    <result column="key_field" jdbcType="VARCHAR" property="keyField" />
+    <result column="key_field2" jdbcType="VARCHAR" property="keyField2" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, instance_no, instance_name, process_type, biz_no, product_code, creator, process_def_id, start_time, 
+    end_time, status, parent_instance_no, parent_node_instance_no, current_node_ids, biz_status, biz_data, vars, ext_data, key_field,key_field2, created_date, modified_date,
+    deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_instance
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update process_instance set deleted=1
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance" useGeneratedKeys="true">
+    insert into process_instance (instance_no, instance_name, process_type, biz_no, 
+      product_code, creator, process_def_id, 
+      start_time, end_time, status, 
+      parent_instance_no, parent_node_instance_no, current_node_ids,biz_status, biz_data, vars, ext_data, key_field, key_field2
+      )
+    values (#{instanceNo,jdbcType=VARCHAR}, #{instanceName,jdbcType=VARCHAR}, #{processType,jdbcType=VARCHAR}, #{bizNo,jdbcType=VARCHAR}, 
+      #{productCode,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{processDefId,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{parentInstanceNo,jdbcType=VARCHAR},
+      #{parentNodeInstanceNo,jdbcType=VARCHAR},#{currentNodeIds,jdbcType=VARCHAR},#{bizStatus,jdbcType=VARCHAR},#{bizData,jdbcType=OTHER}, #{vars,jdbcType=OTHER}, #{extData,jdbcType=OTHER},
+      #{keyField,jdbcType=VARCHAR}, #{keyField2,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertWithCreatedDate" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance" useGeneratedKeys="true">
+    insert into process_instance (instance_no, instance_name, process_type, biz_no, 
+      product_code, creator, process_def_id, 
+      start_time, end_time, status, 
+      parent_instance_no, parent_node_instance_no, current_node_ids,biz_status, biz_data, vars, ext_data,key_field,key_field2, created_date
+      )
+    values (#{instanceNo,jdbcType=VARCHAR}, #{instanceName,jdbcType=VARCHAR}, #{processType,jdbcType=VARCHAR}, #{bizNo,jdbcType=VARCHAR}, 
+      #{productCode,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{processDefId,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{parentInstanceNo,jdbcType=VARCHAR},
+      #{parentNodeInstanceNo,jdbcType=VARCHAR},#{currentNodeIds,jdbcType=VARCHAR},#{bizStatus,jdbcType=VARCHAR},#{bizData,jdbcType=OTHER}, #{vars,jdbcType=OTHER}, #{extData,jdbcType=OTHER},
+      #{keyField,jdbcType=VARCHAR}, #{keyField2,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP})
+  </insert>  
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance" useGeneratedKeys="true">
+    insert into process_instance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="instanceNo != null">
+        instance_no,
+      </if>
+      <if test="instanceName != null">
+        instance_name,
+      </if>      
+      <if test="processType != null">
+        process_type,
+      </if>
+      <if test="bizNo != null">
+        biz_no,
+      </if>
+      <if test="productCode != null">
+        product_code,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="processDefId != null">
+        process_def_id,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="parentInstanceNo != null">
+        parent_instance_no,
+      </if>      
+      <if test="parentNodeInstanceNo != null">
+        parent_node_instance_no,
+      </if>
+      <if test="currentNodeIds != null">
+        current_node_ids,
+      </if> 
+      <if test="bizStatus != null">
+        biz_status,
+      </if>   
+      <if test="bizData != null">
+        biz_data,
+      </if>                    
+      <if test="vars != null">
+        vars,
+      </if>
+      <if test="extData != null">
+        ext_data,
+      </if>
+      <if test="keyField != null">
+        key_field,
+      </if>
+      <if test="keyField2 != null">
+        key_field2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="instanceNo != null">
+        #{instanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceName != null">
+        #{instanceName,jdbcType=VARCHAR},
+      </if>      
+      <if test="processType != null">
+        #{processType,jdbcType=VARCHAR},
+      </if>
+      <if test="bizNo != null">
+        #{bizNo,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null">
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="processDefId != null">
+        #{processDefId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="parentInstanceNo != null">
+        #{parentInstanceNo,jdbcType=VARCHAR},
+      </if>      
+      <if test="parentNodeInstanceNo != null">
+        #{parentNodeInstanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="currentNodeIds != null">
+        #{currentNodeIds,jdbcType=VARCHAR},
+      </if> 
+      <if test="bizStatus != null">
+        #{bizStatus,jdbcType=VARCHAR},
+      </if>  
+      <if test="bizData != null">
+        #{bizData,jdbcType=OTHER},
+      </if>                 
+      <if test="vars != null">
+        #{vars,jdbcType=OTHER},
+      </if>
+      <if test="extData != null">
+        #{extData,jdbcType=OTHER},
+      </if>
+      <if test="keyField != null">
+        #{keyField,jdbcType=VARCHAR},
+      </if>
+      <if test="keyField2 != null">
+        #{keyField2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance">
+    update process_instance
+    <set>
+      <if test="instanceNo != null">
+        instance_no = #{instanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceName != null">
+        instance_name = #{instanceName,jdbcType=VARCHAR},
+      </if>      
+      <if test="processType != null">
+        process_type = #{processType,jdbcType=VARCHAR},
+      </if>
+      <if test="bizNo != null">
+        biz_no = #{bizNo,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="processDefId != null">
+        process_def_id = #{processDefId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="parentInstanceNo != null">
+        parent_instance_no = #{parentInstanceNo,jdbcType=VARCHAR},
+      </if>      
+      <if test="parentNodeInstanceNo != null">
+        parent_node_instance_no = #{parentNodeInstanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="currentNodeIds != null">
+        current_node_ids = #{currentNodeIds,jdbcType=VARCHAR},
+      </if> 
+      <if test="bizStatus != null">
+        biz_status = #{bizStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="bizData != null">
+        biz_data = #{bizData,jdbcType=OTHER},
+      </if>                 
+      <if test="vars != null">
+        vars = #{vars,jdbcType=OTHER},
+      </if>
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=OTHER},
+      </if>
+      <if test="keyField != null">
+        key_field = #{keyField,jdbcType=VARCHAR},
+      </if>
+      <if test="keyField2 != null">
+        key_field2 = #{keyField2,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance">
+    update process_instance
+    set instance_no = #{instanceNo,jdbcType=VARCHAR},
+      instance_name = #{instanceName,jdbcType=VARCHAR},
+      process_type = #{processType,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=VARCHAR},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      process_def_id = #{processDefId,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      parent_instance_no = #{parentInstanceNo,jdbcType=VARCHAR},
+      parent_node_instance_no = #{parentNodeInstanceNo,jdbcType=VARCHAR},
+      current_node_ids = #{currentNodeIds,jdbcType=VARCHAR},
+      biz_status = #{bizStatus,jdbcType=VARCHAR},
+      biz_data = #{bizData,jdbcType=OTHER},
+      vars = #{vars,jdbcType=OTHER},
+      ext_data = #{extData,jdbcType=OTHER},
+      key_field = #{keyField,jdbcType=OTHER},
+      key_field2 = #{keyField2,jdbcType=OTHER}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  
+    <update id="updateByProcessInstanceNo" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance">
+    update process_instance
+    set 
+      instance_name = #{instanceName,jdbcType=VARCHAR},
+      process_type = #{processType,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=VARCHAR},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      process_def_id = #{processDefId,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      parent_instance_no = #{parentInstanceNo,jdbcType=VARCHAR},
+      parent_node_instance_no = #{parentNodeInstanceNo,jdbcType=VARCHAR},
+      current_node_ids = #{currentNodeIds,jdbcType=VARCHAR},
+      biz_status = #{bizStatus,jdbcType=VARCHAR},
+      biz_data = #{bizData,jdbcType=OTHER},
+      vars = #{vars,jdbcType=OTHER},
+      ext_data = #{extData,jdbcType=OTHER},
+      key_field = #{keyField,jdbcType=OTHER},
+      key_field2 = #{keyField2,jdbcType=OTHER}
+    where instance_no = #{instanceNo,jdbcType=VARCHAR} and deleted=0
+  </update>
+  
+  <select id="getProcessInstanceByProcessTypeAndBizNo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_instance
+    where process_type=#{processType} and biz_no=#{bizNo} and deleted=0 order by id desc limit 1
+  </select>
+  <select id="selectByInstanceNo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_instance
+    where instance_no=#{instanceNo} and deleted=0
+  </select>
+
+  <select id="getActiveProcessInstanceByProcessTypeAndBizNo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_instance
+    where process_type=#{processType} and biz_no=#{bizNo} and status='ACTIVE' and deleted=0 order by id desc
+  </select>
+
+  <select id="countProcessInstanceByPagerCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultType="long">
+    select
+    count(instance_no)
+    from process_instance
+    <include refid="pagerWhere" />
+  </select>
+
+  <select id="selectProcessInstanceByPageCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from process_instance
+    <include refid="pagerWhere" />
+    <if test="sortMap.createdDate != null">
+      order by created_date ${sortMap.createdDate.type},id  ${sortMap.createdDate.type}
+    </if>  
+    <if test="sortMap.modifiedDate != null">
+      order by modified_date ${sortMap.modifiedDate.type}
+    </if>
+    limit #{start},#{pageSize}
+  </select>
+  <select id="queryProcessInstanceByInstanceNos" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from process_instance
+    <where>
+      deleted = 0 and instance_no in
+      <foreach collection="processInstanceNos" item="processInstanceNo" open="(" separator="," close=")">
+        #{processInstanceNo}
+      </foreach>
+    </where>
+  </select>
+
+  <sql id="pagerWhere">
+    <where> deleted = 0
+      <if test="fieldMap.instanceNo != null">
+        and instance_no=#{fieldMap.instanceNo.value}
+      </if>
+      <if test="fieldMap.processType != null">
+        and process_type=#{fieldMap.processType.value}
+      </if>
+      <if test="fieldMap.bizNo != null">
+        and biz_no=#{fieldMap.bizNo.value}
+      </if>
+      <if test="fieldMap.productCode != null">
+        and product_code=#{fieldMap.productCode.value}
+      </if>
+      <if test="fieldMap.productCodeList != null">
+        and (product_code is null or product_code in
+        <foreach collection="fieldMap.productCodeList.value" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        )
+      </if>
+      <if test="fieldMap.processDefId != null">
+        and process_def_id=#{fieldMap.processDefId.value}
+      </if>
+      <if test="fieldMap.bizStatus != null">
+        and biz_status=#{fieldMap.bizStatus.value}
+      </if> 
+      <if test="fieldMap.status != null">
+        and status=#{fieldMap.status.value}
+      </if>       
+      <if test="fieldMap.creator != null">
+        and creator=#{fieldMap.creator.value}
+      </if>
+      <if test="fieldMap.createdDateStart != null">
+        and created_date &gt;=#{fieldMap.createdDateStart.value}
+      </if> 
+      <if test="fieldMap.createdDateEnd != null">
+        and created_date &lt;=#{fieldMap.createdDateEnd.value}
+      </if>  
+      <if test="fieldMap.keyField != null">
+        and key_field =#{fieldMap.keyField.value}
+      </if>
+      <if test="fieldMap.keyField2 != null">
+        and key_field2 like CONCAT(#{fieldMap.keyField2.value},'%')
+      </if>
+    </where>
+  </sql>
+</mapper>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.processInstanceList.process},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processInstanceList.process}]]</li>
+</ol>
+<div id="content">
+    <div id="tabs">
+        <div id="tableContainer">
+            <!-- Search -->
+            <form id="search" class="card j-form-horizontal">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.instanceNo}]]:</label><input name="instanceNo" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.bizType}]]:</label><input type="text" name="bizType" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.bizNo}]]:</label><input name="bizNo" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.productCode}]]:</label><input name="productCode" class="form-control"></input>
+                        </div>                        
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.creator}]]:</label><input name="creator" class="form-control"></input>
+                        </div> 
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.processStatus}]]:</label>
+                            <select name="status" class="form-control" id="queryType">
+                                <option value="">[[#{easyflow.process.admin.page.processInstanceList.statusAll}]]</option>
+                                <option value="ACTIVE">[[#{easyflow.process.admin.page.processInstanceList.statusActive}]]</option>
+                                <option value="CLOSE">[[#{easyflow.process.admin.page.processInstanceList.statusClose}]]</option>
+                                <option value="CANCELED">[[#{easyflow.process.admin.page.processInstanceList.statusCanceled}]]</option>
+                            </select>
+                        </div> 
+                         <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.keyField}]]:</label><input name="keyField" class="form-control"></input>
+                        </div>      
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processInstanceList.queryType}]]:</label>                            
+                            <select name="queryType" class="form-control" id="queryType">
+                                <option value="MY">[[#{easyflow.process.admin.page.processInstanceList.queryTypeMy}]]</option>
+                                <option value="ALL">[[#{easyflow.process.admin.page.processInstanceList.queryTypeAll}]]</option>
+                            </select>
+                        </div>                                                                      
+                    </div>                   
+                    <div class="form-row">
+                        <div class="col text-center">
+                            <button id="query" class="btn btn-primary">[[#{easyflow.process.admin.page.processInstanceList.query}]]</button>
+                            <button id="reset" class="btn btn-secondary">[[#{easyflow.process.admin.page.processInstanceList.reset}]]</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Toolbar-->
+            <div id="toolbar">
+                <div class="btn-group" role="group">
+                    <button id="create" class="btn btn-primary">[[#{easyflow.process.admin.page.processInstanceList.createProces}]]</button> &nbsp;&nbsp;
+                </div>
+            </div>            
+            <!-- Table -->
+            <table id="datatable"></table>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+    $("#tabs").jTabs().jTabs("open", {id: "tab-table", name: "[(#{easyflow.process.admin.page.processInstanceList.processList})]", element: $("#tableContainer"), closeable: false});
+    var queryParam = {};
+
+    function reset() {
+        $("#search .form-control").val("");
+        $("#queryType").val("MY");        
+        queryParam = $("#search").serializeObject();
+    };
+    reset();
+    $("#query").click(function () {
+        queryParam = $("#search").serializeObject();
+        $('#datatable').bootstrapTable("refresh");
+        return false;
+    });
+    $("#reset").click(function () {
+        reset();
+        return false;
+    });
+    var root = "[(@{/easyflow/processInstance})]";
+    $('#datatable').bootstrapTable({
+        url: root + "/ajax/getListData",
+        toolbar: "#toolbar",
+        sortName: "createdDate",
+        sortOrder: "desc",
+        columns: [
+            {radio: true},
+            {
+                field: 'instanceNo', title: '[(#{easyflow.process.admin.page.processInstanceList.instanceNo})]', formatter: function (data, item) {
+                    return "<a class='j-op detailBtn' data-record-id='" + item.instanceNo + "'>" + data + "</a>";
+                }
+            },
+            {field: 'instanceName', title: '[(#{easyflow.process.admin.page.processInstanceList.instanceName})]'},
+            {field: 'processType', title: '[(#{easyflow.process.admin.page.processInstanceList.processType})]'},
+            {field: 'bizNo', title: '[(#{easyflow.process.admin.page.processInstanceList.processBizNo})]'},
+            {field: 'productCode', title: '[(#{easyflow.process.admin.page.processInstanceList.productCode})]'},
+            {field: 'creator', title: '[(#{easyflow.process.admin.page.processInstanceList.creator})]'},
+            {field: 'keyField', title: '[(#{easyflow.process.admin.page.processInstanceList.keyField})]'},
+            {field: 'processDefId', title: '[(#{easyflow.process.admin.page.processInstanceList.processDefId})]'},
+            {field: 'status', title: '[(#{easyflow.process.admin.page.processInstanceList.processStatus})]', formatter: function (data) {
+                return {"ACTIVE":"[(#{easyflow.process.admin.page.processInstanceList.statusActive})]", "CLOSE":"[(#{easyflow.process.admin.page.processInstanceList.statusClose})]", "CANCELED":"[(#{easyflow.process.admin.page.processInstanceList.statusCanceled})]"}[data];
+            }},
+            {field: 'startTime', title: '[(#{easyflow.process.admin.page.processInstanceList.processStartTime})]'},
+            {field: 'endTime', title: '[(#{easyflow.process.admin.page.processInstanceList.processEndTime})]'},
+            {field: 'currentNodeIds', title: '[(#{easyflow.process.admin.page.processInstanceList.currentNodeId})]'},
+            {field: 'createdDate', title: '[(#{easyflow.process.admin.page.processInstanceList.createdDate})]',sortable: true},
+            {field: 'modifiedDate', title: '[(#{easyflow.process.admin.page.processInstanceList.modifiedDate})]',sortable: true},
+            {
+                field: 'op', title: '[(#{easyflow.process.admin.page.processInstanceList.op})]', formatter: function (data,item) {
+                    let content = "";
+                    if (item.canCanCel) {
+                        content +="<button type='button' class='btn btn-link j-op canCelBtn' data-record-id='" + item.instanceNo + "'>[(#{easyflow.process.admin.page.processInstanceList.cancel})]</button>";
+                    }
+                    return content;
+                }
+            }
+        ],
+        queryParams: function (param) {
+            $.extend(param, queryParam);
+            return param;
+        }
+    });
+
+    $("#datatable").on("click", ".detailBtn", function () {
+        window.location.href = root + "/detail?instanceNo=" + $(this).data("record-id");
+        return false;
+    });
+
+    $("#datatable").on("click", ".canCelBtn", function () {
+        $.jAjax({confirm:"[(#{easyflow.process.admin.page.processInstanceList.cancelConfirm})]", url:root+"/ajax/cancel?instanceNo=" + $(this).data("record-id")});
+    });
+    $("#create").click(function(){
+        window.location.href=root + "/create";
+    });
+
+</script>
+</body>
+</html>

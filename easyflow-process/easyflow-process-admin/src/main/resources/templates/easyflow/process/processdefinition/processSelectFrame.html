@@ -1,0 +1,91 @@
+<div th:id="'tableContainer'+${selectId }">
+    <form th:id="'search'+${selectId }" class="card j-form-horizontal">
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processSelectFrame.defId}]]:</label><input type="text" class="form-control" name="defId"/>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processSelectFrame.format}]]:</label><select name="format" class="form-control">
+                    <option value="">[[#{easyflow.process.admin.page.processSelectFrame.formatAll}]]</option>
+                    <option value="FLOW-easy">[[#{easyflow.process.admin.page.processSelectFrame.formatFlowEasy}]]</option>
+                    <option value="FLOW-bpmn">[[#{easyflow.process.admin.page.processSelectFrame.formatFlowBpmn}]]</option>
+                    <option value="FSM-easy">[[#{easyflow.process.admin.page.processSelectFrame.formatFsmEasy}]]</option>
+                </select>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processSelectFrame.latest}]]:</label><select name="latest" class="form-control">
+                    <option value="">[[#{easyflow.process.admin.page.processSelectFrame.latestAll}]]</option>
+                    <option value=1>[[#{easyflow.process.admin.page.processSelectFrame.latestOnly}]]</option>
+                </select>
+                    <div class="form-group col">
+                        <label>[[#{easyflow.process.admin.page.processSelectFrame.bizType}]]:</label><select class="form-control" name="memNoType">
+                        <option value="">[[#{easyflow.process.admin.page.processSelectFrame.bizTypeAll}]]</option>
+                    </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col text-center">
+                    <button th:id="'query'+${selectId }" class="btn btn-primary">[[#{easyflow.process.admin.page.processSelectFrame.query}]]</button>
+                    <button th:id="'reset'+${selectId }" class="btn btn-secondary">[[#{easyflow.process.admin.page.processSelectFrame.reset}]]</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Table -->
+    <table th:id="'datatable'+${selectId }"></table>
+    <div class="row">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary j-btn-ok">[[#{easyflow.process.admin.page.processSelectFrame.confirm}]]</button>
+            <button type="button" class="btn btn-secondary j-btn-cancel">[[#{easyflow.process.admin.page.processSelectFrame.cancel}]]</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+(function(){
+    var queryParam[(${selectId })] = {};
+  function reset[(${selectId })]() {
+      $("#search[(${selectId })] .form-control").val("");
+      queryParam[(${selectId })] = $("#search[(${selectId })]").serializeObject();
+  };
+  reset[(${selectId })]();
+  $("#query[(${selectId })]").click(function() {
+      queryParam[(${selectId })] = $("#search[(${selectId })]").serializeObject();
+      $('#datatable[(${selectId })]').bootstrapTable("refresh");
+      return false;
+  });
+  $("#reset[(${selectId })]").click(function() {
+      reset[(${selectId })]();
+      return false;
+  });
+
+        var processDefSelect ="[(@{/easyflow/processDefinition})]";
+        $('#datatable[(${selectId })]').bootstrapTable({
+            url : processDefSelect + "/ajax/getListData",
+            pageSize:100,
+            pageList:[100],
+            sortName:"createdDate",
+            sortOrder:"desc",
+            columns: [
+                {radio: true,field:"state"},
+                {field: 'defId', title: '[(#{easyflow.process.admin.page.processSelectFrame.defId}]'},
+                {field: 'defName', title: '[(#{easyflow.process.admin.page.processSelectFrame.defName})]'},
+                {field: 'defVersion', title: '[(#{easyflow.process.admin.page.processSelectFrame.defVersion})]'},
+                {field: 'format', title: '[(#{easyflow.process.admin.page.processSelectFrame.defFormat}]', formatter:function(data){
+                        return {"FLOW-bpmn":"[(#{easyflow.process.admin.page.processSelectFrame.formatFlowBpmn})]","FLOW-easy":"[(#{easyflow.process.admin.page.processSelectFrame.formatFlowEasy})]","FSM-easy":"[(#{easyflow.process.admin.page.processSelectFrame.formatFsmEasy})]"}[data];
+                    }},
+                {field: 'bizType', title: '[(#{easyflow.process.admin.page.processSelectFrame.bizType}]', formatter:function(data){
+                        return data;
+                    }},
+                {field: 'latest', title: '[(#{easyflow.process.admin.page.processSelectFrame.latest}]', formatter:function(data){
+                        return {"true":"[(#{easyflow.process.admin.page.processSelectFrame.latestYes})]","false":"[(#{easyflow.process.admin.page.processSelectFrame.latestNo})]"}[data];
+                    }}
+            ],
+        queryParams : function(param) {
+            $.extend(param, queryParam[(${selectId })]);
+            return param;
+        }
+        });
+})();
+    </script>

@@ -1,0 +1,60 @@
+{
+"id":"flow_task_001",
+"name":"task flow 001",
+"nodes":[
+{"id":"task_start", "start":true, "name":"Flow create", "action":{"createExp":"@eventNodeAction"}, "post":{"createExp":"@eventPostHandler"}, 
+  "properties":{
+      "events":{
+          "PROCESS_INSTANCE_CREATE":{"action":{"createExp":"@taskCreateAndExecuteNodeAction"}, "post":{"to":"task_node_001"}},
+          "NONE":{"action":{"createExp":"@taskCreateNodeAction"}}
+      },
+      "task":{
+          "create":{"formId":"PROCESS_TEST_TASK_CREATE_001","processor":"", "processService":"", "assignee":{"user":"paramData['_USER']"}},
+          "execute":{}, 
+          "detail":{ "formId":""}
+      }
+  }},
+{"id":"task_node_001", "name":"001 task node", "action":{"createExp":"@eventNodeAction"}, "post":{"createExp":"@eventPostHandler"}, 
+  "properties":{
+      "events":{
+          "NONE":{"action":{"createExp":"@taskCreateNodeAction"}},
+          "EXECUTE":{"action":{"createExp":"@taskExecuteNodeAction"}, "post":{"when":"actionResult=='PASS'", "to":"task_node_002"}}
+      },
+      "task":{
+          "create":{"processor":"", "processService":"", "assignee":{"user":"{'zhangsan'}"}},
+          "execute":{"formId":"PROCESS_TEST_TASK_EXECUTE_001"}, 
+          "detail":{"pageId":"", "formId":""}
+      }
+  }
+},
+{"id":"task_node_002", "name":"002 task node", "action":{"createExp":"@eventNodeAction"}, "post":{"createExp":"@eventPostHandler"}, 
+  "properties":{
+      "events":{
+          "NONE":{"action":{"createExp":"@taskCreateNodeAction"}},
+          "EXECUTE":{"action":{"createExp":"@taskExecuteNodeAction"}, "post":{"when":"@taskEl.bizData(param,'select')=='b'", "to":"task_node_001", "defaultTo":"end"}}
+      },
+      "task":{
+          "create":{"processor":"", "processService":"", "assignee":{"user":"{'lisi'}"}},
+          "execute":{"pageId":"commonProcessTaskExecute", "formId":"PROCESS_TEST_TASK_EXECUTE_002"}
+      }
+  }
+},
+{"id":"end", "name":"End node", "properties":{"end":true}}
+],
+
+"listeners":[{"createExp":"@'easyflow-process-processFlowListener'"},
+{"createExp":"@'easyflow-process-taskFlowListener'"},
+{"createExp":"@eventFlowListener"}],
+"properties":{
+    "process":{
+        "processType":"TEST_FLOW",
+        "formId":"PROCESS_TEST_001",
+        "instanceCreate":{"pageId":"commonTaskProcessInstanceAdd"},
+        "processInstanceStatusMessage":{"enable":true}
+    },
+    "task":{
+        "taskExecute":{"formId":""}, 
+        "taskDetail":{"pageId":"", "formId":""}
+    }
+}
+}

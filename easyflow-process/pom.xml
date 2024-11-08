@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>easyflow-parent</artifactId>
+        <groupId>com.jd.easyflow</groupId>
+        <version>1.4.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>easyflow-process</artifactId>
+    <name>easyflow-process</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>easyflow-process-admin</module>
+        <module>easyflow-process-api</module>
+        <module>easyflow-process-client</module>
+        <module>easyflow-process-common</module>
+        <module>easyflow-process-sample</module>
+        <module>easyflow-process-server</module>
+    </modules>
+</project>

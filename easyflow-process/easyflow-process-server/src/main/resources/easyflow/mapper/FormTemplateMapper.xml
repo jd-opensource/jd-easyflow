@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.form.infrastructure.persistence.mapper.FormTemplateMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.form.infrastructure.persistence.po.FormTemplate">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="template_code" jdbcType="VARCHAR" property="templateCode" />
+    <result column="template_name" jdbcType="INTEGER" property="templateName" />
+    <result column="biz_type" jdbcType="VARCHAR" property="bizType" />
+    <result column="config" jdbcType="OTHER" property="config" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, template_code, template_name, biz_type, config, status, created_date, modified_date, 
+    deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from form_template
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update form_template set deleted=1
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.form.infrastructure.persistence.po.FormTemplate" useGeneratedKeys="true">
+    insert into form_template (template_code, template_name, biz_type, 
+      config, status)
+    values (#{templateCode,jdbcType=VARCHAR}, #{templateName,jdbcType=INTEGER}, #{bizType,jdbcType=VARCHAR}, 
+      #{config,jdbcType=OTHER}, #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.form.infrastructure.persistence.po.FormTemplate" useGeneratedKeys="true">
+    insert into form_template
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="templateCode != null">
+        template_code,
+      </if>
+      <if test="templateName != null">
+        template_name,
+      </if>
+      <if test="bizType != null">
+        biz_type,
+      </if>
+      <if test="config != null">
+        config,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="templateCode != null">
+        #{templateCode,jdbcType=VARCHAR},
+      </if>
+      <if test="templateName != null">
+        #{templateName,jdbcType=INTEGER},
+      </if>
+      <if test="bizType != null">
+        #{bizType,jdbcType=VARCHAR},
+      </if>
+      <if test="config != null">
+        #{config,jdbcType=OTHER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.form.infrastructure.persistence.po.FormTemplate">
+    update form_template
+    <set>
+      <if test="templateCode != null">
+        template_code = #{templateCode,jdbcType=VARCHAR},
+      </if>
+      <if test="templateName != null">
+        template_name = #{templateName,jdbcType=INTEGER},
+      </if>
+      <if test="bizType != null">
+        biz_type = #{bizType,jdbcType=VARCHAR},
+      </if>
+      <if test="config != null">
+        config = #{config,jdbcType=OTHER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.form.infrastructure.persistence.po.FormTemplate">
+    update form_template
+    set template_code = #{templateCode,jdbcType=VARCHAR},
+      template_name = #{templateName,jdbcType=INTEGER},
+      biz_type = #{bizType,jdbcType=VARCHAR},
+      config = #{config,jdbcType=OTHER},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+ 
+   <select id="selectByTemplateCode" parameterType="string" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from form_template
+    where template_code=#{templateCode} and deleted=0
+  </select> 
+  
+
+  <sql id="pagerWhere">
+    <where>
+    deleted=0
+
+    <if test="fieldMap.templateCode != null">
+    and template_code=#{fieldMap.templateCode.value}
+    </if>
+    <if test="fieldMap.templateName != null">
+    and template_name=#{fieldMap.templateName.value}
+    </if>
+    <if test="fieldMap.status != null">
+    and status=#{fieldMap.status.value}
+    </if>
+    </where>
+  </sql>
+  
+  <select id="countByPagerCondition" resultType="long">
+    select count(*) from form_template
+    <include refid="pagerWhere"/>
+  </select>
+
+    <select id="selectByPagerCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from form_template
+        <include refid="pagerWhere" />
+        <if test="sortMap.createdDate != null">
+            order by created_date ${sortMap.createdDate.type}
+        </if>
+        <if test="sortMap.modifiedDate != null">
+            order by modified_date ${sortMap.modifiedDate.type}
+        </if>
+      <if test="page">
+        limit #{start},#{pageSize}
+      </if>
+    </select>  
+</mapper>

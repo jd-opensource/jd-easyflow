@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: jd-easyflow
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8	#replace to your time-zone
+  mvc:
+    static-path-pattern: /static/**
+  messages:
+    basename: easyflow.messages.easyflow-process-admin,easyflow.messages.easyflow-process-server,easyflow.messages.easyflow-admin-framework,easyflow.messages.easyflow-form-admin      
+ 
+server:
+  port: 9888
+  
+flow.local.push: true  
+fsm.local.push: true 
+db:
+  #import jdbc driver jar of your database in pom.xml and configue the correct jdbcUrl bellow.
+  #jdbcUrl: jdbc:mysql://localhost:3306/easyflow?characterEncoding=UTF-8 
+  username: root
+  password: 12345678
+   
+global-provider: spring
+

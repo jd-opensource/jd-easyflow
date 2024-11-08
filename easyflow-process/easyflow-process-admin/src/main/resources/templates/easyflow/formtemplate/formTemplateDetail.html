@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.form.admin.page.formTemplateDetail.formTemplateDetail},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.form.admin.page.formTemplateDetail.formTemplateDetail}]]</li>
+</ol>
+<div id="content">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-link active" id="nav-template-tab" data-toggle="tab" href="#nav-template"
+               role="tab">[[#{easyflow.form.admin.page.formTemplateDetail.formTemplateDef}]]</a>
+            <a class="nav-link" id="nav-demo-tab" data-toggle="tab" href="#nav-demo" role="tab"
+               aria-controls="nav-profile" aria-selected="false">[[#{easyflow.form.admin.page.formTemplateDetail.formTemplatePreview}]]</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-template" role="tabpanel">
+            <form th:action="@{/easyflow/formTemplate/ajax/edit}" method="post" id="editForm"
+                  class="j-ajax-form j-form-container j-form-horizontal container-fluid"
+                  th:data-success-url="@{/easyflow/formTemplate/formTemplateList}">
+                <div class="row">
+                    <div class="form-group col">
+                        <label><span class="j-require">*</span>[[#{easyflow.form.admin.page.formTemplateDetail.templateCode}]]:</label> <input
+                            type="text" name="templateCode" class="form-control" readonly="readonly"
+                            th:value="${detail.templateCode}"/>
+                    </div>
+                    <div class="form-group col">
+                        <label><span class="j-require">*</span>[[#{easyflow.form.admin.page.formTemplateDetail.templateName}]]:</label>
+                        <input type="text" name="templateName" class="form-control" th:value="${detail.templateName}"
+                               readonly="readonly"/>
+
+                    </div>
+                    <div class="form-group col">
+                        <label><span class="j-require">*</span>[[#{easyflow.form.admin.page.formTemplateDetail.status}]]:</label>
+                        <select class="form-control" name="status">
+                            <option value="VALID">[[#{easyflow.form.admin.page.formTemplateDetail.valid}]]</option>
+                            <option value="INVALID">[[#{easyflow.form.admin.page.formTemplateDetail.invalid}]]</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="row d-none">
+                    <div class="form-group col">
+                        <label><span class="j-require">*</span>[[#{easyflow.form.admin.page.formTemplateDetail.templateConfigForDeveloper}]]:</label>
+                        <textarea rows="10" cols="" name="config" class="form-control"></textarea>
+                    </div>
+
+                </div>
+
+            </form>
+            <div id="pageConfig"></div>
+            <div class="row mt-2">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary j-btn-view">[[#{easyflow.form.admin.page.formTemplateDetail.viewJsonConfig}]]</button>
+                    <button type="button" class="btn btn-secondary j-btn-cancel">[[#{easyflow.form.admin.page.formTemplateDetail.cancel}]]</button>
+                </div>
+            </div>
+            <div class="modal" tabindex="-1" role="dialog" id="modal">
+                <div class="modal-dialog  modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">[[#{easyflow.form.admin.page.formTemplateDetail.viewConfig}]]</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <textarea id='jsonData' class="form-control" rows="30"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">[[#{easyflow.form.admin.page.formTemplateDetail.close}]]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-demo" role="tabpanel">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="mt-1">[[#{easyflow.form.admin.page.formTemplateDetail.inputDataToRender}]]:</h6>
+                        <textarea class="form-control" id="demoData"></textarea>
+                        <button class="btn btn-primary mt-1 mb-1" id="viewAddDemo" data-op="add">[[#{easyflow.form.admin.page.formTemplateDetail.addPreview}]]</button>
+                        <button class="btn btn-primary mt-1 mb-1" id="viewModifyDemo" data-op="modify">[[#{easyflow.form.admin.page.formTemplateDetail.editPreview}]]</button>
+                        <button class="btn btn-primary mt-1 mb-1" id="viewDetailDemo" data-op="detail">[[#{easyflow.form.admin.page.formTemplateDetail.viewPreview}]]</button>
+                    </div>
+                </div>
+                <div>
+                    <div id="page"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+    activeMenu = "FORM_TEMPLATE";
+    var root = "[(@{/easyflow/formTemplate})]";
+    var config = {
+        "type": "pageConfig",
+        "component": {
+            "type": "tabsConfig",
+            "component": {
+                "type": "list",
+                "addText": "[(#{easyflow.form.admin.page.formTemplateDetail.addTab})]",
+                "component": {
+                    "type": "tabConfig",
+                    "component": {
+                        "type": "list",
+                        "addText": "[(#{easyflow.form.admin.page.formTemplateDetail.addPanel})]",
+                        "component": {
+                            "type": "panelConfig",
+                            "component": {
+                                "type": "list",
+                                "addText": "[(#{easyflow.form.admin.page.formTemplateDetail.addCard})]",
+                                "component": {
+                                    "type": "cardConfig",
+                                    "component": {
+                                        "type": "list",
+                                        "addText": "[(#{easyflow.form.admin.page.formTemplateDetail.addItem})]",
+                                        "insertRemovePosition": "Right",
+                                        "component": {
+                                            "type": "elementConfig"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    var data =/*[(${detail.config})]*/ {};
+    var pageConfig = new J.PageConfig({config: config, allConfig: config, data: data, allData: data});
+    pageConfig.render($("#pageConfig"));
+    $("#content input").attr('readonly', true);
+    $("#ccontent textarea").attr('readonly', true);
+    $('#content select').attr('disabled', true);
+
+    $(".j-btn-ok").click(function () {
+        var data = pageConfig.collect({});
+        $("textarea[name='config']").val(JSON.stringify(data, null, 2));
+        $("form").submit();
+    });
+
+    $(".j-btn-view").click(function () {
+        var data = pageConfig.collect({});
+        $("#jsonData").val(JSON.stringify(data, null, 2));
+        $('#modal').modal();
+    });
+
+    $(".save-config").click(function () {
+        var data = $("#jsonData").val();
+        $("textarea[name='config']").val(data);
+        $("form").submit();
+    });
+
+    $(".j-btn-cancel").click(function () {
+        window.location.href = root + "/formTemplateList";
+    });
+    $("#viewAddDemo,#viewModifyDemo,#viewDetailDemo").click(function () {
+        var op = $(this).data("op");
+        var dataStr = $("#demoData").val();
+        var data = dataStr ? JSON.parse(dataStr) : {};
+        var templateConfig = pageConfig.collect({});
+        $("#page").empty();
+        var page = new J.Page({data: data, ctx: {"op": op}, init: false, templates: null, $container: $("#page")});
+        page.loadAndRender(templateConfig);
+    });
+</script>
+</body>
+</html>

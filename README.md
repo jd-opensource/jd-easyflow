@@ -66,12 +66,22 @@ The executing log are as follows:
 [main            ] INFO  BaseFlowRunner          - NEXT NODES:
 [main            ] INFO  QuickStartTest          - Execute finish, current node is:node003           
 ```
+Above is simple usecase, JDEasyFlow support many configurations and use cases. More can be seen in wiki doc.
+
 #### FlowEngine-BPMN
 Open flow designer with path easyflow-flow-bpmn/BPMNDesigner.html. Click import button, import easyflow-flow-bpmn/src/test/resources/flow/quickstart/quickstart_001.bpmn file. You can see bpmn flow definition of equal JSON format.
 You only need set flowPaser of FlowEngineImpl to BpmnFlowParser when use.
 
+#### Process
+Process module provide persistence and task audit ability based on flow engine, needing relation database support. Sample application in the source code can be started as follows:
+1. Checkout source code.
+1. Install relation database system, for example MYSQL(You should obey their license). 
+1. Create database and table. Database name is easyflow, Table schema can be referred by create_all_table.sql and sample_form_template.sql. 
+1. Config database connection info in application-open-all.yml of sample module, Import database driver jar in pom.xml of sample module.
+1. Build the project. Start IntegrationOpenApplication. Access http://localhost:9888.
+
+
 ### More
-Above is simple usecase, JDEasyFlow support many configurations and use cases. More can be seen in wiki doc.
 
 JDEasyFlow has very flexible extension ability. You can implement more features based on current component. For example flow data persistence, auditting, exception retry. 
 

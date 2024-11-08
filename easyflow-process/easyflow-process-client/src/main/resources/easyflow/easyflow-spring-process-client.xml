@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="easyflow-process-processFlowListener" class="com.jd.easyflow.process.client.flow.StdProcessFlowListener">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>
+    <bean id="easyflow-process-processFlowEngineFilter" class="com.jd.easyflow.process.client.flow.StdProcessFlowEngineFilter">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>
+    <bean id="easyflow-process-processFlowFilter" class="com.jd.easyflow.process.client.flow.StdProcessFlowFilter">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>
+    <bean id="easyflow-process-processFlowNodeFilter" class="com.jd.easyflow.process.client.flow.StdProcessFlowNodeFilter">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>            
+    <bean id="easyflow-process-processFsmListener" class="com.jd.easyflow.process.client.fsm.StdProcessFsmListener">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>
+    <bean id="easyflow-process-processFsmManagerFilter" class="com.jd.easyflow.process.client.fsm.StdProcessFsmManagerFilter">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>
+    <bean id="easyflow-process-processFsmFilter" class="com.jd.easyflow.process.client.fsm.StdProcessFsmFilter">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>
+    <bean id="easyflow-process-processFsmTransitionFilter" class="com.jd.easyflow.process.client.fsm.StdProcessFsmTransitionFilter">
+        <property name="processRuntimeService" ref="easyflow-process-processRuntimeService"></property>
+    </bean>        
+    <bean id="easyflow-process-processRuntimeService" class="com.jd.easyflow.process.client.runtime.ProcessRuntimeService">
+        <property name="manager" ref="easyflow-process-processRuntimeManager"></property>
+    </bean>
+    <bean id="easyflow-process-processRuntimeManager" class="com.jd.easyflow.process.client.runtime.ProcessRuntimeManager">
+    </bean>
+    
+    <bean id="easyflow-process-processScheduleClientService" class="com.jd.easyflow.process.client.schedule.ProcessScheduleClientServiceImpl">
+        <property name="processEngine">
+            <bean class="com.jd.easyflow.process.client.runtime.core.ProcessEngineImpl">
+                <property name="flowEngine" ref="easyflow-flowEngine"></property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="easyflow-eventFlowListener" class="com.jd.easyflow.flow.engine.event.impl.EventFlowListener"/>
+    <bean id="easyflow-eventNodeAction" class="com.jd.easyflow.flow.model.action.EventNodeAction"/>
+    <bean id="easyflow-eventPostHandler" class="com.jd.easyflow.flow.model.post.EventPostHandler"/>
+    
+    <bean id="easyflow-process-taskFlowListener" class="com.jd.easyflow.process.client.task.flow.TaskFlowListener">
+    </bean>    
+    
+    <bean id="easyflow-task-taskClientManager" class="com.jd.easyflow.process.client.task.service.TaskClientManager">
+        <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>   
+    </bean>
+    
+    <bean id="easyflow-task-taskClientService" class="com.jd.easyflow.process.client.task.service.TaskClientService">
+        <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
+        <property name="taskClientManager" ref="easyflow-task-taskClientManager"></property>
+        <property name="defaultExecMode" value="client"></property>
+    </bean>
+    
+    <bean id="easyflow-task-taskCreateNodeAction" class="com.jd.easyflow.process.client.task.flow.TaskCreateNodeAction">
+        <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
+        <property name="taskClientService" ref="easyflow-task-taskClientService"></property>
+    </bean>
+    <bean id="easyflow-task-taskExecuteNodeAction" class="com.jd.easyflow.process.client.task.flow.TaskExecuteNodeAction">
+        <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
+        <property name="taskClientService" ref="easyflow-task-taskClientService"></property>
+    </bean>
+    <bean id="easyflow-task-taskCreateAndExecuteNodeAction" class="com.jd.easyflow.process.client.task.flow.TaskCreateAndExecuteNodeAction">
+        <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
+         <property name="taskClientService" ref="easyflow-task-taskClientService"></property>
+    </bean>
+    
+    <bean id="easyflow-task-taskEl" class="com.jd.easyflow.process.client.task.util.TaskEl"></bean>
+    <bean id="easyflow-process-stdFlowEl" class="com.jd.easyflow.process.client.flow.util.StdFlowEl"></bean>
+    <bean id="easyflow-process-elUtil" class="com.jd.easyflow.process.client.util.ElUtil"></bean>
+    
+    <bean id="easyflow-taskbizservice-call" class="com.jd.easyflow.process.client.task.biz.impl.CallTaskBizService"/>
+</beans>

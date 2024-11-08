@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.processDefinitionList.processDefinition},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processDefinitionList.processDefinition}]]</li>
+</ol>
+<div id="content">
+    <div id="tabs">
+        <div id="tableContainer">
+            <!-- Search -->
+            <form id="search" class="card j-form-horizontal">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processDefinitionList.defId}]]:</label><input name="defId" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processDefinitionList.bizType}]]:</label><input type="text" name="bizType" class="form-control"/>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processDefinitionList.category}]]:</label><input name="category" class="form-control"/>
+                        </div>                        
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processDefinitionList.format}]]:</label><select name="format" class="form-control">
+                            <option value="">[[#{easyflow.process.admin.page.processDefinitionList.formatAll}]]</option>
+                            <option value="FLOW-easy">[[#{easyflow.process.admin.page.processDefinitionList.formatFlowEasy}]]</option>
+                            <option value="FLOW-bpmn">[[#{easyflow.process.admin.page.processDefinitionList.formatFlowBpmn}]]</option>
+                            <option value="FSM-easy">[[#{easyflow.process.admin.page.processDefinitionList.formatFsmEasy}]]</option>
+                        </select>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processDefinitionList.latest}]]:</label><select name="latest" class="form-control">
+                            <option value="">[[#{easyflow.process.admin.page.processDefinitionList.latestAll}]]</option>
+                            <option value=1>[[#{easyflow.process.admin.page.processDefinitionList.latestOnly}]]</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col text-center">
+                            <button id="query" class="btn btn-primary">[[#{easyflow.process.admin.page.processDefinitionList.query}]]</button>
+                            <button id="reset" class="btn btn-secondary">[[#{easyflow.process.admin.page.processDefinitionList.reset}]]</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Toolbar -->
+            <div id="toolbar">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-secondary" id="addBtn">[[#{easyflow.process.admin.page.processDefinitionList.add}]]</button>
+                </div>
+            </div>
+            <!-- Table -->
+            <table id="datatable"></table>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+    $("#tabs").jTabs().jTabs("open", {id: "tab-table", name: "[(#{easyflow.process.admin.page.processDefinitionList.processDefinitionList})]", element: $("#tableContainer"), closeable: false});
+    var queryParam = {};
+
+    function reset() {
+        $("#search .form-control").val("");
+        queryParam = $("#search").serializeObject();
+    };
+    reset();
+    $("#query").click(function () {
+        queryParam = $("#search").serializeObject();
+        $('#datatable').bootstrapTable("refresh");
+        return false;
+    });
+    $("#reset").click(function () {
+        reset();
+        return false;
+    });
+    var root = "[(@{/easyflow/processDefinition})]";
+    $('#datatable').bootstrapTable({
+        url: root + "/ajax/getListData",
+        toolbar: "#toolbar",
+        sortName: "createdDate",
+        sortOrder: "desc",
+        columns: [
+            {radio: true},
+            {
+                field: 'defId', title: '[(#{easyflow.process.admin.page.processDefinitionList.defId})]', formatter: function (data, item) {
+                    return "<a class='j-op detailBtn' data-def_id='" + item.defId + "' data-def_version='" + item.defVersion + "'>" + data + "</a>";
+                }
+            },
+            {field: 'defName', title: '[(#{easyflow.process.admin.page.processDefinitionList.defName})]'},
+            {field: 'defVersion', title: '[(#{easyflow.process.admin.page.processDefinitionList.defVersion})]'},
+            {field: 'format', title: '[(#{easyflow.process.admin.page.processDefinitionList.defFormat})]', formatter:function(data){
+                    return {"FLOW-bpmn":"[(#{easyflow.process.admin.page.processDefinitionList.formatFlowBpmn})]","FLOW-easy":"[(#{easyflow.process.admin.page.processDefinitionList.formatFlowEasy})]","FSM-easy":"[(#{easyflow.process.admin.page.processDefinitionList.formatFsmEasy})]"}[data];
+                }},
+            {field: 'bizType', title: '[(#{easyflow.process.admin.page.processDefinitionList.bizType})]'},
+            {field: 'category', title: '[(#{easyflow.process.admin.page.processDefinitionList.category})]'},
+            {field: 'latest', title: '[(#{easyflow.process.admin.page.processDefinitionList.latest})]', formatter:function(data){
+                    return {"true":"[(#{easyflow.process.admin.page.processDefinitionList.latestYes})]","false":"[(#{easyflow.process.admin.page.processDefinitionList.latestNo})]"}[data];
+                }},
+            {field: 'createdDate', title: '[(#{easyflow.process.admin.page.processDefinitionList.createdDate})]',sortable: true},
+            {field: 'modifiedDate', title: '[(#{easyflow.process.admin.page.processDefinitionList.modifiedDate})]',sortable: true},
+            {
+                field: 'op', title: '[(#{easyflow.process.admin.page.processDefinitionList.op})]', formatter: function (data, item) {
+                    var content = ''
+                            + "<button type='button' class='btn btn-link j-op editBtn' data-def_id='" + item.defId + "' data-def_version='" + item.defVersion + "'>[(#{easyflow.process.admin.page.processDefinitionList.edit})]</button>"
+                    return content;
+                }
+            }
+        ],
+        queryParams: function (param) {
+            $.extend(param, queryParam);
+            return param;
+        }
+    });
+
+    $("#datatable").on("click", ".detailBtn", function () {
+        window.location.href = root + "/detail?defId=" + $(this).data("def_id") +"&defVersion=" +($(this).data("def_version") == null ? "" : $(this).data("def_version"));
+        return false;
+    });
+    $("#addBtn").on("click", function () {
+        window.location.href = root + "/add";
+    });
+
+    $("#datatable").on("click", ".editBtn", function () {
+        window.location.href = root + "/edit?defId=" + $(this).data("def_id") +"&defVersion=" +($(this).data("def_version") == null ? "" : $(this).data("def_version"));
+    });
+
+</script>
+</body>
+</html>

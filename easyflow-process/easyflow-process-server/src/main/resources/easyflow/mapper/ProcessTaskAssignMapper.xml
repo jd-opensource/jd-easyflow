@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.process.infrastructure.persistence.mapper.ProcessTaskAssignMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="assign_no" jdbcType="VARCHAR" property="assignNo" />
+    <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+    <result column="assign_type" jdbcType="VARCHAR" property="assignType" />
+    <result column="assign_group" jdbcType="VARCHAR" property="assignGroup" />
+    <result column="assign_group2" jdbcType="VARCHAR" property="assignGroup2" />
+    <result column="assign_user" jdbcType="VARCHAR" property="assignUser" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="assign_time" jdbcType="TIMESTAMP" property="assignTime" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="ext_data" jdbcType="OTHER" property="extData" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, assign_no, task_no, assign_type, assign_group,assign_group2, assign_user, status, assign_time, 
+    product_code, ext_data, created_date, modified_date, deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_task_assign
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update process_task_assign set deleted=1
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign" useGeneratedKeys="true">
+    insert into process_task_assign (assign_no, task_no, assign_type, 
+      assign_group, assign_group2, assign_user, status, 
+      assign_time,
+      product_code, ext_data)
+    values (#{assignNo,jdbcType=VARCHAR}, #{taskNo,jdbcType=VARCHAR}, #{assignType,jdbcType=VARCHAR}, 
+      #{assignGroup,jdbcType=VARCHAR},#{assignGroup2,jdbcType=VARCHAR}, #{assignUser,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{assignTime,jdbcType=TIMESTAMP}, 
+      #{productCode,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER})
+  </insert>
+  <insert id="insertWithCreatedDate" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign" useGeneratedKeys="true">
+    insert into process_task_assign (assign_no, task_no, assign_type, 
+      assign_group, assign_group2, assign_user, status, 
+      assign_time,
+      product_code, ext_data, created_date)
+    values (#{assignNo,jdbcType=VARCHAR}, #{taskNo,jdbcType=VARCHAR}, #{assignType,jdbcType=VARCHAR}, 
+      #{assignGroup,jdbcType=VARCHAR},#{assignGroup2,jdbcType=VARCHAR}, #{assignUser,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{assignTime,jdbcType=TIMESTAMP}, 
+      #{productCode,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}, #{createdDate,jdbcType=TIMESTAMP})
+  </insert>  
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign" useGeneratedKeys="true">
+    insert into process_task_assign
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="assignNo != null">
+        assign_no,
+      </if>
+      <if test="taskNo != null">
+        task_no,
+      </if>
+      <if test="assignType != null">
+        assign_type,
+      </if>
+      <if test="assignGroup != null">
+        assign_group,
+      </if>
+      <if test="assignGroup2 != null">
+        assign_group2,
+      </if>      
+      <if test="assignUser != null">
+        assign_user,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="assignTime != null">
+        assign_time,
+      </if>
+      <if test="productCode != null">
+        product_code,
+      </if>
+      <if test="extData != null">
+        ext_data,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="assignNo != null">
+        #{assignNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskNo != null">
+        #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="assignType != null">
+        #{assignType,jdbcType=VARCHAR},
+      </if>
+      <if test="assignGroup != null">
+        #{assignGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="assignGroup2 != null">
+        #{assignGroup2,jdbcType=VARCHAR},
+      </if>      
+      <if test="assignUser != null">
+        #{assignUser,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="assignTime != null">
+        #{assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productCode != null">
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="extData != null">
+        #{extData,jdbcType=OTHER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign">
+    update process_task_assign
+    <set>
+      <if test="assignNo != null">
+        assign_no = #{assignNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskNo != null">
+        task_no = #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="assignType != null">
+        assign_type = #{assignType,jdbcType=VARCHAR},
+      </if>
+      <if test="assignGroup != null">
+        assign_group = #{assignGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="assignGroup2 != null">
+        assign_group2 = #{assignGroup2,jdbcType=VARCHAR},
+      </if>      
+      <if test="assignUser != null">
+        assign_user = #{assignUser,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="assignTime != null">
+        assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=OTHER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign">
+    update process_task_assign
+    set assign_no = #{assignNo,jdbcType=VARCHAR},
+      task_no = #{taskNo,jdbcType=VARCHAR},
+      assign_type = #{assignType,jdbcType=VARCHAR},
+      assign_group = #{assignGroup,jdbcType=VARCHAR},
+      assign_group2 = #{assignGroup2,jdbcType=VARCHAR},
+      assign_user = #{assignUser,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByTaskAssignNo" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign">
+    update process_task_assign
+    set 
+      task_no = #{taskNo,jdbcType=VARCHAR},
+      assign_type = #{assignType,jdbcType=VARCHAR},
+      assign_group = #{assignGroup,jdbcType=VARCHAR},
+      assign_group2 = #{assignGroup2,jdbcType=VARCHAR},
+      assign_user = #{assignUser,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER}
+    where assign_no = #{assignNo,jdbcType=VARCHAR} and deleted=0
+  </update>
+    
+    <select id="list" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_task_assign
+    <where> deleted=0
+      <if test="id != null">
+         and id = #{id}
+      </if>
+      <if test="assignNo != null">
+        and assign_no = #{assignNo}
+      </if>
+      <if test="taskNo != null">
+        and task_no = #{taskNo}
+      </if>      
+      <if test="assignType != null">
+        and assign_type = #{assignType}
+      </if>
+      <if test="assignGroup != null">
+        and assign_group = #{assignGroup}
+      </if>   
+      <if test="assignGroup2 != null">
+        and assign_group2 = #{assignGroup2}
+      </if>            
+      <if test="assignUser != null">
+        and assign_user = #{assignUser}
+      </if>  
+      <if test="status != null">
+        and status = #{status}
+      </if>    
+      <if test="assignTimeStart != null">
+        and assign_time &gt;= #{assignTimeStart}
+      </if>  
+      <if test="assignTimeEnd != null">
+        and assign_time &lt;= #{assignTimeEnd}
+      </if>  
+      <if test="createdDateStart != null">
+        and created_date &gt;= #{createdDateStart}
+      </if>  
+      <if test="createdDateEnd != null">
+        and created_date &lt;= #{createdDateEnd}
+      </if> 
+      <if test="modifiedDateStart != null">
+        and modifiedDate &gt;= #{modifiedDateStart}
+      </if>  
+      <if test="modifiedDateEnd != null">
+        and modifiedDate &lt;= #{modifiedDateEnd}
+      </if>   
+    </where>
+  </select>
+	<select id="listByTaskNoList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from process_task_assign
+		<where>
+			deleted=0 and task_no in
+			<foreach collection="taskNoList" item="item"
+				index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</select>    
+</mapper>

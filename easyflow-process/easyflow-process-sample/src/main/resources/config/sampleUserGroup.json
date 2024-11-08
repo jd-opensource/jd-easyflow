@@ -1,0 +1,6 @@
+{
+"userList":[
+{"user":"zhangsan", "groupList":["groupA", "groupB"], "group2List":["group2A"], "erp":"zhangsan1"},
+{"user":"lisi", "groupList":["groupA", "groupC"], "group2List":["group2C"], "erp":"lisi1"}
+]
+}

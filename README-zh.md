@@ -62,14 +62,23 @@ Spring环境可直接定义FlowEngineImpl bean.
 [main            ] INFO  BaseFlowRunner          - NEXT NODES:
 [main            ] INFO  QuickStartTest          - Execute finish, current node is:node003           
 ```
+以上只是简单使用示例，EasyFlow可支持很多的配置项和使用场景，更多使用见wiki文档.
+
 #### 流程引擎-BPMN
 打开easyflow-flow-bpmn/BPMNDesigner.html流程设计器. 点击导入按钮，导入easyflow-flow-bpmn/src/test/resources/flow/quickstart/quickstart_001.bpmn文件，可在设计器中看到和以上JSON定义等价的BPMN流程定义.
 使用时只需要将FlowEngineImpl的flowParser设置为BpmnFlowParser.
 
-### 更多
-以上只是简单使用示例，EasyFlow可支持很多的配置项和使用场景，更多使用见wiki文档.
+#### 工作流
+工作流模块提供了基于流程引擎的持久化和任务审批能力, 需要关系型数据库支持. 源码中的示例工程启动步骤如下:
+1. 检出本工程库代码至本地.
+1. 安装关系型数据库, 如MYSQL(使用时需遵守其许可). 
+1. 建库表, 数据库名为easyflow, 表结构可参考源码中的create_all_table.sql和sample_form_template.sql. 
+1. sample模块的application-open-all.yml文件中配置数据库连接信息, pom中引入数据库驱动jar包.
+1. 编译构建代码工程, 启动IntegrationOpenApplication类. 启动成功后访问http://localhost:9888便可看到JDEasyFlow管理界面.
 
-JDEasyFlow具有非常灵活的扩展性，你可以基于目前已开源组件做更多的功能，如流程持久化、任务审批等. 
+
+### 更多
+JDEasyFlow具有非常灵活的扩展性，你可以基于目前已开源组件扩展做更多的功能.
 
 ### 联系我们
 email: liyuliang5@jd.com

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.commonProcessTaskExecute.taskHandle},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.commonProcessTaskExecute.taskHandle}]]</li>
+</ol>
+<div id="content">
+<!-- Process Info -->
+    <div id="instance" class="card">
+        <h5 class="card-header">[[#{easyflow.process.admin.page.commonProcessTaskExecute.processInfo}]]</h5>
+			<div class="card-body">
+                <div class="row">
+                    <div class="form-group col">
+                        <label>[[#{easyflow.process.admin.page.commonProcessTaskExecute.processLink}]]:</label><a
+                            th:href="@{/easyflow/processInstance/detail(instanceNo=${instance.instanceNo})}"
+                            th:text="${instance.instanceName}" class="form-control-plaintext"
+                            style="color: rgb(0, 123, 255)" onclick="javascript:J.openWindow(this.href, '_blank','','');return false;"></a>
+                    </div>
+                    <div class="form-group col">
+                        <label>[[#{easyflow.process.admin.page.commonProcessTaskExecute.processKeyField}]]:</label><input class="form-control" th:value="${instance.keyField}" readonly="readonly"></input>
+                    </div>
+            </div>
+            <div id="instanceForm"></div>
+			</div>
+		</div>
+<!-- Task Info -->
+    <div id="task" class="card">
+        <h5 class="card-header">[[#{easyflow.process.admin.page.commonProcessTaskExecute.taskHandle}]]</h5>
+        <div class="card-body">
+            <th th:if="${createTask}">
+                <button id="createTask">[[#{easyflow.process.admin.page.commonProcessTaskExecute.addHandleUser}]]</button>
+            </th>
+            <div id="taskForm"></div>               
+        </div>
+    </div>
+<!-- Task history -->
+    <div id="taskHistory" class="card">
+	    <h5 class="card-header">[]</h5>
+	    <div class="card-body">
+	       <table id="taskHistoryTable"></table>
+	    </div>
+    
+    </div>
+    <div id="createTaskDialog" class="d-none">
+        <div class="row">
+            <div class="form-group col">
+                <label>[[#{easyflow.process.admin.page.commonProcessTaskExecute.taskHandleUser}]]:</label>
+                <input class="assignUser"></input>
+            </div>
+        </div>
+    <div class="row mt-2">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary submit">[[#{easyflow.process.admin.page.commonProcessTaskExecute.confirm}]]</button>
+        </div>
+    </div>      
+    </div>    
+</div>
+	<script type="text/javascript" id="script" th:inline="javascript">
+var pageData = /*[(${pageData})]*/ "pageData";
+var instanceDataModify = /*[(${instanceDataModify})]*/ "instanceDataModify";
+var instanceDataModifyOp = instanceDataModify==true?"modify":"detail";
+
+var instanceTemplateId = /*[[${instanceFormId}]]*/ "formId";
+if (instanceTemplateId) {
+    instanceData = pageData.instanceBizData ? pageData.instanceBizData : {};
+    instancePage = new J.Page({data:instanceData, ctx:{"op":instanceDataModifyOp}, init:false, templates:[{"code":instanceTemplateId}], $container:$("#instanceForm"), saveAction:null, helper:{show:false}});
+    instancePage.loadAndRender();
+}
+
+var taskTemplateId = /*[[${taskFormId}]]*/ "formId";
+var taskData = pageData.executeBizData ? pageData.executeBizData : {};
+var op = pageData.executeBizData ? "modify" : "add";
+var taskPage = new J.Page({data:taskData, ctx:{"op":op}, init:false, templates:[{"code":taskTemplateId}], $container:$("#taskForm"), saveAction:null, helper:{show:false}});
+ taskPage.loadAndRender();
+ 
+ var root = "[(@{/easyflow/processTask})]";
+ $('#taskHistoryTable').bootstrapTable({
+     showRefresh: false,
+     showColumns: false,
+     url: root + "/ajax/getTaskHistoryListData?taskNo=" + pageData.taskNo,
+     sortName: "createdDate",
+     sortOrder: "asc",
+     columns: [
+         {field: 'taskNo', title: '[(#{easyflow.process.admin.page.commonProcessTaskExecute.taskNo})]'},
+         {field: 'taskBizName', title: '[(#{easyflow.process.admin.page.commonProcessTaskExecute.taskName})]'},
+         {field: 'createdDate', title: '[(#{easyflow.process.admin.page.commonProcessTaskExecute.createdTime})]'},
+         {field: 'executeBizResult', title: '[(#{easyflow.process.admin.page.commonProcessTaskExecute.handleResult})]'},
+         {field: 'executor', title: '[(#{easyflow.process.admin.page.commonProcessTaskExecute.handleUser})]'},
+         {field: 'executeTime', title: '[(#{easyflow.process.admin.page.commonProcessTaskExecute.handleTime})]'},
+     ]
+ });
+ 
+ $("#createTask").click(function(){
+	 $.jDialog({"title":"[(#{easyflow.process.admin.page.commonProcessTaskExecute.addHandleUser})]", "element":$("#createTaskDialog"),  "action":function($dialog){
+		 $dialog.find(".submit").click(function(){
+			 var assignUser = $dialog.find(".assignUser").val();
+			 var assignInfo = {};
+			 assignInfo['user'] = assignUser.split(",");
+			 pageData.assignInfo = assignInfo;
+			 $dialog.modal("hide");
+		 })
+	 }});
+ });
+</script>
+</body>
+</html>

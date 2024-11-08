@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:encrypt="http://shardingsphere.apache.org/schema/shardingsphere/encrypt"
+	   xmlns:bean="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://shardingsphere.apache.org/schema/shardingsphere/encrypt
+                        http://shardingsphere.apache.org/schema/shardingsphere/encrypt/encrypt.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+		<property name="jdbcUrl" value="${db.jdbcUrl}"/>
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
+		<property name="mapperLocations">
+		  <array>
+		      <value>classpath*:easyflow/mapper/*Mapper.xml</value>
+		      <value>classpath:easyflow/pumapper/*Mapper.xml</value>
+		  </array>
+		 </property>
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="com.jd.easyflow.process.infrastructure.persistence.mapper,
+		com.jd.easyflow.codegenerator.infrastructure.persistence.mapper,
+		com.jd.easyflow.form.infrastructure.persistence.mapper,
+		com.jd.easyflow.processunit.infrastructure.persistence.mapper"
+		/>
+	</bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+       <property name="transactionManager" ref="transactionManager"></property>
+       <property name="propagationBehavior" value="0"></property>
+    </bean>
+
+    <bean id="newTransactionTemplate"
+        class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager"
+            ref="transactionManager"></property>
+        <property name="propagationBehavior" value="3"></property>
+    </bean>
+    
+</beans>

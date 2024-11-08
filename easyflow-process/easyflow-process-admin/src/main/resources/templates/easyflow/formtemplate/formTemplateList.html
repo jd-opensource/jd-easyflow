@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.form.admin.page.formTemplateList.formTemplate},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.form.admin.page.formTemplateList.formTemplate}]]</li>
+</ol>
+<div id="content">
+    <div id="tabs">
+        <div id="tableContainer">
+            <!-- Search -->
+            <form id="search" class="card j-form-horizontal">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.form.admin.page.formTemplateList.templateCode}]]:</label><input type="text" class="form-control" name="templateCode"/>
+                        </div>                         
+                    </div>
+                    <div class="form-row">
+                        <div class="col text-center">
+                            <button id="query" class="btn btn-primary">[[#{easyflow.form.admin.page.formTemplateList.query}]]</button>
+                            <button id="reset" class="btn btn-secondary">[[#{easyflow.form.admin.page.formTemplateList.reset}]]</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Toolbar -->
+            <div id="toolbar">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-secondary" id="addBtn">[[#{easyflow.form.admin.page.formTemplateList.add}]]</button>
+                </div>
+            </div>
+            <!-- Table -->
+            <table id="datatable"></table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+    $("#tabs").jTabs().jTabs("open", {id: "tab-table", name: "[(#{easyflow.form.admin.page.formTemplateList.formTemplateList})]", element: $("#tableContainer"), closeable: false});
+
+    var queryParam = {};
+
+    function reset() {
+        $("#search .form-control").val("");
+        queryParam = $("#search").serializeObject();
+    };
+    reset();
+    $("#query").click(function () {
+        queryParam = $("#search").serializeObject();
+        $('#datatable').bootstrapTable("refresh");
+        return false;
+    });
+    $("#reset").click(function () {
+        reset();
+        return false;
+    });
+    var root = "[(@{/easyflow/formTemplate})]";
+    $('#datatable').bootstrapTable({
+        url: root + "/ajax/getListData",
+        toolbar: "#toolbar",
+        sortName: "createdDate",
+        sortOrder: "desc",
+        columns: [
+            {radio: true},
+            {
+                field: 'templateCode', title: '[(#{easyflow.form.admin.page.formTemplateList.templateCode})]', formatter: function (data, item) {
+                    return "<button type='button' class='btn btn-link j-op detailBtn' data-record-id='" + item.templateCode + "'>" + data + "</button>";
+                }
+            },
+            {field: 'templateName', title: '[(#{easyflow.form.admin.page.formTemplateList.templateName})]'},
+            {field: 'state', title: '[(#{easyflow.form.admin.page.formTemplateList.state})]', formatter:function(data){
+                return {"VALID":"[(#{easyflow.form.admin.page.formTemplateList.valid})]","INVALID":"[(#{easyflow.form.admin.page.formTemplateList.invalid})]"}[data];
+            }},
+            {field: 'createdDate', title: '[(#{easyflow.form.admin.page.formTemplateList.createdDate})]', sortable: true},
+            {field: 'modifiedDate', title: '[(#{easyflow.form.admin.page.formTemplateList.modifiedDate})]', sortable: true},
+            {
+                field: 'op', title: '[(#{easyflow.form.admin.page.formTemplateList.op})]', formatter: function (data, item) {
+                    var content = ''
+                        + "<button type='button' class='btn btn-link j-op editBtn' data-record-id='" + item.templateCode + "'>[(#{easyflow.form.admin.page.formTemplateList.edit})]</button>"
+                    return content;
+                }
+            }
+        ],
+        queryParams: function (param) {
+            $.extend(param, queryParam);
+            return param;
+        }
+    });
+
+    $("#datatable").on("click", ".detailBtn", function () {
+        var templateCode = $(this).text();
+        window.location.href = root + "/formTemplateDetail?templateCode=" + $(this).data("record-id");
+        return false;
+    });
+    $("#addBtn").on("click", function () {
+    	 window.location.href = root + "/formTemplateAdd";
+    });
+
+    $("#datatable").on("click", ".editBtn", function () {
+    	window.location.href = root + "/formTemplateEdit?templateCode=" + $(this).data("record-id");
+    });
+
+</script>
+</body>
+</html>

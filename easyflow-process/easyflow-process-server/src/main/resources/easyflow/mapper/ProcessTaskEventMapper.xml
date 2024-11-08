@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.process.infrastructure.persistence.mapper.ProcessTaskEventMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="event_no" jdbcType="VARCHAR" property="eventNo" />
+    <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+    <result column="event_type" jdbcType="VARCHAR" property="eventType" />
+    <result column="event_user" jdbcType="VARCHAR" property="eventUser" />
+    <result column="event_time" jdbcType="TIMESTAMP" property="eventTime" />
+    <result column="event_biz_result" jdbcType="VARCHAR" property="eventBizResult" />
+    <result column="event_biz_data" jdbcType="OTHER" property="eventBizData" />
+    <result column="instance_biz_status" jdbcType="VARCHAR" property="instanceBizStatus" />
+    <result column="instance_biz_data" jdbcType="OTHER" property="instanceBizData" />    
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="ext_data" jdbcType="OTHER" property="extData" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, event_no, task_no, event_type, event_user, event_time, event_biz_result, event_biz_data, instance_biz_status, instance_biz_data, 
+    product_code, ext_data, created_date, modified_date, deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_task_event
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update process_task_event set deleted=1
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent" useGeneratedKeys="true">
+    insert into process_task_event (event_no, task_no, event_type, 
+      event_user, event_time, event_biz_result, 
+      event_biz_data, instance_biz_status,instance_biz_data, product_code, ext_data
+      )
+    values (#{eventNo,jdbcType=VARCHAR}, #{taskNo,jdbcType=VARCHAR}, #{eventType,jdbcType=VARCHAR}, 
+      #{eventUser,jdbcType=VARCHAR}, #{eventTime,jdbcType=TIMESTAMP}, #{eventBizResult,jdbcType=VARCHAR}, 
+      #{eventBizData,jdbcType=OTHER},#{instanceBizStatus,jdbcType=VARCHAR},#{instanceBizData,jdbcType=OTHER},  #{productCode,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}
+      )
+  </insert>
+  <insert id="insertWithCreatedDate" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent" useGeneratedKeys="true">
+    insert into process_task_event (event_no, task_no, event_type, 
+      event_user, event_time, event_biz_result, 
+      event_biz_data, instance_biz_status,instance_biz_data, product_code, ext_data, created_date
+      )
+    values (#{eventNo,jdbcType=VARCHAR}, #{taskNo,jdbcType=VARCHAR}, #{eventType,jdbcType=VARCHAR}, 
+      #{eventUser,jdbcType=VARCHAR}, #{eventTime,jdbcType=TIMESTAMP}, #{eventBizResult,jdbcType=VARCHAR}, 
+      #{eventBizData,jdbcType=OTHER},#{instanceBizStatus,jdbcType=VARCHAR},#{instanceBizData,jdbcType=OTHER},  #{productCode,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}, #{createdDate,jdbcType=TIMESTAMP}
+      )
+  </insert>  
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent" useGeneratedKeys="true">
+    insert into process_task_event
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eventNo != null">
+        event_no,
+      </if>
+      <if test="taskNo != null">
+        task_no,
+      </if>
+      <if test="eventType != null">
+        event_type,
+      </if>
+      <if test="eventUser != null">
+        event_user,
+      </if>
+      <if test="eventTime != null">
+        event_time,
+      </if>
+      <if test="eventBizResult != null">
+        event_biz_result,
+      </if>
+      <if test="eventBizData != null">
+        event_biz_data,
+      </if>
+      <if test="instanceBizStatus != null">
+        instance_biz_status,
+      </if>
+      <if test="instanceBizData != null">
+        instance_biz_data,
+      </if>      
+      <if test="productCode != null">
+        product_code,
+      </if>
+      <if test="extData != null">
+        ext_data,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eventNo != null">
+        #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskNo != null">
+        #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventType != null">
+        #{eventType,jdbcType=VARCHAR},
+      </if>
+      <if test="eventUser != null">
+        #{eventUser,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTime != null">
+        #{eventTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventBizResult != null">
+        #{eventBizResult,jdbcType=VARCHAR},
+      </if>
+      <if test="eventBizData != null">
+        #{eventBizData,jdbcType=OTHER},
+      </if>
+      <if test="instanceBizStatus != null">
+        #{instanceBizStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceBizData != null">
+        #{instanceBizData,jdbcType=OTHER},
+      </if>      
+      <if test="productCode != null">
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="extData != null">
+        #{extData,jdbcType=OTHER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent">
+    update process_task_event
+    <set>
+      <if test="eventNo != null">
+        event_no = #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskNo != null">
+        task_no = #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventType != null">
+        event_type = #{eventType,jdbcType=VARCHAR},
+      </if>
+      <if test="eventUser != null">
+        event_user = #{eventUser,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTime != null">
+        event_time = #{eventTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventBizResult != null">
+        event_biz_result = #{eventBizResult,jdbcType=VARCHAR},
+      </if>
+      <if test="eventBizData != null">
+        event_biz_data = #{eventBizData,jdbcType=OTHER},
+      </if>
+      <if test="instanceBizStatus != null">
+        instance_biz_status = #{instanceBizStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceBizData != null">
+        instance_biz_data = #{instanceBizData,jdbcType=OTHER},
+      </if>      
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=OTHER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent">
+    update process_task_event
+    set event_no = #{eventNo,jdbcType=VARCHAR},
+      task_no = #{taskNo,jdbcType=VARCHAR},
+      event_type = #{eventType,jdbcType=VARCHAR},
+      event_user = #{eventUser,jdbcType=VARCHAR},
+      event_time = #{eventTime,jdbcType=TIMESTAMP},
+      event_biz_result = #{eventBizResult,jdbcType=VARCHAR},
+      event_biz_data = #{eventBizData,jdbcType=OTHER},
+      instance_biz_status = #{instanceBizStatus,jdbcType=VARCHAR},
+      instance_biz_data = #{instanceBizData,jdbcType=OTHER},      
+      product_code = #{productCode,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByTaskEventNo" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent">
+    update process_task_event
+    set 
+      task_no = #{taskNo,jdbcType=VARCHAR},
+      event_type = #{eventType,jdbcType=VARCHAR},
+      event_user = #{eventUser,jdbcType=VARCHAR},
+      event_time = #{eventTime,jdbcType=TIMESTAMP},
+      event_biz_result = #{eventBizResult,jdbcType=VARCHAR},
+      event_biz_data = #{eventBizData,jdbcType=OTHER},
+      instance_biz_status = #{instanceBizStatus,jdbcType=VARCHAR},
+      instance_biz_data = #{instanceBizData,jdbcType=OTHER},      
+      product_code = #{productCode,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER}
+    where event_no = #{eventNo,jdbcType=VARCHAR} and deleted=0
+  </update>  
+  
+  <select id="list" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_task_event
+    <where> deleted=0
+      <if test="id != null">
+         and id = #{id}
+      </if>
+      <if test="eventNo != null">
+        and event_no = #{eventNo}
+      </if>      
+      <if test="taskNo != null">
+        and task_no = #{taskNo}
+      </if> 
+      <if test="eventType != null">
+        and event_type = #{eventType}
+      </if>  
+      <if test="eventUser != null">
+        and event_user = #{eventUser}
+      </if>    
+
+      <if test="productCode != null">
+        and product_code = #{productCode}
+      </if>    
+      <if test="eventTimeStart != null">
+        and event_time &gt;= #{eventTimeStart}
+      </if>  
+      <if test="eventTimeEnd != null">
+        and event_time &lt;= #{eventTimeEnd}
+      </if>  
+      <if test="createdDateStart != null">
+        and created_date &gt;= #{createdDateStart}
+      </if>  
+      <if test="createdDateEnd != null">
+        and created_date &lt;= #{createdDateEnd}
+      </if> 
+      <if test="modifiedDateStart != null">
+        and modifiedDate &gt;= #{modifiedDateStart}
+      </if>  
+      <if test="modifiedDateEnd != null">
+        and modifiedDate &lt;= #{modifiedDateEnd}
+      </if>                                                                                 
+    </where>
+  </select>  
+</mapper>

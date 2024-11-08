@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.process.infrastructure.persistence.mapper.ProcessDefinitionMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.process.infrastructure.persistence.po.ProcessDefinition">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="def_id" jdbcType="VARCHAR" property="defId" />
+    <result column="def_version" jdbcType="INTEGER" property="defVersion" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="format" jdbcType="VARCHAR" property="format" />
+    <result column="biz_type" jdbcType="VARCHAR" property="bizType" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="json_content" jdbcType="LONGVARCHAR" property="jsonContent" />
+    <result column="latest" jdbcType="TINYINT" property="latest" />
+    <result column="def_source" jdbcType="VARCHAR" property="defSource" />
+    <result column="ext_data" jdbcType="OTHER" property="extData" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, def_id, def_version, name, format, biz_type,category, content,json_content, latest, def_source, ext_data,
+    created_date, modified_date,created_by,modified_by, deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_definition
+    where id = #{id,jdbcType=BIGINT} and deleted = 0
+  </select>
+
+  <insert id="insert" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessDefinition">
+    insert into process_definition(def_id, def_version,
+      name, format, biz_type, category, content,
+      json_content, latest, def_source,ext_data,created_by,modified_by)
+    values (#{defId,jdbcType=VARCHAR}, #{defVersion,jdbcType=INTEGER},
+      #{name,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR}, #{bizType,jdbcType=VARCHAR},#{category,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR},
+      #{jsonContent,jdbcType=LONGVARCHAR}, #{latest,jdbcType=TINYINT}, #{defSource,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}, #{createdBy,jdbcType=VARCHAR}, #{modifiedBy,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessDefinition">
+    update process_definition
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+        biz_type = #{bizType,jdbcType=VARCHAR},    
+        category = #{category,jdbcType=VARCHAR},
+      <if test="jsonContent != null">
+        json_content = #{jsonContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=LONGVARCHAR},
+      </if>   
+      <if test="format != null">
+        format = #{format,jdbcType=VARCHAR},
+      </if>  
+      <if test="defSource != null">
+        def_source = #{defSource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+
+  <select id="countProcessDefByPageCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultType="long">
+    select count(def_id)
+    from process_definition
+    <include refid="pagerWhere"/>
+  </select>
+
+  <select id="selectProcessDefByPageCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultMap="BaseResultMap">
+    select
+    id, def_id, def_version, name, format, biz_type,category, latest, def_source,
+    created_date, modified_date,created_by,modified_by
+    from process_definition
+    <include refid="pagerWhere"/>
+    <if test="sortMap.createdDate != null">
+      order by created_date ${sortMap.createdDate.type}
+    </if>
+    <if test="sortMap.modifiedDate != null">
+      order by modified_date ${sortMap.modifiedDate.type}
+    </if>
+    limit #{start},#{pageSize}
+  </select>
+
+  <sql id="pagerWhere">
+    <where> deleted = 0
+      <if test="fieldMap.defId != null">
+        and def_id=#{fieldMap.defId.value}
+      </if>
+      <if test="fieldMap.name != null">
+        and name=#{fieldMap.name.value}
+      </if>
+      <if test="fieldMap.format != null">
+        and format=#{fieldMap.format.value}
+      </if>
+      <if test="fieldMap.bizType != null">
+        and biz_type=#{fieldMap.bizType.value}
+      </if>
+      <if test="fieldMap.category != null">
+        and category=#{fieldMap.category.value}
+      </if>
+      <if test="fieldMap.latest != null">
+        and latest=#{fieldMap.latest.value}
+      </if>
+      <if test="fieldMap.createdBy != null">
+        and created_by=#{fieldMap.createdBy.value}
+      </if>
+      <if test="fieldMap.modifiedBy != null">
+        and modified_by=#{fieldMap.modifiedBy.value}
+      </if>
+    </where>
+  </sql>
+
+  <select id="selectByDefIdAndVersion" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from process_definition
+   where def_id = #{defId}
+    <if test="defVersion == null">
+      and def_version is null
+    </if>
+    <if test="defVersion != null">
+      and def_version = #{defVersion}
+    </if>
+     and deleted=0
+  </select>
+
+  <select id="findLatestDefinition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from process_definition
+    where def_id = #{defId}  and latest = 1  and deleted=0
+  </select>
+
+  <update id="updateProcessDefinitionLatestStatus" parameterType="java.lang.Long">
+    update process_definition
+    set
+    latest = 0
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+
+  <select id="existProcessDefinition" parameterType="java.lang.String" resultType="boolean">
+    select count(1)
+    from process_definition
+    where def_id = #{defId} and deleted=0 limit 1;
+  </select>
+
+</mapper>

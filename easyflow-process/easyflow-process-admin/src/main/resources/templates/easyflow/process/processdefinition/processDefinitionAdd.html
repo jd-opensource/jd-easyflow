@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+    th:replace="layout::html(#{easyflow.process.admin.page.processDefinitionAdd.processDefinition},~{::link},~{}, ~{::.breadcrumb-item},~{::#content},~{::.script},~{::#script})">
+<head>
+    <link rel="stylesheet" th:href="@{/static/plugins/bpmnjs/assets/diagram-js.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/bpmnjs/assets/bpmn-js.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/bpmnjs/assets/bpmn-font/css/bpmn.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/flow/flow.css}">
+</head>
+<body>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" th:text="#{easyflow.process.admin.processDefinitionAdd}"></li>
+    </ol>
+    <div id="content">
+  <form th:action="@{/easyflow/processDefinition/ajax/add}" method="post" id="addForm" class="j-ajax-form j-form-container j-form-horizontal container-fluid"
+  th:data-success-url="@{/easyflow/processDefinition/list}">
+  <input type="hidden" name="defId"/>
+  <input type="hidden" name="defName"/>
+  <input type="hidden" name="bizType"/>
+  <input type="hidden" name="category"/>
+  <input type="hidden" name="format"/>
+  <input type="hidden" name="bpmnXmlData"/>
+  <input type="hidden" name="jsonData"/>
+  <input type="hidden" name="plantUmlData"/>
+    </form>  
+    <div id="flowControl"></div> 
+    <div class="row mt-2">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary j-btn-ok j-btn-save-flow">[[#{easyflow.process.admin.page.processDefinitionAdd.save}]]</button>
+            <button type="button" class="btn btn-secondary j-btn-cancel">[[#{easyflow.process.admin.page.processDefinitionAdd.cancel}]]</button>
+        </div>
+    </div>      
+    </div>
+    <script type="text/javascript" th:src="@{/static/plugins/bpmnjs/bpmn-navigated-viewer.development.js}" class="script"></script>
+    <script type="text/javascript" th:src="@{/static/plugins/bpmnjs/bpmn-modeler.development.js}" class="script"></script>
+    <script type="text/javascript" th:src="@{/static/plugins/flow/bpmn.js}" class="script"></script>
+    <script type="text/javascript" th:src="@{/static/plugins/flow/flow.js}" class="script"></script>
+    <script type="text/javascript" id="script" th:inline="javascript">
+
+    var flowBizType={};
+    var flowCategory={};
+    var flowControl = new J.FlowControl({$container: $("#flowControl")});
+    var root = "[(@{/easyflow/processDefinition})]";
+    flowControl.render();
+    $(".j-btn-save-flow").click(async function(){
+    	var controlData = await flowControl.collect();
+    	    $("[name='defId']").val(controlData.defId);
+    	    $("[name='defName']").val(controlData.defName);
+    	    $("[name='format']").val(controlData.format);
+    	    $("[name='bizType']").val(controlData.bizType);
+    	    $("[name='category']").val(controlData.category);
+    	    $("[name='bpmnXmlData']").val(controlData.bpmnXmlData);
+    	    $("[name='jsonData']").val(controlData.jsonData);
+            $("#addForm").submit();
+    });
+    $(".j-btn-cancel").click(function(){
+        window.location.href=root + "/list";
+    });
+    </script>
+</body>
+</html>

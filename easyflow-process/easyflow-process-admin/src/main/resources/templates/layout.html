@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.jd.com"
+      th:fragment="html(title, links,style, breadcrumb, content, script, js)">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="icon" th:href="@{/static/images/favicon.ico}" type="image/x-icon">
+    <title th:text="${title}?|#{easyflow.admin.framework.page.layout.adminPortal}-${title}|:#{easyflow.admin.framework.page.layout.adminPortal}">Administrator Portal</title>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap4/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/fontawesome/css/all.css}">
+    <link rel="stylesheet" th:href="@{/static/css/common.css}">
+    <link rel="stylesheet" th:href="@{/static/css/frame.css}">
+    <link rel="stylesheet" th:href="@{/static/plugins/dataview/dataview.css}">
+    <th:block th:replace="${links}"></th:block>
+    <style type="text/css" th:replace="${style}"></style>
+</head>
+<body>
+<div id="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar fixed-top" id="navbar">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><img th:src="@{/static/images/logo.png}" width="164" height="36"></a>
+        </div>
+                <!-- Top Menu Items -->
+        <ul class="nav top-nav">
+            <li class="dropdown">
+                <a href="#" class="j-erp"><i class="fa fa-user"></i>[(${session.user})]</a>
+            </li>
+        </ul>
+
+        <!-- /.navbar-collapse -->
+    </nav>
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    <div>
+        <div class="navbar-sideholder"></div>
+        <ul class="nav side-nav flex-column" id="side-menu">
+            <li class="nav-item">
+                <a href="#m-flow" data-toggle="collapse" class="nav-link li-level-1"><i class="fa fa-desktop fa-fw"></i>[[#{easyflow.admin.framework.page.layout.menu.processAndTask}]]<span
+                        class="fa fa-angle-right"></span></a>
+                <ul class="nav flex-column collapse show" id="m-flow">
+                     <li class="nav-item"><a href="/easyflow/processInstance/list" class="nav-link" data-menu="PROCESS_INSTANCE">[[#{easyflow.admin.framework.page.layout.menu.processInstance}]]</a></li>
+                    <li class="nav-item"><a href="/easyflow/processTask/list" class="nav-link">[[#{easyflow.admin.framework.page.layout.menu.processTask}]]</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#m-system" data-toggle="collapse" class="nav-link li-level-1"><i
+                        class="fa fa-desktop fa-fw"></i>[[#{easyflow.admin.framework.page.layout.menu.system}]]<span class="fa fa-angle-right"></span></a>
+                <ul class="nav flex-column collapse show" id="m-system">
+                    <li class="nav-item"><a href="/easyflow/processDefinition/list" class="nav-link" data-menu="PROCESS_DEF">[[#{easyflow.admin.framework.page.layout.menu.processDefinition}]]</a></li>
+                    <li class="nav-item"><a href="/easyflow/formTemplate/formTemplateList" data-menu="FORM_TEMPLATE"
+                                            class="nav-link">[[#{easyflow.admin.framework.page.layout.menu.formTemplate}]]</a></li>
+                </ul>
+            </li>            
+        </ul>
+    </div>
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <i class="fa fa-home"></i> <a href="/">[[#{easyflow.admin.framework.page.layout.home}]]</a>
+                            </li>
+                            <th:block th:insert="${breadcrumb}"></th:block>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div id="content" th:replace="${content}"></div>
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<script th:inline="javascript">
+window.jLocale=[[${T(com.jd.easyflow.spring.MessageUtil).locale()}]];
+</script>
+<!-- /#wrapper -->
+<script th:src="@{/static/plugins/jquery/jquery-3.6.0.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap4/js/bootstrap.bundle.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-table/bootstrap-table.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-table/bootstrap-table-locale-all.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/jquery-validation/messages_zh.js}" type="text/javascript"  th:if="${T(com.jd.easyflow.spring.MessageUtil).locale()=='zh_CN'}"></script>
+<script th:src="@{/static/js/messages_default.js}" type="text/javascript"></script>
+<script th:src="@{/static/js/messages_zh.js}" type="text/javascript"  th:if="${T(com.jd.easyflow.spring.MessageUtil).locale()=='zh_CN'}"></script>
+<script th:src="@{/static/js/common.js}" type="text/javascript"></script>
+<script th:src="@{/static/js/biz.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/dataview/dataview.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/dataview/dataview-config.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/dataview/dataview-app.js}" type="text/javascript"></script>
+<th:block th:replace="${script}"></th:block>
+<script th:inline="javascript" th:replace="${js}"></script>
+
+</body>
+
+<script>
+
+</script>
+</html>

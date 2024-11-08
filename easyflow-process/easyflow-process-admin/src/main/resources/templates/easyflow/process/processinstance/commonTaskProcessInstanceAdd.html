@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processCreate},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processCreate}]]</li>
+</ol>
+<div id="content">
+<!-- Process definition and process instance info -->
+		<div id="instance" class="card">
+			<h5 class="card-header">[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processInfo}]]</h5>
+			<div class="card-body container-fluid">
+				<div class="row">
+					<div class="form-group col">
+						<label>[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processDefinition}]]:</label><a th:href="@{/easyflow/processDefinition/detail(defId=${param.processId},latest=true)}" th:text="${processName}" class="form-control-plaintext" style="color:rgb(0, 123, 255)" onclick="javascript:J.openWindow(this.href, '_blank','','');return false;"></a></div>
+                    <div class="form-group col">
+                        <label>[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processName}]]:</label><input type="text" th:value="${processName}" id="instanceName" class="form-control"></input></div>
+                    <div class="form-group col">
+                        <label>[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processKeyField}]]:</label><input type="text" th:value="${keyField}" id="keyField" class="form-control"></input></div>
+                    <div class="form-group col">
+                        <label>[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.processKeyField2}]]:</label><input type="text" th:value="${keyField2}" id="keyField2" class="form-control"></input></div>
+                </div>				
+			</div>
+			<div id="instanceForm"></div>
+		</div>
+<!-- task info -->		
+		<div id="task" class="card">
+        <h5 class="card-header">[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.formInfo}]]</h5>
+        <div class="card-body">
+            <div id="taskForm"></div>
+        </div>    
+    </div> 
+<!-- submit form -->
+<form th:action="@{/easyflow/processInstance/ajax/commonTaskProcessInstanceAdd}" method="post" id="executeForm" class="j-ajax-form"
+          th:data-success-url="@{/easyflow/processInstance/list}">
+                <input type="hidden" name="processId" th:value="${param.processId}"> 
+                <input type="hidden" name="instanceName"/> 
+                <input type="hidden" name="keyField"/> 
+                <input type="hidden" name="keyField2"/>
+                <textarea name=instanceBizData class="d-none" ></textarea>
+                <textarea name="taskData" class="d-none" ></textarea>
+    <div class="row mt-2">
+        <div class="col text-center">
+            <button type="button" class="btn btn-primary j-btn-ok">[[#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.createProcess}]]</button>
+        </div>
+    </div>                  
+        </form>    
+  
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+J.formTemplateUrl = "/easyflow/formTemplate/ajax/getTemplate";
+// Process instance form
+var instanceTemplateId = /*[[${instanceFormId}]]*/ "formId";
+var instanceBizData,instancePage;
+if (instanceTemplateId) {
+	instanceBizData = {};
+	instancePage = new J.Page({data:instanceBizData, ctx:{"op":"add"}, init:false, templates:[{"code":instanceTemplateId}], $container:$("#instanceForm"), saveAction:null});
+	instancePage.loadAndRender();
+}
+
+ // Task form
+var taskTemplateId = /*[[${taskFormId}]]*/ "formId";
+ var taskData, taskPage;
+ if (taskTemplateId) {
+	taskData = {};
+	 taskPage = new J.Page({data:taskData, ctx:{"op":"add"}, init:false, templates:[{"code":taskTemplateId}], $container:$("#taskForm"), saveAction:null});
+	 taskPage.loadAndRender();
+ } else {
+	 $("#task").hide();
+ }
+$(".j-btn-ok").click(function(){
+    $("input[name='instanceName']").val($("#instanceName").val());
+    $("input[name='keyField']").val($("#keyField").val());
+    $("input[name='keyField2']").val($("#keyField2").val());
+    if (instanceTemplateId) {
+        if (!instancePage.$form.valid()) {
+        	$.jMessage({title:"[(#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.tip})]", msg:"[(#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.instancerrorTip})]"});
+        	return false;
+        }
+		instancePage.collect(instanceBizData);
+	    $("textarea[name='instanceBizData']").val(JSON.stringify(instanceBizData, null, 2));
+    }
+    if (taskTemplateId) {
+    	if (! taskPage.$form.valid()) {
+    		$.jMessage({title:"[(#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.tip})]", msg:"[(#{easyflow.process.admin.page.commonTaskProcessInstanceAdd.formErrorTip})]"});
+    		return false;
+    	}
+	    taskPage.collect(taskData);
+	    $("textarea[name='taskData']").val(JSON.stringify(taskData, null, 2));
+    }
+	    $("#executeForm").submit();
+});
+</script>
+</body>
+</html>

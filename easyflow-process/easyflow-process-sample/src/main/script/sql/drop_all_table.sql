@@ -1,0 +1,10 @@
+drop table `form_template`;
+drop table `lock_record`;
+drop table `sequence`;
+drop table `process_definition`;
+drop table `process_instance`;
+drop table `process_node_instance`;
+drop table `process_node_execution`;
+drop table `process_task`;
+drop table `process_task_assign`;
+drop table `process_task_event`;

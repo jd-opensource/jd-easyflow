@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+    th:replace="layout::html(#{easyflow.process.admin.page.processInstanceDetail.process},~{::link},~{}, ~{::.breadcrumb-item},~{::#content},~{::.script},~{::#script})">
+<head>
+<link rel="stylesheet"
+    th:href="@{/static/plugins/bpmnjs/assets/diagram-js.css}">
+<link rel="stylesheet" th:href="@{/static/plugins/bpmnjs/assets/bpmn-js.css}">        
+<link rel="stylesheet"
+    th:href="@{/static/plugins/bpmnjs/assets/bpmn-font/css/bpmn.css}">
+<link rel="stylesheet" th:href="@{/static/plugins/flow/flow.css}">
+</head>
+<body>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processInstanceDetail.processView}]]</li>
+    </ol>
+    <div id="content">
+        <div class=" container-fluid">
+            <div class="row">
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.instanceNo}]]:</label><input type="text" name="instanceNo"
+                        class="form-control" th:value="${processInstance.instanceNo}" readonly="readonly" />
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.instanceName}]]:</label><input type="text" name="instanceName"
+                        class="form-control" th:value="${processInstance.instanceName}" readonly="readonly" />
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.productCode}]]:</label> <input class="form-control"
+                        name="productCode" th:value="${processInstance.productCode}" disabled="disabled" id="productCode"/>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.processType}]]:</label> <input type="text" name="processType" class="form-control" th:value="${processInstance.processType}" readonly="readonly"></input>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.bizNo}]]:</label><input type="text" name="bizNo"
+                        class="form-control" th:value="${processInstance.bizNo}" readonly="readonly"/>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.processStatus}]]:</label><select class="form-control" disabled="disabled">
+                       <option value="ACTIVE" th:selected="${processInstance.status=='ACTIVE'}">[[#{easyflow.process.admin.page.processInstanceDetail.processStatusActive}]]</option>
+                       <option value="CLOSE" th:selected="${processInstance.status=='CLOSE'}">[[#{easyflow.process.admin.page.processInstanceDetail.processStatusClose}]]</option>
+                       <option value="CANCELED" th:selected="${processInstance.status=='CANCELED'}">[[#{easyflow.process.admin.page.processInstanceDetail.processStatusCanceled}]]</option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.keyField}]]:</label><input type="text" name="keyField"
+                        class="form-control" th:value="${processInstance.keyField}" readonly="readonly" />
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.startTime}]]:</label><input type="text" name="startTime"
+                        class="form-control" th:value="${#calendars.format(processInstance.startTime,'yyyy-MM-dd HH:mm:ss')}" readonly="readonly"/>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.modifiedDate}]]:</label><input type="text" name="modifiedDate" th:value="${#calendars.format(processInstance.modifiedDate,'yyyy-MM-dd HH:mm:ss')}"
+                        class="form-control" readonly="readonly"/>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.currentNode}]]:</label><input type="text" name="currentNodeIds" th:value="${processInstance.currentNodeIds}"
+                        class="form-control" readonly="readonly"/>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.processVars}]]:</label><textarea name="vars"
+                        class="form-control" th:text="${processInstance.vars}" style="height:27px" readonly="readonly"></textarea>
+                </div>
+                <div class="form-group col">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.processDef}]]:</label><a th:href="@{/easyflow/processDefinition/detail(defId=${processDef.defId},defVersion=${processDef.defVersion})}" th:text="${processInstance.processDefId}" class="form-control-plaintext" style="color:rgb(0, 123, 255)" onclick="javascript:J.openWindow(this.href, '_blank','','');return false;"></a>
+                </div>
+            </div>
+            <div id="processBizDataDiv" class="card">
+                <h5 class="card-header">[[#{easyflow.process.admin.page.processInstanceDetail.processBizData}]]</h5>
+                <div class="card-body">
+                    <div id="instanceForm"></div>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a class="nav-link active"  data-toggle="tab"
+                        data-target="#bpmnContainer" id="nav-bpmn">[[#{easyflow.process.admin.page.processInstanceDetail.processNodeStatusGraph}]]</a></li>
+                    <li class="nav-item"><a class="nav-link"  data-toggle="tab" data-target="#dataContainer" id="nav-instance-data">[[#{easyflow.process.admin.page.processInstanceDetail.processNodeData}]]</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="bpmnContainer" class="bpmnContainer tab-pane active">
+                    </div>
+                    <div id="dataContainer" class="dataContainer tab-pane">
+                        <div id="nodeInstanceTable"></div>
+                    </div>
+                </div>
+            </div>
+        <!-- Task info -->
+            <div id="task" class="card mt-2">
+                <h5 class="card-header">[[#{easyflow.process.admin.page.processInstanceDetail.taskList}]]</h5>
+                <div class="card-body">
+                   <table id="taskTable"></table>
+                </div>
+            </div> 
+        </div>
+        <div class="row mt-2">
+            <div class="col text-center">
+                <button type="button" class="btn btn-secondary j-btn-cancel">[[#{easyflow.process.admin.page.processInstanceDetail.returnList}]]</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript"
+        th:src="@{/static/plugins/bpmnjs/bpmn-navigated-viewer.development.js}"
+        class="script"></script>
+    <script type="text/javascript"
+        th:src="@{/static/plugins/bpmnjs/bpmn-modeler.development.js}"
+        class="script"></script>
+    <script type="text/javascript" th:src="@{/static/plugins/flow/bpmn.js}" class="script"></script>
+    <script type="text/javascript" th:src="@{/static/plugins/flow/flow.js}"
+        class="script"></script>
+    <script type="text/javascript" id="script" th:inline="javascript">
+    activeMenu = "PROCESS_INSTANCE";
+    var defData =/*[(${defData})]*/ {};
+    var nodeInstances =/*[(${nodeInstancesStr})]*/ {};
+    var tasks = /*[(${tasksStr})]*/ {};
+    var root = "[(@{/easyflow/processInstance})]";
+    var instanceTemplateId = /*[[${instanceFormId}]]*/ "formId";
+    var instanceData = /*[(${instanceBizData})]*/ {};
+    instancePage = new J.Page({data:instanceData, ctx:{"op":"detail"}, init:false, templates:[{"code":instanceTemplateId}], $container:$("#instanceForm"), saveAction:null, helper:{show:false}});
+    instancePage.loadAndRender();
+// Graph view
+if (defData.bpmnXmlData) {
+        var bpmnControl = new J.BpmnControl({
+            $bpmnContainer : $("#bpmnContainer"),
+            data : {bpmnXmlData:defData.bpmnXmlData},
+            mode : "view"
+        });
+        bpmnControl.render().then(
+                function() {
+                    var modeler = bpmnControl.bpmnModeler;
+                    elementRegistry = modeler.get('elementRegistry');
+                    canvas = modeler.get('canvas');
+                    for ( var i in nodeInstances) {
+                        var nodeInstance = nodeInstances[i];
+                        var nodeId = nodeInstance.nodeId;
+                        var status = nodeInstance.status;
+                        var elementToColor = elementRegistry.get(nodeId);
+                        if (!elementToColor) {
+                            console.log("Node not found:" + nodeId);
+                            continue;
+                        }
+                        if (status == 'CLOSE') {
+                              canvas.addMarker(nodeId, 'j-bpmn-node-close');
+                        } else if (status == 'INACTIVE' || status == 'ACTIVE') {
+                              canvas.addMarker(nodeId, 'j-bpmn-node-active');
+                        }
+                    }
+                })
+} else {
+    $("#nav-bpmn").hide();
+    $("#nav-instance-data").tab("show");
+}
+// Node table view
+    $("#nodeInstanceTable").bootstrapTable({
+        pagination:false,
+        showRefresh: false,
+        showColumns: false,
+        columns:[
+            {field:"nodeInstanceNo", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeInstanceNo})]"},
+            {field:"nodeId", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeId})]"},
+            {field:"nodeName", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeName})]"},
+            {field:"startTime", title:"[(#{easyflow.process.admin.page.processInstanceDetail.startTime})]"},
+            {field:"endTime", title:"[(#{easyflow.process.admin.page.processInstanceDetail.endTime})]"},
+            {field:"status", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeStatus})]", formatter: function (data) {
+                return {"CLOSE": "<span style='color:green'>[(#{easyflow.process.admin.page.processInstanceDetail.nodeStatusEnd})]</span>", "INACTIVE": "[(#{easyflow.process.admin.page.processInstanceDetail.nodeStatusInactive})]", "ACTIVE": "[(#{easyflow.process.admin.page.processInstanceDetail.nodeStatusActive})]"}[data];
+            }},
+            {field:"previousNodeInstances", title:"[(#{easyflow.process.admin.page.processInstanceDetail.previousNodeInstances})]"},
+            {field:"nextNodeInstances", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nextNodeInstances})]"},
+            {field:"extData", title:"[(#{easyflow.process.admin.page.processInstanceDetail.extData})]"}
+        ],
+        data : nodeInstances
+    });
+
+// Task table view
+ $('#taskTable').bootstrapTable({
+     pagination:false,
+     showRefresh: false,
+     showColumns: false,
+     columns: [
+         {field: 'taskNo', title: '[(#{easyflow.process.admin.page.processInstanceDetail.taskNo})]'},
+         {field: 'taskBizName', title: '[(#{easyflow.process.admin.page.processInstanceDetail.taskBizName})]'},
+         {field: 'createdDate', title: '[(#{easyflow.process.admin.page.processInstanceDetail.createdDate})]'},
+         {field: 'status', title: '[(#{easyflow.process.admin.page.processInstanceDetail.taskStatus})]',formatter: function (data) {
+                return {"PENDING":"[(#{easyflow.process.admin.page.processInstanceDetail.taskStatusPending})]", "FINISH":"[(#{easyflow.process.admin.page.processInstanceDetail.taskStatusFinish})]", "CANCELED":"[(#{easyflow.process.admin.page.processInstanceDetail.taskStatusCanceled})]", "INVALID":"[(#{easyflow.process.admin.page.processInstanceDetail.taskStatusInvalid})]"}[data];
+            }},
+         {field: 'assignInfo', title: '[(#{easyflow.process.admin.page.processInstanceDetail.assignInfo})]', formatter: function(data, item) {
+             if (item.status!='PENDING') {
+                 return "";
+             }
+             if (! item.assignInfo) {
+                 return "";
+             }
+             var dataObj = JSON.parse(item.assignInfo);
+             var info = "";
+             if (dataObj.user) {
+                 info += " [(#{easyflow.process.admin.page.processInstanceDetail.user})]:";
+                 for (var i in dataObj.user) {
+                     if (dataObj.excludeUser && dataObj.excludeUser.indexOf(dataObj.user[i])>0) {
+                         continue;
+                     }
+                     info += dataObj.user[i] + ",";
+                 }
+                 info = info.substring(0, info.length - 1);
+             }
+             if (dataObj.group) {
+                 info += " [(#{easyflow.process.admin.page.processInstanceDetail.userGroup})]:";
+                 for (var i in dataObj.group) {
+                     info += dataObj.group[i] + ",";
+                 }
+                 info = info.substring(0, info.length - 1);
+             }
+             if (dataObj.group2) {
+                 info += "[(#{easyflow.process.admin.page.processInstanceDetail.userGroup2})]:";
+                 for (var i in dataObj.group2) {
+                     info += dataObj.group2[i] + ",";
+                 }
+                 info = info.substring(0, info.length - 1);
+             }             
+             return info;
+         }},
+         {field: 'executeBizResult', title: '[(#{easyflow.process.admin.page.processInstanceDetail.executeBizResult})]', formatter: function(data) {
+             if (data == 'PASS') {
+                 return "[(#{easyflow.process.admin.page.processInstanceDetail.pass})]";
+             }
+             if (data == 'REJECT') {
+                 return "[(#{easyflow.process.admin.page.processInstanceDetail.reject})]";
+             }
+             return data;
+         }},
+         {field: 'executor', title: '[(#{easyflow.process.admin.page.processInstanceDetail.handleUser})]'},
+         {field: 'executeTime', title: '[(#{easyflow.process.admin.page.processInstanceDetail.handleTime})]'},
+     ],
+     data : tasks
+ });
+ if (! tasks || tasks.length==0) {
+     $("#task").hide();
+ }
+    
+    $(".j-btn-cancel").click(function(){
+        window.location.href=root + "/list";
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.processTaskList.todoTask},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processTaskList.todoTask}]]</li>
+</ol>
+<div id="content">
+    <div id="tabs">
+        <div id="tableContainer">
+            <!-- Search -->
+            <form id="search" class="card j-form-horizontal">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.queryType}]]:</label>
+                            <select name="queryType" class="form-control" id="queryType">
+                                <option value="MY_TODO">[[#{easyflow.process.admin.page.processTaskList.myTodo}]]</option>
+                                <option value="MY_DONE">[[#{easyflow.process.admin.page.processTaskList.myDone}]]</option>
+                                <option value="ALL">[[#{easyflow.process.admin.page.processTaskList.allTask}]]</option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.processType}]]:</label><input type="text" name="processType" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.bizNo}]]:</label><input name="bizNo" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.productCode}]]:</label><input name="productCode" class="form-control"></input>
+                        </div>
+                    </div>
+                    <div class="form-row">                        
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.taskNo}]]:</label><input name="taskNo" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.nodeInstanceNo}]]:</label><input name="nodeInstanceNo" class="form-control"></input>
+                        </div>         
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.processInstanceNo}]]:</label><input name="processInstanceNo" class="form-control"></input>
+                        </div> 
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.keyField}]]:</label><input name="processInstanceKeyField" class="form-control"></input>
+                        </div>                                                                                      
+                    </div>                  
+                    <div class="form-row">
+                        <div class="col text-center">
+                            <button id="query" class="btn btn-primary">[[#{easyflow.process.admin.page.processTaskList.query}]]</button>
+                            <button id="reset" class="btn btn-secondary">[[#{easyflow.process.admin.page.processTaskList.reset}]]</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Table -->
+            <table id="datatable"></table>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+    $("#tabs").jTabs().jTabs("open", {id: "tab-table", name: "[(#{easyflow.process.admin.page.processTaskList.taskList})]", element: $("#tableContainer"), closeable: false});
+    var queryParam = {};
+
+    function reset() {
+        $("#search .form-control").val("");
+        $("#queryType").val("MY_TODO");
+        queryParam = $("#search").serializeObject();
+    };
+    reset();
+    $("#query").click(function () {
+        queryParam = $("#search").serializeObject();
+        $('#datatable').bootstrapTable("refresh");
+        return false;
+    });
+    $("#reset").click(function () {
+        reset();
+        return false;
+    });
+    var root = "[(@{/easyflow/processTask})]";
+    var instanceRoot = "[(@{/easyflow/processInstance})]";
+    $('#datatable').bootstrapTable({
+        url: root + "/ajax/getListData",
+        toolbar: "#toolbar",
+        sortName: "createdDate",
+        sortOrder: "desc",
+        columns: [
+            {radio: true},
+            {
+                field: 'taskNo', title: '[(#{easyflow.process.admin.page.processTaskList.taskNo})]', formatter: function (data, item) {
+                    return "<a class='j-op detailBtn' data-record-id='" + item.taskNo + "'>" + data + "</a>";
+                }
+            },
+            {field: 'instanceName', title: '[(#{easyflow.process.admin.page.processTaskList.instanceName})]',formatter: function (data, item) {
+                return "<button type='button' class='btn btn-link j-op instanceBtn' data-process-instance-no='" + item.processInstanceNo + "'>" + (data?data : item.processInstanceNo) + "</button>";
+            }},
+            {field: 'taskBizName', title: '[(#{easyflow.process.admin.page.processTaskList.taskBizName})]'},
+            {field: 'processType', title: '[(#{easyflow.process.admin.page.processTaskList.processType})]'},
+            {field: 'bizNo', title: '[(#{easyflow.process.admin.page.processTaskList.processBizNo})]'},
+            {field: 'productCode', title: '[(#{easyflow.process.admin.page.processTaskList.productCode})]'},
+            {field: 'instanceStatus', title: '[(#{easyflow.process.admin.page.processTaskList.instanceStatus})]', formatter: function (data) {
+                return {"ACTIVE":"[(#{easyflow.process.admin.page.processTaskList.instanceStatusActive})]", "CLOSE":"[(#{easyflow.process.admin.page.processTaskList.instanceStatusFinished})]"}[data];
+            }},
+            {field: 'instanceCreator', title: '[(#{easyflow.process.admin.page.processTaskList.instanceCreator})]'},
+            {field: 'instanceKeyField', title: '[(#{easyflow.process.admin.page.processTaskList.keyField})]'},
+            {field: 'instanceCreatedDate', title: '[(#{easyflow.process.admin.page.processTaskList.instanceCreateTime})]',sortable: true},
+            {field: 'status', title: '[(#{easyflow.process.admin.page.processTaskList.taskStatus})]', formatter: function (data) {
+                return {"PENDING":"[(#{easyflow.process.admin.page.processTaskList.taskStatusPending})]", "FINISH":"[(#{easyflow.process.admin.page.processTaskList.taskStatusFinish})]", "CANCELED":"[(#{easyflow.process.admin.page.processTaskList.taskStatusCanceled})]", "INVALID":"[(#{easyflow.process.admin.page.processTaskList.taskStatusInvalid})]"}[data];
+            }},
+            {field: 'executor', title: '[(#{easyflow.process.admin.page.processTaskList.taskExecutor})]'},
+            {field: 'createdDate', title: '[(#{easyflow.process.admin.page.processTaskList.taskCreatedDate})]',sortable: true},
+            {
+                field: 'op', title: '[(#{easyflow.process.admin.page.processTaskList.op})]', formatter: function (data,item) {
+                    let content = "";
+                    if (item.canHandle) {
+                    content +="<button type='button' class='btn btn-link j-op handleBtn' data-record-id='" + item.taskNo + "'>[(#{easyflow.process.admin.page.processTaskList.opHandle})]</button>";
+                    }
+                    if (item.canWithdraw) {
+                        content +="<button type='button' class='btn btn-link j-op withdrawBtn' data-record-id='" + item.taskNo + "'>[(#{easyflow.process.admin.page.processTaskList.opWithdraw})]</button>";
+                    }
+                    content +="<button type='button' class='btn btn-link j-op detailBtn' data-record-id='" + item.taskNo + "'>[(#{easyflow.process.admin.page.processTaskList.opDetail})]</button>";
+                    return content;
+                }
+            }
+        ],
+        queryParams: function (param) {
+            $.extend(param, queryParam);
+            return param;
+        }
+    });
+    
+    $("#datatable").on("click", ".detailBtn", function () {
+        J.openWindow(root + "/detail?taskNo=" + $(this).data("record-id"), "_blank", "", "");
+    });
+    $("#datatable").on("click", ".handleBtn", function () {
+        J.openWindow(root + "/handle?taskNo=" + $(this).data("record-id"), "_self", "", "");
+    });
+    $("#datatable").on("click", ".withdrawBtn", function () {
+        $.jAjax({confirm:"[(#{easyflow.process.admin.page.processTaskList.withDrawConfirm})]", url:root+"/ajax/withdraw?taskNo=" + $(this).data("record-id")});
+    });  
+    $("#datatable").on("click", ".instanceBtn", function () {
+        J.openWindow(instanceRoot + "/detail?instanceNo=" + $(this).data("processInstanceNo"), "_blank", "", "");
+    });   
+</script>
+</body>
+</html>

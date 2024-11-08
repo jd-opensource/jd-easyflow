@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.processInstanceCreate.processCreate},~{},~{}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processInstanceCreate.processCreate}]]</li>
+</ol>
+<div id="content">
+    <div id="instance" class="card">
+        <h5 class="card-header">[[#{easyflow.process.admin.page.processInstanceCreate.createProcess}]]</h5>
+        <div class="card-body">
+            <label>[[#{easyflow.process.admin.page.processInstanceCreate.defId}]]:<span class="j-require">*</span></label><input class="form-control" id="defId" value="flow_task_001_bpmn"></input>
+          <button type="button" class="btn btn-primary process-create mt-2">[[#{easyflow.process.admin.page.processInstanceCreate.createProcess}]]</button>
+        </div>    
+    </div>
+</div>
+<script type="text/javascript" id="script" th:inline="javascript">
+var root = "[(@{/easyflow/processInstance})]";
+    $(".process-create").click(function(){
+        var processDefId = $("#defId").val();
+        window.location.href=root + "/add?processId=" + processDefId;
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:easyflow="http://jd.com/easyflow" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="flow_task_001_bpmn" name="task flow 001_bpmn" isExecutable="false">
+    <bpmn:extensionElements>
+      <easyflow:listeners>[{"createExp":"@'easyflow-process-processFlowListener'"},
+{"createExp":"@'easyflow-process-taskFlowListener'"},
+{"createExp":"@eventFlowListener"}]</easyflow:listeners>
+      <easyflow:properties>{
+    "process":{
+        "processType":"TEST_FLOW",
+        "formId":"PROCESS_TEST_001",
+        "instanceCreate":{"pageId":"commonTaskProcessInstanceAdd"},
+        "processInstanceStatusMessage":{"enable":true}
+    },
+    "task":{
+        "taskExecute":{"formId":""}, 
+        "taskDetail":{"pageId":"", "formId":""}
+    }
+}</easyflow:properties>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="task_start" name="Flow create">
+      <bpmn:extensionElements>
+        <easyflow:action>{"createExp":"@eventNodeAction"}</easyflow:action>
+        <easyflow:properties>{
+  "events": {
+    "PROCESS_INSTANCE_CREATE": {
+      "action": {
+        "createExp": "@taskCreateAndExecuteNodeAction"
+      }
+    }
+  },
+  "task": {
+    "create": {
+      "formId": "PROCESS_TEST_TASK_CREATE_001",
+      "processor": "",
+      "processService": "",
+      "assignee": {
+        "user": "paramData['_USER']"
+      }
+    },
+    "execute": {},
+    "detail": {
+      "formId": ""
+    }
+  }
+}</easyflow:properties>
+        <easyflow:extProperties>{"commentPosition":{"top":-128,"left":-165},"commentWidth":273}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1wgcqok</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="task_node_001" name="001 task node" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:properties>{
+  "events": {
+    "NONE": {
+      "action": {
+        "createExp": "@taskCreateNodeAction"
+      }
+    },
+    "EXECUTE": {
+      "action": {
+        "createExp": "@taskExecuteNodeAction"
+      }
+    }
+  },
+  "task": {
+    "create": {
+      "processor": "",
+      "processService": "",
+      "assignee": {
+        "user": "{'zhangsan'}"
+      }
+    },
+    "execute": {
+      "formId": "PROCESS_TEST_TASK_EXECUTE_001"
+    },
+    "detail": {
+      "pageId": "",
+      "formId": ""
+    }
+  }
+}</easyflow:properties>
+        <easyflow:extProperties>{"commentWidth":249,"commentPosition":{"top":91,"left":-95}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wgcqok</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wm09xx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_110e40i</bpmn:outgoing>
+      <bpmn:script>@eventNodeAction</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1wgcqok" sourceRef="task_start" targetRef="task_node_001" />
+    <bpmn:scriptTask id="task_node_002" name="002 task node" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:properties>{
+  "events": {
+    "NONE": {
+      "action": {
+        "createExp": "@taskCreateNodeAction"
+      }
+    },
+    "EXECUTE": {
+      "action": {
+        "createExp": "@taskExecuteNodeAction"
+      }
+    }
+  },
+  "task": {
+    "create": {
+      "processor": "",
+      "processService": "",
+      "assignee": {
+        "user": "{'lisi'}"
+      }
+    },
+    "execute": {
+      "pageId": "commonProcessTaskExecute",
+      "formId": "PROCESS_TEST_TASK_EXECUTE_002"
+    }
+  }
+}</easyflow:properties>
+        <easyflow:extProperties>{"commentWidth":237,"commentPosition":{"top":90,"left":4}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wm09xx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1urqgl5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1femzw7</bpmn:outgoing>
+      <bpmn:script>@eventNodeAction</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0wm09xx" name="Pass" sourceRef="task_node_001" targetRef="task_node_002">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":125,"commentPosition":{"top":2,"left":-8}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">actionResult=='PASS'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="end" name="End node">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentPosition":{"top":3,"left":45}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1urqgl5</bpmn:incoming>
+      <bpmn:incoming>Flow_1femzw7</bpmn:incoming>
+      <bpmn:incoming>Flow_110e40i</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1urqgl5" name="Pass" sourceRef="task_node_002" targetRef="end">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":133}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">actionResult=='PASS'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1femzw7" name="Reject" sourceRef="task_node_002" targetRef="end">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":142,"commentPosition":{"top":2,"left":44}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">actionResult=='REJECT'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_110e40i" name="Reject" sourceRef="task_node_001" targetRef="end">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":140,"commentPosition":{"top":-42,"left":-15}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">actionResult=='REJECT'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flow_task_001_bpmn">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="task_start">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01hbn41_di" bpmnElement="task_node_001">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v34e47_di" bpmnElement="end">
+        <dc:Bounds x="692" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="738" y="113" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jtizd2_di" bpmnElement="task_node_002">
+        <dc:Bounds x="460" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1wgcqok_di" bpmnElement="Flow_1wgcqok">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wm09xx_di" bpmnElement="Flow_0wm09xx">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="460" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="399" y="102" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1urqgl5_di" bpmnElement="Flow_1urqgl5">
+        <di:waypoint x="560" y="120" />
+        <di:waypoint x="692" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="616" y="102" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1femzw7_di" bpmnElement="Flow_1femzw7">
+        <di:waypoint x="510" y="80" />
+        <di:waypoint x="510" y="60" />
+        <di:waypoint x="710" y="60" />
+        <di:waypoint x="710" y="102" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="594" y="42" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_110e40i_di" bpmnElement="Flow_110e40i">
+        <di:waypoint x="310" y="80" />
+        <di:waypoint x="310" y="30" />
+        <di:waypoint x="710" y="30" />
+        <di:waypoint x="710" y="102" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="494" y="12" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

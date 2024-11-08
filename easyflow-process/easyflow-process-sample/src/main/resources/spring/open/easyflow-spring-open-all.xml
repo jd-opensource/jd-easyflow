@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <bean id="springEnvPropertiesAccessor" class="com.jd.easyflow.properties.spring.SpringEnvPropertiesAccessor"/>
+	<bean id="defaultObjectFactory" class="com.jd.easyflow.objects.factory.DefaultObjectFactory">
+	   <property name="propertiesAccessor" ref="springEnvPropertiesAccessor"></property>
+		<property name="providerMap">
+			<map>
+				<entry key="spring">
+					<bean
+						class="com.jd.easyflow.objects.factory.spring.SpringObjectProvider">
+						     <property name="propertiesAccessor" ref="springEnvPropertiesAccessor"></property>
+						</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	<bean class="com.jd.easyflow.objects.factory.ObjectFactorys">
+	   <property name="defaultObjectFactory" ref="defaultObjectFactory"></property>
+	</bean>
+	<alias name="dataSource" alias="easyflow-lock-dataSource"/>
+    <import resource="classpath:easyflow/easyflow-spring-lock-db.xml"/>
+    <alias name="easyflow-lock-dbLocker" alias="easyflow-process-locker"/>
+    <bean id="easyflow-codegenerator-locker" class="com.jd.easyflow.lock.impl.NoopLocker"/>
+    <import resource="classpath:easyflow/easyflow-spring-message-spring.xml"/>
+    <import resource="spring-datasource.xml"/>
+    <alias name="dataSource" alias="easyflow-codegenerator-dataSource"/>
+    <import resource="classpath:easyflow/easyflow-spring-codegenerator-server.xml" />
+    <import resource="classpath:easyflow/easyflow-spring-form-server.xml" />
+    <alias name="dataSource" alias="easyflow-process-dataSource"/>    
+    <import resource="classpath:easyflow/easyflow-spring-process-server.xml"/>
+    
+    <bean id="easyflow-cache-localCacheServiceImpl" class="com.jd.easyflow.cache.impl.LocalCacheServiceImpl"></bean>
+    <alias name="easyflow-cache-localCacheServiceImpl" alias="easyflow-process-cacheService"/>
+    <alias name="easyflow-message-springMessageSendService" alias="easyflow-process-messageSendService"/>
+    <alias name="easyflow-process-adapter-client-processInstanceService" alias="easyflow-process-client-processInstanceService"/>
+    <alias name="easyflow-process-adapter-client-processDefinitionService" alias="easyflow-process-client-processDefinitionService"/>
+    <alias name="easyflow-process-adapter-client-processTaskService" alias="easyflow-process-client-processTaskService"/>    
+    <alias name="easyflow-process-adapter-export-processTaskExport" alias="easyflow-process-client-processTaskExport"/>    
+    <import resource="classpath:easyflow/easyflow-spring-process-client.xml"/>
+    
+    <bean id="flowEngine" class="com.jd.easyflow.process.client.flow.StdFlowEngineImpl">
+        <property name="flowPath" value="classpath:flow/server/*.json,classpath:flow/client/*.json,classpath:flow/server/*.bpmn,classpath:flow/client/*.bpmn"></property>
+        <property name="flowParser">
+            <bean class="com.jd.easyflow.flow.bpmn.BpmnFlowParser"></bean>
+        </property>
+        <property name="listeners">
+            <list>
+                <ref bean="easyflow-process-processFlowListener"/>
+            </list>
+        </property>
+        <property name="filters">
+            <list>
+                <ref bean="easyflow-process-processFlowEngineFilter"/>
+            </list>
+        </property>
+    </bean>
+    <alias name="flowEngine" alias="easyflow-flowEngine"/>
+    
+     <bean id="fsmManager" class="com.jd.easyflow.process.client.fsm.StdFsmManager">
+        <property name="fsmPath" value="classpath:fsm/client/*.json"></property>
+        <property name="listeners">
+            <list>
+                <ref bean="easyflow-process-processFsmListener"/>
+            </list>
+        </property>
+    </bean>   
+    
+    <bean id="eventFlowListener" class="com.jd.easyflow.flow.engine.event.impl.EventFlowListener"/>
+    <bean id="interruptFlowListener" class="com.jd.easyflow.flow.engine.event.impl.InterruptFlowListener"/>
+    <bean id="eventNodeAction" class="com.jd.easyflow.flow.model.action.EventNodeAction"/>
+    <bean id="eventPostHandler" class="com.jd.easyflow.flow.model.post.EventPostHandler"/>    
+    <alias name="easyflow-task-taskCreateNodeAction" alias="taskCreateNodeAction"/>
+    <alias name="easyflow-task-taskExecuteNodeAction" alias="taskExecuteNodeAction"/>
+    <alias name="easyflow-task-taskCreateAndExecuteNodeAction" alias="taskCreateAndExecuteNodeAction"/>
+    <alias name="easyflow-task-taskEl" alias="taskEl"/>
+    
+    <bean class="com.jd.easyflow.message.spring.EventMessageListener">
+        <property name="messageListenerMap">
+            <map>
+            </map>
+        </property>
+    </bean>
+    
+    <bean class="com.jd.easyflow.spring.ContextUtil"></bean>
+    
+     <bean id="easyflow-action-actionAspect" class="com.jd.easyflow.action.ActionAspect">
+        <property name="function">
+            <bean class="com.jd.easyflow.action.SimpleExportAopFunction"></bean>
+        </property>
+    </bean>
+    
+     <aop:config>
+         <aop:aspect ref="easyflow-action-actionAspect" order="200">
+             <aop:pointcut id="easyflow-action-pointcut" expression="@annotation(com.jd.easyflow.action.Action)"/>
+             <aop:around pointcut-ref="easyflow-action-pointcut" method="process"/>
+         </aop:aspect>
+     </aop:config>   
+    
+</beans>

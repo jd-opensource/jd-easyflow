@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <bean id="easyflow-process-transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="easyflow-process-dataSource" />
+    </bean>
+    <bean id="easyflow-process-newTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+       <property name="transactionManager" ref="easyflow-process-transactionManager"></property>
+       <property name="propagationBehavior" value="3"></property>
+    </bean>
+    
+    <bean class="com.jd.easyflow.process.infrastructure.repository.ProcessRepositoryImpl"></bean>
+    <!-- ProcessInstance -->
+    <bean id="easyflow-process-adapter-export-processInstanceExport" class="com.jd.easyflow.process.adapter.export.ProcessInstanceExportImpl"/>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessInstanceDomainService" ></bean>
+    
+    <!-- ProcessDefinition -->
+    <bean id="easyflow-process-adapter-export-processDefinitionExport" class="com.jd.easyflow.process.adapter.export.ProcessDefinitionExportImpl"></bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessDefinitionDomainService"></bean>
+    
+    <!-- ProcessSchedule -->
+    <bean id="easyflow-process-adapter-export-processScheduleExport" class="com.jd.easyflow.process.adapter.export.ProcessScheduleExportImpl">
+    </bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessScheduleDomainService"></bean>
+    <bean class="com.jd.easyflow.process.domain.service.impl.ProcessScheduleSpiInvoker"/>
+    
+    <!-- ProcessTask -->
+    <bean id="easyflow-process-adapter-export-processTaskExport" class="com.jd.easyflow.process.adapter.export.ProcessTaskExportImpl"></bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessTaskDomainService"></bean>
+    <bean class="com.jd.easyflow.process.infrastructure.repository.ProcessTaskRepositoryImpl"></bean>
+    <!-- ProcessTransaction -->
+    <bean id="easyflow-process-adapter-export-processTransactionExport" class="com.jd.easyflow.process.adapter.export.ProcessTransactionExportImpl"></bean>
+</beans>

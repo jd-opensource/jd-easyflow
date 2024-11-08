@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.process.infrastructure.persistence.mapper.ProcessTaskMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+    <result column="process_type" jdbcType="VARCHAR" property="processType" />
+    <result column="biz_no" jdbcType="VARCHAR" property="bizNo" />
+    <result column="task_biz_code" jdbcType="VARCHAR" property="taskBizCode" />
+    <result column="task_biz_name" jdbcType="VARCHAR" property="taskBizName" />
+    <result column="task_type" jdbcType="VARCHAR" property="taskType" />
+    <result column="process_instance_no" jdbcType="VARCHAR" property="processInstanceNo" />
+    <result column="node_instance_no" jdbcType="VARCHAR" property="nodeInstanceNo" />
+    <result column="node_execution_no" jdbcType="VARCHAR" property="nodeExecutionNo" />
+    <result column="assign_type" jdbcType="VARCHAR" property="assignType" />
+    <result column="assign_info" jdbcType="OTHER" property="assignInfo" />
+    <result column="assign_time" jdbcType="TIMESTAMP" property="assignTime" />
+    <result column="executor" jdbcType="VARCHAR" property="executor" />
+    <result column="execute_biz_result" jdbcType="VARCHAR" property="executeBizResult" />
+    <result column="execute_biz_data" jdbcType="OTHER" property="executeBizData" />
+    <result column="execute_time" jdbcType="TIMESTAMP" property="executeTime" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="ext_data" jdbcType="OTHER" property="extData" />
+    <result column="process_instance_key_field" jdbcType="VARCHAR" property="processInstanceKeyField" />
+    <result column="process_instance_key_field2" jdbcType="VARCHAR" property="processInstanceKeyField2" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, task_no, process_type, biz_no, task_biz_code, task_biz_name, task_type, process_instance_no, 
+    node_instance_no, node_execution_no, assign_type, assign_info, assign_time, executor, 
+    execute_biz_result, execute_biz_data, execute_time, product_code, creator, status, ext_data, process_instance_key_field,process_instance_key_field2,
+    created_date, modified_date, deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_task
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update process_task set deleted=1
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask" useGeneratedKeys="true">
+    insert into process_task (task_no, process_type, biz_no, 
+      task_biz_code, task_biz_name, task_type, process_instance_no, 
+      node_instance_no, node_execution_no, assign_type, 
+      assign_info, assign_time, executor, 
+      execute_biz_result, execute_biz_data, execute_time, 
+      product_code, creator, status, ext_data, process_instance_key_field, process_instance_key_field2
+      )
+    values (#{taskNo,jdbcType=VARCHAR}, #{processType,jdbcType=VARCHAR}, #{bizNo,jdbcType=VARCHAR}, 
+      #{taskBizCode,jdbcType=VARCHAR},#{taskBizName,jdbcType=VARCHAR}, #{taskType,jdbcType=VARCHAR}, #{processInstanceNo,jdbcType=VARCHAR}, 
+      #{nodeInstanceNo,jdbcType=VARCHAR}, #{nodeExecutionNo,jdbcType=VARCHAR}, #{assignType,jdbcType=VARCHAR}, 
+      #{assignInfo,jdbcType=OTHER}, #{assignTime,jdbcType=TIMESTAMP}, #{executor,jdbcType=VARCHAR}, 
+      #{executeBizResult,jdbcType=VARCHAR}, #{executeBizData,jdbcType=OTHER}, #{executeTime,jdbcType=TIMESTAMP}, 
+      #{productCode,jdbcType=VARCHAR},#{creator,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}, #{processInstanceKeyField,jdbcType=VARCHAR}, #{processInstanceKeyField2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertWithCreatedDate" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask" useGeneratedKeys="true">
+    insert into process_task (task_no, process_type, biz_no, 
+      task_biz_code, task_biz_name, task_type, process_instance_no, 
+      node_instance_no, node_execution_no, assign_type, 
+      assign_info, assign_time, executor, 
+      execute_biz_result, execute_biz_data, execute_time, 
+      product_code, creator, status, ext_data, process_instance_key_field,process_instance_key_field2, created_date
+      )
+    values (#{taskNo,jdbcType=VARCHAR}, #{processType,jdbcType=VARCHAR}, #{bizNo,jdbcType=VARCHAR}, 
+      #{taskBizCode,jdbcType=VARCHAR},#{taskBizName,jdbcType=VARCHAR}, #{taskType,jdbcType=VARCHAR}, #{processInstanceNo,jdbcType=VARCHAR}, 
+      #{nodeInstanceNo,jdbcType=VARCHAR}, #{nodeExecutionNo,jdbcType=VARCHAR}, #{assignType,jdbcType=VARCHAR}, 
+      #{assignInfo,jdbcType=OTHER}, #{assignTime,jdbcType=TIMESTAMP}, #{executor,jdbcType=VARCHAR}, 
+      #{executeBizResult,jdbcType=VARCHAR}, #{executeBizData,jdbcType=OTHER}, #{executeTime,jdbcType=TIMESTAMP}, 
+      #{productCode,jdbcType=VARCHAR},#{creator,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER} , #{processInstanceKeyField,jdbcType=VARCHAR},#{processInstanceKeyField2,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP}
+      )
+  </insert>  
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask" useGeneratedKeys="true">
+    insert into process_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskNo != null">
+        task_no,
+      </if>
+      <if test="processType != null">
+        process_type,
+      </if>
+      <if test="bizNo != null">
+        biz_no,
+      </if>
+      <if test="taskBizCode != null">
+        task_biz_code,
+      </if>
+      <if test="taskBizName != null">
+        task_biz_name,
+      </if>      
+      <if test="taskType != null">
+        task_type,
+      </if>
+      <if test="processInstanceNo != null">
+        process_instance_no,
+      </if>
+      <if test="nodeInstanceNo != null">
+        node_instance_no,
+      </if>
+      <if test="nodeExecutionNo != null">
+        node_execution_no,
+      </if>
+      <if test="assignType != null">
+        assign_type,
+      </if>
+      <if test="assignInfo != null">
+        assign_info,
+      </if>
+      <if test="assignTime != null">
+        assign_time,
+      </if>
+      <if test="executor != null">
+        executor,
+      </if>
+      <if test="executeBizResult != null">
+        execute_biz_result,
+      </if>
+      <if test="executeBizData != null">
+        execute_biz_data,
+      </if>
+      <if test="executeTime != null">
+        execute_time,
+      </if>
+      <if test="productCode != null">
+        product_code,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>      
+      <if test="status != null">
+        status,
+      </if>    
+      <if test="extData != null">
+        ext_data,
+      </if>
+      <if test="processInstanceKeyField != null">
+        process_instance_key_field,
+      </if>
+      <if test="processInstanceKeyField2 != null">
+        process_instance_key_field2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskNo != null">
+        #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="processType != null">
+        #{processType,jdbcType=VARCHAR},
+      </if>
+      <if test="bizNo != null">
+        #{bizNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskBizCode != null">
+        #{taskBizCode,jdbcType=VARCHAR},
+      </if>
+      <if test="taskBizName != null">
+        #{taskBizName,jdbcType=VARCHAR},
+      </if>      
+      <if test="taskType != null">
+        #{taskType,jdbcType=VARCHAR},
+      </if>
+      <if test="processInstanceNo != null">
+        #{processInstanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeInstanceNo != null">
+        #{nodeInstanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeExecutionNo != null">
+        #{nodeExecutionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="assignType != null">
+        #{assignType,jdbcType=VARCHAR},
+      </if>
+      <if test="assignInfo != null">
+        #{assignInfo,jdbcType=OTHER},
+      </if>
+      <if test="assignTime != null">
+        #{assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="executor != null">
+        #{executor,jdbcType=VARCHAR},
+      </if>
+      <if test="executeBizResult != null">
+        #{executeBizResult,jdbcType=VARCHAR},
+      </if>
+      <if test="executeBizData != null">
+        #{executeBizData,jdbcType=OTHER},
+      </if>
+      <if test="executeTime != null">
+        #{executeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productCode != null">
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>      
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>    
+      <if test="extData != null">
+        #{extData,jdbcType=OTHER},
+      </if>
+      <if test="processInstanceKeyField != null">
+        #{processInstanceKeyField,jdbcType=OTHER},
+      </if>
+      <if test="processInstanceKeyField2 != null">
+        #{processInstanceKeyField2,jdbcType=OTHER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask">
+    update process_task
+    <set>
+      <if test="taskNo != null">
+        task_no = #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="processType != null">
+        process_type = #{processType,jdbcType=VARCHAR},
+      </if>
+      <if test="bizNo != null">
+        biz_no = #{bizNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskBizCode != null">
+        task_biz_code = #{taskBizCode,jdbcType=VARCHAR},
+      </if>
+      <if test="taskBizName != null">
+        task_biz_name = #{taskBizName,jdbcType=VARCHAR},
+      </if>      
+      <if test="taskType != null">
+        task_type = #{taskType,jdbcType=VARCHAR},
+      </if>
+      <if test="processInstanceNo != null">
+        process_instance_no = #{processInstanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeInstanceNo != null">
+        node_instance_no = #{nodeInstanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeExecutionNo != null">
+        node_execution_no = #{nodeExecutionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="assignType != null">
+        assign_type = #{assignType,jdbcType=VARCHAR},
+      </if>
+      <if test="assignInfo != null">
+        assign_info = #{assignInfo,jdbcType=OTHER},
+      </if>
+      <if test="assignTime != null">
+        assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="executor != null">
+        executor = #{executor,jdbcType=VARCHAR},
+      </if>
+      <if test="executeBizResult != null">
+        execute_biz_result = #{executeBizResult,jdbcType=VARCHAR},
+      </if>
+      <if test="executeBizData != null">
+        execute_biz_data = #{executeBizData,jdbcType=OTHER},
+      </if>
+      <if test="executeTime != null">
+        execute_time = #{executeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>      
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>     
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=OTHER},
+      </if>
+      <if test="processInstanceKeyField != null">
+        process_instance_key_field = #{processInstanceKeyField,jdbcType=OTHER},
+      </if>
+      <if test="processInstanceKeyField2 != null">
+        process_instance_key_field2 = #{processInstanceKeyField2,jdbcType=OTHER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask">
+    update process_task
+    set task_no = #{taskNo,jdbcType=VARCHAR},
+      process_type = #{processType,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=VARCHAR},
+      task_biz_code = #{taskBizCode,jdbcType=VARCHAR},
+      task_biz_name = #{taskBizName,jdbcType=VARCHAR},
+      task_type = #{taskType,jdbcType=VARCHAR},
+      process_instance_no = #{processInstanceNo,jdbcType=VARCHAR},
+      node_instance_no = #{nodeInstanceNo,jdbcType=VARCHAR},
+      node_execution_no = #{nodeExecutionNo,jdbcType=VARCHAR},
+      assign_type = #{assignType,jdbcType=VARCHAR},
+      assign_info = #{assignInfo,jdbcType=OTHER},
+      assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      executor = #{executor,jdbcType=VARCHAR},
+      execute_biz_result = #{executeBizResult,jdbcType=VARCHAR},
+      execute_biz_data = #{executeBizData,jdbcType=OTHER},
+      execute_time = #{executeTime,jdbcType=TIMESTAMP},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER},
+      process_instance_key_field = #{processInstanceKeyField,jdbcType=OTHER},
+      process_instance_key_field2 = #{processInstanceKeyField2,jdbcType=OTHER}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  
+    <update id="updateByTaskNo" parameterType="com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask">
+    update process_task
+    set
+      process_type = #{processType,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=VARCHAR},
+      task_biz_code = #{taskBizCode,jdbcType=VARCHAR},
+      task_biz_name = #{taskBizName,jdbcType=VARCHAR},
+      task_type = #{taskType,jdbcType=VARCHAR},
+      process_instance_no = #{processInstanceNo,jdbcType=VARCHAR},
+      node_instance_no = #{nodeInstanceNo,jdbcType=VARCHAR},
+      node_execution_no = #{nodeExecutionNo,jdbcType=VARCHAR},
+      assign_type = #{assignType,jdbcType=VARCHAR},
+      assign_info = #{assignInfo,jdbcType=OTHER},
+      assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      executor = #{executor,jdbcType=VARCHAR},
+      execute_biz_result = #{executeBizResult,jdbcType=VARCHAR},
+      execute_biz_data = #{executeBizData,jdbcType=OTHER},
+      execute_time = #{executeTime,jdbcType=TIMESTAMP},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER},
+      process_instance_key_field = #{processInstanceKeyField,jdbcType=OTHER},
+      process_instance_key_field2 = #{processInstanceKeyField2,jdbcType=OTHER}
+    where task_no = #{taskNo,jdbcType=VARCHAR} and deleted=0
+  </update>
+  
+    <select id="list" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_task
+    <where> deleted=0
+      <if test="id != null">
+         and id = #{id}
+      </if>
+      <if test="taskNo != null">
+        and task_no = #{taskNo}
+      </if>
+      <if test="processType != null">
+        and process_type = #{processType}
+      </if>
+      <if test="bizNo != null">
+        and biz_no = #{bizNo}
+      </if>      
+      <if test="taskBizCode != null">
+        and task_biz_code = #{taskBizCode}
+      </if>  
+      <if test="taskType != null">
+        and task_type = #{taskType}
+      </if>    
+      <if test="processInstanceNo != null">
+        and process_instance_no = #{processInstanceNo}
+      </if> 
+      <if test="nodeInstanceNo != null">
+        and node_instance_no = #{nodeInstanceNo}
+      </if> 
+      <if test="assignType != null">
+        and assign_type = #{assignType}
+      </if>  
+      <if test="executor != null">
+        and executor = #{executor}
+      </if>   
+      <if test="productCode != null">
+        and product_code = #{productCode}
+      </if>  
+      <if test="creator != null">
+        and creator = #{creator}
+      </if>        
+      <if test="status != null">
+        and status = #{status}
+      </if>  
+      <if test="assignTimeStart != null">
+        and assign_time &gt;= #{assignTimeStart}
+      </if>  
+      <if test="assignTimeEnd != null">
+        and assign_time &lt;= #{assignTimeEnd}
+      </if>  
+      <if test="executeTimeStart != null">
+        and execute_time &gt;= #{executeTimeStart}
+      </if>  
+      <if test="executeTimeEnd != null">
+        and execute_time &lt;= #{executeTimeEnd}
+      </if> 
+      <if test="createdDateStart != null">
+        and created_date &gt;= #{createdDateStart}
+      </if>  
+      <if test="createdDateEnd != null">
+        and created_date &lt;= #{createdDateEnd}
+      </if> 
+      <if test="modifiedDateStart != null">
+        and modified_date &gt;= #{modifiedDateStart}
+      </if>  
+      <if test="modifiedDateEnd != null">
+        and modified_date &lt;= #{modifiedDateEnd}
+      </if>  
+      <if test="processInstanceKeyField != null">
+        and process_instance_key_field = #{processInstanceKeyField}
+      </if>
+      <if test="processInstanceKeyField2 != null">
+        and process_instance_key_field2 like CONCAT(#{processInstanceKeyField2},'%')
+      </if>
+    </where>
+  </select>  
+
+  <select id="countTaskByPagerCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultType="long">
+    select
+    count(1)
+    from process_task
+    <include refid="pagerQueryTaskWhere" />
+  </select>
+
+  <select id="selectTaskByPagerCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from process_task
+    <include refid="pagerQueryTaskWhere" />
+	<if test="sortMap.createdDate != null">
+		order by created_date ${sortMap.createdDate.type}, id  ${sortMap.createdDate.type}
+	</if>
+    limit #{start},#{pageSize}
+  </select>
+
+  <sql id="pagerQueryTaskWhere">
+    <where> deleted = 0
+      <if test="fieldMap.taskNo != null">
+        and task_no=#{fieldMap.taskNo.value}
+      </if>
+      <if test="fieldMap.taskNoList != null">
+        and task_no in 
+        <foreach collection="fieldMap.taskNoList.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>
+      </if>   
+            <if test="fieldMap.statusList != null">
+        and status in 
+        <foreach collection="fieldMap.statusList.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>
+      </if>          
+      <if test="fieldMap.processType != null">
+        and process_type=#{fieldMap.processType.value}
+      </if>
+      <if test="fieldMap.bizNo != null">
+        and biz_no=#{fieldMap.bizNo.value}
+      </if>
+      <if test="fieldMap.processInstanceNo != null">
+        and process_instance_no=#{fieldMap.processInstanceNo.value}
+      </if> 
+      <if test="fieldMap.nodeInstanceNo != null">
+        and node_instance_no=#{fieldMap.nodeInstanceNo.value}
+      </if>              
+      <if test="fieldMap.taskBizCode != null">
+        and task_biz_code=#{fieldMap.taskBizCode.value}
+      </if>      
+      <if test="fieldMap.productCode != null">
+        and product_code=#{fieldMap.productCode.value}
+      </if>
+      <if test="fieldMap.productCodeList != null">
+        and (product_code is null or product_code in
+        <foreach collection="fieldMap.productCodeList.value" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        )
+      </if>
+      <if test="fieldMap.creator != null">
+        and creator=#{fieldMap.creator.value}
+      </if>      
+      <if test="fieldMap.executor != null">
+        and executor=#{fieldMap.executor.value}
+      </if>
+      <if test="fieldMap.status != null">
+        and status=#{fieldMap.status.value}
+      </if>
+      <if test="fieldMap.createdDateStart != null">
+        and created_date &gt;=#{fieldMap.createdDate.value}
+      </if> 
+      <if test="fieldMap.createdDateEnd != null">
+        and created_date &lt;=#{fieldMap.createdDate.value}
+      </if>     
+      <if test="fieldMap.processInstanceKeyField != null">
+        and process_instance_key_field =#{fieldMap.processInstanceKeyField.value}
+      </if>
+      <if test="fieldMap.processInstanceKeyField2 != null">
+        and process_instance_key_field2 like CONCAT(#{fieldMap.processInstanceKeyField2.value},'%')
+      </if>
+    </where>
+  </sql>
+  
+  <select id="countTaskAndAssignByPagerCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultType="long">
+    select
+    count(distinct task.task_no)
+    from process_task task, process_task_assign assign
+    <include refid="pagerQueryTaskAndAssignWhere" />
+  </select>
+
+  <select id="selectTaskAndAssignByPagerCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultMap="BaseResultMap">
+    select
+    distinct task.task_no,task.created_date,task.id
+    from process_task task, process_task_assign assign
+    <include refid="pagerQueryTaskAndAssignWhere" />
+        <if test="sortMap.createdDate != null">
+        order by task.created_date ${sortMap.createdDate.type}, task.id  ${sortMap.createdDate.type}
+    </if>
+    limit #{start},#{pageSize}
+  </select>
+
+
+  <sql id="pagerQueryTaskAndAssignWhere">
+    <where> task.deleted = 0 and assign.deleted=0 and task.task_no=assign.task_no
+      <if test="fieldMap.taskNo != null">
+        and task.task_no=#{fieldMap.taskNo.value}
+      </if>
+            <if test="fieldMap.taskNoList != null">
+        and task.task_no in 
+        <foreach collection="fieldMap.taskNoList.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>
+      </if>  
+            <if test="fieldMap.statusList != null">
+        and task.status in 
+        <foreach collection="fieldMap.statusList.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>
+      </if>         
+      <if test="fieldMap.processType != null">
+        and task.process_type=#{fieldMap.processType.value}
+      </if>
+      <if test="fieldMap.bizNo != null">
+        and task.biz_no=#{fieldMap.bizNo.value}
+      </if>
+      <if test="fieldMap.processInstanceNo != null">
+        and task.process_instance_no=#{fieldMap.processInstanceNo.value}
+      </if> 
+      <if test="fieldMap.nodeInstanceNo != null">
+        and task.node_instance_no=#{fieldMap.nodeInstanceNo.value}
+      </if>                 
+      <if test="fieldMap.taskBizCode != null">
+        and task.task_biz_code=#{fieldMap.taskBizCode.value}
+      </if>      
+      <if test="fieldMap.productCode != null">
+        and task.product_code=#{fieldMap.productCode.value}
+      </if>
+      <if test="fieldMap.productCodeList != null">
+        and (task.product_code is null or task.product_code in
+        <foreach collection="fieldMap.productCodeList.value" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        )
+      </if>
+      <if test="fieldMap.creator != null">
+        and task.creator=#{fieldMap.creator.value}
+      </if>      
+      <if test="fieldMap.executor != null">
+        and task.executor=#{fieldMap.executor.value}
+      </if>
+      <if test="fieldMap.status != null">
+        and task.status=#{fieldMap.status.value}
+      </if>
+      <if test="fieldMap.createdDateStart != null">
+        and task.created_date &gt;=#{fieldMap.createdDate.value}
+      </if> 
+      <if test="fieldMap.createdDateEnd != null">
+        and task.created_date &lt;=#{fieldMap.createdDate.value}
+      </if>
+
+      <if test="fieldMap.assignStatus != null">
+        and assign.status =#{fieldMap.assignStatus.value}
+      </if>   
+      <if test="fieldMap.processInstanceKeyField != null">
+        and task.process_instance_key_field =#{fieldMap.processInstanceKeyField.value}
+      </if>
+      <if test="fieldMap.processInstanceKeyField2 != null">
+        and task.process_instance_key_field2 like CONCAT(#{fieldMap.processInstanceKeyField2.value},'%')
+      </if>
+      and (
+      <trim prefixOverrides="OR">
+      <if test="fieldMap.assignUser != null">
+          or assign.assign_user =#{fieldMap.assignUser.value}
+      </if> 
+      <if test="fieldMap.assignGroupList != null">
+        or  (assign.assign_group in 
+            <foreach collection="fieldMap.assignGroupList.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach> 
+         and assign.assign_group2 is null)
+      </if> 
+      <if test="fieldMap.assignGroup2List!=null">
+              or  (assign.assign_group2 in 
+            <foreach collection="fieldMap.assignGroup2List.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach> 
+         and assign.assign_group is null)
+      </if>   
+      <if test="fieldMap.assignGroupList != null&amp;&amp; fieldMap.assignGroup2List!=null">
+        or  (assign.assign_group in 
+            <foreach collection="fieldMap.assignGroupList.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach> 
+        and assign.assign_group2 in
+            <foreach collection="fieldMap.assignGroup2List.value" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach> )        
+      </if>      
+      </trim>         
+      )         
+                         
+    </where>
+  </sql>
+
+  
+</mapper>

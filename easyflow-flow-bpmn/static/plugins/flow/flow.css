@@ -63,12 +63,13 @@
 
 /**instance info style*/
 .j-bpmn-node-close:not(.djs-connection) .djs-visual>:nth-child(1) {
-    fill: #3f3 !important; /* color elements as green */
+    fill: #F0FFF0 !important; /* color elements as green */
 }
 
 .j-bpmn-node-active:not(.djs-connection) .djs-visual>:nth-child(1) {
-    fill: #ff0 !important; /* color elements as green */
+    fill: #FFFACD !important; /* color elements as green */
 }
+
 
 .j-bpmn-comment-select-container {
 	display: inline-block;

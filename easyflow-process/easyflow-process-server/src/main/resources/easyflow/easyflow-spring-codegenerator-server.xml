@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <bean id="easyflow-codegenerator-transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="easyflow-codegenerator-dataSource" />
+    </bean>    
+    <bean id="easyflow-codegenerator-newTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+       <property name="transactionManager" ref="easyflow-codegenerator-transactionManager"></property>
+       <property name="propagationBehavior" value="3"></property>
+    </bean>
+    <bean id="easyflow-codegenerator-adapter-export-codeGenerateExport" class="com.jd.easyflow.codegenerator.adaper.export.CodeGenerateExportImpl"></bean>
+    <bean class="com.jd.easyflow.codegenerator.domain.service.CodeGenerateDomainService">
+        <property name="configuredGeneratorMap">
+            <map>
+                <entry key="demo_code">
+                    <bean class="com.jd.easyflow.codegenerator.domain.service.CodeGenerator">
+                    </bean>
+                </entry>
+                <entry key="demo_code2">
+                    <bean class="com.jd.easyflow.codegenerator.domain.service.CodeGenerator">
+                        <property name="codePrefix" value="T"></property>
+                        <property name="rollingType" value="1"></property>
+                        <property name="start" value="1000000"></property>
+                        <property name="startRandomRange" value="0"></property>
+                        <property name="step" value="1"></property>
+                        <property name="stepRandomRange" value="0"></property>
+                        <property name="numLength" value="8"></property>
+                        <property name="cacheSize" value="1000"></property>
+                        <property name="seperator1" value=""></property>
+                        <property name="seperator2" value=""></property>
+                    </bean>
+                </entry>
+                <entry key="PU-INSTANCE-ID">
+                    <bean class="com.jd.easyflow.codegenerator.domain.service.CodeGenerator">
+                        <property name="rollingType" value="-1"></property>
+                        <property name="start" value="1000000000"></property>
+                        <property name="numLength" value="12"></property>
+                        <property name="cacheSize" value="10000"></property>
+                    </bean>
+                </entry>
+                <entry key="PU-EXECUTION-ID">
+                    <bean class="com.jd.easyflow.codegenerator.domain.service.CodeGenerator">
+                        <property name="rollingType" value="-1"></property>
+                        <property name="start" value="1000000000"></property>
+                        <property name="numLength" value="12"></property>
+                        <property name="cacheSize" value="10000"></property>
+                    </bean>
+                </entry>                                
+            </map>
+        </property>    
+    </bean>
+    <bean class="com.jd.easyflow.codegenerator.infrastructure.repository.SequenceRepositoryImpl"></bean>
+</beans>
