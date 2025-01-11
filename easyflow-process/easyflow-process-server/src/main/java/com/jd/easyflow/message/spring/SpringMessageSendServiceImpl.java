@@ -31,4 +31,10 @@ public class SpringMessageSendServiceImpl implements MessageSendService {
         applicationEventPublisher.publishEvent(eventMessage);
         log.info("Spring send message end");
     }
+
+    @Override
+    public void sendMessage(Message message, int timeoutMillis) {
+        log.info("spring send message has no timeout");
+        sendMessage(message);
+    }
 }

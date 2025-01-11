@@ -23,7 +23,9 @@ public class TargetAction extends ParamExecutorNodeAction {
             context.getResult().setResult(result);
             return null;
         } catch (Throwable t) {
-            logger.error("Target action execute exception:" + t.getMessage(), t);
+            if (context.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("Target action execute exception:" + t.getMessage());
+            }
             context.put(ChainConstants.EXCEPTION, t);
             return null;
         } finally {

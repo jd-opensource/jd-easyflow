@@ -142,12 +142,26 @@ public class ProcessRuntimeService {
             log.debug("Node start exec, nodeContext:{}", nodeContext);
         }
         manager.op(context, () -> {
-            Pair<ProcessNodeInstanceDTO, Boolean> nodeInstanceInfo = manager.getOrCreateOpenNodeInstanceWithCreateFlag(nodeContext.getNodeId(), context);
-            ProcessNodeInstanceDTO nodeInstance = nodeInstanceInfo.getLeft();
+            ProcessNodeInstanceDTO nodeInstance;
+            boolean nodeNewCreate;
+            if (FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK.equals(nodeContext.getPreCheckType()) || FlowConstants.NODE_PRE_CHECK_TYPE_INCLUSIVECHECK.equals(nodeContext.getPreCheckType())) {
+                // can only be created on previous node end.
+                nodeInstance = manager.getOpenNodeInstance(nodeContext.getNodeId(), context);
+                if (nodeInstance == null) {
+                    log.info("Open node instance is null," + nodeContext );
+                    nodeContext.setPreResult(false);
+                    return null;
+                }
+                nodeNewCreate = false;
+            } else {
+                Pair<ProcessNodeInstanceDTO, Boolean> nodeInstanceInfo = manager.getOrCreateOpenNodeInstanceWithCreateFlag(nodeContext.getNodeId(), context);
+                nodeInstance = nodeInstanceInfo.getLeft();
+                nodeNewCreate = nodeInstanceInfo.getRight();
+            }
+            
             if (StringUtils.isNotEmpty(nodeInstance.getVars())) {
                 context.getNodeVariableSetter().accept(Pair.of(nodeContext, JSON.parseObject(nodeInstance.getVars(), Map.class)));
             }
-            boolean nodeNewCreate = nodeInstanceInfo.getRight();
             if (nodeNewCreate && context.getNodeStartEventPolicy() == StdProcessConstants.NODE_START_EVENT_POLICY_CREATE) {
                 context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_NODE_INSTANCE_START, new Object[] {nodeInstance, nodeContext} });
             }
@@ -285,6 +299,10 @@ public class ProcessRuntimeService {
         }
 
         manager.op(context, () -> {
+            if (nodeContext.getNodeInstanceNo() == null) {
+                log.info("node instance no is null, " + nodeContext);
+                return null;
+            }
             ProcessNodeInstanceDTO instance = manager.getNodeInstance(nodeContext.getNodeInstanceNo(), context);
 
             Map<String, String> nodeVariables = context.getNodeVariableGetter().apply(nodeContext);

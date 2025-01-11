@@ -24,9 +24,8 @@ public class SingleThreadFlowRunner extends BaseFlowRunner {
     @Override
     public void runNodes(FlowContextImpl context) {
         NodeContext currentNode;
-        FlowContextImpl contextImpl = (FlowContextImpl) context;
         // Loop execute.
-        while ((currentNode = contextImpl.getNextNode()) != null) {
+        while ((currentNode = context.getNextNode()) != null) {
             if (context.isInterrupted()) {
                 if (context.isLogOn() && logger.isInfoEnabled()) {
                     logger.info("Flow interrupted!");
@@ -35,7 +34,7 @@ public class SingleThreadFlowRunner extends BaseFlowRunner {
             }
             NodeContext[] nextNodes = runOneNode(currentNode, context);
             if (nextNodes != null) {
-                contextImpl.addNodes(nextNodes);
+                context.addNodes(nextNodes);
             }
         }
     }

@@ -191,7 +191,9 @@ public abstract class CoreFlowEngine implements FlowEngine {
             return wrapResult(context);
         } catch (Throwable t) { // NOSONAR
             throwable = t;
-            logger.error(t.getMessage(), t);
+            if (context.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("Flow execute exception, Flow:" + flow.getId() + "," + t.getMessage());
+            }
             throw t;
         } finally {
             flow.triggerEvent(FlowEventTypes.FLOW_COMPLETE, throwable, context, true);

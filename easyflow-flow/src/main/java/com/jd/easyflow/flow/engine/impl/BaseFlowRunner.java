@@ -128,7 +128,9 @@ public abstract class BaseFlowRunner implements FlowRunner {
             return nodeContext;
         } catch (Throwable t) {// NOSONAR
             throwable = t;
-            logger.error("Flow node execute exception, Node:" + currentNode.getNodeId() + "," + t.getMessage());
+            if (context.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("Flow node execute exception, Node:" + currentNode.getNodeId() + "," + t.getMessage());
+            } 
             throw t;
         } finally {
             currentNode.setThrowable(throwable);

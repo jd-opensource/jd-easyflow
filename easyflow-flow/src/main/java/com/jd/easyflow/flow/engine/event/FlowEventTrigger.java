@@ -151,7 +151,7 @@ public class FlowEventTrigger {
             try {
                 listener.on(event);
             } catch (Throwable t) { //NOSONAR
-                logger.error("OnEvent of " + listener.getClass().getName() + " Exception, " + t.getMessage(), t);
+                logger.error("On Event of " + listener.getClass().getName() + " Exception, " + t.getMessage(), t);
             }
         }
     }

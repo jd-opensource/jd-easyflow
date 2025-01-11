@@ -31,7 +31,14 @@ public class SpelEvaluator implements ElEvaluator {
 
     @Override
     public <T> T evalWithDefaultContext(String exp, Object root, boolean cache) {
-        return SpelHelper.evalWithDefaultContext(exp, root, cache);
+        try {
+            return SpelHelper.evalWithDefaultContext(exp, root, cache);
+        } catch (Exception e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("eval spel exception, exp:" + exp + "," + e.getMessage());
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -50,7 +57,15 @@ public class SpelEvaluator implements ElEvaluator {
             break;
         }
 
-        Object result = SpelHelper.evalWithDefaultContext(exp, root, cache);
+        Object result = null;
+        try {
+            result =  SpelHelper.evalWithDefaultContext(exp, root, cache);
+        } catch (Exception e) {
+            if ((fsmContext == null || fsmContext.isLogOn()) && logger.isErrorEnabled()) {
+                logger.error("EVAL SPEL EXCEPTION, exp:" + exp + "," + e.getMessage(), e);
+            } 
+            throw e;
+        }
         if ((fsmContext == null || fsmContext.isLogOn()) && logger.isInfoEnabled()) {
             logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
         }

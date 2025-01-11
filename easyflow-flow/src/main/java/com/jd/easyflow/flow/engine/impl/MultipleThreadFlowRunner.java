@@ -66,7 +66,9 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         List<NodeContext> exceptions = context.get(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS);
         // Default behavior is throwing first exception.
         if (exceptions != null && exceptions.size() > 0) {
-            printStackTrace();
+            if (context.isLogOn()) {
+                logger.error("Flow execute exception");
+            }
             Throwable t = exceptions.get(0).get(FlowConstants.NODE_CTX_MULTI_EXCEPTION);
             throw ExceptionUtil.throwException(t);
         }
@@ -130,14 +132,16 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
      * @param nodeContext
      * @param t
      */
-    protected synchronized void addException(FlowContext context, NodeContext nodeContext, Throwable t) {
-        List<NodeContext> exceptionNodes = context.get(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS);
-        if (exceptionNodes == null) {
-            exceptionNodes = new ArrayList<NodeContext>();
-            context.put(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS, exceptionNodes);
+    protected void addException(FlowContext context, NodeContext nodeContext, Throwable t) {
+        synchronized(context) {
+            List<NodeContext> exceptionNodes = context.get(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS);
+            if (exceptionNodes == null) {
+                exceptionNodes = new ArrayList<NodeContext>();
+                context.put(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS, exceptionNodes);
+            }
+            nodeContext.put(FlowConstants.NODE_CTX_MULTI_EXCEPTION, t);
+            exceptionNodes.add(nodeContext);
         }
-        nodeContext.put(FlowConstants.NODE_CTX_MULTI_EXCEPTION, t);
-        exceptionNodes.add(nodeContext);
     }
 
     protected void printStackTrace() {

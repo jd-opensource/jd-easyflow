@@ -31,7 +31,14 @@ public class SpelEvaluator implements ElEvaluator {
 
     @Override
     public <T> T evalWithDefaultContext(String exp, Object root, boolean cache) {
-        return SpelHelper.evalWithDefaultContext(exp, root, cache);
+        try {
+            return SpelHelper.evalWithDefaultContext(exp, root, cache);
+        } catch (Exception e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("Eval spel exception, exp:" + exp + "," + e.getMessage());
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -48,8 +55,15 @@ public class SpelEvaluator implements ElEvaluator {
             root = buildRootMapRoot(nodeContext, flowContext, data);
             break;
         }
-
-        Object result = SpelHelper.evalWithDefaultContext(exp, root, cache);
+        Object result = null;
+        try {
+            result = SpelHelper.evalWithDefaultContext(exp, root, cache);
+        } catch (Exception e) {
+            if (flowContext.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("EVAL SPEL EXCEPTION, EXP:" + exp + "," + e.getMessage());
+            }
+            throw e;
+        }
         if (flowContext.isLogOn() && logger.isInfoEnabled()) {
             logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
         }

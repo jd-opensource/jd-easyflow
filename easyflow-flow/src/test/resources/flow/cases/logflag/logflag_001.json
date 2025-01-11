@@ -1,0 +1,6 @@
+{
+	"id":"logFlag_001",
+	"nodes":[
+		{"id":"node001","action":"new com.jd.easyflow.flow.cases.logflag.LogFlagTest().throwException()","start":true}
+	]
+}

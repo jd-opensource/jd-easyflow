@@ -464,7 +464,7 @@
         this.bpmnModeler.saveXML({ format: true }).then(function(obj) {
             var xml = obj.xml;
             var encodedData = encodeURIComponent(xml);
-            var processId = _findProcessElement(_self.bpmnModeler).businessObject.id;
+            var processId = _findProcessElement(_self.bpmnModeler)[0].businessObject.id;
             var fileName = processId + "-" + J.getNowDatetime("", "-", "") + '.bpmn';
             var downloadLink = document.createElement('a');
             downloadLink.download = fileName;

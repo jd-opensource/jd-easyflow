@@ -14,4 +14,9 @@ public class NoopMessageSendServiceImpl implements MessageSendService {
         // NOOP
     }
 
+    @Override
+    public void sendMessage(Message message, int timeoutMillis) {
+        // NOOP
+    }
+
 }

@@ -35,7 +35,9 @@ public abstract class BaseChainPlugin implements NodeAction {
                     context.put(ChainConstants.STAGE, ChainConstants.STAGE_POST);
                 }
             } catch (Throwable t) {
-                logger.error(this.getClass().getName() + " pre handle exception:" + t.getMessage(), t);
+                if (context.isLogOn() && logger.isErrorEnabled()) {
+                    logger.error(this.getClass().getName() + " pre handle exception:" + t.getMessage());
+                }
                 context.put(ChainConstants.STAGE, ChainConstants.STAGE_POST);
                 context.put(ChainConstants.EXCEPTION, t);
             }
@@ -43,7 +45,9 @@ public abstract class BaseChainPlugin implements NodeAction {
             try {
                 postHandle(nodeContext, context);
             } catch (Throwable t) {
-                logger.error(this.getClass().getName() + "post handle exception:" + t.getMessage(), t);
+                if (context.isLogOn() && logger.isErrorEnabled()) {
+                    logger.error(this.getClass().getName() + "post handle exception:" + t.getMessage());
+                }
                 context.put(ChainConstants.EXCEPTION, t);
             }
         }

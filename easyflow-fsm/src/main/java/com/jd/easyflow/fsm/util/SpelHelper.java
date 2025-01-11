@@ -99,50 +99,40 @@ public class SpelHelper {
     }
 
     public static <T> T eval(String exp, Object context, boolean cache) {
-        try {
-            Expression expression;
-            if (cache) {
-                expression = cacheMap.get(exp);
-                if (expression == null) {
-                    expression = parse(exp);
-                    cacheMap.put(exp, expression);
-                }
-            } else {
+        Expression expression;
+        if (cache) {
+            expression = cacheMap.get(exp);
+            if (expression == null) {
                 expression = parse(exp);
+                cacheMap.put(exp, expression);
             }
-
-            Object value = null;
-            if (context instanceof EvaluationContext) {
-                value = expression.getValue((EvaluationContext) context);
-            } else {
-                value = expression.getValue(context);
-            }
-            return (T) value;
-        } catch (Exception e) {
-            logger.error("SPEL eval exception, exp:" + exp, e);
-            throw e;
+        } else {
+            expression = parse(exp);
         }
+
+        Object value = null;
+        if (context instanceof EvaluationContext) {
+            value = expression.getValue((EvaluationContext) context);
+        } else {
+            value = expression.getValue(context);
+        }
+        return (T) value;
     }
 
     public static <T> T eval(String exp, EvaluationContext context, Object root, boolean cache) {
-        try {
-            Expression expression;
-            if (cache) {
-                expression = cacheMap.get(exp);
-                if (expression == null) {
-                    expression = parse(exp);
-                    cacheMap.put(exp, expression);
-                }
-            } else {
+        Expression expression;
+        if (cache) {
+            expression = cacheMap.get(exp);
+            if (expression == null) {
                 expression = parse(exp);
+                cacheMap.put(exp, expression);
             }
-
-            Object value = expression.getValue(context, root);
-            return (T) value;
-        } catch (Exception e) {
-            logger.error("SPEL eval exception, exp:" + exp, e);
-            throw e;
+        } else {
+            expression = parse(exp);
         }
+
+        Object value = expression.getValue(context, root);
+        return (T) value;
     }
 
     public static Expression parseTemplate(String template) {
@@ -193,7 +183,7 @@ public class SpelHelper {
         SpelHelper.applicationContext = applicationContext;
         context.setBeanResolver(new BeanFactoryResolver(applicationContext));
     }
-    
+
     public static StandardEvaluationContext getDefaultContext() {
         return context;
     }

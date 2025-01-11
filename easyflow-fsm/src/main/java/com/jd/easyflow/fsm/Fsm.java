@@ -211,7 +211,9 @@ public class Fsm implements FsmLifeCycle {
             return wrapResult(context);
         } catch (Throwable t) { // NOSONAR
             throwable = t;
-            logger.error(t.getMessage(), t);
+            if (context.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("Fsm execute exception, fsmId:" + this.id + "," +  t.getMessage());
+            }
             throw t;
         } finally {
             eventTrigger.triggerEvent(FsmEventTypes.FSM_COMPLETE, throwable, context, true);
@@ -240,7 +242,9 @@ public class Fsm implements FsmLifeCycle {
         } catch (Throwable t) { // NOSONAR
             tstThrowable = t;
             transitionContext.setThrowable(tstThrowable);
-            logger.error("Transition Exception");
+            if (context.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("Transition Exception, fromId:" + transition.getFromId() + " eventId:" + transition.getEventId());
+            }
             throw t;
         } finally {
             eventTrigger.triggerEvent(FsmEventTypes.TST_COMPLETE, transitionContext, context, true);
