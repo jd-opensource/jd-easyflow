@@ -63,10 +63,13 @@ public class ExpFilter<T, R> implements Filter<T, R> {
         if (evaluator == null) {
             evaluator = ElFactory.get();
         }
-        R result = null;
-        evaluator.evalWithDefaultContext(exp, data, true);
+        R result = evaluator.evalWithDefaultContext(exp, data, true);
         if (logger.isDebugEnabled()) {
-            logger.debug("SPEL RESULT:" + JsonUtil.toJsonString(result));
+            try {
+                logger.debug("SPEL RESULT:" + JsonUtil.toJsonString(result));
+            } catch (Throwable t) {
+                logger.debug("SPEL RESULT to json string exception:" + t.getMessage());
+            }
         }
         return result;
     }

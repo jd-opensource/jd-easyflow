@@ -64,7 +64,11 @@ public class FlowParserImpl implements FlowParser {
     private static final String MAIN_FLOW_ID_KEY = "_main_flow_id";
     
     private ElEvaluator elEvaluator;
-
+    
+    private List<FlowParseEventListener> preListeners;
+    
+    private List<FlowParseEventListener> postListeners;
+    
 
     @Override
     public List<Flow> parse(String data) {
@@ -140,6 +144,18 @@ public class FlowParserImpl implements FlowParser {
         flowList.add(flow);
         
         List<FlowParseEventListener> parseListeners = parseParseListeners(map, flow, parseEl);
+        if (preListeners != null && preListeners.size() > 0) {
+            if (parseListeners == null) {
+                parseListeners = new ArrayList<FlowParseEventListener>();
+            }
+           parseListeners.addAll(0, preListeners);
+        }
+        if (postListeners != null && postListeners.size() > 0) {
+            if (parseListeners == null) {
+                parseListeners = new ArrayList<FlowParseEventListener>();
+            }
+            parseListeners.addAll(postListeners);
+        }
         triggerParseEvent(parseListeners, FlowParseEventTypes.PARSE_FLOW_START, map, flow, null);
         
         flow.setId((String) map.get(DefConstants.COMMON_PROP_ID));
@@ -181,11 +197,11 @@ public class FlowParserImpl implements FlowParser {
                     node.setName((String) nodeConf.get(DefConstants.COMMON_PROP_NAME));
                     node.putProperties((Map<String, Object>) nodeConf.get(DefConstants.COMMON_PROP_PROPERTIES));
                     node.setPreHandler(parseNodePreHandler(
-                            new PreParseParam(nodeConf.get(DefConstants.NODE_PROP_PRE), parseEl, node)));
+                            new PreParseParam(nodeConf.get(DefConstants.NODE_PROP_PRE), flowList, parseEl, flow, node)));
                     node.setAction(parseNodeAction(new ActionParseParam(nodeConf.get(DefConstants.NODE_PROP_ACTION),
-                            flowList, parseEl, node)));
+                            flowList, parseEl, flow, node)));
                     node.setPostHandler(parseNodePostHandler(
-                            new PostParseParam(nodeConf.get(DefConstants.NODE_PROP_POST), parseEl, node)));
+                            new PostParseParam(nodeConf.get(DefConstants.NODE_PROP_POST), flowList, parseEl, flow, node)));
                     node.postConstruct(nodeConf, null);
                     flow.addNode(node);
                 }
@@ -880,6 +896,24 @@ public class FlowParserImpl implements FlowParser {
     public void setElEvaluator(ElEvaluator elEvaluator) {
         this.elEvaluator = elEvaluator;
     }
+
+    public List<FlowParseEventListener> getPreListeners() {
+        return preListeners;
+    }
+
+    public void setPreListeners(List<FlowParseEventListener> preListeners) {
+        this.preListeners = preListeners;
+    }
+
+    public List<FlowParseEventListener> getPostListeners() {
+        return postListeners;
+    }
+
+    public void setPostListeners(List<FlowParseEventListener> postListeners) {
+        this.postListeners = postListeners;
+    }
+    
+    
     
     
 

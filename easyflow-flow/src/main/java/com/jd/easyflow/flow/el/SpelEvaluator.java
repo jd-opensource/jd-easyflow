@@ -65,7 +65,11 @@ public class SpelEvaluator implements ElEvaluator {
             throw e;
         }
         if (flowContext.isLogOn() && logger.isInfoEnabled()) {
-            logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
+            try {
+                logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
+            } catch (Throwable t) {
+                logger.info("spel result to json string exception:" + t.getMessage());
+            }
         }
         return (T) result;
     }

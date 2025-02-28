@@ -106,6 +106,7 @@ public class ProcessRuntimeService {
             context.setInstanceNo(processInstance.getInstanceNo());
             if (Boolean.TRUE
                     .equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_DATA_FLUSH_AFTER_CREATE))) {
+                syncVariable(context);
                 manager.flushProcess(context);
             }
         }

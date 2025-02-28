@@ -12,5 +12,5 @@ public class FlowParseEventTypes {
 
     public static final String INIT_FLOW_START = "INIT_FLOW_START";
     public static final String INIT_FLOW_END = "INIT_FLOW_END";
-
+    
 }

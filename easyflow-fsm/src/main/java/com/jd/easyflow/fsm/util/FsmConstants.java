@@ -36,5 +36,10 @@ public class FsmConstants {
     public static final String INIT_CONTEXT_KEY = "initContext";
     
     public static final String PARAM_KEY_EL_EVALUATOR = "_fsm.elEvaluator";
+    
+    public static final String FSM_MANAGER_EVENT_DATA_KEY_PARAM = "param";
+    public static final String FSM_MANAGER_EVENT_DATA_KEY_FSM_MANAGER = "fsmManager";
+    public static final String FSM_MANAGER_EVENT_DATA_KEY_RESULT = "result";
+    public static final String FSM_MANAGER_EVENT_DATA_KEY_EXCEPTION = "exception";
 
 }

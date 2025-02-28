@@ -64,7 +64,9 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
             preNodes.add(nodeContext.getPreviousNode().getNodeId());
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
-            List<String> configPreNodes = this.preNodes != null ? this.preNodes
+            List<String> preNodeList = this.getPreNodes(nodeContext, lockContext);
+            
+            List<String> configPreNodes = preNodeList != null ? preNodeList
                     : currentNode.getProperty(FlowConstants.PROP_PRENODES);
             if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("Pre nodes executed:" + preNodes);
@@ -96,8 +98,13 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
     }
 
     @Override
-    public String getCheckType() {
+    public String getCheckType(NodeContext nodeContext, FlowContext flowContext) {
         return FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK;
+    }
+
+    @Override
+    public List<String> getPreNodes(NodeContext nodeContext, FlowContext flowContext) {
+        return this.preNodes;
     }
 
 }

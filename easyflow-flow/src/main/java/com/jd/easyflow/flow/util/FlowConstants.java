@@ -81,6 +81,11 @@ public class FlowConstants {
      */
     public static final String INIT_CONTEXT_KEY = "initContext";
     
+    
+    public static final String FLOW_ENGINE_EVENT_DATA_KEY_PARAM = "param";
+    public static final String FLOW_ENGINE_EVENT_DATA_KEY_FLOW_ENGINE = "flowEngine";
+    public static final String FLOW_ENGINE_EVENT_DATA_KEY_RESULT = "result";
+    public static final String FLOW_ENGINE_EVENT_DATA_KEY_EXCEPTION = "exception";
 
 
 }

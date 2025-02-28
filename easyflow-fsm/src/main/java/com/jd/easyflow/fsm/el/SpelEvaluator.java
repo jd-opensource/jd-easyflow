@@ -62,12 +62,16 @@ public class SpelEvaluator implements ElEvaluator {
             result =  SpelHelper.evalWithDefaultContext(exp, root, cache);
         } catch (Exception e) {
             if ((fsmContext == null || fsmContext.isLogOn()) && logger.isErrorEnabled()) {
-                logger.error("EVAL SPEL EXCEPTION, exp:" + exp + "," + e.getMessage(), e);
+                logger.error("EVAL SPEL EXCEPTION, exp:" + exp + "," + e.getMessage());
             } 
             throw e;
         }
         if ((fsmContext == null || fsmContext.isLogOn()) && logger.isInfoEnabled()) {
-            logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
+            try {
+                logger.info("SPEL RESULT:" + JsonUtil.toJsonString(result));
+            } catch (Throwable t) {
+                logger.info("spel result to json string exception:" + t.getMessage());
+            }
         }
         return (T) result;
     }

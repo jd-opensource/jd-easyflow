@@ -134,7 +134,11 @@ public class Fsm implements FsmLifeCycle {
                     + param.getCurrentStateId() + " opType:" + param.getOpType());
         }
         if (logFlag && logger.isDebugEnabled()) {
-            logger.debug("Param:" + JsonUtil.toJsonString(param));
+            try {
+                logger.debug("Param:" + JsonUtil.toJsonString(param));
+            } catch (Throwable t) {
+                logger.debug("Param to json string exception:" + t.getMessage());
+            }
         }
         FsmContext context = initContext(param);
         if (filters == null || filters.size() == 0) {
@@ -174,10 +178,16 @@ public class Fsm implements FsmLifeCycle {
                 State currentState = context.getCurrentState();
                 Event currentEvent = context.getCurrentEvent();
                 if (context.isLogOn() && logger.isInfoEnabled()) {
-                    logger.info("Current state:" + currentState.getId() + ", Current event:"
+                    logger.info("Current state:" + (currentState == null ? null : currentState.getId()) + ", Current event:"
                             + (currentEvent == null ? null : currentEvent.getId()));
                 }
+                if (currentState == null) {
+                    throw new RuntimeException("Current state is null");
+                }
                 if (currentEvent == null) {
+                    if (context.isLogOn() && logger.isInfoEnabled()) {
+                        logger.info("Current event is null, EXIT");
+                    }
                     break;
                 }
                 String transitionKey = createTransitionKey(currentState, currentEvent);

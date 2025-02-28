@@ -150,7 +150,7 @@ public class FsmEventTrigger {
             try {
                 listener.on(event);
             } catch (Throwable t) { //NOSONAR
-                logger.error(listener.getClass().getName() + " Execute exception:" + t.getMessage(), t);
+                logger.error("Exception on event of " + listener.getClass().getName() + ", message:" + t.getMessage(), t);
             }
         }
     }

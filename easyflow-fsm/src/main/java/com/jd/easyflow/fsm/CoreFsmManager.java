@@ -143,18 +143,21 @@ public abstract class CoreFsmManager {
         }
         // Has fsm manager listener scenario.
         Map<String, Object> data = new HashMap<>();
-        data.put("param", param);
-        data.put("fsmManager", this);
-        eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_START, data, null, false);
+        data.put(FsmConstants.FSM_MANAGER_EVENT_DATA_KEY_PARAM, param);
+        data.put(FsmConstants.FSM_MANAGER_EVENT_DATA_KEY_FSM_MANAGER, this);
         try {
+            eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_START, data, null, false);
             Fsm fsm = getFsm(param.getFsmId());
             if (fsm == null) {
                 throw new RuntimeException("FSM:" + param.getFsmId() + " not exists");
             }
             FsmResult result = fsm.run(param);
-            data.put("result", result);
+            data.put(FsmConstants.FSM_MANAGER_EVENT_DATA_KEY_RESULT, result);
             eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_END, data, null, false);
             return result;
+        } catch (Throwable t) {
+            data.put(FsmConstants.FSM_MANAGER_EVENT_DATA_KEY_EXCEPTION, t);
+            throw t;
         } finally {
             eventTrigger.triggerEvent(FsmEventTypes.FSM_MANAGER_COMPLETE, data, null, true);
         }

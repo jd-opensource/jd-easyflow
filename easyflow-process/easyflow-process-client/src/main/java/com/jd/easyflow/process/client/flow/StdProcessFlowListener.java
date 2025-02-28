@@ -430,8 +430,8 @@ public class StdProcessFlowListener implements FlowEventListener {
         if (currentNode instanceof NodeImpl) {
             NodePreHandler preHandler = ((NodeImpl) currentNode).getPreHandler();
             if (preHandler != null && preHandler instanceof NodePrePropertyGetter) {
-                configPreNodes = ((NodePrePropertyGetter) preHandler).getPreNodes();
-                preCheckType = ((NodePrePropertyGetter) preHandler).getCheckType();
+                configPreNodes = ((NodePrePropertyGetter) preHandler).getPreNodes(flowNodeContext, context);
+                preCheckType = ((NodePrePropertyGetter) preHandler).getCheckType(flowNodeContext, context);
             }
         }
         if (configPreNodes == null) {

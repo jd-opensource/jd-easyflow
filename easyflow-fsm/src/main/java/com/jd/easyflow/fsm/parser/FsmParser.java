@@ -54,6 +54,10 @@ public class FsmParser {
 
     private static final String FSM_STRING_KEY = "_fsm_string";
     
+    private static List<FsmParseEventListener> preListeners;
+    
+    private static List<FsmParseEventListener> postListeners;
+    
     public static Fsm parse(String data) {
         return parse(data, true);
     }
@@ -75,6 +79,19 @@ public class FsmParser {
         FsmBuilder builder = FsmBuilder.create(fsmId, fsmName);
         builder.logFag((Boolean) map.get(DefConstants.FSM_PROP_LOG_FLAG));
         List<FsmParseEventListener> parseListeners = parseParseListeners(map, builder.build(), parseEl, elEvaluator);
+        if (preListeners != null) {
+            if (parseListeners == null) {
+                parseListeners = new ArrayList<FsmParseEventListener>();
+            }
+            parseListeners.addAll(0, preListeners);
+        }
+        if (postListeners != null) {
+            if (parseListeners == null) {
+                parseListeners = new ArrayList<FsmParseEventListener>();
+            }
+            parseListeners.addAll(postListeners);
+        }
+        
         triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_START, map, builder.build(), null, elEvaluator);
         
         // Parse property
@@ -630,4 +647,22 @@ public class FsmParser {
         context.put("definition", currentDef);
         return context;
     }
+
+    public static List<FsmParseEventListener> getPreListeners() {
+        return preListeners;
+    }
+
+    public static void setPreListeners(List<FsmParseEventListener> preListeners) {
+        FsmParser.preListeners = preListeners;
+    }
+
+    public static List<FsmParseEventListener> getPostListeners() {
+        return postListeners;
+    }
+
+    public static void setPostListeners(List<FsmParseEventListener> postListeners) {
+        FsmParser.postListeners = postListeners;
+    }
+    
+    
 }

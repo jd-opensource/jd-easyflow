@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyflow-parent</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.4.1</version>
+        <version>1.4.2</version>
     </parent>
     <artifactId>easyflow-flow-bpmn</artifactId>
     <name>easyflow-flow-bpmn</name>
@@ -21,6 +21,7 @@
         <dependency>
             <groupId>com.jd.easyflow</groupId>
             <artifactId>easyflow-flow-extension</artifactId>
+            <scope>test</scope>
         </dependency>           
 		<dependency>
 			<groupId>org.activiti</groupId>

@@ -165,7 +165,7 @@ public class LoopNodeAction implements NodeAction {
         Object loopActionConf = node.getProperty("loopAction");
         if (loopActionConf != null) {
             ActionParseParam param = new ActionParseParam(loopActionConf, initContext.getFlowList(),
-                    initContext.isParseEl(), node);
+                    initContext.isParseEl(), initContext.getFlow(), node);
             loopAction = initContext.getFlowParser().parseNodeAction(param);
         }
         

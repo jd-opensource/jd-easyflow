@@ -72,7 +72,8 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
             }
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
-            List<String> configPreNodes = this.preNodes != null ? this.preNodes
+            List<String> preNodeList = this.getPreNodes(nodeContext, lockContext);
+            List<String> configPreNodes = preNodeList != null ? preNodeList
                     : currentNode.getProperty(FlowConstants.PROP_PRENODES);
             if (nodeContext.getPreviousNode() == null || nodeContext.getPreviousNode().getPreviousNode() == null) {
                 if (context.isLogOn() && logger.isWarnEnabled()) {
@@ -128,8 +129,13 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
     }
 
     @Override
-    public String getCheckType() {
+    public String getCheckType(NodeContext nodeContext, FlowContext flowContext) {
         return FlowConstants.NODE_PRE_CHECK_TYPE_INCLUSIVECHECK;
+    }
+
+    @Override
+    public List<String> getPreNodes(NodeContext nodeContext, FlowContext flowContext) {
+        return this.preNodes;
     }
 
 }

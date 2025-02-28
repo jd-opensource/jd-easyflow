@@ -19,16 +19,19 @@ public class ActionParseParam {
 
     private boolean parseEl;
     
+    private Flow flow;
+    
     private FlowNode node;
 
     public ActionParseParam() {
         // NOOP
     }
 
-    public ActionParseParam(Object actionDef, List<Flow> flowList, boolean parseEl, FlowNode node) {
+    public ActionParseParam(Object actionDef, List<Flow> flowList, boolean parseEl, Flow flow, FlowNode node) {
         this.actionDef = actionDef;
         this.flowList = flowList;
         this.parseEl = parseEl;
+        this.flow = flow;
         this.node = node;
     }
 
@@ -62,6 +65,14 @@ public class ActionParseParam {
 
     public void setNode(FlowNode node) {
         this.node = node;
+    }
+
+    public Flow getFlow() {
+        return flow;
+    }
+
+    public void setFlow(Flow flow) {
+        this.flow = flow;
     }
     
 }

@@ -28,6 +28,7 @@ import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.parser.FlowParser;
 import com.jd.easyflow.flow.model.parser.FlowParserImpl;
+import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
 import com.jd.easyflow.flow.util.FlowIOUtil;
 import com.jd.easyflow.flow.util.JsonUtil;
@@ -124,7 +125,11 @@ public abstract class CoreFlowEngine implements FlowEngine {
                     + Arrays.toString(param.getNodeIds()));
         }
         if (logOn && logger.isDebugEnabled()) {
-            logger.debug("Flow param:" + JsonUtil.toJsonString(param));
+            try {
+                logger.debug("Flow param:" + JsonUtil.toJsonString(param));
+            } catch (Throwable t) {
+                logger.debug("Flow param to json string exception:" + t.getMessage());
+            }
         }
         if (filters == null || filters.size() == 0) {
             return invokeFlowEngine(param);
@@ -143,13 +148,17 @@ public abstract class CoreFlowEngine implements FlowEngine {
         }
         // Has flow engine listener scenario
         Map<String, Object> data = new HashMap<>();
-        data.put("param", param);
-        data.put("flowEngine", this);
-        eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);
+        data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_PARAM, param);
+        data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_FLOW_ENGINE, this);
         try {
+            eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);            
             FlowResult result = executeFlow(param);
+            data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_RESULT, result);
             eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_END, data, null, false);
             return result;
+        } catch (Throwable t) {
+            data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_EXCEPTION, t);
+            throw t;
         } finally {
             eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_COMPLETE, data, null, true);
         }
@@ -160,6 +169,9 @@ public abstract class CoreFlowEngine implements FlowEngine {
         FlowContext context = initContext(param);
         // find flow definition
         Flow flow = findFlow(context);
+        if (flow == null) {
+            throw new FlowException("Flow is null, context flow id:" + context.getFlowId() + ", param flow id:" + param.getFlowId());
+        }
         // set log flag
         if (context.getLogFlag() == null) {
             if (param.getLogFlag() != null) {

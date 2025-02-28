@@ -82,4 +82,24 @@ public class FsmFilterTest {
         logger.info("RESULT:" + JsonUtil.toJsonString(result));
         Assert.assertEquals("B", result.getContext().getCurrentState().getId());
     }
+    
+//    /**
+//     * Dead loop when filter is empty.
+//     */
+//    @Test
+//    public void testEmptyTransitionFilter() {
+//        FsmManager manager = new FsmManager();
+//        manager.setFsmPath("classpath:fsm/cases/filter/tst_empty_filter_001.json");
+//        manager.init();
+//
+//        Fsm fsm = manager.getFsm("tst_prehandler_filter_001");
+//        
+//        FsmParam param = new FsmParam();
+//        param.setCurrentStateId("A1");
+//        param.setEventId("E1");
+//        FsmResult result = fsm.run(param);
+//        logger.info(result.getState().getId());
+//        logger.info("RESULT:" + JsonUtil.toJsonString(result));
+//        
+//    }
 }

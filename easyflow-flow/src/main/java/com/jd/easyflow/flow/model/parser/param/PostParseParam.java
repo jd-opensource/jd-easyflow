@@ -1,5 +1,8 @@
 package com.jd.easyflow.flow.model.parser.param;
 
+import java.util.List;
+
+import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 
 /**
@@ -10,8 +13,12 @@ import com.jd.easyflow.flow.model.FlowNode;
 public class PostParseParam {
 
     private Object postDef;
+    
+    private List<Flow> flowList;
 
     private boolean parseEl;
+    
+    private Flow flow;
     
     private FlowNode node;
 
@@ -19,9 +26,11 @@ public class PostParseParam {
         // NOOP
     }
 
-    public PostParseParam(Object postDef, boolean parseEl, FlowNode node) {
+    public PostParseParam(Object postDef,List<Flow> flowList, boolean parseEl, Flow flow, FlowNode node) {
         this.postDef = postDef;
+        this.flowList = flowList;
         this.parseEl = parseEl;
+        this.flow = flow;
         this.node = node;
     }
 
@@ -47,6 +56,22 @@ public class PostParseParam {
 
     public void setNode(FlowNode node) {
         this.node = node;
+    }
+
+    public List<Flow> getFlowList() {
+        return flowList;
+    }
+
+    public void setFlowList(List<Flow> flowList) {
+        this.flowList = flowList;
+    }
+
+    public Flow getFlow() {
+        return flow;
+    }
+
+    public void setFlow(Flow flow) {
+        this.flow = flow;
     }
     
 }

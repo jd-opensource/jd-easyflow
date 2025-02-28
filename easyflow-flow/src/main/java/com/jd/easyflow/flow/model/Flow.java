@@ -373,6 +373,9 @@ public class Flow implements FlowLifeCycle {
     }
 
     public String stringify() {
+        if (flowParser == null) {
+            return null;
+        }
         return flowParser.stringify(this);
     }
 
