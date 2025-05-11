@@ -1,0 +1,8 @@
+{
+"id":"check_isolated_001",
+"nodes":[
+{"id":"node001","properties":{"nextNodes":["node002"]}},
+{"id":"node002","post":{"to":"end"}},
+{"id":"end"}
+]
+}

@@ -2,7 +2,6 @@ package com.jd.easyflow.flow.model.action;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
@@ -54,14 +53,14 @@ public class FlowNodeAction implements NodeAction {
         param.setNodeIds(startNodeIds);
         if (inherit) {
             param.setParam(context.getParam().getParam());
-            param.setDataMap(context.getParam().getDataMap());
+            param.setDataMapFrom(context.getParam());
             param.setLogFlag(context.getParam().getLogFlag());
         }
         // init context.
         FlowContextImpl subContext = new FlowContextImpl();
         
         if (inherit) {
-            subContext.setData(context.getData());
+            subContext.setDataFrom(context);
             subContext.setContext(context.getContext());
             subContext.setLogFlag(context.getLogFlag());
             subContext.setElEvaluator(context.getElEvaluator());
@@ -75,10 +74,7 @@ public class FlowNodeAction implements NodeAction {
         FlowResult result = new FlowResult();
         if (inherit) {
             result.setResult(context.getResult().getResult());
-            if (context.getResult().getDataMap() == null) {
-                context.getResult().setDataMap(new ConcurrentHashMap<>());
-            }
-            result.setDataMap(context.getResult().getDataMap());
+            result.setDataMapFrom(context.getResult());
         }
 
         param.setContext(subContext);

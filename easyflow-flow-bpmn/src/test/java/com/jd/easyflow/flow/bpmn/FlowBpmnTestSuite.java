@@ -33,6 +33,6 @@ import com.jd.easyflow.flow.bpmn.ext.cases.chain.ChainTest;
     LogFlagTest.class,
     BpmnTerminateTest.class
 })
-public class EasyFlowBpmnTestSuite {
+public class FlowBpmnTestSuite {
 
 }

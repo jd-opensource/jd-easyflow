@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.FlowRunner;
@@ -69,7 +71,8 @@ public class Flow implements FlowLifeCycle {
     private List<Filter<FlowContext, Boolean>> flowPreHandlerFilters;
     
     private List<Filter<FlowContext, Void>> flowPostHandlerFilters;
-
+    
+    @JsonIgnore
     private FlowParser flowParser;
     
     private Boolean logFlag;
@@ -206,14 +209,22 @@ public class Flow implements FlowLifeCycle {
     public Map<String, Object> getProperties() {
         return properties;
     }
-
+    
     public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        this.properties.clear();
+        putProperties(properties);
     }
 
     public void putProperties(Map<String, Object> properties) {
-        if (properties != null) {
-            this.properties.putAll(properties);
+        if (properties == null) {
+            return;
+        }
+        for (Entry<String, Object>  entry : properties.entrySet()) {
+            if (entry.getValue() == null) {
+                this.properties.remove(entry.getKey());
+            } else {
+                this.properties.put(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -226,7 +237,11 @@ public class Flow implements FlowLifeCycle {
     }
 
     public void setProperty(String key, Object value) {
-        properties.put(key, value);
+        if (value == null) {
+            properties.remove(key);
+        } else {
+            properties.put(key, value);
+        }
     }
     
 

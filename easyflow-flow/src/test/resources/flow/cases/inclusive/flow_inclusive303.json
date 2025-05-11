@@ -1,0 +1,14 @@
+{
+    "id": "flow_inclusive303","name": "Inclusive nodes 001",
+    "nodes": [
+        {"id": "S", "start":true,
+            "post":{"conditionType":"inclusive", "conditions":[
+            {"when":"bizParam.I1", "to":"I1"},
+            {"when":"bizParam.I2", "to":"I2"}
+            ]}
+        },
+        {"id": "I1","pre":{"type":"inclusiveCheck", "preNodes":["S","I2"]}, "post":{"to":"I2"}},        
+        {"id": "I2", "pre":{"type":"inclusiveCheck","preNodes":["S","I1"]},"post":{"to":"I1"}}
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestReusableThreadRunner()"}
+}

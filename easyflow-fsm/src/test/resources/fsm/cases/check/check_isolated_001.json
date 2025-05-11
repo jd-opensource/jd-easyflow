@@ -1,0 +1,7 @@
+{
+"id":"check_isolated_001",
+"transitions":[
+{"from":"state001", "event":"event1"},
+{"from":"state002", "event":"event1"}
+]
+}

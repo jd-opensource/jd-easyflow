@@ -22,4 +22,14 @@ public class FixedTransitionPostHandler extends AbstractTransitionPostHandler {
 		return super.parseTo(to, transitionContext, context);
 	}
 
+    public Object getTo() {
+        return to;
+    }
+
+    public void setTo(Object to) {
+        this.to = to;
+    }
+	
+	
+
 }

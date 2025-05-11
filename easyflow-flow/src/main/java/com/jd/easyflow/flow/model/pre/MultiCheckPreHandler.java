@@ -57,11 +57,15 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
         }
         synchronized (lockObj) {
             List<String> preNodes = context.get(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
+            List<NodeContext> previousNodes = context.get(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId());
             if (preNodes == null) {
                 preNodes = new ArrayList<String>();
                 context.put(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId(), preNodes);
+                previousNodes = new ArrayList<NodeContext>();
+                context.put(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId(), previousNodes);
             }
             preNodes.add(nodeContext.getPreviousNode().getNodeId());
+            previousNodes.add(nodeContext.getPreviousNode());
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
             List<String> preNodeList = this.getPreNodes(nodeContext, lockContext);
@@ -84,6 +88,8 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
                 logger.info("All pre nodes finished");
             }
             context.remove(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
+            context.remove(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId());
+            nodeContext.put(FlowConstants.NODECTX_PREVIOUS_NODES, previousNodes);
             return true;
 
         }
@@ -96,13 +102,12 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
     public void setPreNodes(List<String> preNodes) {
         this.preNodes = preNodes;
     }
-
+    
     @Override
-    public String getCheckType(NodeContext nodeContext, FlowContext flowContext) {
+    public String getCheckType() {
         return FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK;
     }
 
-    @Override
     public List<String> getPreNodes(NodeContext nodeContext, FlowContext flowContext) {
         return this.preNodes;
     }

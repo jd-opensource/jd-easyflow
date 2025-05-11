@@ -1,0 +1,23 @@
+{
+    "id": "flow_inclusive203","name": "Inclusive nodes 001",
+    "nodes": [
+        {"id": "START_NODE", "start":true, "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+            "post":{"conditionType":"inclusive", "conditions":[
+            {"when":"bizParam.node1", "to":"NODE1"},
+            {"when":"bizParam.node2", "to":"NODE2"},
+            {"when":"bizParam.node3", "to":"NODE3"}
+            ]}
+        },
+        
+        {"id": "NODE1","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"INCLUSIVE1"}},
+        {"id": "NODE2","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"INCLUSIVE1"}},
+        {"id": "NODE3","action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"INCLUSIVE2"}},
+        {"id": "INCLUSIVE1","pre":{"type":"inclusiveCheck", "preNodes":["NODE1","NODE2"]},
+             "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"}, "post":{"to":"INCLUSIVE2"}},        
+        {"id": "INCLUSIVE2", "pre":{"type":"inclusiveCheck","preNodes":["INCLUSIVE1","NODE3"]},
+                           "action":{"createExp":"new com.jd.easyflow.flow.cases.share.nodeaction.TestStepAction()"},
+                           "post":{"to":"END"}},
+        {"id":"END"}
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestReusableThreadRunner()"}
+}

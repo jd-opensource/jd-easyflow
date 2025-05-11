@@ -22,7 +22,7 @@ public class FlowResult {
     /**
      * common result data.
      */
-    private Map<String, Object> dataMap;
+    private Map<String, Object> dataMap = new ConcurrentHashMap<String, Object>();
 
     public FlowContext getContext() {
         return context;
@@ -89,14 +89,11 @@ public class FlowResult {
         return dataMap;
     }
 
-    public void setDataMap(Map<String, Object> dataMap) {
-        this.dataMap = dataMap;
+    public void setDataMapFrom(FlowResult result) {
+        this.dataMap = result.dataMap;
     }
 
     public void put(String key, Object value) {
-        if (dataMap == null) {
-            dataMap = new ConcurrentHashMap<>();
-        }
         if (value == null) {
             dataMap.remove(key);
         } else {
@@ -105,9 +102,6 @@ public class FlowResult {
     }
 
     public <T> T get(String key) {
-        if (dataMap == null) {
-            return null;
-        }
         return (T) dataMap.get(key);
     }
 

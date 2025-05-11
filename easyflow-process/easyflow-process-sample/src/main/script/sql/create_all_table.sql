@@ -195,7 +195,9 @@ CREATE TABLE `process_task` (
   INDEX `idx_bizNoProcessType` (`biz_no`, process_type),
   INDEX `idx_executeTime` (`execute_time`),
   INDEX `idx_assignTime` (`assign_time`),
-  INDEX `idx_executor` (`executor`))
+  INDEX `idx_executor` (`executor`),
+  INDEX `idx_processInstanceKeyField` (`process_instance_key_field`),
+  INDEX `idx_processInstanceKeyField2` (`process_instance_key_field2`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARSET = utf8mb4

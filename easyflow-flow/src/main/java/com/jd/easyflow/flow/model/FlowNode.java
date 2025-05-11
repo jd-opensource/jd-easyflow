@@ -63,7 +63,11 @@ public interface FlowNode extends FlowLifeCycle {
      * @param value
      */
     default void setProperty(String key, Object value) {
-        getProperties().put(key, value);
+        if (value == null) {
+            getProperties().remove(key);
+        } else {
+            getProperties().put(key, value);
+        }
     }
 
 }

@@ -22,6 +22,8 @@ public class FlowParseEvent {
     
     private FlowParser flowParser;
     
+    private boolean parseEl;
+    
     
     public Flow getFlow() {
         return flow;
@@ -62,6 +64,15 @@ public class FlowParseEvent {
     public void setFlowParser(FlowParser flowParser) {
         this.flowParser = flowParser;
     }
+
+    public boolean isParseEl() {
+        return parseEl;
+    }
+
+    public void setParseEl(boolean parseEl) {
+        this.parseEl = parseEl;
+    }
+    
     
 
 }

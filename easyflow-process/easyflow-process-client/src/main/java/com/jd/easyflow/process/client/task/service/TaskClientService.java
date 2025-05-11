@@ -57,9 +57,6 @@ public class TaskClientService {
     public static final String OP_CREATE = "CREATE";
     public static final String OP_SAVE = "SAVE";
 
-    @Deprecated
-    private String defaultExecMode = TaskConstants.EXEC_MODE_CLIENT;
-
     private ProcessTaskExport processTaskExport;
 
     private ProcessRuntimeManager processRuntimeManager;
@@ -185,7 +182,6 @@ public class TaskClientService {
         Date assignTime = new Date();
         task.setAssignTime(assignTime);
         task.setBizNo(param.getBizNo());
-        task.setNodeInstanceNo(task.getNodeInstanceNo());
         task.setProcessInstanceNo(param.getProcessContext().getInstanceNo());
         task.setNodeInstanceNo(param.getNodeContext().getNodeInstanceNo());
         task.setProcessType(param.getProcessType());
@@ -402,14 +398,6 @@ public class TaskClientService {
 
     public void setProcessTransactionExport(ProcessTransactionExport processTransactionExport) {
         this.processTransactionExport = processTransactionExport;
-    }
-
-    public String getDefaultExecMode() {
-        return defaultExecMode;
-    }
-
-    public void setDefaultExecMode(String defaultExecMode) {
-        this.defaultExecMode = defaultExecMode;
     }
 
     public ObjectIdManager getObjectIdManager() {

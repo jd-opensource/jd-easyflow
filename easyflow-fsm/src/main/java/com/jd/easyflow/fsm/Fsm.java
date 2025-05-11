@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ public class Fsm implements FsmLifeCycle {
     public static final Logger logger = LoggerFactory.getLogger(Fsm.class);
 
     public static final String DOLLAR = "$";
+    
+    private static final String FSM_STRING_KEY = "_fsm_string";
 
     private String id;
 
@@ -66,7 +70,7 @@ public class Fsm implements FsmLifeCycle {
 
     private FsmEventTrigger eventTrigger = new FsmEventTrigger();
 
-    private Map<String, Object> properties;
+    private Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
 
     private List<Filter<FsmContext, FsmResult>> filters;
 
@@ -519,25 +523,38 @@ public class Fsm implements FsmLifeCycle {
     }
 
     public void setProperty(String key, Object value) {
-        if (this.properties == null) {
-            properties = new HashMap<>();
+        if (value == null) {
+            properties.remove(key);
+        } else {
+            properties.put(key, value);
         }
-        properties.put(key, value);
     }
 
     public <T> T getProperty(String key) {
-        if (properties == null) {
-            return null;
-        }
         return (T) properties.get(key);
     }
 
     public Map<String, Object> getProperties() {
         return properties;
     }
-
+    
     public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        this.properties.clear();
+        putProperties(properties);
+    }
+
+    
+    public void putProperties(Map<String, Object> properties) {
+        if (properties == null) {
+            return;
+        }
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            if (entry.getValue() == null) {
+                this.properties.remove(entry.getKey());
+            } else {
+                this.properties.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     public List<Filter<FsmContext, FsmResult>> getFilters() {
@@ -645,6 +662,10 @@ public class Fsm implements FsmLifeCycle {
 
     public void setLogFlag(Boolean logFlag) {
         this.logFlag = logFlag;
+    }
+    
+    public String stringify() {
+        return this.getProperty(FSM_STRING_KEY);
     }
 
 }

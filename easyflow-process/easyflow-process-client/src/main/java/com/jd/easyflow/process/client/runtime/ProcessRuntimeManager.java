@@ -475,7 +475,28 @@ public class ProcessRuntimeManager {
             return openNodeIds;
         });
     }
-
+    
+    public List<ProcessNodeInstanceDTO> findOpenNodeInstances(StdProcessContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Query OPEN node instances in cache");
+        }
+        return op(context, () -> {
+            List<ProcessNodeInstanceDTO> openNodeInstances = new ArrayList<ProcessNodeInstanceDTO>();
+            String instanceNo = context.getInstanceNo();
+            for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
+                if (StringUtils.equals(instanceNo, nodeInstance.getProcessInstanceNo())
+                        && (StdProcessConstants.NODE_STATUS_ACTIVE.equals(nodeInstance.getStatus())
+                                || StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus()))) {
+                    openNodeInstances.add(nodeInstance);
+                }
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Open node instances in cache are " + openNodeInstances);
+            }
+            return openNodeInstances;
+        });
+    }
+    
     /**
      * 
      * @param context

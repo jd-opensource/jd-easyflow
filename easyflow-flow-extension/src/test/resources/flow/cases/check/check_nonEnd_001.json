@@ -1,0 +1,8 @@
+{
+"id":"check_noneEnd_001",
+"nodes":[
+{"id":"node001", "post":{"to":"node002"}, "start":true},
+{"id":"node002", "post":{"to":"end"}},
+{"id":"end"}
+]
+}

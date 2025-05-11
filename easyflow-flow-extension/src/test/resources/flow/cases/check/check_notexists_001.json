@@ -1,0 +1,8 @@
+{
+"id":"check_notexists_001",
+"nodes":[
+{"id":"node001", "post":{"to":"notexists"}},
+{"id":"node002","post":{"to":"end"}},
+{"id":"end"}
+]
+}

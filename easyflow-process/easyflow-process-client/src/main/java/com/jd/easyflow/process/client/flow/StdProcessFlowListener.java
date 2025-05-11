@@ -30,6 +30,7 @@ import com.jd.easyflow.flow.model.node.NodeImpl;
 import com.jd.easyflow.flow.model.pre.NodePrePropertyGetter;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
+import com.jd.easyflow.flow.util.FlowNodeLinkUtil;
 import com.jd.easyflow.flow.util.Pair;
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.model.TransitionContext;
@@ -426,18 +427,17 @@ public class StdProcessFlowListener implements FlowEventListener {
         nodeContext.setExtData(flowNodeContext.get(StdFlowProcessConstants.FLOW_NODE_CTX_PROCESS_EXT_DATA));
 
         List<String> configPreNodes = null;
-        String preCheckType = null;
         if (currentNode instanceof NodeImpl) {
             NodePreHandler preHandler = ((NodeImpl) currentNode).getPreHandler();
             if (preHandler != null && preHandler instanceof NodePrePropertyGetter) {
                 configPreNodes = ((NodePrePropertyGetter) preHandler).getPreNodes(flowNodeContext, context);
-                preCheckType = ((NodePrePropertyGetter) preHandler).getCheckType(flowNodeContext, context);
             }
         }
         if (configPreNodes == null) {
-            configPreNodes = currentNode.getProperty(StdFlowConstants.PROP_PRENODES);
+            configPreNodes = FlowNodeLinkUtil.getPreCheckNodes(currentNode, context.getFlow());
         }
-        if (configPreNodes != null && preCheckType == null) {
+        String preCheckType = FlowNodeLinkUtil.getPreCheckType(flowNodeContext.getNodeId(), context.getFlow());
+        if (configPreNodes != null && configPreNodes.size() > 0 && (preCheckType == null || FlowNodeLinkUtil.NODE_PRE_CHECK_TYPE_UNKNOWN.equals(preCheckType))) {
             preCheckType = FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK;
         }
         

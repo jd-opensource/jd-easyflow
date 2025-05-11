@@ -92,11 +92,11 @@ public class FsmParser {
             parseListeners.addAll(postListeners);
         }
         
-        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_START, map, builder.build(), null, elEvaluator);
+        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_START, map, builder.build(), null, elEvaluator, parseEl);
         
         // Parse property
         Map<String, Object> properties = (Map<String, Object>) map.get(DefConstants.COMMON_PROP_PROPERTIES);
-        builder.properties(properties);
+        builder.putProperties(properties);
         
         // Parse pre handler
         FsmPreHandler fsmPreHandler = parseFsmPreHandler(map.get(DefConstants.FSM_PROP_PRE), parseEl, elEvaluator);
@@ -177,15 +177,15 @@ public class FsmParser {
         
         fsm.postConstruct(map, null);
         
-        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_END, map, fsm, null, elEvaluator);
+        triggerParseEvent(parseListeners, FsmParseEventTypes.PARSE_FSM_END, map, fsm, null, elEvaluator, parseEl);
         
-        triggerParseEvent(parseListeners, FsmParseEventTypes.INIT_FSM_START, map, fsm, null, elEvaluator);
+        triggerParseEvent(parseListeners, FsmParseEventTypes.INIT_FSM_START, map, fsm, null, elEvaluator, parseEl);
         InitContext initContext = new InitContext();
         initContext.setParseEl(parseEl);
         initContext.setFsm(fsm);
         initContext.setFsmDefinitionMap(map);
         fsm.init(initContext, null);
-        triggerParseEvent(parseListeners, FsmParseEventTypes.INIT_FSM_END, map, fsm, null, elEvaluator);
+        triggerParseEvent(parseListeners, FsmParseEventTypes.INIT_FSM_END, map, fsm, null, elEvaluator, parseEl);
                 
         return fsm;
     }
@@ -612,7 +612,7 @@ public class FsmParser {
     }
 
     private static void triggerParseEvent(List<FsmParseEventListener> listeners, String eventType,
-            Map<String, Object> fsmDef, Fsm fsm, Object data, ElEvaluator elEvaluator) {
+            Map<String, Object> fsmDef, Fsm fsm, Object data, ElEvaluator elEvaluator, boolean parseEl) {
         if (listeners == null || listeners.size() == 0) {
             return;
         }
@@ -622,6 +622,7 @@ public class FsmParser {
         event.setFsmDef(fsmDef);
         event.setData(data);
         event.setElEvaluator(elEvaluator);
+        event.setParseEl(parseEl);
         for (FsmParseEventListener listener : listeners) {
             listener.on(event);
         }

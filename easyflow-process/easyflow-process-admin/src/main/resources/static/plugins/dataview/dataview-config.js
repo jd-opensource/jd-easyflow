@@ -265,7 +265,7 @@
 		        '<div class="form-group col">' +
 		            '<label>'+J.msg['dataviewcfg.configType']+':</label>' +
 	                '<select class="form-control j-el-type">' +
-	                    '<option value="" selected="selected">'+J.msg['dataviewcfg.selectType']+'</option>' +
+	                    '<option value="" selected="selected">'+J.msg['dataviewcfg.selectTypeTip']+'</option>' +
 		                configTypeListStr+
 	                '</select>' +
 		        '</div>' +
@@ -603,7 +603,7 @@
 			_commonAddConfigBody.call(this, $container);
 			var selectHtml = 
                 '<div class="row">' +
-				'<div class="form-group col-6"><label>'+J.msg['dataviewcfg.selectType']+':</label><select class="form-control c_selectType ' + this.componentClass + '">' +
+				'<div class="form-group col-6"><label>'+J.msg['dataviewcfg.selectTypeSelect']+':</label><select class="form-control c_selectType ' + this.componentClass + '">' +
 	            	'<option value="single" selected="selected">'+J.msg['dataviewcfg.single']+'</option>' +
 	                '<option value="multiple">'+J.msg['dataviewcfg.multiple']+'</option>' +
 	                '<option value="seqMultiple">'+J.msg['dataviewcfg.seqMultiple']+'</option>' +

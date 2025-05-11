@@ -56,4 +56,12 @@ public class ConditionalTransitionPostHandler  extends AbstractTransitionPostHan
         return ((TransitionExecutor<Boolean>) condition).execute(transitionContext, context);
     }
 
+    public List<Map<String, Object>> getBranchList() {
+        return branchList;
+    }
+
+    public void setBranchList(List<Map<String, Object>> branchList) {
+        this.branchList = branchList;
+    }
+    
 }

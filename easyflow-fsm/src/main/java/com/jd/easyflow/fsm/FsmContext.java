@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jd.easyflow.fsm.el.ElEvaluator;
 import com.jd.easyflow.fsm.model.Event;
 import com.jd.easyflow.fsm.model.State;
@@ -30,6 +31,7 @@ public class FsmContext {
 
     private String stateInstanceId;
 
+    @JsonIgnore
     private Fsm fsm;
 
     FsmParam param;

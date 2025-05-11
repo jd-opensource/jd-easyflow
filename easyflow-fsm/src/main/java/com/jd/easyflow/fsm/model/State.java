@@ -33,6 +33,13 @@ public interface State {
 	 * @param key
 	 * @return
 	 */
-	<T>T getProperty(String key);
+	<T> T getProperty(String key);
+	
+	/**
+	 * Set property.
+	 * @param key
+	 * @param value
+	 */
+    void setProperty(String key, Object value);
 	
 }

@@ -20,6 +20,12 @@ public class TimeoutTemplate {
     
     private static final Logger logger = LoggerFactory.getLogger(TimeoutTemplate.class);
     
+    private static final TimeoutTemplate INSTANCE = new TimeoutTemplate();
+    
+    public static TimeoutTemplate getInstance() {
+        return INSTANCE;
+    }
+    
     public <T>T execute(Callable<T> callable, Callable<T> timeoutCallable, long timeoutMillis, ExecutorService executorService, boolean logOn) {
         return execute(callable, timeoutCallable, timeoutMillis, executorService, logOn, true);
     }

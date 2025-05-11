@@ -2,6 +2,7 @@ package com.jd.easyflow.flow.engine;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +38,15 @@ public class FlowParam {
         this.flowId = flowId;
         this.nodeIds = nodeIds;
         this.param = param;
+        if (dataMap != null) {
+            for (Entry<String, Object> entry : dataMap.entrySet()) {
+                if (entry.getValue() == null) {
+                    this.dataMap.remove(entry.getKey());
+                } else {
+                    this.dataMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
         this.dataMap = dataMap;
     }
 
@@ -62,7 +72,7 @@ public class FlowParam {
     /**
      * common param data.
      */
-    private Map<String, Object> dataMap;
+    private Map<String, Object> dataMap = new ConcurrentHashMap<String, Object>();
     
     /**
      * log flag
@@ -148,6 +158,10 @@ public class FlowParam {
         return context;
     }
 
+    /**
+     * High level method.
+     * @param context. SHOULD use new FlowContext Object and can only invoke some methods.
+     */
     public void setContext(FlowContext context) {
         this.context = context;
     }
@@ -156,14 +170,11 @@ public class FlowParam {
         return dataMap;
     }
 
-    public void setDataMap(Map<String, Object> dataMap) {
-        this.dataMap = dataMap;
+    public void setDataMapFrom(FlowParam fromParam) {
+        this.dataMap = fromParam.dataMap;
     }
 
     public void put(String key, Object value) {
-        if (dataMap == null) {
-            dataMap = new ConcurrentHashMap<>();
-        }
         if (value == null) {
             dataMap.remove(key);
         } else {
@@ -172,9 +183,6 @@ public class FlowParam {
     }
 
     public <T> T get(String key) {
-        if (dataMap == null) {
-            return null;
-        }
         return (T) dataMap.get(key);
     }
 

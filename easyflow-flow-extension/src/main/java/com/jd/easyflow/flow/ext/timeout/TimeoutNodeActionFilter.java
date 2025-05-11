@@ -116,7 +116,14 @@ public class TimeoutNodeActionFilter implements Filter<Pair<NodeContext, FlowCon
         this.executorServiceMap = executorServiceMap;
     }
 
+    public TimeoutTemplate getTimeoutTemplate() {
+        return timeoutTemplate;
+    }
 
+    public void setTimeoutTemplate(TimeoutTemplate timeoutTemplate) {
+        this.timeoutTemplate = timeoutTemplate;
+    }
+    
     
 
 }

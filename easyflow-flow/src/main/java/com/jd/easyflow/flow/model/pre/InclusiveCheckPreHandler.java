@@ -1,24 +1,32 @@
 package com.jd.easyflow.flow.model.pre;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.exception.FlowException;
+import com.jd.easyflow.flow.filter.Filter;
+import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.FlowNode;
+import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePreHandler;
 import com.jd.easyflow.flow.util.FlowConstants;
+import com.jd.easyflow.flow.util.FlowNodeLinkUtil;
+import com.jd.easyflow.flow.util.Triple;
 
 /**
  * Inclusive check pre handler.
  * 
  *  IMPORTANT NOTICE! This class should not be singleton!
- *  
- * !!! Currently only support simple mode as below: For example, A->B,C->D, for
- * node D, we check if all next nodes of node A is finished.
  * 
  * @author liyuliang5
  *
@@ -30,17 +38,12 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
     private List<String> preNodes;
 
     public InclusiveCheckPreHandler() {
-
     }
 
     public InclusiveCheckPreHandler(List<String> preNodes) {
         this.preNodes = preNodes;
     }
-
-    /**
-     * Judge all exptected pre nodes finished.
-     * 
-     */
+    
     @Override
     public boolean preHandle(NodeContext nodeContext, final FlowContext context) {
         Boolean checkResult = nodeContext.get(FlowConstants.NODECTX_PRE_RESULT);
@@ -50,74 +53,74 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
             }
             return checkResult;
         }
-        final Object lockObj;
-        final FlowContext lockContext = context;
-        synchronized (lockContext) {
-            Object contextLockObj = context.get(FlowConstants.CTX_LOCK_PREFIX + nodeContext.getNodeId());
-            if (contextLockObj == null) {
-                contextLockObj = new Object();
-                context.put(FlowConstants.CTX_LOCK_PREFIX + nodeContext.getNodeId(), contextLockObj);
-            }
-            lockObj = contextLockObj;
+        
+        NodeContext previousNode = nodeContext.getPreviousNode();
+        if (previousNode == null) {
+            return false;
         }
-        synchronized (lockObj) {
-            List<String> preNodes = context.get(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
-            if (preNodes == null) {
-                preNodes = new ArrayList<String>();
-                context.put(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId(), preNodes);
+        String previousNodeId = previousNode.getNodeId();
+        synchronized(context) {
+            Map<String, WaitingNodeInfo> map = context.get(InclusiveCheckHelper.CTX_WAITING_NODE_MAP);
+            if (map == null) {
+                map = new HashMap<String, WaitingNodeInfo>();
+                context.put(InclusiveCheckHelper.CTX_WAITING_NODE_MAP, map);
             }
-            preNodes.add(nodeContext.getPreviousNode().getNodeId());
-            if (context.isLogOn() && logger.isInfoEnabled()) {
-                logger.info("Pre nodes executed:" + preNodes);
-            }
-
-            FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
-            List<String> preNodeList = this.getPreNodes(nodeContext, lockContext);
-            List<String> configPreNodes = preNodeList != null ? preNodeList
-                    : currentNode.getProperty(FlowConstants.PROP_PRENODES);
-            if (nodeContext.getPreviousNode() == null || nodeContext.getPreviousNode().getPreviousNode() == null) {
-                if (context.isLogOn() && logger.isWarnEnabled()) {
-                    logger.warn("Previous node of " + nodeContext.getNodeId() + "is null");
+            WaitingNodeInfo waitingNodeInfo = map.get(nodeContext.getNodeId());
+            if (waitingNodeInfo == null) {
+                waitingNodeInfo = new WaitingNodeInfo();
+                waitingNodeInfo.waitNodeId = nodeContext.getNodeId();
+                waitingNodeInfo.unknownPreNodes = new HashSet<String>();
+                waitingNodeInfo.finishedPreNodes = new HashSet<String>();
+                waitingNodeInfo.unreachablePreNodes = new HashSet<String>();
+                waitingNodeInfo.previousNodes = new ArrayList<NodeContext>();
+                
+                FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
+                List<String> preNodeList = this.getPreNodes(nodeContext, context);
+                List<String> configPreNodes = preNodeList != null ? preNodeList
+                        : currentNode.getProperty(FlowConstants.PROP_PRENODES);
+                if (! configPreNodes.contains(previousNodeId)) {
+                    if (context.isLogOn() && logger.isDebugEnabled()) {
+                        logger.info("Node:" + previousNodeId + " not in check list" );
+                    }
+                    return false;
                 }
-                return false;
+                for (String preNode : configPreNodes) {
+                    if (FlowNodeLinkUtil.isReachable(preNode, nodeContext.getNodeId(), context.getFlow())) {
+                        waitingNodeInfo.unknownPreNodes.add(preNode);
+                    } else {
+                        waitingNodeInfo.unreachablePreNodes.add(preNode);
+                    }
+                }
+                map.put(nodeContext.getNodeId(), waitingNodeInfo);
             }
-
-            NodeContext[] nextNodes = nodeContext.getPreviousNode().getPreviousNode().getNextNodes();
-            List<String> nextNodeIds = new ArrayList<>(nextNodes.length);
-            for (NodeContext node : nextNodes) {
-                nextNodeIds.add(node.getNodeId());
-            }
-
-            List<String> expectedNodeIds = intersection(nextNodeIds, configPreNodes);
-            if (context.isLogOn() && logger.isInfoEnabled()) {
-                logger.info("Expected node ids:" + expectedNodeIds + "(next node ids:" + nextNodeIds + ")");
-            }
-
-            for (String s : expectedNodeIds) {
-                if (!preNodes.contains(s)) {
+            waitingNodeInfo.previousNodes.add(previousNode);
+            waitingNodeInfo.finishedPreNodes.add(previousNodeId);
+            waitingNodeInfo.unknownPreNodes.remove(previousNodeId);
+            if (waitingNodeInfo.unknownPreNodes.size() == 0) {
+                if (context.isLogOn() && logger.isInfoEnabled()) {
+                    logger.info("Node:" + nodeContext.getNodeId() + " is activated");
+                }
+                map.remove(nodeContext.getNodeId());
+                nodeContext.put(FlowConstants.NODECTX_PREVIOUS_NODES, waitingNodeInfo.previousNodes);
+                return true;
+            } else {
+                InclusiveCheckHelper.judgeOneWaitingNode(waitingNodeInfo, context);
+                if (waitingNodeInfo.unknownPreNodes.size() == 0) {
+                    if (context.isLogOn() && logger.isInfoEnabled()) {
+                        logger.info("Node:" + nodeContext.getNodeId() + " is activated");
+                    }
+                    map.remove(nodeContext.getNodeId());
+                    nodeContext.put(FlowConstants.NODECTX_PREVIOUS_NODES, waitingNodeInfo.previousNodes);
+                    return true;
+                } else {
+                    if (context.isLogOn() && logger.isDebugEnabled()) {
+                        logger.debug("Finish nodes:" + waitingNodeInfo.finishedPreNodes + " Unreachable nodes:" + waitingNodeInfo.unreachablePreNodes + " Unknown nodes:" + waitingNodeInfo.unknownPreNodes);
+                    }
                     return false;
                 }
             }
-            if (context.isLogOn() && logger.isInfoEnabled()) {
-                logger.info("All expected pre nodes finished");
-            }
-            context.remove(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
-            return true;
-
+            
         }
-    }
-    
-    private static List<String> intersection(List<String> list1, List<String> list2) {
-        List<String> result = new ArrayList<>();
-        if (list1 == null || list2 == null) {
-            return result;
-        }
-        for (String s : list1) {
-            if (list2.contains(s)) {
-                result.add(s);
-            }
-        }
-        return result;
     }
 
     public List<String> getPreNodes() {
@@ -129,7 +132,7 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
     }
 
     @Override
-    public String getCheckType(NodeContext nodeContext, FlowContext flowContext) {
+    public String getCheckType() {
         return FlowConstants.NODE_PRE_CHECK_TYPE_INCLUSIVECHECK;
     }
 
@@ -137,5 +140,182 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
     public List<String> getPreNodes(NodeContext nodeContext, FlowContext flowContext) {
         return this.preNodes;
     }
-
+    
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        boolean recordHistory = ! Boolean.FALSE.equals(initContext.getFlow().getProperty(FlowConstants.FLOW_PROPERTY_RECORD_HISTORY));
+        if (! recordHistory) {
+            throw new FlowException("InclusiveCheck must record history");
+        }
+        List<Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext>> filters = initContext.getFlow().getNodeFilters();
+        boolean contains = false;
+        if (filters == null) {
+            filters = new ArrayList<Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext>>();
+            initContext.getFlow().setNodeFilters(filters);
+        }
+        for (Filter filter : filters) {
+            if (filter instanceof InclusiveCheckWaitNodeProcessFilter) {
+                contains = true;
+                break;
+            }
+        }
+        if (!contains) {
+            filters.add(0, new InclusiveCheckWaitNodeProcessFilter());
+        }
+    }
+ 
 }
+
+class InclusiveCheckWaitNodeProcessFilter implements Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> {
+    
+    private static final Logger logger = LoggerFactory.getLogger(InclusiveCheckWaitNodeProcessFilter.class);
+
+    @Override
+    public NodeContext doFilter(Triple<FlowNode, NodeContext, FlowContext> request,
+            FilterChain<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> chain) {
+        chain.doFilter(request);
+        NodeContext nodeContext = request.getMiddle();
+        FlowContext flowContext = request.getRight();
+        synchronized (flowContext) {
+            nodeContext.put(InclusiveCheckWaitNodeProcessFilter.class.getName(), true);
+            Map<String, WaitingNodeInfo> map = flowContext.get(InclusiveCheckHelper.CTX_WAITING_NODE_MAP);
+            if (map != null && !map.isEmpty()) {
+                List<NodeContext> additionalNextNodes = null;
+                for (WaitingNodeInfo info : map.values()) {
+                    if (info.waitNodeId.equals(nodeContext.getNodeId())) {
+                        continue;
+                    }
+                    InclusiveCheckHelper.judgeOneWaitingNode(info, flowContext);
+                    if (info.unknownPreNodes.isEmpty()) {
+                        if (flowContext.isLogOn() && logger.isInfoEnabled()) {
+                            logger.info("Node:" + info.waitNodeId + " is activated in filter");
+                        }
+                        if (additionalNextNodes == null) {
+                            additionalNextNodes = new ArrayList<NodeContext>();
+                            if (nodeContext.getNextNodes() != null) {
+                                for (NodeContext nc : nodeContext.getNextNodes()) {
+                                    additionalNextNodes.add(nc);
+                                }
+                            }
+                        }
+                        NodeContext additionNode = new NodeContext(info.waitNodeId);
+                        additionalNextNodes.add(additionNode);
+                    }
+                }
+                if (additionalNextNodes != null) {
+                    nodeContext.setNextNodes(additionalNextNodes.toArray(new NodeContext[additionalNextNodes.size()]));
+                }
+            }
+        }
+        return nodeContext;
+    }
+}
+
+class InclusiveCheckHelper {
+    
+    
+    static final String CTX_WAITING_NODE_MAP = "_WAITING_NODE_MAP";
+    static final String CTX_RUNNING_NODES = "_RUNNING_NODES";
+    
+    private static final List<String> EMPTY_LIST = new ArrayList<String>();
+
+    static void judgeOneWaitingNode(WaitingNodeInfo info, FlowContext context) {
+        Set<NodeContext> runningNodes = refreshRunningNodes(context);
+        Map<String, WaitingNodeInfo> map = context.get(CTX_WAITING_NODE_MAP);
+        Iterator<String> iterator = info.unknownPreNodes.iterator();
+        while (iterator.hasNext()) {
+            String unknownPreNode = iterator.next();
+            boolean reachable = false;
+            for (NodeContext nodeContext : runningNodes) {
+                if (nodeContext.getNodeId().equals(unknownPreNode)) {
+                    reachable = true;
+                    break;
+                }
+                if (nodeContext.getNodeId().equals(info.waitNodeId)) {
+                    if (nodeContext.getPreviousNode() != null && nodeContext.getPreviousNode().getNodeId().equals(unknownPreNode)) {
+                        reachable = true;
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                if (FlowNodeLinkUtil.isReachable(nodeContext.getNodeId(), unknownPreNode, context.getFlow())) {
+                    reachable = true;
+                    break;
+                }
+            }
+            if (! reachable) {
+                for (String key : map.keySet()) {
+                    if (key.equals(info.waitNodeId)) {
+                        continue;
+                    }
+                    if (key.equals(unknownPreNode)) {
+                        reachable = true;
+                        break;
+                    }
+                    if (FlowNodeLinkUtil.isReachable(key, unknownPreNode, context.getFlow())) {
+                        reachable = true;
+                        break;
+                    }
+                }
+            }
+            if (! reachable) {
+                info.unreachablePreNodes.add(unknownPreNode);
+                iterator.remove();
+
+            }
+        }
+    }
+    
+    
+    private static Set<NodeContext> refreshRunningNodes(FlowContext context) {
+        Set<NodeContext> runningNodes = context.get(CTX_RUNNING_NODES);
+        if (runningNodes == null) {
+            runningNodes = new HashSet<NodeContext>();
+            runningNodes.addAll(context.getStartNodes());
+            context.put(CTX_RUNNING_NODES, runningNodes);
+        }
+        List<NodeContext> addList = null;
+        List<NodeContext> removeList = null;
+        for (NodeContext node : runningNodes) {
+            if (Boolean.TRUE.equals(node.get(InclusiveCheckWaitNodeProcessFilter.class.getName()))) {
+                if (node.getNextNodes() != null) {
+                    for (NodeContext nctx : node.getNextNodes()) {
+                        if (addList == null) {
+                            addList = new ArrayList<NodeContext>();
+                        }
+                        addList.add(nctx);
+                    }
+                }
+                if (removeList == null) {
+                    removeList = new ArrayList<NodeContext>();
+                }
+                removeList.add(node);
+            }
+        }
+        if (removeList != null) {
+            runningNodes.removeAll(removeList); 
+        }
+        if (addList != null) {
+            runningNodes.addAll(addList);
+        }
+        if (addList != null && !addList.isEmpty()) {
+            refreshRunningNodes(context);
+        }
+        return runningNodes;
+    }
+    
+}
+
+class WaitingNodeInfo {
+    
+    String waitNodeId;
+    
+    Set<String> finishedPreNodes;
+    Set<String> unreachablePreNodes;
+    Set<String> unknownPreNodes;
+    List<NodeContext> previousNodes;
+    
+    
+}
+

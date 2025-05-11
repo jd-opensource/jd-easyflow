@@ -156,7 +156,7 @@ public class FlowParserImpl implements FlowParser {
             }
             parseListeners.addAll(postListeners);
         }
-        triggerParseEvent(parseListeners, FlowParseEventTypes.PARSE_FLOW_START, map, flow, null);
+        triggerParseEvent(parseListeners, FlowParseEventTypes.PARSE_FLOW_START, map, flow, null, parseEl);
         
         flow.setId((String) map.get(DefConstants.COMMON_PROP_ID));
         flow.setName((String) map.get(DefConstants.COMMON_PROP_NAME));
@@ -238,10 +238,10 @@ public class FlowParserImpl implements FlowParser {
         
         flow.postConstruct(map, null);
         
-        triggerParseEvent(parseListeners, FlowParseEventTypes.PARSE_FLOW_END, map, flow, null);
+        triggerParseEvent(parseListeners, FlowParseEventTypes.PARSE_FLOW_END, map, flow, null, parseEl);
         
         
-        triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_START, map, flow, null);
+        triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_START, map, flow, null, parseEl);
         InitContext initContext = new InitContext();
         initContext.setFlowParser(this);
         initContext.setParseEl(parseEl);
@@ -249,7 +249,7 @@ public class FlowParserImpl implements FlowParser {
         initContext.setFlowDefinitionMap(map);
         initContext.setFlow(flow);
         flow.init(initContext, null);
-        triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_END, map, flow, null);
+        triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_END, map, flow, null, parseEl);
         return flow;
     }
     
@@ -842,7 +842,7 @@ public class FlowParserImpl implements FlowParser {
     }
 
     private void triggerParseEvent(List<FlowParseEventListener> listeners, String eventType,
-            Map<String, Object> flowDef, Flow flow, Object data) {
+            Map<String, Object> flowDef, Flow flow, Object data, boolean parseEl) {
         if (listeners == null || listeners.size() == 0) {
             return;
         }
@@ -852,6 +852,7 @@ public class FlowParserImpl implements FlowParser {
         event.setFlowDef(flowDef);
         event.setData(data);
         event.setFlowParser(this);
+        event.setParseEl(parseEl);
         for (FlowParseEventListener listener : listeners) {
             listener.on(event);
         }

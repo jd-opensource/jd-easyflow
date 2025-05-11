@@ -21,6 +21,8 @@ public class FsmParseEvent {
     private Object data;
     
     private ElEvaluator elEvaluator;
+    
+    private boolean parseEl;
 
     public String getType() {
         return type;
@@ -61,12 +63,14 @@ public class FsmParseEvent {
     public void setElEvaluator(ElEvaluator elEvaluator) {
         this.elEvaluator = elEvaluator;
     }
-    
-    
-    
-    
-    
-    
+
+    public boolean isParseEl() {
+        return parseEl;
+    }
+
+    public void setParseEl(boolean parseEl) {
+        this.parseEl = parseEl;
+    }
     
 
 }

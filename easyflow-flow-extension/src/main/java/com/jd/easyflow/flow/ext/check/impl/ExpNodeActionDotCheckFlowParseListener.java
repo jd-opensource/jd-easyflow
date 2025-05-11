@@ -1,4 +1,4 @@
-package com.jd.easyflow.flow.ext.model.action.parser.event;
+package com.jd.easyflow.flow.ext.check.impl;
 
 import java.util.Map;
 
@@ -54,7 +54,7 @@ public class ExpNodeActionDotCheckFlowParseListener implements FlowParseEventLis
                             if (eventActionMap != null) {
                                 for (NodeAction subNodeAction : eventActionMap.values()) {
                                     if (subNodeAction instanceof ExpNodeAction) {
-                                        validateNodeActionExp((ExpNodeAction) nodeAction, flow, nodeImpl);
+                                        validateNodeActionExp((ExpNodeAction) subNodeAction, flow, nodeImpl);
                                     }
                                 }
                             }
@@ -71,11 +71,10 @@ public class ExpNodeActionDotCheckFlowParseListener implements FlowParseEventLis
         String exp = expNodeAction.getExp();
         if (!exp.contains(".")) {
             String errorMsg =  "[EXP INVALID]Flow:" + flow.getId() + " Node:" + node.getId() + " Exp:[" + exp + "] invalid，should contains dot";
+            log.warn(errorMsg);
             if (NODE_ACTION_EXP_NO_DOT_POLICY_EXCEPTION.equals(nodeActionExpNoDotPolicy)) {
                 throw new FlowException(errorMsg);
-            } else {
-                log.warn(errorMsg);
-            }
+            } 
         }
     }
 

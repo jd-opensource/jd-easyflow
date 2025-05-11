@@ -59,7 +59,6 @@
     <bean id="easyflow-task-taskClientService" class="com.jd.easyflow.process.client.task.service.TaskClientService">
         <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
         <property name="taskClientManager" ref="easyflow-task-taskClientManager"></property>
-        <property name="defaultExecMode" value="client"></property>
     </bean>
     
     <bean id="easyflow-task-taskCreateNodeAction" class="com.jd.easyflow.process.client.task.flow.TaskCreateNodeAction">

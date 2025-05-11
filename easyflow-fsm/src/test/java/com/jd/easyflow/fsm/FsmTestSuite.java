@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.jd.easyflow.fsm.cases.check.FsmStateLinkCheckTest;
 import com.jd.easyflow.fsm.cases.event.MultipleEventTest;
 import com.jd.easyflow.fsm.cases.filter.FsmFilterTest;
 import com.jd.easyflow.fsm.cases.mockbiz.FsmMockBizTest;
@@ -25,7 +26,8 @@ import com.jd.easyflow.fsm.quickstart.FsmQuickStartTest;
     MultipleEventTest.class,
     PostEventTest.class,
     FsmFilterTest.class,
-    PostTest.class})
+    PostTest.class,
+    FsmStateLinkCheckTest.class})
 public class FsmTestSuite {
 
 }

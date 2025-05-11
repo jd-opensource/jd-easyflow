@@ -12,8 +12,24 @@ import com.jd.easyflow.flow.model.NodeContext;
  */
 public interface NodePrePropertyGetter {
     
-    String getCheckType(NodeContext nodeContext, FlowContext flowContext);
+    /**
+     * used for static compute.
+     * @return
+     */
+    String getCheckType();
+    
+    /**
+     * used for static compute.
+     * @return should contains all nodes in getPreNodes(nodeContext, flowContext)
+     */
+    List<String> getPreNodes();
         
+    /**
+     * used for runtime.
+     * @param nodeContext
+     * @param flowContext
+     * @return All nodes should in getPreNodes().
+     */
     List<String> getPreNodes(NodeContext nodeContext, FlowContext flowContext);
     
 }

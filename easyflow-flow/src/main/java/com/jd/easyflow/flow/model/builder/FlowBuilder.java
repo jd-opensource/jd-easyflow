@@ -4,6 +4,7 @@ import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.FlowPostHandler;
 import com.jd.easyflow.flow.model.FlowPreHandler;
+import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.node.NodeImpl;
@@ -73,6 +74,17 @@ public class FlowBuilder {
 
 	public Flow build() {
 		return flow;
+	}
+	
+	public Flow buildAndInit() {
+	    InitContext initContext = new InitContext();
+        initContext.setFlowParser(null);
+        initContext.setParseEl(true);
+        initContext.setFlowList(null);
+        initContext.setFlowDefinitionMap(null);
+        initContext.setFlow(flow);
+	    flow.init(initContext, null);
+	    return flow;
 	}
 
 }

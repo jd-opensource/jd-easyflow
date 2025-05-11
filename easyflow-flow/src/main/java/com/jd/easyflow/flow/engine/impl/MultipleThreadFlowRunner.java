@@ -32,6 +32,8 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
     
     protected long timeout = 0;
     
+    protected boolean throwExceptionOnTimeout = false;
+    
     public MultipleThreadFlowRunner() {
         
     }
@@ -39,6 +41,12 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
     public MultipleThreadFlowRunner(Executor executor, long timeout) {
         this.executor = executor;
         this.timeout = timeout;
+    }
+    
+    public MultipleThreadFlowRunner(Executor executor, long timeout, boolean throwExceptionOnTimeout) {
+        this.executor = executor;
+        this.timeout = timeout;
+        this.throwExceptionOnTimeout = throwExceptionOnTimeout;
     }
 
     @Override
@@ -58,6 +66,9 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                 context.put(FlowConstants.FLOW_CTX_MULTI_AWAIT_RESULT, result);
                 if (result == false) {
                     context.setInterrupted();
+                    if (throwExceptionOnTimeout) {
+                        throw new FlowException("flow execution timeout, runId:" + runId + ", flowId:" + context.getFlowId());
+                    }
                 }
             }
         } catch (InterruptedException e) {
@@ -168,5 +179,15 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    public boolean isThrowExceptionOnTimeout() {
+        return throwExceptionOnTimeout;
+    }
+
+    public void setThrowExceptionOnTimeout(boolean throwExceptionOnTimeout) {
+        this.throwExceptionOnTimeout = throwExceptionOnTimeout;
+    }
+    
+    
 
 }

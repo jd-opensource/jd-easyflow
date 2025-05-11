@@ -19,7 +19,7 @@ CREATE TABLE `process_definition` (
   `deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识',
   PRIMARY KEY (`id`),
   INDEX `idx_def_id_def_version` (`def_id`,`def_version`),
-  INDEX `idx_category` (``category`)
+  INDEX `idx_category` (`category`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='流程定义表';
 -- 流程实例表，流程实例持久化功能使用
 CREATE TABLE `process_instance` (
@@ -150,7 +150,7 @@ CREATE TABLE `process_task` (
   INDEX `idx_executeTime` (`execute_time`),
   INDEX `idx_assignTime` (`assign_time`),
   INDEX `idx_executor` (`executor`),
-  INDEX `idx_processInstanceKeyField` (`process_instance_key_field`)),
+  INDEX `idx_processInstanceKeyField` (`process_instance_key_field`),
   INDEX `idx_processInstanceKeyField2` (`process_instance_key_field2`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1

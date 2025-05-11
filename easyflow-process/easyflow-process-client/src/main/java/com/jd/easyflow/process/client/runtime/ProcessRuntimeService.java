@@ -203,73 +203,7 @@ public class ProcessRuntimeService {
                 }
                 
             } else if (FlowConstants.NODE_PRE_CHECK_TYPE_INCLUSIVECHECK.equals(nodeContext.getPreCheckType())) {
-                if (StdProcessConstants.NODE_STATUS_ACTIVE.equals(nodeInstance.getStatus())) {
-                    log.info("Node " + nodeContext + " finish precheck");
-                    nodeContext.setPreResult(false);
-                } else if (StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus())) {
-                    boolean preResult = false;
-
-                    String previousNodeInstanceNos = nodeInstance.getPreviousNodeInstances();
-                    List<String> previousNodeInstanceNoList = Arrays.asList(previousNodeInstanceNos.split(","));
-                    List<ProcessNodeInstanceDTO> previousNodeInstanceList = manager
-                            .getNodeInstances(previousNodeInstanceNoList, context);
-                    if (log.isDebugEnabled()) {
-                        log.debug("All pre nodes are:" + previousNodeInstanceNos);
-                    }
-
-                    String previousNodeInstanceNos2 = previousNodeInstanceList.get(0).getPreviousNodeInstances();
-                    List<String> previousNodeInstanceNoList2 = Arrays.asList(previousNodeInstanceNos2.split(","));
-                    List<ProcessNodeInstanceDTO> previousNodeInstanceList2 = manager
-                            .getNodeInstances(previousNodeInstanceNoList2, context);
-                    if (log.isDebugEnabled()) {
-                        log.debug("All pre nodes 2 are:" + previousNodeInstanceNos);
-                    }
-
-                    String nextNodeInstanceNos = previousNodeInstanceList2.get(0).getNextNodeInstances();
-                    List<String> nextNodeInstanceNoList = Arrays.asList(nextNodeInstanceNos.split(","));
-                    List<ProcessNodeInstanceDTO> nextNodeInstanceList = manager.getNodeInstances(nextNodeInstanceNoList, context);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Node:" + previousNodeInstanceList.get(0) + " post node is:" + nextNodeInstanceList);
-                    }
-                    List<ProcessNodeInstanceDTO> expectedNodeInstanceList = new ArrayList<>();
-                    for (ProcessNodeInstanceDTO node : nextNodeInstanceList) {
-                        if (nodeContext.getConfigPreNodeIds() != null
-                                && nodeContext.getConfigPreNodeIds().contains(node.getNodeId())) {
-                            expectedNodeInstanceList.add(node);
-                        }
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.debug("Expected pre nodes are:" + expectedNodeInstanceList);
-                    }
-
-                    boolean active = true;
-                    for (ProcessNodeInstanceDTO node : expectedNodeInstanceList) {
-                        boolean contains = false;
-                       for (ProcessNodeInstanceDTO previousNode : previousNodeInstanceList) {
-                           if (previousNode.getNodeInstanceNo().equals(node.getNodeInstanceNo())) {
-                               contains = true;
-                               break;
-                           }
-                       }
-                       if (! contains) {
-                           active = false;
-                           break;
-                       }
-                    }
-                    if (active) {
-                        log.info(nodeInstance.getNodeInstanceNo() + " " + nodeInstance.getNodeId() + " node is active");
-                        nodeInstance.setStatus(StdProcessConstants.NODE_STATUS_ACTIVE);
-                        manager.updateNodeInstance(nodeInstance, context);
-                        if (context.getNodeStartEventPolicy() == StdProcessConstants.NODE_START_EVENT_POLICY_ACTIVE) {
-                            nodeInstance.setStartTime(new Date());
-                            context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_NODE_INSTANCE_START, new Object[] {nodeInstance, nodeContext} });
-                        }
-                        preResult = true;
-                    }
-                    nodeContext.setPreResult(preResult);
-                } else {
-                    throw new IllegalStateException("Illegal node status:" + nodeInstance);
-                }
+                ProcessInclusiveCheckHelper.nodeStartExec(nodeContext, context, nodeInstance, manager);
             } else {
                 if (StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus())) {
                     nodeInstance.setStatus(StdProcessConstants.NODE_STATUS_ACTIVE);
@@ -316,11 +250,12 @@ public class ProcessRuntimeService {
                     manager.updateNodeInstance(instance, context);
                 }
             }
+            
+            
             if (nodeContext.getNextNodeIds() != null) {
 
                 List<String> nextNodeInstanceNos = new ArrayList<>();
                 List<ProcessNodeInstanceDTO> createdNextNodeList = new ArrayList<>();
-                ;
                 for (String nodeId : nodeContext.getNextNodeIds()) {
                     Pair<ProcessNodeInstanceDTO, Boolean> nodeInstanceInfo = manager
                             .getOrCreateOpenNodeInstanceWithCreateFlag(nodeId, context);
@@ -371,6 +306,8 @@ public class ProcessRuntimeService {
                     log.debug("Create node execution:{}", execution);
                 }
             }
+            ProcessInclusiveCheckHelper.nodeEndExec(nodeContext, context, manager);
+
             String dataFlushPolicy = PropertiesUtil.getProperty(StdProcessConstants.PROP_DATA_FLUSH_POLICY, nodeContext,
                     context);
             if (StdProcessConstants.FLUSH_AFTER_NODE.equals(dataFlushPolicy)

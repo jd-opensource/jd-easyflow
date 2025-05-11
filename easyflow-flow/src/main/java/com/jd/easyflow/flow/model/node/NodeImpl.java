@@ -2,6 +2,7 @@ package com.jd.easyflow.flow.model.node;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.jd.easyflow.flow.engine.FlowContext;
@@ -198,14 +199,22 @@ public class NodeImpl implements FlowNode {
     public Map<String, Object> getProperties() {
         return properties;
     }
-
+    
     public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        this.properties.clear();
+        this.putProperties(properties);
     }
 
     public void putProperties(Map<String, Object> properties) {
-        if (properties != null) {
-            this.properties.putAll(properties);
+        if (properties == null) {
+            return;
+        }
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            if (entry.getValue() == null) {
+                this.properties.remove(entry.getKey());
+            } else {
+                this.properties.put(entry.getKey(), entry.getValue());
+            }
         }
     }
 

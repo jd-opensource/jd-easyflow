@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jd.easyflow.flow.el.ElEvaluator;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
@@ -65,6 +66,7 @@ public class FlowContextImpl implements FlowContext {
     /**
      * Flow engine.
      */
+    @JsonIgnore
     private FlowEngine flowEngine;
 
     /**
@@ -164,9 +166,8 @@ public class FlowContextImpl implements FlowContext {
         return data;
     }
 
-    @Override
-    public void setData(Map<String, Object> data) {
-        this.data = data;
+    public void setDataFrom(FlowContext fromContext) {
+        this.data = fromContext.getData();
     }
 
     @Override

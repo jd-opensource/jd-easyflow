@@ -1,6 +1,8 @@
 package com.jd.easyflow.fsm.model.impl;
 
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.jd.easyflow.fsm.model.State;
 
@@ -23,14 +25,14 @@ public class StateImpl implements State {
     public StateImpl(String id, String name, Map<String, Object> properties) {
         this.id = id;
         this.name = name;
-        this.properties = properties;
+        setProperties(properties);
     }
 
     private String id;
 
     private String name;
 
-    private Map<String, Object> properties;
+    private Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
 
     @Override
     public String getId() {
@@ -56,7 +58,8 @@ public class StateImpl implements State {
     }
 
     public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        this.properties.clear();
+        putProperties(properties);
     }
 
     @Override
@@ -88,13 +91,32 @@ public class StateImpl implements State {
         }
         return true;
     }
-
+    
     @Override
     public <T> T getProperty(String key) {
-        if (properties == null) {
-            return null;
-        }
         return (T) properties.get(key);
+    }
+
+    @Override
+    public void setProperty(String key, Object value) {
+        if (value == null) {
+            properties.remove(key);
+        } else {
+            properties.put(key, value);
+        }
+    }
+    
+    public void putProperties(Map<String, Object> properties) {
+        if (properties == null) {
+            return;
+        }
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            if (entry.getValue() == null) {
+                this.properties.remove(entry.getKey());
+            } else {
+                this.properties.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
 }

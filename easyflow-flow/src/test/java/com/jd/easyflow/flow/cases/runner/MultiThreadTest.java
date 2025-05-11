@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
+import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.util.FlowConstants;
 
 /**
@@ -49,6 +50,16 @@ public class MultiThreadTest {
         FlowParam param = new FlowParam("flow_multi003", "EMPTY_NODE", null);
         FlowResult result = flowEngine.execute(param);
         assertFalse(result.getContext().get(FlowConstants.FLOW_CTX_MULTI_AWAIT_RESULT));
+        logger.info("end");        
+    }
+    
+    @Test(expected = FlowException.class)
+    public void testTimeoutThrowException() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/runner/flow_multi004.json");
+        flowEngine.init();
+        FlowParam param = new FlowParam("flow_multi004", "EMPTY_NODE", null);
+        FlowResult result = flowEngine.execute(param);
         logger.info("end");        
     }
     

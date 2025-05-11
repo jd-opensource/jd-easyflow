@@ -6,6 +6,7 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+<!-- For admin and client -->
     <bean id="springEnvPropertiesAccessor" class="com.jd.easyflow.properties.spring.SpringEnvPropertiesAccessor"/>
 	<bean id="defaultObjectFactory" class="com.jd.easyflow.objects.factory.DefaultObjectFactory">
 	   <property name="propertiesAccessor" ref="springEnvPropertiesAccessor"></property>
@@ -23,6 +24,12 @@
 	<bean class="com.jd.easyflow.objects.factory.ObjectFactorys">
 	   <property name="defaultObjectFactory" ref="defaultObjectFactory"></property>
 	</bean>
+	<bean class="com.jd.easyflow.spring.ContextUtil"></bean>
+
+<!-- For client -->
+    <import resource="classpath:easyflow/easyflow-spring-process-client.xml"/>
+
+<!-- For server -->
 	<alias name="dataSource" alias="easyflow-lock-dataSource"/>
     <import resource="classpath:easyflow/easyflow-spring-lock-db.xml"/>
     <alias name="easyflow-lock-dbLocker" alias="easyflow-process-locker"/>
@@ -41,9 +48,28 @@
     <alias name="easyflow-process-adapter-client-processInstanceService" alias="easyflow-process-client-processInstanceService"/>
     <alias name="easyflow-process-adapter-client-processDefinitionService" alias="easyflow-process-client-processDefinitionService"/>
     <alias name="easyflow-process-adapter-client-processTaskService" alias="easyflow-process-client-processTaskService"/>    
-    <alias name="easyflow-process-adapter-export-processTaskExport" alias="easyflow-process-client-processTaskExport"/>    
-    <import resource="classpath:easyflow/easyflow-spring-process-client.xml"/>
+    <alias name="easyflow-process-adapter-export-processTaskExport" alias="easyflow-process-client-processTaskExport"/>  
+
+    <bean class="com.jd.easyflow.message.spring.EventMessageListener">
+        <property name="messageListenerMap">
+            <map>
+            </map>
+        </property>
+    </bean>
+        
+     <bean id="easyflow-action-actionAspect" class="com.jd.easyflow.action.ActionAspect">
+        <property name="function">
+            <bean class="com.jd.easyflow.action.SimpleExportAopFunction"></bean>
+        </property>
+    </bean>
     
+     <aop:config>
+         <aop:aspect ref="easyflow-action-actionAspect" order="200">
+             <aop:pointcut id="easyflow-action-pointcut" expression="@annotation(com.jd.easyflow.action.Action)"/>
+             <aop:around pointcut-ref="easyflow-action-pointcut" method="process"/>
+         </aop:aspect>
+     </aop:config>         
+<!-- For client and server -->    
     <bean id="flowEngine" class="com.jd.easyflow.process.client.flow.StdFlowEngineImpl">
         <property name="flowPath" value="classpath:flow/server/*.json,classpath:flow/client/*.json,classpath:flow/server/*.bpmn,classpath:flow/client/*.bpmn"></property>
         <property name="flowParser">
@@ -80,26 +106,5 @@
     <alias name="easyflow-task-taskCreateAndExecuteNodeAction" alias="taskCreateAndExecuteNodeAction"/>
     <alias name="easyflow-task-taskEl" alias="taskEl"/>
     
-    <bean class="com.jd.easyflow.message.spring.EventMessageListener">
-        <property name="messageListenerMap">
-            <map>
-            </map>
-        </property>
-    </bean>
-    
-    <bean class="com.jd.easyflow.spring.ContextUtil"></bean>
-    
-     <bean id="easyflow-action-actionAspect" class="com.jd.easyflow.action.ActionAspect">
-        <property name="function">
-            <bean class="com.jd.easyflow.action.SimpleExportAopFunction"></bean>
-        </property>
-    </bean>
-    
-     <aop:config>
-         <aop:aspect ref="easyflow-action-actionAspect" order="200">
-             <aop:pointcut id="easyflow-action-pointcut" expression="@annotation(com.jd.easyflow.action.Action)"/>
-             <aop:around pointcut-ref="easyflow-action-pointcut" method="process"/>
-         </aop:aspect>
-     </aop:config>   
     
 </beans>

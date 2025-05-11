@@ -13,6 +13,7 @@ import com.jd.easyflow.fsm.filter.Filter;
 import com.jd.easyflow.fsm.model.Event;
 import com.jd.easyflow.fsm.model.FsmPostHandler;
 import com.jd.easyflow.fsm.model.FsmPreHandler;
+import com.jd.easyflow.fsm.model.InitContext;
 import com.jd.easyflow.fsm.model.PostHandleResult;
 import com.jd.easyflow.fsm.model.State;
 import com.jd.easyflow.fsm.model.Transition;
@@ -212,6 +213,11 @@ public class FsmBuilder {
         return this;
     }
     
+    public FsmBuilder putProperties(Map<String, Object> properties) {
+        fsm.putProperties(properties);
+        return this;
+    }
+    
     public FsmBuilder fsmPreHandler(FsmPreHandler preHandler) {
         fsm.setPreHandler(preHandler);
         return this;
@@ -228,6 +234,15 @@ public class FsmBuilder {
     }
     
     public Fsm build() {
+        return fsm;
+    }
+    
+    public Fsm buildAndInit() {
+        InitContext initContext = new InitContext();
+        initContext.setParseEl(true);
+        initContext.setFsmDefinitionMap(null);
+        initContext.setFsm(fsm);
+        fsm.init(initContext, null);
         return fsm;
     }
     

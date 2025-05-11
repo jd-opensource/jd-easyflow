@@ -28,6 +28,12 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
         this.executor = executor;
         this.timeout = timeout;
     }
+    
+    public ReusableThreadFlowRunner(Executor executor, long timeout, boolean throwExceptionOnTimeout) {
+        this.executor = executor;
+        this.timeout = timeout;
+        this.throwExceptionOnTimeout = throwExceptionOnTimeout;
+    }
 
     @Override
     protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock, String runId) {

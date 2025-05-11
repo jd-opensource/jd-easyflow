@@ -549,4 +549,14 @@ public class ProcessDefinitionDomainService {
         this.flowParser = flowParser;
     }
 
+    public ProcessRepository getProcessRepository() {
+        return processRepository;
+    }
+
+    public void setProcessRepository(ProcessRepository processRepository) {
+        this.processRepository = processRepository;
+    }
+    
+    
+
 }

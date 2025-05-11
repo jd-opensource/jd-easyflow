@@ -42,12 +42,14 @@ public class FlowConstants {
     public static final String CTX_LOCK_PREFIX = "_node_lock_";
     
     public static final String CTX_PRE_NODES_PREFIX = "_pre_nodes_";
+    public static final String CTX_PREVIOUS_NODES_PREFIX = "_previousNodes_";
     
     public static final String CTX_PARENT_CONTEXT = "_parentContext";
     
     public static final String CTX_PARENT_NODE_CONTEXT = "_parentNodeContext";
     
     public static final String NODECTX_PRE_RESULT = "_preResult";
+    public static final String NODECTX_PREVIOUS_NODES = "_previousNodes";
     
     public static final String PROP_PRENODES = "preNodes";
     
@@ -86,6 +88,12 @@ public class FlowConstants {
     public static final String FLOW_ENGINE_EVENT_DATA_KEY_FLOW_ENGINE = "flowEngine";
     public static final String FLOW_ENGINE_EVENT_DATA_KEY_RESULT = "result";
     public static final String FLOW_ENGINE_EVENT_DATA_KEY_EXCEPTION = "exception";
+    
+    /**
+     * Node property
+     */
+    public static final String NODE_PROP_NEXT_NODES = "nextNodes";
+
 
 
 }

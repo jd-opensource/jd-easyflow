@@ -41,5 +41,7 @@ public class FsmConstants {
     public static final String FSM_MANAGER_EVENT_DATA_KEY_FSM_MANAGER = "fsmManager";
     public static final String FSM_MANAGER_EVENT_DATA_KEY_RESULT = "result";
     public static final String FSM_MANAGER_EVENT_DATA_KEY_EXCEPTION = "exception";
+    
+    public static final String STATE_PROP_NEXT_STATES = "nextStates";
 
 }

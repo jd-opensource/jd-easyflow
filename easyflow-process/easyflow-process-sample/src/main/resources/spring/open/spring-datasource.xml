@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:encrypt="http://shardingsphere.apache.org/schema/shardingsphere/encrypt"
 	   xmlns:bean="http://www.springframework.org/schema/util"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://shardingsphere.apache.org/schema/shardingsphere/encrypt
-                        http://shardingsphere.apache.org/schema/shardingsphere/encrypt/encrypt.xsd
                         http://www.springframework.org/schema/util
                         http://www.springframework.org/schema/util/spring-util.xsd">
 
@@ -55,5 +52,7 @@
             ref="transactionManager"></property>
         <property name="propagationBehavior" value="3"></property>
     </bean>
+
+    <alias name="newTransactionTemplate" alias="easyflow-processunit-newTransactionTemplate"/>
     
 </beans>

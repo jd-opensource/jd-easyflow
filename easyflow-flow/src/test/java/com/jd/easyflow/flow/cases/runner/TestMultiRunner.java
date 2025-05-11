@@ -25,5 +25,12 @@ public class TestMultiRunner extends MultipleThreadFlowRunner {
                 new SynchronousQueue<Runnable>(), Executors.defaultThreadFactory(), new AbortPolicy());
         this.timeout = timeout;
     }
+    
+    public TestMultiRunner(long timeout, boolean throwExceptionOnTimeout) {
+        this.executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>(), Executors.defaultThreadFactory(), new AbortPolicy());
+        this.timeout = timeout;
+        this.throwExceptionOnTimeout = throwExceptionOnTimeout;
+    }
 
 }

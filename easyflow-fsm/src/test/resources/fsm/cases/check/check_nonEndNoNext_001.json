@@ -1,0 +1,7 @@
+{
+"id":"check_nonEndNoNext_001",
+"transitions":[
+{"from":"state001", "event":"event1", "post":{"to":"state002"}},
+{"from":"state002", "event":"event1"}
+]
+}
