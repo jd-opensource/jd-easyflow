@@ -1,0 +1,16 @@
+{
+    "id": "flow_postdata_001",
+    "nodes": [
+        {
+            "id": "STEP1", "start": true,
+            "post":{"to":{"node":"STEP2", 
+			"data":{"a":"1", 
+			"b":{"exp":"1+2"}, 
+			"c":{"fixedValue":{"d":3}},
+			"d":{"createExp":"new com.jd.easyflow.flow.cases.common.TestNodeExecutor('dd')"}}}
+        }},
+        {
+            "id": "STEP2"
+        }
+    ]
+}

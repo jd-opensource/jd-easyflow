@@ -1,6 +1,6 @@
 package com.jd.easyflow.flow.engine.impl;
 
-import java.util.List;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,11 +8,10 @@ import org.slf4j.LoggerFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowRunner;
 import com.jd.easyflow.flow.exception.FlowException;
-import com.jd.easyflow.flow.filter.Filter;
-import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeContextAccessor;
 import com.jd.easyflow.flow.util.FlowEventTypes;
 import com.jd.easyflow.flow.util.Triple;
 
@@ -24,7 +23,14 @@ import com.jd.easyflow.flow.util.Triple;
 public abstract class BaseFlowRunner implements FlowRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseFlowRunner.class);
-
+    
+    private Function<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> outerNodeInvoker = p -> invokeNode(p.getLeft(), p.getMiddle(), p.getRight());
+    private Function<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> innerNodeInvoker = p -> p.getLeft().execute(p.getMiddle(), p.getRight());
+    private Function<FlowContext, Boolean> outerFlowPreHandlerInvoker = p -> invokePreHandler(p.getFlow(), p);
+    private Function<FlowContext, Boolean> innerFlowPreHandlerInvoker = p -> p.getFlow().getPreHandler().preHandle(p);
+    private Function<FlowContext, Void> outerFlowPostHandlerInvoker = p -> {invokePostHandler(p.getFlow(), p); return null;};
+    private Function<FlowContext, Void> innerFlowPostHandlerInvoker = p -> {p.getFlow().getPostHandler().postHandle(p); return null;};
+    
     @Override
     public void run(FlowContext context) {
         Flow flow = context.getFlow();
@@ -71,11 +77,11 @@ public abstract class BaseFlowRunner implements FlowRunner {
         }
         NodeContext[] nextNodes = null;
         try {
-            runNode(node, currentNode, context);
+            currentNode = runNode(node, currentNode, context);
             // get next nodes
             nextNodes = currentNode.getNextNodes();
         } catch (Throwable t) { // NOSONAR
-            currentNode.setThrowable(t);
+            NodeContextAccessor.setThrowable(currentNode, t);
             throw t;
         } finally {
             if (nextNodes == null) {
@@ -98,34 +104,34 @@ public abstract class BaseFlowRunner implements FlowRunner {
         }
         // Clear previous node to avoid OOM
         if (!context.isRecordHistory()) {
-            currentNode.setPreviousNode(null);
-            currentNode.setNextNodes(null);
+            NodeContextAccessor.setPreviousNode(currentNode, null);
+            NodeContextAccessor.setNextNodes(currentNode, null);
         }
         return nextNodes;
     }
 
-    protected void runNode(FlowNode node, NodeContext currentNode, FlowContextImpl context) {
+    protected NodeContext runNode(FlowNode node, NodeContext currentNode, FlowContextImpl context) {
         Flow flow = context.getFlow();
-        if (flow.getNodeFilters() == null || flow.getNodeFilters().size() == 0) {
-            invokeNode(node, currentNode, context, flow);
-            return;
+        if (flow.getFilterManager().noOuterNodeFilter()) {
+            return invokeNode(node, currentNode, context);
         }
-        FilterChain<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> chain = new FilterChain<Triple<FlowNode, NodeContext, FlowContext>, NodeContext>(
-                flow.getNodeFilters(), p -> {
-                    return invokeNode(node, currentNode, context, flow);
-                });
-        chain.doFilter(Triple.of(node, currentNode, context));
+        return flow.getFilterManager().doOuterNodeFilter(Triple.of(node, currentNode, context), outerNodeInvoker);
 
     }
 
-    private NodeContext invokeNode(FlowNode node, NodeContext currentNode, FlowContext context, Flow flow) {
+    private NodeContext invokeNode(FlowNode node, NodeContext currentNode, FlowContext context) {
         Throwable throwable = null;
+        Flow flow = context.getFlow();
         try {
             flow.triggerEvent(FlowEventTypes.NODE_START, currentNode, context, false);
             // Execute node
-            NodeContext nodeContext = node.execute(currentNode, context);
+            if (flow.getFilterManager().noInnerNodeFilter()) {
+                currentNode = node.execute(currentNode, context);
+            } else {
+                currentNode = flow.getFilterManager().doInnerNodeFilter(Triple.of(node, currentNode, context), innerNodeInvoker);
+            }
             flow.triggerEvent(FlowEventTypes.NODE_END, currentNode, context, false);
-            return nodeContext;
+            return currentNode;
         } catch (Throwable t) {// NOSONAR
             throwable = t;
             if (context.isLogOn() && logger.isErrorEnabled()) {
@@ -133,53 +139,55 @@ public abstract class BaseFlowRunner implements FlowRunner {
             } 
             throw t;
         } finally {
-            currentNode.setThrowable(throwable);
+            NodeContextAccessor.setThrowable(currentNode, throwable);
             flow.triggerEvent(FlowEventTypes.NODE_COMPLETE, currentNode, context, true);
         }
     }
     
     
     private boolean executePreHandler(Flow flow, FlowContext context) {
-        List<Filter<FlowContext, Boolean>> filters = flow.getFlowPreHandlerFilters();
-        if (filters == null || filters.size() == 0) {
+        if (flow.getFilterManager().noOuterFlowPreHandlerFilter()) {
             return invokePreHandler(flow, context);
+        } else {
+            Boolean preResult = flow.getFilterManager().doOuterFlowPreHandlerFilter(context, outerFlowPreHandlerInvoker);
+            ((FlowContextImpl) context).setPreResult(preResult);
+            return preResult == null ? true : preResult;
         }
-        FilterChain<FlowContext, Boolean> chain = new FilterChain<FlowContext, Boolean>(
-                filters, p -> {
-                    return invokePreHandler(flow, context);
-                });
-        Boolean preResult = chain.doFilter(context);
-        ((FlowContextImpl) context).setPreResult(preResult);
-        return preResult == null ? true : preResult;
     }
     
     private boolean invokePreHandler(Flow flow, FlowContext context) {
         if (flow.getPreHandler() != null) {
             flow.triggerEvent(FlowEventTypes.FLOW_PRE_START, context);
-            boolean preResult = flow.getPreHandler().preHandle(context);
-            flow.triggerEvent(FlowEventTypes.FLOW_PRE_END, context);
+            boolean preResult;
+            if (flow.getFilterManager().noInnerFlowPreHandlerFilter()) {
+                preResult = flow.getPreHandler().preHandle(context);
+            } else {
+                Boolean result = flow.getFilterManager().doInnerFlowPreHandlerFilter(context, innerFlowPreHandlerInvoker);
+                preResult = result == null ? true : result;
+            }
             ((FlowContextImpl) context).setPreResult(preResult);
+            flow.triggerEvent(FlowEventTypes.FLOW_PRE_END, context);
         }
         return context.getPreResult() == null ? true : context.getPreResult();
     }
     
     private void executePostHandler(Flow flow, FlowContext context) {
-        List<Filter<FlowContext, Void>> filters = flow.getFlowPostHandlerFilters();
-        if (filters == null || filters.size() == 0) {
+        if (flow.getFilterManager().noOuterFlowPostHandlerFilter()) {
             invokePostHandler(flow, context);
-            return;
+        } else {
+            flow.getFilterManager().doOuterFlowPostHandlerFilter(context, outerFlowPostHandlerInvoker);
         }
-        FilterChain<FlowContext, Void> chain = new FilterChain<FlowContext, Void>(filters, p -> {
-            invokePostHandler(flow, context);
-            return null;
-        });
     }
     
     
     private void invokePostHandler(Flow flow, FlowContext context) {
         if (flow.getPostHandler() != null) {
             flow.triggerEvent(FlowEventTypes.FLOW_POST_START, context);
-            flow.getPostHandler().postHandle(context);
+            if (flow.getFilterManager().noInnerFlowPostHandlerFilter()) {
+                flow.getPostHandler().postHandle(context);
+            } else {
+                flow.getFilterManager().doInnerFlowPostHandlerFilter(context, innerFlowPostHandlerInvoker); 
+            }
             flow.triggerEvent(FlowEventTypes.FLOW_POST_END, context);
         }
     }

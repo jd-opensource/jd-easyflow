@@ -5,13 +5,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 
+ * Generally setter is not needed for user. Using @see NodeContextAccessor if necessary.
  * @author liyuliang5
  *
  */
 public class NodeContext {
 
-    public NodeContext() {
-    }
 
     public NodeContext(String nodeId) {
         this.nodeId = nodeId;
@@ -40,7 +39,7 @@ public class NodeContext {
         return actionResult;
     }
 
-    public void setActionResult(Object actionResult) {
+    protected void setActionResult(Object actionResult) {
         this.actionResult = actionResult;
     }
 
@@ -48,7 +47,7 @@ public class NodeContext {
         return dataMap;
     }
 
-    public void setDataMap(Map<String, Object> dataMap) {
+    protected void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
     }
 
@@ -74,7 +73,7 @@ public class NodeContext {
         dataMap.remove(key);
     }
 
-    public void setNextNodeIds(String[] nextNodeIds) {
+    protected void setNextNodeIds(String[] nextNodeIds) {
         if (nextNodeIds == null) {
             this.nextNodes = null;
             return;
@@ -87,7 +86,7 @@ public class NodeContext {
         }
     }
 
-    public void setNextNodes(NodeContext[] nextNodes) {
+    protected void setNextNodes(NodeContext[] nextNodes) {
         this.nextNodes = nextNodes;
         if (nextNodes != null) {
             for (int i = 0; i < nextNodes.length; i++) {
@@ -104,7 +103,7 @@ public class NodeContext {
         return nodeId;
     }
 
-    public void setNodeId(String nodeId) {
+    protected void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
 
@@ -112,7 +111,7 @@ public class NodeContext {
         return previousNode;
     }
 
-    public void setPreviousNode(NodeContext previousNode) {
+    protected void setPreviousNode(NodeContext previousNode) {
         this.previousNode = previousNode;
     }
 
@@ -120,7 +119,7 @@ public class NodeContext {
         return throwable;
     }
 
-    public void setThrowable(Throwable throwable) {
+    protected void setThrowable(Throwable throwable) {
         this.throwable = throwable;
     }
 
@@ -128,7 +127,7 @@ public class NodeContext {
         return preResult;
     }
 
-    public void setPreResult(Boolean preResult) {
+    protected void setPreResult(Boolean preResult) {
         this.preResult = preResult;
     }
 

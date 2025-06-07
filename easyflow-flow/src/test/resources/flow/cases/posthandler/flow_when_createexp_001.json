@@ -1,0 +1,7 @@
+{
+"id":"flow_when_createexp_001",
+"nodes":[
+{"id":"001", "start":true, "post":{"when":{"createExp":"new com.jd.easyflow.flow.cases.common.TestNodeExecutor(true)"},"to":"002"}},
+{"id":"002"}
+]
+}

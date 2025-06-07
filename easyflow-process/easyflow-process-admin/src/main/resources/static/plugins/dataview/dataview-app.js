@@ -802,6 +802,7 @@ J.Textarea = J.Components['textarea'] = function(cfg) {
 
 J.Self = J.Components['self'] = function(cfg) {
     J.BaseComponent.call(this, 'self', cfg);
+	var _self = this;
     var selfScript = this.config.selfScript;
         try {
             this.selfFunc = eval(selfScript);
@@ -812,7 +813,6 @@ J.Self = J.Components['self'] = function(cfg) {
             throw err;
         }        
 
-    var _self = this;
     this.render=function($container){
         this.selfFunc.render($container);
     }

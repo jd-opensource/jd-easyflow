@@ -1,5 +1,6 @@
 package com.jd.easyflow.flow.model.post;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.engine.event.FlowEventListener;
+import com.jd.easyflow.flow.engine.event.impl.EventFlowListener;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
@@ -23,10 +26,35 @@ import com.jd.easyflow.flow.util.FlowConstants;
 public class EventPostHandler implements NodePostHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(EventPostHandler.class);
+    
+    private boolean autoAddEventFlowListener = true;
+    
+    public EventPostHandler() {
+    }
 
+    public EventPostHandler(boolean autoAddEventFlowListener) {
+        this.autoAddEventFlowListener = autoAddEventFlowListener;
+    }
+    
     @Override
     public void init(InitContext initContext, Object flowNode) {
         initEventPostHandlerMap(initContext, (FlowNode) flowNode);
+        if (autoAddEventFlowListener) {
+            List<FlowEventListener> listeners = initContext.getFlow().getEventTrigger().getListenerList();
+            boolean exists = false;
+            if (listeners != null) {
+                for (FlowEventListener listener : listeners) {
+                    if (listener instanceof EventFlowListener) {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (! exists) {
+                logger.info("Auto add EventFlowListener");
+                initContext.getFlow().getEventTrigger().addListener(new EventFlowListener());
+            }
+        }
     }
 
     @Override
@@ -80,5 +108,15 @@ public class EventPostHandler implements NodePostHandler {
         }
 
     }
+
+    public boolean isAutoAddEventFlowListener() {
+        return autoAddEventFlowListener;
+    }
+
+    public void setAutoAddEventFlowListener(boolean autoAddEventFlowListener) {
+        this.autoAddEventFlowListener = autoAddEventFlowListener;
+    }
+    
+    
 
 }

@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
+import com.jd.easyflow.flow.filter.BaseFilter;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeContextAccessor;
 import com.jd.easyflow.flow.model.NodePreHandler;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowNodeLinkUtil;
@@ -147,11 +149,11 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
         if (! recordHistory) {
             throw new FlowException("InclusiveCheck must record history");
         }
-        List<Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext>> filters = initContext.getFlow().getNodeFilters();
+        List<Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext>> filters = initContext.getFlow().getFilterManager().getNodeFilters();
         boolean contains = false;
         if (filters == null) {
             filters = new ArrayList<Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext>>();
-            initContext.getFlow().setNodeFilters(filters);
+            initContext.getFlow().getFilterManager().setNodeFilters(filters);
         }
         for (Filter filter : filters) {
             if (filter instanceof InclusiveCheckWaitNodeProcessFilter) {
@@ -160,15 +162,20 @@ public class InclusiveCheckPreHandler implements NodePreHandler, NodePreProperty
             }
         }
         if (!contains) {
-            filters.add(0, new InclusiveCheckWaitNodeProcessFilter());
+            filters.add(0, new InclusiveCheckWaitNodeProcessFilter(Integer.MAX_VALUE));
+            initContext.getFlow().getFilterManager().setNodeFilters(filters);
         }
     }
  
 }
 
-class InclusiveCheckWaitNodeProcessFilter implements Filter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> {
+class InclusiveCheckWaitNodeProcessFilter extends BaseFilter<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> {
     
     private static final Logger logger = LoggerFactory.getLogger(InclusiveCheckWaitNodeProcessFilter.class);
+    
+    public InclusiveCheckWaitNodeProcessFilter(int order) {
+        this.order = order;
+    }
 
     @Override
     public NodeContext doFilter(Triple<FlowNode, NodeContext, FlowContext> request,
@@ -203,7 +210,7 @@ class InclusiveCheckWaitNodeProcessFilter implements Filter<Triple<FlowNode, Nod
                     }
                 }
                 if (additionalNextNodes != null) {
-                    nodeContext.setNextNodes(additionalNextNodes.toArray(new NodeContext[additionalNextNodes.size()]));
+                    NodeContextAccessor.setNextNodes(nodeContext, additionalNextNodes.toArray(new NodeContext[additionalNextNodes.size()]));
                 }
             }
         }

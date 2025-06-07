@@ -25,8 +25,7 @@ public class TestPostHandlerFilter implements Filter<Pair<NodeContext, FlowConte
         NodeContext[] result = chain.doFilter(request);
         if ("STEP1".equals(request.getLeft().getNodeId())) {
             logger.info("origin result:" + result[0].getNodeId());
-            NodeContext nextNodeContext = new NodeContext();
-            nextNodeContext.setNodeId("STEP3");
+            NodeContext nextNodeContext = new NodeContext("STEP3");
             // request.getLeft().setNextNodes(new NodeContext[] { nextNodeContext });
             return new NodeContext[] { nextNodeContext };
         }

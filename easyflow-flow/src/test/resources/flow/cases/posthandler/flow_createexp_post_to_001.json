@@ -1,0 +1,12 @@
+{
+    "id": "flow_createexp_post_to_001",
+    "nodes": [
+        {
+            "id": "STEP1", "start": true,
+            "post":{"to":{"createExp":"new com.jd.easyflow.flow.cases.common.TestNodeExecutor('STEP2')"}}
+        },
+        {
+            "id": "STEP2"
+        }
+    ]
+}

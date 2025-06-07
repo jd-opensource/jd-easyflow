@@ -88,7 +88,7 @@ public class FlowNodeLinkUtil {
         }
         if (nextNodeIds.contains(NODE_ID_UNKNOWN)) {
             if (logger.isInfoEnabled()) {
-                logger.info(flow.getId() + ":" + node.getId() + " next nodes contains unkown");
+                logger.info(flow.getId() + ":" + node.getId() + " next nodes contains unknown");
             }
         }
         node.setProperty(NODE_PROP_NEXT_NODES_CACHE, nextNodeIds);
@@ -248,6 +248,19 @@ public class FlowNodeLinkUtil {
                 List<String> nodes = parseTo(toObj, nodeId, flow);
                 result.addAll(nodes);
             }
+        } else if (to instanceof Map) {
+            Map<String, Object> toMap = (Map<String, Object>) to;
+            Object exp = toMap.get("exp");
+            if (exp != null) {
+                result.add(NODE_ID_UNKNOWN);
+            } else {
+                Object node = toMap.get("node");
+                if (node != null) {
+                    List<String> nodes = parseTo(node, nodeId, flow);
+                    result.addAll(nodes);
+                }
+            }
+            
         } else {
             result.add(NODE_ID_UNKNOWN);
         }

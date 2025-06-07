@@ -40,7 +40,7 @@ public class EndEventConverter extends BaseFlowNodeConverter {
             if (isTerminateEvent) {
                 if (node.get(DefConstants.NODE_PROP_ACTION) == null) {
                     Map<String, Object> action = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_ACTION);
-                    action.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + InterruptNodeAction.class.getName() + "()");
+                    action.put(DefConstants.COMMON_PROP_TYPE, DefConstants.NODE_ACTION_TYPE_INTERRUPT);
                 }
             }
         }

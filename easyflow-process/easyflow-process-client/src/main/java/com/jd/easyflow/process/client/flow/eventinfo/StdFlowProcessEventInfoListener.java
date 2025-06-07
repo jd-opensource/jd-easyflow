@@ -1,7 +1,7 @@
 package com.jd.easyflow.process.client.flow.eventinfo;
 
+import com.jd.easyflow.flow.engine.event.BaseFlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
-import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.Pair;
 import com.jd.easyflow.process.adapter.export.dto.instance.ProcessInstanceDTO;
@@ -15,7 +15,7 @@ import com.jd.easyflow.process.client.runtime.eventinfo.ProcessEventInfoListener
  * @author liyuliang5
  *
  */
-public class StdFlowProcessEventInfoListener implements FlowEventListener {
+public class StdFlowProcessEventInfoListener extends BaseFlowEventListener {
 
     private ProcessEventInfoListener processEventInfoListener;
 
@@ -27,20 +27,14 @@ public class StdFlowProcessEventInfoListener implements FlowEventListener {
             Pair.of(StdProcessConstants.EVENT_TXN_FLUSH_START, FlowConstants.EVENT_ORDER_START),
             Pair.of(StdProcessConstants.EVENT_TXN_FLUSH_END, -FlowConstants.EVENT_ORDER_START) };
 
-    private Pair<String, Integer>[] acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     
     public StdFlowProcessEventInfoListener() {
         this.processEventInfoListener = new ProcessEventInfoListener();
-        
+        acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     }
     
     public StdFlowProcessEventInfoListener(ProcessEventInfoListener processEventInfoListener) {
         this.processEventInfoListener = processEventInfoListener;
-    }
-
-    @Override
-    public Pair<String, Integer>[] getAcceptedEvents() {
-        return acceptedEvents;
     }
 
     @Override

@@ -1,0 +1,12 @@
+{
+    "id": "flow_event_nolistener_001",
+    "nodes": [
+        {"id": "EMPTY_NODE","name": "Single Empty Node1","action":{"type":"event"},
+            "post":{"type":"event"}, 
+            "properties":{"events":{
+                "EVENT3":{"action":{"exp":"new com.jd.easyflow.flow.cases.event.TestEventNodeAction().execute(nodeContext, context)"}, "post":{"to":"EMPTY_NODE2"}}
+            }}
+        },
+        {"id": "EMPTY_NODE2","name": "Single Empty Node2"}
+    ]
+ }

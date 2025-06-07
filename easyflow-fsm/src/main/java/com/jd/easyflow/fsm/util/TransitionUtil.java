@@ -12,7 +12,7 @@ import com.jd.easyflow.fsm.model.impl.TransitionImpl;
  */
 public class TransitionUtil {
 
-    private static FixPostTransitionImpl INSTANCE = new FixPostTransitionImpl();
+    private static FixedPostTransitionImpl INSTANCE = new FixedPostTransitionImpl();
 
     /**
      * Used for post manually.
@@ -26,7 +26,7 @@ public class TransitionUtil {
         INSTANCE.post(postStateId, postEventId, transitionContext, fsmContext);
     }
 
-    private static class FixPostTransitionImpl extends TransitionImpl {
+    private static class FixedPostTransitionImpl extends TransitionImpl {
 
         {
             postHandler = new TransitionPostHandler() {

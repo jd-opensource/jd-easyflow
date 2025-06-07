@@ -20,8 +20,8 @@ import com.jd.easyflow.common.adapter.export.util.ExportResponseUtil;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowEngine;
 import com.jd.easyflow.flow.engine.FlowParam;
+import com.jd.easyflow.flow.engine.event.BaseFlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
-import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
@@ -54,7 +54,7 @@ import com.jd.easyflow.process.client.runtime.StdProcessContext;
  * @author liyuliang5
  * 
  */
-public class StdProcessFlowListener implements FlowEventListener {
+public class StdProcessFlowListener extends BaseFlowEventListener {
     
     private static final Logger log = LoggerFactory.getLogger(StdProcessFlowListener.class);
 
@@ -72,14 +72,11 @@ public class StdProcessFlowListener implements FlowEventListener {
     private ProcessRuntimeService processRuntimeService;
 
     private ProcessInstanceExport processInstanceExport;
-
-    private Pair<String, Integer>[] acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     
-    @Override
-    public Pair<String, Integer>[] getAcceptedEvents() {
-        return acceptedEvents;
+    public StdProcessFlowListener() {
+        acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     }
-
+    
     @Override
     public void on(FlowEvent flowEvent) {
         switch (flowEvent.getType()) {

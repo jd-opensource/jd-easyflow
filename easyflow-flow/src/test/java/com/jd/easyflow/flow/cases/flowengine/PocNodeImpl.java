@@ -4,6 +4,7 @@ import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeContextAccessor;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.NodePreHandler;
 
@@ -25,7 +26,7 @@ public abstract class PocNodeImpl implements FlowNode {
         boolean preResult = true;
         if (preHandler != null) {
             preResult = preHandler.preHandle(nodeContext, context);
-            nodeContext.setPreResult(preResult);
+            NodeContextAccessor.setPreResult(nodeContext, preResult);
         }
         if (!preResult) {
             return nodeContext;
@@ -33,13 +34,13 @@ public abstract class PocNodeImpl implements FlowNode {
 
         if (action != null) {
             Object result = action.execute(nodeContext, context);
-            nodeContext.setActionResult(result);
+            NodeContextAccessor.setActionResult(nodeContext,result);
         }
 
         if (postHandler != null) {
             NodeContext[] nextNodes = postHandler.postHandle(nodeContext, context);
             if (nextNodes != null) {
-                nodeContext.setNextNodes(nextNodes);
+                NodeContextAccessor.setNextNodes(nodeContext,nextNodes);
             }
         }
 

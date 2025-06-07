@@ -21,7 +21,7 @@ import com.jd.easyflow.flow.util.Triple;
  * @param <T>
  * @param <R>
  */
-public class ExpFilter<T, R> implements Filter<T, R> {
+public class ExpFilter<T, R> extends BaseFilter<T, R> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExpFilter.class);
 

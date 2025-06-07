@@ -14,7 +14,7 @@ public class TestAddFilterParseListener implements FlowParseEventListener {
     public void on(FlowParseEvent event) {
         switch (event.getType()) {
         case FlowParseEventTypes.INIT_FLOW_END: {
-            event.getFlow().addFilter(new TestFlowParamAndResultPrintFilter());
+            event.getFlow().getFilterManager().addFilter(new TestFlowParamAndResultPrintFilter());
             break;
         }
 

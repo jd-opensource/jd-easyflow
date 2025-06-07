@@ -81,7 +81,7 @@ public class FsmStateLinkUtil {
         }
         if (nextStates.contains(STATE_ID_UNKNOWN)) {
             if (logger.isInfoEnabled()) {
-                logger.info(fsm.getId() + ":" + state.getId() + " next states contains unkown");
+                logger.info(fsm.getId() + ":" + state.getId() + " next states contains unknown");
             }
         }
         state.setProperty(STATE_PROP_NEXT_STATES_CACHE, nextStates);
@@ -136,6 +136,9 @@ public class FsmStateLinkUtil {
             String toStr = fsm.getStateList().get(toIdx).getId();
             result.add(toStr);
             // List type
+        } else if (to instanceof Map) {
+            String toStr = (String) ((Map) to).get("state");
+            result.add(toStr);
         } else {
             result.add(STATE_ID_UNKNOWN);
         }

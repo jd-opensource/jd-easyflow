@@ -23,7 +23,7 @@ public class IntermediateCatchEventConverter extends BaseFlowNodeConverter {
         Map<String, Object> node = super.convert(flowNode, bpmnModel, flowDef);
         if (node.get(DefConstants.NODE_PROP_ACTION) == null) {
             Map<String, Object> action = new HashMap<>();
-            action.put(DefConstants.COMMON_PROP_CREATE_EXP, "new " + EventNodeAction.class.getName() + "()");
+            action.put(DefConstants.COMMON_PROP_TYPE, DefConstants.NODE_ACTION_TYPE_EVENT);
             node.put(DefConstants.NODE_PROP_ACTION, action);
         }
         return node;

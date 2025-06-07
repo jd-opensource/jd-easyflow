@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.engine.event.BaseFlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
-import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
@@ -17,17 +17,16 @@ import com.jd.easyflow.flow.util.Pair;
  * @author liyuliang5
  *
  */
-public class InterruptFlowListener implements FlowEventListener {
+public class InterruptFlowListener extends BaseFlowEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(InterruptFlowListener.class);
     
-    private int nodeEndEventOrder = FlowConstants.EVENT_ORDER_START;
-
-    @Override
-    public Pair<String, Integer>[] getAcceptedEvents() {
-        return new Pair[] { Pair.of(FlowEventTypes.NODE_END, nodeEndEventOrder) };
+    private static final Pair<String, Integer>[] DEFAULT_ACCEPTED_EVENTS = new Pair[]{Pair.of(FlowEventTypes.NODE_END, FlowConstants.EVENT_ORDER_START)};
+    
+    public InterruptFlowListener() {
+        this.acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     }
-
+    
     @Override
     public void on(FlowEvent event) {
         switch (event.getType()) {
@@ -60,13 +59,6 @@ public class InterruptFlowListener implements FlowEventListener {
         }
 
     }
-
-    public int getNodeEndEventOrder() {
-        return nodeEndEventOrder;
-    }
-
-    public void setNodeEndEventOrder(int nodeEndEventOrder) {
-        this.nodeEndEventOrder = nodeEndEventOrder;
-    }
+ 
     
 }

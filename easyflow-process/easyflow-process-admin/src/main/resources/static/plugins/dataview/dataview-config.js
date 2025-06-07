@@ -574,9 +574,11 @@
 				'<div class="form-group col"><label>'+J.msg['dataviewcfg.selfScript']+':</label>' +
 				'<textarea class="form-control selfScript ' + this.componentClass + '"></textarea></div>';	
 			$(selfHtml).appendTo(this.$bodyContainer);
+			var $selfScript = this.$bodyContainer.find("." + this.componentClass);
+			this.data && this.data.selfScript && $selfScript.val(this.data.selfScript);
 		}
 		this.collect = function(data) {
-			var collectData = {selfScript:this.$row.find(".selfScript." + this.componentClass).val()};
+			var collectData = {selfScript:_self.$bodyContainer.find(".selfScript." + this.componentClass).val()};
 			return collectData;
 		}
 	}

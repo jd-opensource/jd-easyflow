@@ -69,7 +69,7 @@ public class TransitionImpl implements Transition {
         } else {
             FilterChain<Pair<TransitionContext, FsmContext>, Object> chain = new FilterChain<Pair<TransitionContext, FsmContext>, Object>(
                     filters, p -> {
-                        return invokeAction(transitionContext, context);
+                        return invokeAction(p.getLeft(), p.getRight());
                     });
             Object result = chain.doFilter(Pair.of(transitionContext, context));
             transitionContext.setActionResult(result);
@@ -106,7 +106,7 @@ public class TransitionImpl implements Transition {
         }
         FilterChain<Pair<TransitionContext, FsmContext>, Boolean> chain = new FilterChain<Pair<TransitionContext, FsmContext>, Boolean>(
                 filters, p -> {
-                    return invokePreHandler(transitionContext, context);
+                    return invokePreHandler(p.getLeft(), p.getRight());
                 });
         Boolean preResult = chain.doFilter(Pair.of(transitionContext, context));
         transitionContext.setPreResult(preResult);
@@ -140,7 +140,7 @@ public class TransitionImpl implements Transition {
         } else {
             FilterChain<Pair<TransitionContext, FsmContext>, PostHandleResult> chain = new FilterChain<Pair<TransitionContext, FsmContext>, PostHandleResult>(
                     filters, p -> {
-                        return invokePostHandler(transitionContext, context);
+                        return invokePostHandler(p.getLeft(), p.getRight());
                     });
             postHandleResult = chain.doFilter(Pair.of(transitionContext, context));
             transitionContext.setPostStateId(postHandleResult == null ? null : postHandleResult.getPostStateId());

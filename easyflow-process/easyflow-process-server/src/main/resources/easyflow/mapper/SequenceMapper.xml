@@ -16,21 +16,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from sequence
+    from `sequence`
     where id = #{id,jdbcType=BIGINT} and deleted = 0
   </select>
   <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    update sequence set deleted = 1
+    update `sequence` set deleted = 1
     where id = #{id,jdbcType=BIGINT} and deleted = 0
   </update>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.codegenerator.infrastructure.persistence.po.Sequence" useGeneratedKeys="true">
-    insert into sequence (seq_key, seq_sub_key, seq_value
+    insert into `sequence` (seq_key, seq_sub_key, seq_value
       )
     values (#{seqKey,jdbcType=VARCHAR}, #{seqSubKey,jdbcType=VARCHAR}, #{seqValue,jdbcType=BIGINT}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.codegenerator.infrastructure.persistence.po.Sequence" useGeneratedKeys="true">
-    insert into sequence
+    insert into `sequence`
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="seqKey != null">
         seq_key,
@@ -55,7 +55,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.codegenerator.infrastructure.persistence.po.Sequence">
-    update sequence
+    update `sequence`
     <set>
       <if test="seqKey != null">
         seq_key = #{seqKey,jdbcType=VARCHAR},
@@ -70,7 +70,7 @@
     where id = #{id,jdbcType=BIGINT} and deleted='0'
   </update>
   <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.codegenerator.infrastructure.persistence.po.Sequence">
-    update sequence
+    update `sequence`
     set seq_key = #{seqKey,jdbcType=VARCHAR},
       seq_sub_key = #{seqSubKey,jdbcType=VARCHAR},
       seq_value = #{seqValue,jdbcType=BIGINT}
@@ -80,7 +80,7 @@
 	<select id="selectForUpdate" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from sequence where seq_key=#{key}
+		from `sequence` where seq_key=#{key}
 		<if test="subKey != null">
 			and seq_sub_key = #{subKey}
 		</if>
@@ -89,6 +89,6 @@
 	</select>
 	
   <update id="updateValueByPrimaryKey">
-    update sequence set seq_value=#{seqValue} where id=#{id} and deleted ='0';
+    update `sequence` set seq_value=#{seqValue} where id=#{id} and deleted ='0';
   </update>
 </mapper>

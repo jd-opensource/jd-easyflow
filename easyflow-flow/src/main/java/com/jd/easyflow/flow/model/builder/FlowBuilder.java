@@ -8,6 +8,7 @@ import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.node.NodeImpl;
+import com.jd.easyflow.flow.model.parser.FlowParser;
 
 /**
  * 
@@ -86,5 +87,16 @@ public class FlowBuilder {
 	    flow.init(initContext, null);
 	    return flow;
 	}
+	
+    public Flow buildAndInit(FlowParser flowParser) {
+        InitContext initContext = new InitContext();
+        initContext.setFlowParser(flowParser);
+        initContext.setParseEl(true);
+        initContext.setFlowList(null);
+        initContext.setFlowDefinitionMap(null);
+        initContext.setFlow(flow);
+        flow.init(initContext, null);
+        return flow;
+    }
 
 }

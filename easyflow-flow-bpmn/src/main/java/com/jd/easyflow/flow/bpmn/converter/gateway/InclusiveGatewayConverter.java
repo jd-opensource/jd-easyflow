@@ -32,11 +32,7 @@ public class InclusiveGatewayConverter extends BaseFlowNodeConverter {
 
         Map<String, Object> post = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_POST);
         post.put(DefConstants.NODE_POST_PROP_CONDITION_TYPE, ConditionalNodePostHandler.INCLUSIVE_TYPE);
-        // Inclusive gateway with multiple incoming flows is limited supported!
-        // Currently only support this pattern: A(Inclusive gateway) -> (B,C,D...) -> E(Inclusive gateway), no checking.
-        // User can implements other patterns by customize pre handler.
         if (inclusiveGateway.getIncomingFlows().size() > 1) {
-            logger.warn("Inclusive gateway with multiple incomming flows is limited supported!");
             if (node.get(DefConstants.NODE_PROP_PRE) == null) {
                 Map<String, Object> pre = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_PRE);
                 List<String> preNodes = new ArrayList<>();

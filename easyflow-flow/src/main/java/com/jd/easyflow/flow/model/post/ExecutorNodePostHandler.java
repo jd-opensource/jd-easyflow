@@ -1,7 +1,5 @@
 package com.jd.easyflow.flow.model.post;
 
-import java.util.List;
-
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodeExecutor;
@@ -21,8 +19,8 @@ public class ExecutorNodePostHandler extends AbstractNodePostHandler {
 
 	@Override
 	public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
-		List<String> nodeIds = (List<String>) executor.execute(nodeContext, context);
-		return nodeIds2Nodes(nodeIds);
+		Object nodeIds = executor.execute(nodeContext, context);
+		return super.parseToNodes(nodeIds, nodeContext, context);
 	}
 
 }

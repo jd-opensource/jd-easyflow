@@ -205,14 +205,17 @@ public class FlowContextImpl implements FlowContext {
         endNodes.add(node);
     }
 
+    @Override
     public boolean isInterrupted() {
         return interrupted;
     }
 
+    @Override
     public void setInterrupted() {
         this.interrupted = true;
     }
 
+    @Override
     public Boolean getPreResult() {
         return preResult;
     }
@@ -221,26 +224,32 @@ public class FlowContextImpl implements FlowContext {
         this.preResult = preResult;
     }
 
+    @Override
     public Boolean getLogFlag() {
         return logFlag;
     }
 
+    @Override
     public void setLogFlag(Boolean logFlag) {
         this.logFlag = logFlag;
     }
     
+    @Override
     public boolean isLogOn() {
         return logFlag == null || this.logFlag.booleanValue();
     }
 
+    @Override
     public <T>T getContext() {
         return (T) context;
     }
 
+    @Override
     public void setContext(Object context) {
         this.context = context;
     }
 
+    @Override
     public ElEvaluator getElEvaluator() {
         return elEvaluator;
     }

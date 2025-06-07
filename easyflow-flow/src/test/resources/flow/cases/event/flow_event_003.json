@@ -1,0 +1,15 @@
+{
+    "id": "flow_event_003","name": "Flow event 003",
+    "nodes": [
+        {"id": "EMPTY_NODE","name": "Single Empty Node1","action":{"type":"event"},
+            "post":{"type":"event"}, 
+            "properties":{"events":{
+                "EVENT1":"new com.jd.easyflow.flow.cases.event.TestEventNodeAction().execute(nodeContext, context)",
+                "EVENT2":{"action":{"createExp":"new com.jd.easyflow.flow.cases.event.TestEventNodeAction()"}},
+                "EVENT3":{"action":{"exp":"new com.jd.easyflow.flow.cases.event.TestEventNodeAction().execute(nodeContext, context)"}, "post":{"to":"EMPTY_NODE2"}}
+            }}
+        },
+        {"id": "EMPTY_NODE2","name": "Single Empty Node2"}
+    ],
+    "listeners":[{"createExp":"new com.jd.easyflow.flow.engine.event.impl.EventFlowListener()"}]
+}

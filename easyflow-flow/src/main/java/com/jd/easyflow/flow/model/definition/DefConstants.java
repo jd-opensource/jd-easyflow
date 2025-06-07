@@ -58,6 +58,11 @@ public class DefConstants {
     /**
      * Node action property
      */
+    public static final String NODE_ACTION_TYPE_EVENT = "event";
+    public static final String NODE_ACTION_TYPE_FLOW = "flow";
+    public static final String NODE_ACTION_TYPE_INTERRUPT = "interrupt";
+    public static final String NODE_ACTION_TYPE_LOOP = "loop";
+    public static final String NODE_ACTION_TYPE_PARAM_EXECUTOR = "paramExecutor";
     public static final String NODE_ACTION_PROP_START_NODE_ID = "startNodeId";
     public static final String NODE_ACTION_PROP_INHERIT = "inherit";
 
@@ -66,6 +71,7 @@ public class DefConstants {
      * Node post property
      */
     public static final String NODE_POST_TYPE_CONDITION = "condition";
+    public static final String NODE_POST_TYPE_EVENT = "event";
     public static final String NODE_POST_PROP_CONDITIONS = "conditions";
     public static final String NODE_POST_PROP_WHEN = "when";
     public static final String NODE_POST_PROP_TO = "to";

@@ -1,14 +1,19 @@
 package com.jd.easyflow.flow.model.post;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.FlowNode;
+import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeExecutor;
 import com.jd.easyflow.flow.model.NodePostHandler;
+import com.jd.easyflow.flow.model.definition.DefConstants;
 
 /**
  * 
@@ -23,7 +28,6 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
         if (to == null) {
             return null;
         }
-        // String type
         if (to instanceof String) {
             String toStr = (String) to;
             if (!toStr.startsWith(IDX_VAR_PREFIX)) {
@@ -34,7 +38,6 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
         } else if (to instanceof Integer) {
             int toIdx = (Integer) to;
             return new NodeContext[] { nodeId2Node(context.getFlow().getNodeList().get(toIdx).getId()) };
-            // List type
         } else if (to instanceof List) {
             List<Object> toList = (List) to;
             List<NodeContext> toResult = new ArrayList<>(toList.size());
@@ -46,7 +49,7 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
             return toResult.toArray(result);
         } else if (to instanceof Map) {
             Map<String, Object> toMap = (Map) to;
-            NodeContext[] toNodes = null;
+            NodeContext[] toNodes = null; 
             String toExp = (String) toMap.get("exp");
             if (toExp != null) {
                 // parse exp
@@ -64,23 +67,115 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
                 toNodes = parseToNodes(node, nodeContext, context);
             }
             // fill context data
-            Map<String, String> dataConf = (Map<String, String>) toMap.get("data");
+            Map<String, Object> dataConf = (Map<String, Object>) toMap.get("data");
             if (dataConf != null && toNodes != null) {
-                for (Entry<String, String> entry : dataConf.entrySet()) {
-                    Object value = context.getElEvaluator().eval(entry.getValue(), nodeContext, context, null);
+                for (Entry<String, Object> entry : dataConf.entrySet()) {
+                    Object value = parseDataValue(entry.getValue(), nodeContext, context);
                     for (NodeContext node : toNodes) {
                         node.put(entry.getKey(), value);
                     }
                 }
-
             }
             return toNodes;
+        } else if (to instanceof NodeExecutor) {
+            Object result = ((NodeExecutor) to).execute(nodeContext, context);
+            if (result == null) {
+                return null;
+            } else if (result instanceof NodeContext[]) {
+                return (NodeContext[]) result;
+            } else {
+                return parseToNodes(result, nodeContext, context);
+            }
+            
         } else {
             throw new UnsupportedOperationException("Unsupported type:" + to.getClass());
         }
-
     }
+    
+    protected Object parseToDefinition(Object to, FlowNode node, InitContext initContext) {
+        if (to instanceof List) {
+            List list = (List) to;
+            for (int i = 0; i < list.size(); i++) {
+                Object element = list.get(i);
+                if (element instanceof List || element instanceof Map) {
+                    list.set(i, parseToDefinition(element, node, initContext));
+                }
+            }
+        } else if (to instanceof Map) {
+            Map map = (Map) to;
+            if (map.get("type") != null) {
+                throw new IllegalArgumentException("type is reserved");
+            }
+            Map<String, Object> data = (Map<String, Object>) map.get("data");
 
+            String createExp = (String) map.get(DefConstants.COMMON_PROP_CREATE_EXP);
+            if (createExp != null && initContext.isParseEl()) {
+                if (data != null) {
+                    throw new IllegalArgumentException("data is reserved");
+                }
+                Map<String, Object> context = new HashMap<>(3);
+                context.put("definition", map);
+                context.put("node", node);
+                context.put("flow", initContext.getFlow());
+                context.put("flowParser", initContext.getFlowParser());
+                NodeExecutor<Boolean> executor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, context, false);
+                return executor;
+            }
+            
+            if (data != null) {
+                for (Entry<String, Object> entry : data.entrySet()) {
+                    if (entry.getValue() instanceof Map) {
+                        entry.setValue(parseDataValueDefinition(entry.getValue(), node, initContext));
+                    }
+                }
+            }
+            
+        }
+        return to;
+    }
+    
+    private Object parseDataValueDefinition(Object dataValue, FlowNode node, InitContext initContext) {
+        if (dataValue instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) dataValue;
+            if (map.get("type") != null) {
+                throw new IllegalArgumentException("type is reserved");
+            }
+            String createExp = (String) map.get(DefConstants.COMMON_PROP_CREATE_EXP);
+            if (createExp != null && initContext.isParseEl()) {
+                Map<String, Object> context = new HashMap<>(3);
+                context.put("definition", map);
+                context.put("node", node);
+                context.put("flow", initContext.getFlow());
+                context.put("flowParser", initContext.getFlowParser());
+                NodeExecutor<Boolean> executor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, context, false);
+                return executor;
+            }
+            
+        }
+        return dataValue;
+    }
+    
+    private Object parseDataValue(Object value, NodeContext nodeContext, FlowContext context) {
+        if (value instanceof String) {
+            return context.getElEvaluator().eval((String) value, nodeContext, context, null);
+        } else if (value instanceof Map) {
+            Map<String, Object> valueMap = (Map<String, Object>) value;
+            if (valueMap.containsKey(DefConstants.COMMON_PROP_EXP)) {
+                String exp = (String) valueMap.get(DefConstants.COMMON_PROP_EXP);
+                return context.getElEvaluator().eval(exp, nodeContext, context, null);
+            } else if (valueMap.containsKey("fixedValue")) {
+                return valueMap.get("fixedValue");
+            } else {
+                throw new IllegalArgumentException("illegal data map, " + value);
+            }
+            
+        } else if (value instanceof NodeExecutor) {
+            return ((NodeExecutor) value).execute(nodeContext, context);
+        }  else {
+            throw new IllegalArgumentException("illegal data " + value);
+        }
+    }
+    
     private String parseIndexVar(String var, NodeContext nodeContext, FlowContext flowContext) {
         int index = -1;
         Flow flow = flowContext.getFlow();
@@ -142,4 +237,5 @@ public abstract class AbstractNodePostHandler implements NodePostHandler {
             list.add(node);
         }
     }
+    
 }

@@ -1,0 +1,9 @@
+{
+"id":"innerNodeActionFilter001",
+"nodes":[
+{"id":"node001", "start":true, "action":"0", "post":{"when":"actionResult>0", "to":"node002"}},
+{"id":"node002"}
+],
+"nodeActionFilters":[{"createExp":"new com.jd.easyflow.flow.cases.filter.FilterTest.TestNodeActionFilter()", "order":-1}]
+
+}

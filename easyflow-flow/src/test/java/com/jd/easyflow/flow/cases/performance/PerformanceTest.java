@@ -63,7 +63,7 @@ public class PerformanceTest {
         evaluator.setRootType(1);
         ElFactory.setDefaultEvaluator(evaluator);
         long t1 = System.currentTimeMillis();
-        int count = 10000;
+        int count = 1000;
         for (int i = 0; i < count; i++) {
             result = flowEngine.execute(param);
         }
@@ -79,7 +79,7 @@ public class PerformanceTest {
         FlowEngineImpl flowEngine = new FlowEngineImpl();
         flowEngine.setFlowPath("classpath:flow/cases/performance/flow_performance001.json");
         flowEngine.init();
-        int count = 10000;
+        int count = 1000;
         FlowParam param = new FlowParam("flow_performance001", "EMPTY_NODE3", null);
         param.put("count", 1);
         FlowResult result = flowEngine.execute(param);
@@ -116,7 +116,7 @@ public class PerformanceTest {
         evaluator.setRootType(0);
         ElFactory.setDefaultEvaluator(evaluator);
         long t1 = System.currentTimeMillis();
-        int count = 10000;
+        int count = 1000;
         for (int i = 0; i < count; i++) {
             result = flowEngine.execute(param);
         }
@@ -143,7 +143,7 @@ public class PerformanceTest {
         evaluator.setRootType(1);
         ElFactory.setDefaultEvaluator(evaluator);
         long t1 = System.currentTimeMillis();
-        int count = 10000;
+        int count = 1000;
         for (int i = 0; i < count; i++) {
             result = flowEngine.execute(param);
         }

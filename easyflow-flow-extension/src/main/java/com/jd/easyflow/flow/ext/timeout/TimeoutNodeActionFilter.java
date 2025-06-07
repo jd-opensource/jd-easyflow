@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.exception.FlowException;
-import com.jd.easyflow.flow.filter.Filter;
+import com.jd.easyflow.flow.filter.BaseFilter;
 import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
@@ -22,7 +22,7 @@ import com.jd.easyflow.flow.util.Pair;
  * 
  * @author liyuliang5
  */
-public class TimeoutNodeActionFilter implements Filter<Pair<NodeContext, FlowContext>, Object> {
+public class TimeoutNodeActionFilter extends BaseFilter<Pair<NodeContext, FlowContext>, Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(TimeoutNodeActionFilter.class);
 

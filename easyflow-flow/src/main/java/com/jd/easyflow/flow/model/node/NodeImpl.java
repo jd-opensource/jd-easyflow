@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.filter.Filter;
@@ -12,6 +13,7 @@ import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeContextAccessor;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.NodePreHandler;
 import com.jd.easyflow.flow.util.FlowEventTypes;
@@ -35,6 +37,13 @@ public class NodeImpl implements FlowNode {
     protected NodeAction action;
 
     protected NodePostHandler postHandler;
+    
+    private Function<Pair<NodeContext, FlowContext>, Boolean> outerNodePreHandlerInvoker = p -> invokePreHandler(p.getLeft(), p.getRight());
+    private Function<Pair<NodeContext, FlowContext>, Boolean> innerNodePreHandlerInvoker = p -> preHandler.preHandle(p.getLeft(), p.getRight());
+    private Function<Pair<NodeContext, FlowContext>, Object> outerNodeActionInvoker = p -> invokeAction(p.getLeft(), p.getRight());
+    private Function<Pair<NodeContext, FlowContext>, Object> innerNodeActionInvoker = p -> action.execute(p.getLeft(), p.getRight());
+    private Function<Pair<NodeContext, FlowContext>, NodeContext[]> outerNodePostHandlerInvoker = p -> invokePostHandler(p.getLeft(), p.getRight());
+    private Function<Pair<NodeContext, FlowContext>, NodeContext[]> innerNodePostHandlerInvoker = p -> postHandler.postHandle(p.getLeft(), p.getRight());
 
     @Override
     public void init(InitContext initContext, Object parent) {
@@ -73,24 +82,26 @@ public class NodeImpl implements FlowNode {
     }
 
     protected boolean executePreHandler(NodeContext nodeContext, FlowContext context) {
-        List<Filter<Pair<NodeContext, FlowContext>, Boolean>> filters = context.getFlow().getNodePreHandlerFilters();
-        if (filters == null || filters.size() == 0) {
+        if (context.getFlow().getFilterManager().noOuterNodePreHandlerFilter()) {
             return invokePreHandler(nodeContext, context);
+        } else {
+            Boolean preResult = context.getFlow().getFilterManager().doOuterNodePreHandlerFilter(Pair.of(nodeContext, context), outerNodePreHandlerInvoker);
+            NodeContextAccessor.setPreResult(nodeContext, preResult);
+            return preResult == null ? true : preResult;
         }
-        FilterChain<Pair<NodeContext, FlowContext>, Boolean> chain = new FilterChain<Pair<NodeContext, FlowContext>, Boolean>(
-                filters, p -> {
-                    return invokePreHandler(nodeContext, context);
-                });
-        Boolean preResult = chain.doFilter(Pair.of(nodeContext, context));
-        nodeContext.setPreResult(preResult);
-        return preResult == null ? true : preResult;
     }
 
     protected boolean invokePreHandler(NodeContext nodeContext, FlowContext context) {
         if (preHandler != null) {
             context.getFlow().triggerEvent(FlowEventTypes.NODE_PRE_START, nodeContext, context, false);
-            boolean preResult = preHandler.preHandle(nodeContext, context);
-            nodeContext.setPreResult(preResult);
+            boolean preResult;
+            if (context.getFlow().getFilterManager().noInnerNodePreHandlerFilter()) {
+                preResult = preHandler.preHandle(nodeContext, context);
+            } else {
+                Boolean result = context.getFlow().getFilterManager().doInnerNodePreHandlerFilter(Pair.of(nodeContext, context), innerNodePreHandlerInvoker);
+                preResult = result == null ? true : result;
+            }
+            NodeContextAccessor.setPreResult(nodeContext, preResult);
             context.getFlow().triggerEvent(FlowEventTypes.NODE_PRE_END, nodeContext, context, false);
         }
         return nodeContext.getPreResult() == null ? true : nodeContext.getPreResult();
@@ -103,50 +114,49 @@ public class NodeImpl implements FlowNode {
      * @param context
      */
     protected void executeAction(NodeContext nodeContext, FlowContext context) {
-        List<Filter<Pair<NodeContext, FlowContext>, Object>> filters = context.getFlow().getNodeActionFilters();
-        if (filters == null || filters.size() == 0) {
+        if (context.getFlow().getFilterManager().noOuterNodeActionFilter()) {
             invokeAction(nodeContext, context);
-            return;
+        } else {
+            Object result = context.getFlow().getFilterManager().doOuterNodeActionFilter(Pair.of(nodeContext, context), outerNodeActionInvoker);
+            NodeContextAccessor.setActionResult(nodeContext,result);
         }
-        FilterChain<Pair<NodeContext, FlowContext>, Object> chain = new FilterChain<Pair<NodeContext, FlowContext>, Object>(
-                filters, p -> {
-                    return invokeAction(nodeContext, context);
-                });
-        Object result = chain.doFilter(Pair.of(nodeContext, context));
-        nodeContext.setActionResult(result);
     }
 
     protected Object invokeAction(NodeContext nodeContext, FlowContext context) {
         if (action != null) {
             context.getFlow().triggerEvent(FlowEventTypes.NODE_ACTION_START, nodeContext, context, false);
-            Object result = action.execute(nodeContext, context);
-            nodeContext.setActionResult(result);
+            Object result = null;
+            if (context.getFlow().getFilterManager().noInnerNodeActionFilter()) {
+                result = action.execute(nodeContext, context);
+            } else {
+                result = context.getFlow().getFilterManager().doInnerNodeActionFilter(Pair.of(nodeContext, context), innerNodeActionInvoker);
+            }
+            NodeContextAccessor.setActionResult(nodeContext,result);
             context.getFlow().triggerEvent(FlowEventTypes.NODE_ACTION_END, nodeContext, context, false);
         }
         return nodeContext.getActionResult();
     }
 
     protected void executePostHandler(NodeContext nodeContext, FlowContext context) {
-        List<Filter<Pair<NodeContext, FlowContext>, NodeContext[]>> filters = context.getFlow()
-                .getNodePostHandlerFilters();
-        if (filters == null || filters.size() == 0) {
+        if (context.getFlow().getFilterManager().noOuterNodePostHandlerFilter()) {
             invokePostHandler(nodeContext, context);
-            return;
+        } else {
+            NodeContext[] result = context.getFlow().getFilterManager().doOuterNodePostHandlerFilter(Pair.of(nodeContext, context), outerNodePostHandlerInvoker);
+            NodeContextAccessor.setNextNodes(nodeContext, result);
         }
-        FilterChain<Pair<NodeContext, FlowContext>, NodeContext[]> chain = new FilterChain<Pair<NodeContext, FlowContext>, NodeContext[]>(
-                filters, p -> {
-                    return invokePostHandler(nodeContext, context);
-                });
-        NodeContext[] result = chain.doFilter(Pair.of(nodeContext, context));
-        nodeContext.setNextNodes(result);
     }
 
     protected NodeContext[] invokePostHandler(NodeContext nodeContext, FlowContext context) {
         if (postHandler != null) {
             context.getFlow().triggerEvent(FlowEventTypes.NODE_POST_START, nodeContext, context, false);
-            NodeContext[] nextNodes = postHandler.postHandle(nodeContext, context);
+            NodeContext[] nextNodes = null;
+            if (context.getFlow().getFilterManager().noInnerNodePostHandlerFilter()) {
+                nextNodes = postHandler.postHandle(nodeContext, context);
+            } else {
+                nextNodes = context.getFlow().getFilterManager().doInnerNodePostHandlerFilter(Pair.of(nodeContext, context), innerNodePostHandlerInvoker);
+            }
             if (nextNodes != null) {
-                nodeContext.setNextNodes(nextNodes);
+                NodeContextAccessor.setNextNodes(nodeContext,nextNodes);
             }
             context.getFlow().triggerEvent(FlowEventTypes.NODE_POST_END, nodeContext, context, false);
         }

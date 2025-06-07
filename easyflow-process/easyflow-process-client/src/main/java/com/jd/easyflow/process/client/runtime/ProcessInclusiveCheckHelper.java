@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeContextAccessor;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowNodeLinkUtil;
 import com.jd.easyflow.process.adapter.export.dto.instance.ProcessNodeInstanceDTO;
@@ -158,7 +159,7 @@ class ProcessInclusiveCheckHelper  {
                 }
             }
             if (additionalNextNodes != null) {
-                nodeCtx.setNextNodes(additionalNextNodes.toArray(new NodeContext[additionalNextNodes.size()]));
+                NodeContextAccessor.setNextNodes(nodeCtx, additionalNextNodes.toArray(new NodeContext[additionalNextNodes.size()]));
                 String[] nextNodeIds = new String[additionalNextNodes.size()];
                 for (int i = 0; i < additionalNextNodes.size(); i++) {
                     nextNodeIds[i] = additionalNextNodes.get(i).getNodeId();

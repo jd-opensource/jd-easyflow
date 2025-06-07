@@ -65,7 +65,7 @@ public class FlowEngineImplTest {
 	    FlowEngineImpl flowEngine = new FlowEngineImpl();
 	    flowEngine.addFlow(flow1);
 	    flowEngine.addFlow(flow2);
-	    flowEngine.setFilters(Arrays.asList(new TestFlowEngineFilter()));
+	    flowEngine.getFilterManager().setFilters(Arrays.asList(new TestFlowEngineFilter()));
 	    flowEngine.init();
 	    
 	    FlowParam param = new FlowParam("test", new String[] {}, null);

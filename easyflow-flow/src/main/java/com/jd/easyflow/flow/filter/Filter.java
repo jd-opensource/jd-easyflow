@@ -19,4 +19,11 @@ public interface Filter<T,R> extends FlowLifeCycle {
      */
     R doFilter(T request, FilterChain<T, R> chain);
     
+    /**
+     * 
+     * DO NOT override this method unless you have requirement and know its behavior.
+     * @return
+     */
+    default int getOrder() {return 0;};
+    
 }

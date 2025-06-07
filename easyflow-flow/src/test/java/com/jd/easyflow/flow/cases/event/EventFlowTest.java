@@ -69,4 +69,30 @@ public class EventFlowTest {
         logger.info("Result:" + result);
         assertEquals("EMPTY_NODE2", result.getContext().getEndNodes().get(0).getNodeId());
     }
+    
+    @Test
+    public void testEvent4() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/event/flow_event_003.json");
+        flowEngine.init();
+        
+        FlowParam param = new FlowParam("flow_event_003", "EMPTY_NODE", null);
+        param.put(FlowConstants.PARAM_DATA_EVENT, "EVENT1");
+        FlowResult result = flowEngine.execute(param);
+        logger.info("Result:" + result);
+        assertEquals("EMPTY_NODE", result.getContext().getEndNodes().get(0).getNodeId());
+    }
+    
+    @Test
+    public void testEventNoListener001() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/event/flow_event_nolistener_001.json");
+        flowEngine.init();
+        FlowParam param = new FlowParam("flow_event_nolistener_001", "EMPTY_NODE", null);
+        param.put(FlowConstants.PARAM_DATA_EVENT, "EVENT3");
+        FlowResult result = flowEngine.execute(param);
+        logger.info("Result:" + result);
+        assertEquals("EMPTY_NODE2", result.getContext().getEndNodes().get(0).getNodeId());
+    }
+    
 }

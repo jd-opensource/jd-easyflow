@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.engine.FlowRunner;
 import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEventTrigger;
+import com.jd.easyflow.flow.engine.filter.FlowEngineFilterManager;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.filter.Filter;
-import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.parser.FlowParser;
@@ -47,6 +48,8 @@ public abstract class CoreFlowEngine implements FlowEngine {
     protected Map<String, String> flowDefinitionMap = new ConcurrentHashMap<String, String>();
 
     protected FlowEventTrigger eventTrigger = new FlowEventTrigger();
+    
+    protected FlowEngineFilterManager filterManager = new FlowEngineFilterManager();
 
     protected List<FlowEventListener> listeners;
 
@@ -66,6 +69,15 @@ public abstract class CoreFlowEngine implements FlowEngine {
     protected Map<String, Object> properties = new ConcurrentHashMap<>();
     
     protected ElEvaluator elEvaluator;
+    
+    private Function<Pair<FlowParam, FlowEngine>, FlowResult> outerFlowEngineInvoker = p -> invokeFlowEngine(p.getLeft());
+    private Function<Pair<FlowParam, FlowEngine>, FlowResult> innerFlowEngineInvoker = p -> executeFlow(p.getLeft());
+    private Function<FlowContext, FlowResult> outerFlowInvoker = p -> invokeFlow(p);
+    private Function<FlowContext, FlowResult> innerFlowInvoker = p -> {
+        init(p);
+        run(p);
+        return p.getResult();
+    };
 
     public void init() {
         if (inited) {
@@ -85,10 +97,9 @@ public abstract class CoreFlowEngine implements FlowEngine {
         }
         eventTrigger.init(null, null);
         if (filters != null) {
-            filters.forEach(filter -> {
-                filter.init(null, null);
-            });
+            filterManager.setFilters(filters);
         }
+        filterManager.init(null, null);
         if (defaultFlowRunner != null) {
             defaultFlowRunner.init(null, null);
         }
@@ -131,12 +142,10 @@ public abstract class CoreFlowEngine implements FlowEngine {
                 logger.debug("Flow param to json string exception:" + t.getMessage());
             }
         }
-        if (filters == null || filters.size() == 0) {
+        if (filterManager.noOuterFilter()) {
             return invokeFlowEngine(param);
         } else {
-            FilterChain<Pair<FlowParam, FlowEngine>, FlowResult> chain = new FilterChain<Pair<FlowParam, FlowEngine>, FlowResult>(filters,
-                    p -> invokeFlowEngine(p.getLeft()));
-            return chain.doFilter(Pair.of(param, this));
+            return filterManager.doOuterFilter(Pair.of(param, this), outerFlowEngineInvoker);
         }
     }
 
@@ -151,8 +160,13 @@ public abstract class CoreFlowEngine implements FlowEngine {
         data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_PARAM, param);
         data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_FLOW_ENGINE, this);
         try {
-            eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);            
-            FlowResult result = executeFlow(param);
+            eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);     
+            FlowResult result = null;
+            if (filterManager.noInnerFilter()) {
+                result = executeFlow(param);
+            } else {
+                result = filterManager.doInnerFilter(Pair.of(param, this), innerFlowEngineInvoker);
+            }
             data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_RESULT, result);
             eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_END, data, null, false);
             return result;
@@ -183,12 +197,10 @@ public abstract class CoreFlowEngine implements FlowEngine {
         if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("EXECUTE FLOW, flowId:" + flow.getId());
         }
-        if (flow.getFilters() == null || flow.getFilters().size() == 0) {
+        if (flow.getFilterManager().noOuterFilter()) {
             return invokeFlow(context);
         } else {
-            FilterChain<FlowContext, FlowResult> chain = new FilterChain<FlowContext, FlowResult>(flow.getFilters(),
-                    p -> invokeFlow(p));
-            return chain.doFilter(context);
+            return flow.getFilterManager().doOuterFilter(context, outerFlowInvoker);
         }
     }
 
@@ -197,10 +209,14 @@ public abstract class CoreFlowEngine implements FlowEngine {
         Throwable throwable = null;
         try {
             flow.triggerEvent(FlowEventTypes.FLOW_START, context);
-            init(context);
-            run(context);
+            if (flow.getFilterManager().noInnerFilter()) {
+                init(context);
+                run(context);
+            } else {
+                flow.getFilterManager().doInnerFilter(context, innerFlowInvoker);
+            }
             flow.triggerEvent(FlowEventTypes.FLOW_END, context);
-            return wrapResult(context);
+            return context.getResult();
         } catch (Throwable t) { // NOSONAR
             throwable = t;
             if (context.isLogOn() && logger.isErrorEnabled()) {
@@ -301,11 +317,6 @@ public abstract class CoreFlowEngine implements FlowEngine {
         flowMap.put(flow.getId(), flow);
     }
 
-    private FlowResult wrapResult(FlowContext context) {
-        FlowResult result = context.getResult();
-        return result;
-    }
-    
     public void destroy() {
         if (defaultFlowRunner != null) {
             defaultFlowRunner.destroy();
@@ -347,7 +358,7 @@ public abstract class CoreFlowEngine implements FlowEngine {
     public void setFlowDefinitionMap(Map<String, String> flowDefinitionMap) {
         this.flowDefinitionMap = flowDefinitionMap;
     }
-
+    
     public List<Filter<Pair<FlowParam, FlowEngine>, FlowResult>> getFilters() {
         return filters;
     }
@@ -355,7 +366,7 @@ public abstract class CoreFlowEngine implements FlowEngine {
     public void setFilters(List<Filter<Pair<FlowParam, FlowEngine>, FlowResult>> filters) {
         this.filters = filters;
     }
-
+    
     public FlowEventTrigger getEventTrigger() {
         return eventTrigger;
     }
@@ -421,7 +432,13 @@ public abstract class CoreFlowEngine implements FlowEngine {
     public void setElEvaluator(ElEvaluator elEvaluator) {
         this.elEvaluator = elEvaluator;
     }
-    
-    
+
+    public FlowEngineFilterManager getFilterManager() {
+        return filterManager;
+    }
+
+    public void setFilterManager(FlowEngineFilterManager filterManager) {
+        this.filterManager = filterManager;
+    }
     
 }

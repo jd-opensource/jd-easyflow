@@ -2,6 +2,7 @@ package com.jd.easyflow.flow.model.post;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,8 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.model.FlowNode;
+import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodeExecutor;
+import com.jd.easyflow.flow.model.definition.DefConstants;
+import com.jd.easyflow.flow.util.FlowUtil;
 
 /**
  * 
@@ -28,9 +33,11 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
     private String type;
 
     private List<Map<String, Object>> branchList;
+    
+    private List<Branch> branchInfoList;
 
     private Object defaultBranch;
-
+    
     public ConditionalNodePostHandler() {
     }
 
@@ -50,13 +57,15 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
 
     @Override
     public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
+        if (branchInfoList == null) {
+            init(nodeContext, context);
+        }
         // Exclusive
         if (type == null || type.equals(EXCLUSIVE_TYPE)) {
-            for (Map<String, Object> branch : branchList) {
-                boolean result = evalCondition(branch.get("when"), nodeContext, context);
+            for (Branch branch : branchInfoList) {
+                boolean result = branch.when == null ? true : branch.when.execute(nodeContext, context);
                 if (result) {
-                    Object next = branch.get("to");
-                    return parseToNodes(next, nodeContext, context);
+                    return parseToNodes(branch.to, nodeContext, context);
                 }
             }
             if (defaultBranch != null) {
@@ -65,11 +74,10 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
             // Inclusive
         } else {
             List<NodeContext> nextList = new ArrayList<>();
-            for (Map<String, Object> branch : branchList) {
-                boolean result = evalCondition(branch.get("when"), nodeContext, context);
+            for (Branch branch : branchInfoList) {
+                boolean result = branch.when == null ? true : branch.when.execute(nodeContext, context);
                 if (result) {
-                    Object next = branch.get("to");
-                    addArray2List(parseToNodes(next, nodeContext, context), nextList);
+                    addArray2List(parseToNodes(branch.to, nodeContext, context), nextList);
                 }
             }
             if (nextList.isEmpty() && defaultBranch != null) {
@@ -82,21 +90,55 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
         return null;
     }
 
-    /**
-     * Evaluate condition.
-     * 
-     * @param nodeContext
-     * @param context
-     * @return
-     */
-    private boolean evalCondition(Object condition, NodeContext nodeContext, FlowContext context) {
-        if (condition == null) {
-            return true;
+    
+    private void init(NodeContext nodeContext, FlowContext context) {
+        InitContext initContext = new InitContext();
+        initContext.setFlowParser(context.getFlowEngine().getFlowParser());
+        initContext.setParseEl(true);
+        FlowNode node = FlowUtil.node(nodeContext, context);
+        init(initContext, node);
+    }
+    
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        List<Branch> branchInfoList = new ArrayList<ConditionalNodePostHandler.Branch>();
+        for (Map<String, Object> branch : branchList) {
+            Branch branchInfo = new Branch();
+            Object whenObj = branch.get("when");
+            if (whenObj == null) {
+                branchInfo.when = null;
+            } else if (whenObj instanceof String) {
+                branchInfo.when = new ExpWhen((String) whenObj);
+            } else if (whenObj instanceof Map) {
+                Map<String, Object> map = (Map<String, Object>) whenObj;
+                String type = (String) map.get(DefConstants.COMMON_PROP_TYPE);
+                String createExp = (String) map.get(DefConstants.COMMON_PROP_CREATE_EXP);
+                if (DefConstants.COMMON_PROP_CREATE.equals(type) || createExp != null) {
+                    if (initContext.isParseEl()) {
+                        Map<String, Object> context = new HashMap<>(3);
+                        context.put("definition", map);
+                        context.put("node", (FlowNode) parent);
+                        context.put("flow", initContext.getFlow());
+                        context.put("flowParser", initContext.getFlowParser());
+                        NodeExecutor<Boolean> executor = initContext.getFlowParser().getElEvaluator().evalWithDefaultContext(createExp, context, false);
+                        branchInfo.when = new ExecutorWhen(executor);
+                    }
+                } else {
+                    throw new IllegalArgumentException("illegal param " + branch);
+                }
+            } else if (whenObj instanceof NodeExecutor) {
+                branchInfo.when = new ExecutorWhen((NodeExecutor) whenObj);
+            } else {
+                throw new IllegalArgumentException("illegal param " + branch);
+            }
+            
+            branchInfo.to = parseToDefinition(branch.get("to"), (FlowNode) parent, initContext);
+            branchInfoList.add(branchInfo);
         }
-        if (condition instanceof String) {
-            return context.getElEvaluator().eval((String) condition, nodeContext, context, null);
+        this.branchInfoList = branchInfoList;
+        if (this.defaultBranch != null) {
+            this.defaultBranch = parseToDefinition(defaultBranch, (FlowNode) parent, initContext);
         }
-        return ((NodeExecutor<Boolean>) condition).execute(nodeContext, context);
     }
 
     public String getType() {
@@ -123,4 +165,45 @@ public class ConditionalNodePostHandler extends AbstractNodePostHandler {
         this.branchList = branchList;
     }
 
+    private static class Branch {
+        private When when;
+        private Object to;
+    }
+    
+    private static interface When {
+        
+        public boolean execute(NodeContext nodeContext, FlowContext context);
+    }
+    
+    private static class ExpWhen implements When {
+        
+        String exp;
+        
+        ExpWhen(String exp) {
+            this.exp = exp;
+        }
+
+        @Override
+        public boolean execute(NodeContext nodeContext, FlowContext context) {
+            return context.getElEvaluator().eval(exp, nodeContext, context, null);
+        }
+        
+    }
+    
+    private static class ExecutorWhen implements When {
+        
+        NodeExecutor<Boolean> executor;
+        
+        ExecutorWhen(NodeExecutor<Boolean> executor) {
+            this.executor = executor;
+        }
+
+        @Override
+        public boolean execute(NodeContext nodeContext, FlowContext context) {
+            return executor.execute(nodeContext, context);
+        }
+        
+        
+    }
+    
 }

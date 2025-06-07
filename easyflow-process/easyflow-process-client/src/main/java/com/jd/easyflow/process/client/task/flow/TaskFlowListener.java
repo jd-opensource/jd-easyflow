@@ -1,8 +1,8 @@
 package com.jd.easyflow.process.client.task.flow;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.engine.event.BaseFlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
-import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
 import com.jd.easyflow.flow.util.Pair;
@@ -16,17 +16,15 @@ import com.jd.easyflow.process.client.runtime.StdProcessContext;
  * @author liyuliang5
  *
  */
-public class TaskFlowListener implements FlowEventListener {
+public class TaskFlowListener extends BaseFlowEventListener {
 
     private static final Pair<String, Integer>[] DEFAULT_ACCEPTED_EVENTS = new Pair[] {
             Pair.of(FlowEventTypes.FLOW_START, FlowConstants.EVENT_ORDER_START + 90),
             Pair.of(FlowEventTypes.NODE_START, FlowConstants.EVENT_ORDER_START + 100) };
 
-    private Pair<String, Integer>[] acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
-
-    @Override
-    public Pair<String, Integer>[] getAcceptedEvents() {
-        return acceptedEvents;
+    
+    public TaskFlowListener() {
+        acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     }
 
     @Override

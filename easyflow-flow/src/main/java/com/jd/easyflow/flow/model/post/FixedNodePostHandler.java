@@ -1,6 +1,8 @@
 package com.jd.easyflow.flow.model.post;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.model.FlowNode;
+import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
 
 /**
@@ -24,6 +26,13 @@ public class FixedNodePostHandler extends AbstractNodePostHandler {
 	public NodeContext[] postHandle(NodeContext nodeContext, FlowContext context) {
 	    return parseToNodes(to, nodeContext, context);
 	}
+	
+    @Override
+    public void init(InitContext initContext, Object parent) {
+        if (to != null) {
+            to = parseToDefinition(to, (FlowNode)  parent, initContext);
+        }
+    }
 
     public Object getTo() {
         return to;

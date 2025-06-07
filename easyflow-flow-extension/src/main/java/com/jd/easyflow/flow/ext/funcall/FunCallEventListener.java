@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.engine.event.BaseFlowEventListener;
 import com.jd.easyflow.flow.engine.event.FlowEvent;
 import com.jd.easyflow.flow.engine.event.FlowEventListener;
 import com.jd.easyflow.flow.util.FlowEventTypes;
@@ -17,9 +18,9 @@ import com.jd.easyflow.flow.util.Pair;
  * @author liyuliang5
  *
  */
-public class FunCallEventListener implements FlowEventListener {
+public class FunCallEventListener extends BaseFlowEventListener {
 
-    private Pair<String, Integer>[] acceptTypes = new Pair[] { Pair.of(FlowEventTypes.FLOW_START, 0),
+    private static final Pair<String, Integer>[] DEFAULT_ACCEPTED_EVENTS = new Pair[] { Pair.of(FlowEventTypes.FLOW_START, 0),
             Pair.of(FlowEventTypes.FLOW_END, 0), Pair.of(FlowEventTypes.FLOW_COMPLETE, 0) };
 
     private List<Map<String, Object>> paramList;
@@ -29,11 +30,10 @@ public class FunCallEventListener implements FlowEventListener {
     public FunCallEventListener(Map<String, Object> conf) {
         paramList = (List<Map<String, Object>>) conf.get("param");
         resultList = (List<Map<String, Object>>) conf.get("result");
+        this.acceptedEvents = DEFAULT_ACCEPTED_EVENTS;
     }
 
-    public Pair<String, Integer>[] getAcceptedEvents() {
-        return acceptTypes;
-    }
+
 
     @Override
     public void on(FlowEvent flowEvent) {
@@ -79,14 +79,6 @@ public class FunCallEventListener implements FlowEventListener {
 
         }
 
-    }
-
-    public Pair<String, Integer>[] getAcceptTypes() {
-        return acceptTypes;
-    }
-
-    public void setAcceptTypes(Pair<String, Integer>[] acceptTypes) {
-        this.acceptTypes = acceptTypes;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.jd.easyflow.flow.model.action;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jd.easyflow.flow.engine.FlowContext;
-import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.engine.event.FlowEventListener;
+import com.jd.easyflow.flow.engine.event.impl.EventFlowListener;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
@@ -27,10 +29,36 @@ import com.jd.easyflow.flow.util.FlowConstants;
 public class EventNodeAction implements NodeAction {
 
     private static final Logger logger = LoggerFactory.getLogger(EventNodeAction.class);
+    
+    private boolean autoAddEventFlowListener = true;
+    
+    public EventNodeAction() {
+    }
+    
+    public EventNodeAction(boolean autoAddEventFlowListener) {
+        this.autoAddEventFlowListener = autoAddEventFlowListener;
+    }
 
     @Override
     public void init(InitContext initContext, Object flowNode) {
         initEventActionMap(initContext, (FlowNode) flowNode);
+        if (autoAddEventFlowListener) {
+            List<FlowEventListener> listeners = initContext.getFlow().getEventTrigger().getListenerList();
+            boolean exists = false;
+            if (listeners != null) {
+                for (FlowEventListener listener : listeners) {
+                    if (listener instanceof EventFlowListener) {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (! exists) {
+                logger.info("Auto add EventFlowListener");
+                initContext.getFlow().getEventTrigger().addListener(new EventFlowListener());
+            }
+        }
+        
     }
 
     @Override
@@ -70,32 +98,43 @@ public class EventNodeAction implements NodeAction {
             return;
         }
         eventActionMap = new ConcurrentHashMap<>();
-        flowNode.setProperty(FlowConstants.PROP_RUNTIME_EVENT_NODE_ACTION_MAP, eventActionMap);
         Map<String, Object> map = flowNode.getProperty(FlowConstants.NODE_PROP_EVENTS);
-        if (map == null) {
-            return;
-        }
-        for (Entry<String, Object> entry : map.entrySet()) {
-            String event = entry.getKey();
-            Object eventConf = (Object) entry.getValue();
-            Map<String, Object> eventActionConfMap = null;
-            if (eventConf instanceof String) {
-                eventActionConfMap = new HashMap<>();
-                eventActionConfMap.put(DefConstants.COMMON_PROP_EXP, (String) eventConf);
-            } else {
-                Map<String, Object> eventConfMap = (Map<String, Object>) eventConf;
-                eventActionConfMap = (Map<String, Object>) eventConfMap.get("action");
-            }
-            if (eventActionConfMap != null) {
-                NodeAction nodeAction = initContext.getFlowParser()
-                        .parseNodeAction(new ActionParseParam(eventActionConfMap, initContext.getFlowList(), initContext.isParseEl(), initContext.getFlow(), flowNode));
-                nodeAction.init(initContext, flowNode);
-                if (nodeAction != null) {
-                    eventActionMap.put(event, nodeAction);
+        if (map != null) {
+            for (Entry<String, Object> entry : map.entrySet()) {
+                String event = entry.getKey();
+                Object eventConf = (Object) entry.getValue();
+                Map<String, Object> eventActionConfMap = null;
+                if (eventConf instanceof String) {
+                    eventActionConfMap = new HashMap<>();
+                    eventActionConfMap.put(DefConstants.COMMON_PROP_EXP, (String) eventConf);
+                } else {
+                    Map<String, Object> eventConfMap = (Map<String, Object>) eventConf;
+                    eventActionConfMap = (Map<String, Object>) eventConfMap.get("action");
+                }
+                if (eventActionConfMap != null) {
+                    NodeAction nodeAction = initContext.getFlowParser()
+                            .parseNodeAction(new ActionParseParam(eventActionConfMap, initContext.getFlowList(),
+                                    initContext.isParseEl(), initContext.getFlow(), flowNode));
+                    nodeAction.init(initContext, flowNode);
+                    if (nodeAction != null) {
+                        eventActionMap.put(event, nodeAction);
+                    }
                 }
             }
         }
+        flowNode.setProperty(FlowConstants.PROP_RUNTIME_EVENT_NODE_ACTION_MAP, eventActionMap);
+
 
     }
+
+    public boolean isAutoAddEventFlowListener() {
+        return autoAddEventFlowListener;
+    }
+
+    public void setAutoAddEventFlowListener(boolean autoAddEventFlowListener) {
+        this.autoAddEventFlowListener = autoAddEventFlowListener;
+    }
+    
+    
 
 }

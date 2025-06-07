@@ -11,7 +11,7 @@ import com.jd.easyflow.flow.el.ElFactory;
  * @author liyuliang5
  *
  */
-public class ExpFlowEventListener implements FlowEventListener {
+public class ExpFlowEventListener extends BaseFlowEventListener {
     
     private ElEvaluator elEvaluator;
     
