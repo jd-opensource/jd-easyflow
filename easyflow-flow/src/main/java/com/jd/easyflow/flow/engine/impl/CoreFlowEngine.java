@@ -150,18 +150,24 @@ public abstract class CoreFlowEngine implements FlowEngine {
     }
 
     protected FlowResult invokeFlowEngine(FlowParam param) {
+        FlowResult result = null;
+        
         // No flow engine listener scenario
         if (eventTrigger.getListenerList() == null || eventTrigger.getListenerList().size() == 0) {
-            FlowResult result = executeFlow(param);
+            if (filterManager.noInnerFilter()) {
+                result = executeFlow(param);
+            } else {
+                result = filterManager.doInnerFilter(Pair.of(param, this), innerFlowEngineInvoker);
+            }
             return result;
         }
+        
         // Has flow engine listener scenario
         Map<String, Object> data = new HashMap<>();
         data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_PARAM, param);
         data.put(FlowConstants.FLOW_ENGINE_EVENT_DATA_KEY_FLOW_ENGINE, this);
         try {
             eventTrigger.triggerEvent(FlowEventTypes.FLOW_ENGINE_START, data, null, false);     
-            FlowResult result = null;
             if (filterManager.noInnerFilter()) {
                 result = executeFlow(param);
             } else {
@@ -213,7 +219,8 @@ public abstract class CoreFlowEngine implements FlowEngine {
                 init(context);
                 run(context);
             } else {
-                flow.getFilterManager().doInnerFilter(context, innerFlowInvoker);
+                FlowResult flowResult = flow.getFilterManager().doInnerFilter(context, innerFlowInvoker);
+                context.setResult(flowResult);
             }
             flow.triggerEvent(FlowEventTypes.FLOW_END, context);
             return context.getResult();

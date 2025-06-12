@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -13,16 +14,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import com.jd.easyflow.flow.engine.FlowContext;
+import com.jd.easyflow.flow.engine.FlowEngine;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.FlowResult;
+import com.jd.easyflow.flow.engine.filter.impl.BaseFlowEngineFilter;
 import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
 import com.jd.easyflow.flow.filter.BaseFilter;
 import com.jd.easyflow.flow.filter.Filter;
 import com.jd.easyflow.flow.filter.FilterChain;
-import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.model.NodeContextAccessor;
 import com.jd.easyflow.flow.model.filter.FlowFilterManager;
+import com.jd.easyflow.flow.model.filter.impl.BaseFlowFilter;
+import com.jd.easyflow.flow.model.filter.impl.BaseNodeFilter;
 import com.jd.easyflow.flow.util.Pair;
+import com.jd.easyflow.flow.util.Triple;
 
 /**
  * @author liyuliang5
@@ -41,6 +48,35 @@ public class FilterTest {
         assertEquals("node002", result.getContext().getEndNodes().get(0).getNodeId());
     }
     
+
+    
+    @Test
+    public void testInnerFlowEngineFilter() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/filter/inner_flow_engine_filter_001.json");
+        TestInnerFlowEngineFilter filter = new TestInnerFlowEngineFilter();
+        filter.setOrder(-1);
+        flowEngine.setFilters(Arrays.asList(filter));
+        flowEngine.init();
+        // false false
+        FlowParam param = new FlowParam("innerFlowEngineFilter001");
+        FlowResult result = flowEngine.execute(param);
+        assertEquals(true, param.get("flowEngineFilter"));
+    }
+    
+    @Test
+    public void testInnerFlowFilter() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/filter/inner_flow_filter_001.json");
+        flowEngine.init();
+        // false false
+        FlowParam param = new FlowParam("innerFlowFilter001");
+        FlowResult result = flowEngine.execute(param);
+        assertEquals(true, param.get("flowFilter"));
+        assertEquals(true, param.get("nodeFilter"));
+        assertEquals("node002", result.getContext().getEndNodes().get(0).getNodeId());
+
+    }
     
     @Test
     public void testAddFilter() throws Exception {
@@ -166,6 +202,47 @@ public class FilterTest {
             Object result = chain.doFilter(request);
             logger.info("result:{}, nodeActionResult:{}", result, request.getLeft().getActionResult());
             return 1;
+        }
+        
+    }
+    
+    static class TestInnerFlowEngineFilter extends BaseFlowEngineFilter {
+        
+        @Override
+        public FlowResult doFilter(Pair<FlowParam, FlowEngine> request,
+                FilterChain<Pair<FlowParam, FlowEngine>, FlowResult> chain) {
+            request.getLeft().put("flowEngineFilter", true);
+            return chain.doFilter(request);
+        }
+    }
+    
+    public static class TestInnerFlowFilter extends BaseFlowFilter {
+        
+        public TestInnerFlowFilter(int order) {
+            this.order = order;
+        }
+
+        @Override
+        public FlowResult doFilter(FlowContext request, FilterChain<FlowContext, FlowResult> chain) {
+            request.getParam().put("flowFilter", true);;
+            return chain.doFilter(request);
+        }
+        
+    }
+    
+    public static class TestInnerNodeFilter extends BaseNodeFilter {
+        
+        @Override
+        public NodeContext doFilter(Triple<FlowNode, NodeContext, FlowContext> request,
+                FilterChain<Triple<FlowNode, NodeContext, FlowContext>, NodeContext> chain) {
+            if (request.getLeft().getId().equals("node002")) {
+                return chain.doFilter(request);
+            }
+            
+            request.getRight().getParam().put("nodeFilter", true);
+            NodeContext nodeContext = chain.doFilter(request);
+            NodeContextAccessor.setNextNodeIds(nodeContext, new String[]{"node002"});
+            return nodeContext;
         }
         
     }

@@ -47,7 +47,7 @@ public class FlowEngineFilterManager {
     }
     
     public FlowResult doInnerFilter(Pair<FlowParam, FlowEngine> p, Function<Pair<FlowParam, FlowEngine>, FlowResult> innerInvoker) {
-        FilterChain<Pair<FlowParam, FlowEngine>, FlowResult> chain = new FilterChainImpl<Pair<FlowParam, FlowEngine>, FlowResult>(outerFilters,
+        FilterChain<Pair<FlowParam, FlowEngine>, FlowResult> chain = new FilterChainImpl<Pair<FlowParam, FlowEngine>, FlowResult>(innerFilters,
                 innerInvoker);
         return chain.doFilter(p);
     }
