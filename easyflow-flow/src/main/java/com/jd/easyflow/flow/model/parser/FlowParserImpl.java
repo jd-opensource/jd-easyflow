@@ -26,12 +26,14 @@ import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodePostHandler;
 import com.jd.easyflow.flow.model.NodePreHandler;
+import com.jd.easyflow.flow.model.action.CompensateNodeAction;
 import com.jd.easyflow.flow.model.action.EventNodeAction;
 import com.jd.easyflow.flow.model.action.ExpNodeAction;
 import com.jd.easyflow.flow.model.action.FlowNodeAction;
 import com.jd.easyflow.flow.model.action.InterruptNodeAction;
 import com.jd.easyflow.flow.model.action.LoopNodeAction;
 import com.jd.easyflow.flow.model.action.ParamExecutorNodeAction;
+import com.jd.easyflow.flow.model.action.compensate.CompensateAction;
 import com.jd.easyflow.flow.model.definition.DefConstants;
 import com.jd.easyflow.flow.model.flow.post.ExpFlowPostHandler;
 import com.jd.easyflow.flow.model.flow.pre.ExpFlowPreHandler;
@@ -51,6 +53,7 @@ import com.jd.easyflow.flow.model.post.FixedNodePostHandler;
 import com.jd.easyflow.flow.model.pre.ExpNodePreHandler;
 import com.jd.easyflow.flow.model.pre.InclusiveCheckPreHandler;
 import com.jd.easyflow.flow.model.pre.MultiCheckPreHandler;
+import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.JsonUtil;
 
 /**
@@ -207,6 +210,12 @@ public class FlowParserImpl implements FlowParser {
                             flowList, parseEl, flow, node)));
                     node.setPostHandler(parseNodePostHandler(
                             new PostParseParam(nodeConf.get(DefConstants.NODE_PROP_POST), flowList, parseEl, flow, node)));
+                    // compensate action parse
+                    if (node.getProperty(DefConstants.NODE_PROPERTIES_PROP_COMPENSATE_ACTION) != null) {
+                        NodeAction compensateAction = parseNodeAction(new ActionParseParam(nodeConf.get(DefConstants.NODE_PROPERTIES_PROP_COMPENSATE_ACTION),
+                                flowList, parseEl, flow, node));
+                        node.setProperty(FlowConstants.PROP_RUNTIME_COMPENSATE_ACTION, compensateAction);
+                    }
                     node.postConstruct(nodeConf, null);
                     flow.addNode(node);
                 }
@@ -739,6 +748,10 @@ public class FlowParserImpl implements FlowParser {
             return nodeAction;       
         } else if (DefConstants.NODE_ACTION_TYPE_INTERRUPT.equals(type)) {
             InterruptNodeAction nodeAction = new InterruptNodeAction();
+            nodeAction.postConstruct(action, null);
+            return nodeAction;
+        }else if (DefConstants.NODE_ACTION_TYPE_COMPENSATE.equals(type)) {
+            CompensateNodeAction nodeAction = new CompensateNodeAction();
             nodeAction.postConstruct(action, null);
             return nodeAction;
         } else if (DefConstants.NODE_ACTION_TYPE_PARAM_EXECUTOR.equals(type)) {

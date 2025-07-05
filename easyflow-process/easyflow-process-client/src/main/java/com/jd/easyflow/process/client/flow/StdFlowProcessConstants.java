@@ -45,6 +45,12 @@ public class StdFlowProcessConstants {
     public static final String FLOW_DATA_FLUSH_POLICY = "dataFlushPolicy";
 
     public static final String FLOW_NODE_CTX_PROCESS_EXT_DATA = "_PROCESS_EXT_DATA";
+    public static final String FLOW_NODE_CTX_PROCESS_PRE_CHECK_TYPE = "_PROCESS_PRE_CHECK_TYPE";
+    public static final String FLOW_NODE_CTX_PROCESS_PRE_CHECK_TYPE_NONE = "";
+    public static final String FLOW_NODE_CTX_PROCESS_PRE_CHECK_NODES = "_PROCESS_PRE_CHECK_NODES";
+    
+    public static final String FLOW_NODE_CTX_PRE_RESULT = "_preResult";
+
     
     public static final String FLOW_PROP_PROCESS = "process";
     

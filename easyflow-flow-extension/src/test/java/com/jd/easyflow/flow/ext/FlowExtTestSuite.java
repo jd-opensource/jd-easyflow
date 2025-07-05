@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.jd.easyflow.flow.ext.cases.chain.ChainTest;
 import com.jd.easyflow.flow.ext.cases.check.FlowNodeLinkCheckTest;
+import com.jd.easyflow.flow.ext.cases.check.InfiniteLoopCheckTest;
 import com.jd.easyflow.flow.ext.cases.funcall.FunCallTest;
 import com.jd.easyflow.flow.ext.cases.session.SessionFlowTest;
 
@@ -19,7 +20,8 @@ import com.jd.easyflow.flow.ext.cases.session.SessionFlowTest;
     SessionFlowTest.class,
     ChainTest.class,
     FunCallTest.class,
-    FlowNodeLinkCheckTest.class
+    FlowNodeLinkCheckTest.class,
+    InfiniteLoopCheckTest.class
 })
 public class FlowExtTestSuite {
 

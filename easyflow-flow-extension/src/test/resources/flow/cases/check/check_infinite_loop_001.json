@@ -1,0 +1,7 @@
+{"id":"infinite_loop_001",
+"nodes":[
+	{"id":"node001", "post":{"to":"node002"}},
+	{"id":"node002", "post":{"to":"node003"}},
+	{"id":"node003", "post":{"to":"node001"}}
+]	
+}

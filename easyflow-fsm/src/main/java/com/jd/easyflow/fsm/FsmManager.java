@@ -29,6 +29,14 @@ public class FsmManager extends CoreFsmManager implements SmartLifecycle, Applic
     private boolean autoStartup = true;
 
     private volatile boolean isRunning = false;
+    
+    public FsmManager() {
+        
+    }
+    
+    public FsmManager(String fsmPath) {
+        this.fsmPath =fsmPath;
+    }
 
     public void init() {
         if (inited) {

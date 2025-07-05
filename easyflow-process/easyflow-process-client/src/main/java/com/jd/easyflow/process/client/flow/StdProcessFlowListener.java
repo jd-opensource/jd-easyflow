@@ -42,7 +42,6 @@ import com.jd.easyflow.process.adapter.export.dto.instance.QueryProcessInstanceR
 import com.jd.easyflow.process.client.common.PropertiesUtil;
 import com.jd.easyflow.process.client.fsm.StdFsmProcessConstants;
 import com.jd.easyflow.process.client.runtime.ProcessRuntimeService;
-import com.jd.easyflow.process.client.runtime.StdFlowConstants;
 import com.jd.easyflow.process.client.runtime.StdNode;
 import com.jd.easyflow.process.client.runtime.StdNodeContext;
 import com.jd.easyflow.process.client.runtime.StdProcess;
@@ -423,26 +422,32 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         nodeContext.setExecutionStartTime(new Date());
         nodeContext.setExtData(flowNodeContext.get(StdFlowProcessConstants.FLOW_NODE_CTX_PROCESS_EXT_DATA));
 
-        List<String> configPreNodes = null;
-        if (currentNode instanceof NodeImpl) {
-            NodePreHandler preHandler = ((NodeImpl) currentNode).getPreHandler();
-            if (preHandler != null && preHandler instanceof NodePrePropertyGetter) {
-                configPreNodes = ((NodePrePropertyGetter) preHandler).getPreNodes(flowNodeContext, context);
+        List<String> configPreNodes = flowNodeContext.get(StdFlowProcessConstants.FLOW_NODE_CTX_PROCESS_PRE_CHECK_NODES);
+        if (configPreNodes == null) {
+            if (currentNode instanceof NodeImpl) {
+                NodePreHandler preHandler = ((NodeImpl) currentNode).getPreHandler();
+                if (preHandler != null && preHandler instanceof NodePrePropertyGetter) {
+                    configPreNodes = ((NodePrePropertyGetter) preHandler).getPreNodes(flowNodeContext, context);
+                }
             }
         }
         if (configPreNodes == null) {
             configPreNodes = FlowNodeLinkUtil.getPreCheckNodes(currentNode, context.getFlow());
         }
-        String preCheckType = FlowNodeLinkUtil.getPreCheckType(flowNodeContext.getNodeId(), context.getFlow());
+        String preCheckType = flowNodeContext.get(StdFlowProcessConstants.FLOW_NODE_CTX_PROCESS_PRE_CHECK_TYPE);
+        if (preCheckType == null) {
+            preCheckType = FlowNodeLinkUtil.getPreCheckType(flowNodeContext.getNodeId(), context.getFlow());
+        }
         if (configPreNodes != null && configPreNodes.size() > 0 && (preCheckType == null || FlowNodeLinkUtil.NODE_PRE_CHECK_TYPE_UNKNOWN.equals(preCheckType))) {
             preCheckType = FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK;
         }
+        preCheckType = StdFlowProcessConstants.FLOW_NODE_CTX_PROCESS_PRE_CHECK_TYPE_NONE.equals(preCheckType) ? null : preCheckType;
         
         nodeContext.setConfigPreNodeIds(configPreNodes);
         nodeContext.setPreCheckType(preCheckType);
         processRuntimeService.nodeStartExec(nodeContext, processContext);
         if (StringUtils.isNotEmpty(preCheckType)) {
-            flowNodeContext.put(StdFlowConstants.NODECTX_PRE_RESULT, nodeContext.getPreResult());
+            flowNodeContext.put(StdFlowProcessConstants.FLOW_NODE_CTX_PRE_RESULT, nodeContext.getPreResult());
         }
     }
 

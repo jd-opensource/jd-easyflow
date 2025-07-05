@@ -253,6 +253,10 @@ public class ProcessRuntimeService {
             
             
             if (nodeContext.getNextNodeIds() != null) {
+                
+                instance.setEndTime(new Date());
+                instance.setStatus(StdProcessConstants.NODE_STATUS_CLOSE);
+                manager.updateNodeInstance(instance, context);
 
                 List<String> nextNodeInstanceNos = new ArrayList<>();
                 List<ProcessNodeInstanceDTO> createdNextNodeList = new ArrayList<>();
@@ -287,9 +291,7 @@ public class ProcessRuntimeService {
 
                 nodeContext.setNextNodeInstanceNos(nextNodeInstanceNos.toArray(new String[] {}));
 
-                instance.setEndTime(new Date());
                 instance.setNextNodeInstances(StringUtils.join(nextNodeInstanceNos, ","));
-                instance.setStatus(StdProcessConstants.NODE_STATUS_CLOSE);
                 manager.updateNodeInstance(instance, context);
                 context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_NODE_INSTANCE_END,
                         new Object[] { instance, nodeContext } });
@@ -387,11 +389,23 @@ public class ProcessRuntimeService {
                 if (currentOpenNodeIds.contains(startNodeId)) {
                     continue;
                 }
+                
                 if (configStartNodeIds != null && configStartNodeIds.contains(startNodeId)) {
                     StdNode node = context.getNodeFunction().apply(startNodeId);
                     String startCheckPolicy = PropertiesUtil.get(node.getProcessProperties(),
                             StdProcessConstants.PROP_START_CHECK_POLICY);
                     if (StdProcessConstants.START_CHECK_POLICY_UNLIMIT.equals(startCheckPolicy)) {
+                        continue;
+                    }
+                    if (StdProcessConstants.START_CHECK_POLICY_NO_OPENING.equals(startCheckPolicy)) {
+                        if (currentOpenNodeIds.size() > 0) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("instanceNo", context.getInstanceNo());
+                            ProcessException exception = new ProcessException(ProcessRuntimeErrorCode.PR_0101.name(),
+                                    "Process instance has opened nodes, can not start exec:" + startNodeId);
+                            exception.setData(data);
+                            throw exception;
+                        }
                         continue;
                     }
                     ProcessNodeInstanceDTO instance = manager.getOneNodeInstance(startNodeId, context);

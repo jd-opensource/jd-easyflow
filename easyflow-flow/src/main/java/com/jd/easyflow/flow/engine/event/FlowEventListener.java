@@ -12,7 +12,9 @@ public interface FlowEventListener extends FlowLifeCycle {
 	
     /**
      * 
-     * @return List of Event and priority pair.
+     * @return List of Event and order priority pair. 
+     * The highest order values has highest priority.
+     * If order value same, the front configured has higher priority.
      */
     default Pair<String, Integer>[] getAcceptedEvents() {
         return null;

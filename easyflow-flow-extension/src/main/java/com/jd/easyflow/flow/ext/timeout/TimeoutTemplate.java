@@ -57,19 +57,19 @@ public class TimeoutTemplate {
         try {
             result = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-                logger.error("node action timeout!");
+            logger.error("node action timeout!");
             holder.timeout = true;
-            try {
-                result = timeoutCallable.call();
-            } catch (Exception e1) {
-                throw ExceptionUtil.throwException(e1);
-            }
             if (interruptOnTimeout) {
                 synchronized (holder.lock) {
                     if (!holder.complete && holder.executionThread != null) {
                         holder.executionThread.interrupt();
                     }
                 }
+            }
+            try {
+                result = timeoutCallable.call();
+            } catch (Exception e1) {
+                throw ExceptionUtil.throwException(e1);
             }
         } catch (ExecutionException e) {
             if (logOn) {

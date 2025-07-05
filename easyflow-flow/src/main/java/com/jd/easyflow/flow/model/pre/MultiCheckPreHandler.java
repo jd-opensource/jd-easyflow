@@ -11,6 +11,7 @@ import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePreHandler;
 import com.jd.easyflow.flow.util.FlowConstants;
+import com.jd.easyflow.flow.util.LockUtil;
 
 /**
  * 
@@ -45,19 +46,12 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
             }
             return checkResult;
         }
-        final Object lockObj;
-        final FlowContext lockContext = context;
-        synchronized (lockContext) {
-            Object contextLockObj = context.get(FlowConstants.CTX_LOCK_PREFIX + nodeContext.getNodeId());
-            if (contextLockObj == null) {
-                contextLockObj = new Object();
-                context.put(FlowConstants.CTX_LOCK_PREFIX + nodeContext.getNodeId(), contextLockObj);
-            }
-            lockObj = contextLockObj;
-        }
+        boolean result = false;
+        List<NodeContext> previousNodes = null;
+        Object lockObj = LockUtil.getFlowContextLock(FlowConstants.CTX_LOCK_PREFIX + nodeContext.getNodeId(), context);
         synchronized (lockObj) {
             List<String> preNodes = context.get(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
-            List<NodeContext> previousNodes = context.get(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId());
+            previousNodes = context.get(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId());
             if (preNodes == null) {
                 preNodes = new ArrayList<String>();
                 context.put(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId(), preNodes);
@@ -68,7 +62,7 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
             previousNodes.add(nodeContext.getPreviousNode());
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
-            List<String> preNodeList = this.getPreNodes(nodeContext, lockContext);
+            List<String> preNodeList = this.getPreNodes(nodeContext, context);
             
             List<String> configPreNodes = preNodeList != null ? preNodeList
                     : currentNode.getProperty(FlowConstants.PROP_PRENODES);
@@ -84,15 +78,18 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
                     return false;
                 }
             }
+            result = true;
+        }
+        if (result) {
             if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("All pre nodes finished");
             }
             context.remove(FlowConstants.CTX_PRE_NODES_PREFIX + nodeContext.getNodeId());
             context.remove(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId());
             nodeContext.put(FlowConstants.NODECTX_PREVIOUS_NODES, previousNodes);
-            return true;
-
+            NodePreHandlerHelper.setNextNodesOfPreviousNode(previousNodes, nodeContext);
         }
+        return result;
     }
 
     public List<String> getPreNodes() {

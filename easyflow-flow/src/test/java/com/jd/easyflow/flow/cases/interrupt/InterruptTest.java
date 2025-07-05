@@ -51,7 +51,7 @@ public class InterruptTest {
         logger.info("final result:" + (successBizCount.get() == result.getContext().getFlow().getNodeList().size()));
         
         // sleep to see node002 and node003 log.
-        Thread.sleep(5000);
+        //Thread.sleep(5000);
     }
     
  

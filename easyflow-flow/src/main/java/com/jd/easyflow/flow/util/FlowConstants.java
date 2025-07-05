@@ -50,6 +50,12 @@ public class FlowConstants {
     
     public static final String NODECTX_PRE_RESULT = "_preResult";
     public static final String NODECTX_PREVIOUS_NODES = "_previousNodes";
+    public static final String NODECTX_NEXT_NODES = "_nextNodes";
+    
+    public static final String NODECTX_COMPENSATE_NODE_FLAG = "_compensateNodeFlag";
+    public static final String NODECTX_COMPENSATE_FOR = "_compensateFor";
+    public static final String NODECTX_COMPENSATED_BY = "_compensatedBy";
+    public static final String NODECTX_COMPENSATED_FLAG = "_compensatedFlag";
     
     public static final String PROP_PRENODES = "preNodes";
     
@@ -60,6 +66,7 @@ public class FlowConstants {
     
     public static final String PROP_RUNTIME_EVENT_NODE_ACTION_MAP = "_$eventNodeActionMap";
     public static final String PROP_RUNTIME_EVENT_POST_HANDLER_MAP = "_$eventPostHandlerMap";
+    public static final String PROP_RUNTIME_COMPENSATE_ACTION = "_$compensateAction";
     
     /**
      * Event param.

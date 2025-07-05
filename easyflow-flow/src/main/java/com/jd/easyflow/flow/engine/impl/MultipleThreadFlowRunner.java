@@ -127,6 +127,13 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                     }
                 } catch (Throwable t) { // NOSONAR
                     addException(context, finalCurrentNode, t);
+                    if (context.isInterrupted()) {
+                        if (context.isLogOn() && logger.isInfoEnabled()) {
+                            logger.info("Flow state is interrupted");
+                        }
+                        lock.countDown();
+                        return;
+                    }
                     int count = counter.addAndGet(-1);
                     if (count == 0) {
                         lock.countDown();
@@ -144,7 +151,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
      * @param t
      */
     protected void addException(FlowContext context, NodeContext nodeContext, Throwable t) {
-        synchronized(context) {
+        synchronized (context) {
             List<NodeContext> exceptionNodes = context.get(FlowConstants.FLOW_CTX_MULTI_EXCEPTIONS);
             if (exceptionNodes == null) {
                 exceptionNodes = new ArrayList<NodeContext>();

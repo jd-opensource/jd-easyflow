@@ -24,7 +24,7 @@ import com.jd.easyflow.flow.util.FlowConstants;
  */
 public class ExpNodeActionDotCheckFlowParseListener implements FlowParseEventListener {
     
-    private static final Logger log = LoggerFactory.getLogger(ExpNodeActionDotCheckFlowParseListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExpNodeActionDotCheckFlowParseListener.class);
 
     private static final String NODE_ACTION_EXP_NO_DOT_POLICY_WARN = "WARN";
     private static final String NODE_ACTION_EXP_NO_DOT_POLICY_EXCEPTION = "EXCEPTION";
@@ -35,8 +35,8 @@ public class ExpNodeActionDotCheckFlowParseListener implements FlowParseEventLis
     public void on(FlowParseEvent event) {
         switch (event.getType()) {
         case FlowParseEventTypes.INIT_FLOW_END: {
-            if (log.isDebugEnabled()) {
-                log.debug("Start flow check, flow ID:" + event.getFlow().getId());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Start flow check, flow ID:" + event.getFlow().getId());
             }
             Flow flow = event.getFlow();
             if (flow.getNodeList() != null) {
@@ -71,7 +71,7 @@ public class ExpNodeActionDotCheckFlowParseListener implements FlowParseEventLis
         String exp = expNodeAction.getExp();
         if (!exp.contains(".")) {
             String errorMsg =  "[EXP INVALID]Flow:" + flow.getId() + " Node:" + node.getId() + " Exp:[" + exp + "] invalid，should contains dot";
-            log.warn(errorMsg);
+            logger.warn(errorMsg);
             if (NODE_ACTION_EXP_NO_DOT_POLICY_EXCEPTION.equals(nodeActionExpNoDotPolicy)) {
                 throw new FlowException(errorMsg);
             } 

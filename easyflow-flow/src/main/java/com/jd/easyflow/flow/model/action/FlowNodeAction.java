@@ -30,9 +30,10 @@ import com.jd.easyflow.flow.util.FlowConstants;
 
 public class FlowNodeAction implements NodeAction {
 
-    private String flowId;
-    private String[] startNodeIds;
-    private Boolean inherit;
+    protected String flowId;
+    protected String[] startNodeIds;
+    protected Boolean inherit;
+
 
     public FlowNodeAction() {
         // NOOP
@@ -47,6 +48,13 @@ public class FlowNodeAction implements NodeAction {
     @Override
     public <T> T execute(NodeContext nodeContext, FlowContext context) {
         FlowEngine engine = context.getFlowEngine();
+        FlowParam param = buildFlowParam(nodeContext, context);
+        FlowResult subResult = engine.execute(param);
+        processFlowResult(subResult, nodeContext, context);
+        return (T) subResult;
+    }
+    
+    protected FlowParam buildFlowParam(NodeContext nodeContext, FlowContext context) {
         // init param.
         FlowParam param = new FlowParam();
         param.setFlowId(flowId);
@@ -55,7 +63,7 @@ public class FlowNodeAction implements NodeAction {
             param.setParam(context.getParam().getParam());
             param.setDataMapFrom(context.getParam());
             param.setLogFlag(context.getParam().getLogFlag());
-        }
+        } 
         // init context.
         FlowContextImpl subContext = new FlowContextImpl();
         
@@ -79,14 +87,15 @@ public class FlowNodeAction implements NodeAction {
 
         param.setContext(subContext);
         subContext.setResult(result);
-
-        FlowResult subResult = engine.execute(param);
+        return param;
+    }
+    
+    protected void processFlowResult(FlowResult subResult, NodeContext nodeContext, FlowContext context) {
         if (inherit) {
             if (subResult != null && subResult.getContext() != null && subResult.getContext().isInterrupted()) {
                 context.setInterrupted();
             }
         }
-        return (T) subResult;
     }
 
     public String getFlowId() {

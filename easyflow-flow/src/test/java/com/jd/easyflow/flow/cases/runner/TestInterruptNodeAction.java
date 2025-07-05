@@ -12,9 +12,9 @@ import com.jd.easyflow.flow.model.NodeContext;
  * @author liyuliang5
  *
  */
-public class InterruptNodeAction implements NodeAction {
+public class TestInterruptNodeAction implements NodeAction {
     
-    private static final Logger logger = LoggerFactory.getLogger(InterruptNodeAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestInterruptNodeAction.class);
 
     @Override
     public <T> T execute(NodeContext nodeContext, FlowContext context) {

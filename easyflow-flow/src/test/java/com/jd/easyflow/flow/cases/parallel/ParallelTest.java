@@ -30,7 +30,7 @@ public class ParallelTest {
         FlowParam param = new FlowParam("flow_parallel001");
         FlowResult result = flowEngine.execute(param);
         List<NodeContext> previousNodes = result.getContext().getEndNodes().stream()
-                .map(node -> (List<NodeContext>)node.get(FlowConstants.NODECTX_PREVIOUS_NODES)).filter(list -> list != null).findFirst()
+                .map(node -> (List<NodeContext>)node.get(FlowConstants.NODECTX_PREVIOUS_NODES)).filter(list -> list != null && list.size() > 0).findFirst()
                 .get();
         assertEquals(2, previousNodes.size());
     }

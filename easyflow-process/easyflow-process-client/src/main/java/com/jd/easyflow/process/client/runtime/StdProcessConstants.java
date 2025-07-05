@@ -76,6 +76,7 @@ public class StdProcessConstants {
 
     public static final String START_CHECK_POLICY_ONCE = "ONCE";
     public static final String START_CHECK_POLICY_UNLIMIT = "UNLIMIT";
+    public static final String START_CHECK_POLICY_NO_OPENING = "NO_OPENING";
     
 
     public static final String OP_TYPE_CREATE = "CREATE";
@@ -93,5 +94,12 @@ public class StdProcessConstants {
     
     public static final int NODE_START_EVENT_POLICY_ACTIVE = 1;
     public static final int NODE_START_EVENT_POLICY_CREATE = 2;
+    
+    public static final String PROCESS_VAR_COMPENSATE_FLAG = "_COMPENSATE_FLAG";
+    public static final String PROCESS_VAR_COMPENSATED_FLAG = "_COMPENSATED_FLAG";
+    public static final String NODE_VAR_COMPENSATED_FLAG = "_COMPENSATED_FLAG";
+    public static final String NODE_VAR_COMPENSATE_NODE_FLAG = "_COMPENSATE_NODE_FLAG";
+    public static final String NODE_VAR_COMPENSATE_FOR = "_COMPENSATE_FOR";
+    public static final String NODE_VAR_COMPENSATED_BY = "_COMPENSATED_BY";
     
 }

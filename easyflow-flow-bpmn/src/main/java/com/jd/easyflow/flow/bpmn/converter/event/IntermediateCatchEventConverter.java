@@ -7,7 +7,6 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 
 import com.jd.easyflow.flow.bpmn.converter.BaseFlowNodeConverter;
-import com.jd.easyflow.flow.model.action.EventNodeAction;
 import com.jd.easyflow.flow.model.definition.DefConstants;
 
 /**

@@ -28,7 +28,7 @@ public class NodeContext {
 
     private Throwable throwable;
 
-    private Map<String, Object> dataMap;
+    private volatile Map<String, Object> dataMap;
     
     /**
      * business context
@@ -53,7 +53,11 @@ public class NodeContext {
 
     public void put(String key, Object value) {
         if (dataMap == null) {
-            dataMap = new ConcurrentHashMap<String, Object>();
+            synchronized (this) {
+                if (dataMap == null) {
+                    dataMap = new ConcurrentHashMap<String, Object>();
+                }
+            }
         }
         if (value == null) {
             dataMap.remove(key);

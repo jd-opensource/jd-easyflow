@@ -21,6 +21,8 @@ public interface Filter<T,R> extends FlowLifeCycle {
     
     /**
      * 
+     * The highest order value has the highest priority. 
+     * If order value same, the front configured has higher priority.
      * DO NOT override this method unless you have requirement and know its behavior.
      * @return
      */

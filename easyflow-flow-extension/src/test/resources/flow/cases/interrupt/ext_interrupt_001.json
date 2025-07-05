@@ -1,0 +1,13 @@
+{   "id": "ext_interrupt_001",
+    "nodes": [
+        {"id": "node001","action":{"createExp":"new com.jd.easyflow.flow.ext.cases.interrupt.ExtTestInterruptBizNodeAction(1000, false)"}, "start":true}, 
+          
+        {"id": "node0021","action":{"createExp":"new com.jd.easyflow.flow.ext.cases.interrupt.ExtTestInterruptBizNodeAction(2000, true)"}, "post":{"when":"actionResult", "to":"node022"}, "start":true},   
+        {"id": "node0022","action":{"createExp":"new com.jd.easyflow.flow.ext.cases.interrupt.ExtTestInterruptBizNodeAction(1000, false)"}}, 
+        
+        {"id": "node003","action":{"createExp":"new com.jd.easyflow.flow.ext.cases.interrupt.ExtTestInterruptBizNodeAction(3000, false)"}, "start":true} 
+    ],
+    "runner":{"createExp":"new com.jd.easyflow.flow.ext.cases.interrupt.ExtTestReusableThreadRunner(10000)"},
+	"filters":[{"createExp":"new com.jd.easyflow.flow.ext.interrupt.ExtNodeThreadInterruptFlowFilter()"}],
+	"nodeFilters":[{"createExp":"new com.jd.easyflow.flow.ext.interrupt.ExtNodeThreadInterruptNodeFilter()"}]
+}

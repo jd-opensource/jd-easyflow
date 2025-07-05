@@ -82,19 +82,19 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
         } catch (Throwable t) { // NOSONAR
             addException(context, node, t);
         }
+        if (context.isInterrupted()) {
+            if (context.isLogOn() && logger.isInfoEnabled()) {
+                logger.info("Flow state is interrupted");
+            }
+            lock.countDown();
+            return null;
+        }
         if (nextNodes != null && nextNodes.length > 0) {
             counter.addAndGet(nextNodes.length);
         }
         int count = counter.addAndGet(-1);
         if (count == 0) {
             lock.countDown();
-        }
-        if (context.isInterrupted()) {
-            if (context.isLogOn() && logger.isInfoEnabled()) {
-                logger.info("Flow state is interrupted");
-            }
-            lock.countDown();
-            nextNodes = null;
         }
         return nextNodes;
     }

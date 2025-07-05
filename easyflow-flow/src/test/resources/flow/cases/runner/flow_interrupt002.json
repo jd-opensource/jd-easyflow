@@ -1,8 +1,8 @@
 {
     "id": "flow_interrupt002","name": "interrupt flow test 002",
     "nodes": [
-        {"id": "EMPTY_NODE1","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.runner.InterruptNodeAction()"}, "start":true, "properties":{"interrupt":true}},
-        {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.runner.InterruptNodeAction()"}, "post":{"to":"EMPTY_NODE3"}, "start":true},
-        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.runner.InterruptNodeAction()"}}
+        {"id": "EMPTY_NODE1","name": "Empty node 1","action":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestInterruptNodeAction()"}, "start":true, "properties":{"interrupt":true}},
+        {"id": "EMPTY_NODE2","name": "Empty node 2","action":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestInterruptNodeAction()"}, "post":{"to":"EMPTY_NODE3"}, "start":true},
+        {"id": "EMPTY_NODE3","name": "Empty node 3","action":{"createExp":"new com.jd.easyflow.flow.cases.runner.TestInterruptNodeAction()"}}
     ]
 }

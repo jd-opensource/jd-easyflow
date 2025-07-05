@@ -1,14 +1,11 @@
 package com.jd.easyflow.flow.model.node;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import com.jd.easyflow.flow.engine.FlowContext;
-import com.jd.easyflow.flow.filter.Filter;
-import com.jd.easyflow.flow.filter.FilterChain;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeAction;

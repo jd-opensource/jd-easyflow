@@ -46,6 +46,7 @@ public class DefConstants {
     public static final String NODE_PROP_POST = "post";
     
     public static final String NODE_PROPERTIES_PROP_PRE_NODES = "preNodes";
+    public static final String NODE_PROPERTIES_PROP_COMPENSATE_ACTION = "compensateAction";
     
     /**
      * Node pre property
@@ -61,6 +62,7 @@ public class DefConstants {
     public static final String NODE_ACTION_TYPE_EVENT = "event";
     public static final String NODE_ACTION_TYPE_FLOW = "flow";
     public static final String NODE_ACTION_TYPE_INTERRUPT = "interrupt";
+    public static final String NODE_ACTION_TYPE_COMPENSATE = "compensate";
     public static final String NODE_ACTION_TYPE_LOOP = "loop";
     public static final String NODE_ACTION_TYPE_PARAM_EXECUTOR = "paramExecutor";
     public static final String NODE_ACTION_PROP_START_NODE_ID = "startNodeId";

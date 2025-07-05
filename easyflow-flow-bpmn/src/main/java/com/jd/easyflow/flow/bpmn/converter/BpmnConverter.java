@@ -15,14 +15,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.model.Activity;
 import org.activiti.bpmn.model.AdhocSubProcess;
+import org.activiti.bpmn.model.Association;
+import org.activiti.bpmn.model.BoundaryEvent;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.BusinessRuleTask;
 import org.activiti.bpmn.model.CallActivity;
+import org.activiti.bpmn.model.CompensateEventDefinition;
 import org.activiti.bpmn.model.ComplexGateway;
 import org.activiti.bpmn.model.DataObject;
 import org.activiti.bpmn.model.DataStoreReference;
 import org.activiti.bpmn.model.EndEvent;
+import org.activiti.bpmn.model.EventDefinition;
 import org.activiti.bpmn.model.EventGateway;
 import org.activiti.bpmn.model.EventSubProcess;
 import org.activiti.bpmn.model.ExclusiveGateway;
@@ -71,6 +76,7 @@ import com.jd.easyflow.flow.bpmn.converter.gateway.ExclusiveGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.InclusiveGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.gateway.ParallelGatewayConverter;
 import com.jd.easyflow.flow.bpmn.converter.util.BpmnXmlConstants;
+import com.jd.easyflow.flow.bpmn.converter.util.ConvertUtil;
 import com.jd.easyflow.flow.exception.FlowException;
 import com.jd.easyflow.flow.model.definition.DefConstants;
 import com.jd.easyflow.flow.util.FlowStringUtil;
@@ -216,16 +222,27 @@ public class BpmnConverter {
         // Process flow element, convert Gateway,Event,Activity to Node.
         List<Map<String, Object>> nodeList = new ArrayList<>();
         flowDef.put(DefConstants.FLOW_PROP_NODES, nodeList);
+        List<BoundaryEvent> boundaryEvents = new ArrayList<BoundaryEvent>();
+        Map<String, Map<String, Object>> compensateActionMap = new HashMap<>();
         for (FlowElement flowElement : process.getFlowElements()) {
             // Flow element
             if (flowElement instanceof FlowNode) {
+                if (flowElement instanceof BoundaryEvent) {
+                    boundaryEvents.add((BoundaryEvent) flowElement);
+                    continue;
+                }
                 FlowNodeConverter nodeConverter = flowNodeConverterMap.get(flowElement.getClass());
                 if (nodeConverter == null) {
                     throw new FlowException("Unsupported BPMN elmenet:ID" + flowElement.getId() + " TYPE:"
                             + flowElement.getClass().getCanonicalName());
                 }
                 Map<String, Object> node = nodeConverter.convert((FlowNode) flowElement, bpmnModel, flowDef);
-                nodeList.add(node);
+                
+                if (flowElement instanceof Activity && ((Activity) flowElement).isForCompensation()) {
+                    compensateActionMap.put((String) node.get(DefConstants.COMMON_PROP_ID), node);
+                } else {
+                    nodeList.add(node);
+                }
                 // Sequence flow
             } else if (flowElement instanceof SequenceFlow) {
                 continue;
@@ -236,6 +253,9 @@ public class BpmnConverter {
                         "Unsupported BPMN element:ID" + flowElement.getId() + " TYPE:" + flowElement.getClass().getCanonicalName());
             }
         }
+        
+        // process BoundaryEvent
+        processBoundaryEvent(boundaryEvents, compensateActionMap, nodeList, process);
 
         // flow post handler
         if (extensionElementMap != null && extensionElementMap.containsKey(BpmnXmlConstants.POST)) {
@@ -328,6 +348,45 @@ public class BpmnConverter {
             String elementText = element.getElementText();
             if (FlowStringUtil.isNotEmpty(elementText)) {
                 flowDef.put(DefConstants.FLOW_PROP_LOG_FLAG, Boolean.valueOf(elementText));
+            }
+        }
+    }
+    
+    private static void processBoundaryEvent(List<BoundaryEvent> boundaryEvents,
+            Map<String, Map<String, Object>> compensateActionMap, List<Map<String, Object>> nodeList, Process process) {
+        for (BoundaryEvent event : boundaryEvents) {
+            boolean isCompensate = false;
+            String compensateActionId = null;
+            for (EventDefinition definition : event.getEventDefinitions()) {
+                if (definition instanceof CompensateEventDefinition) {
+                    isCompensate = true;
+                    List<Association> associationList = process.findAssociationsWithSourceRefRecursive(event.getId());
+                    if (associationList.size() == 1) {
+                        compensateActionId = associationList.get(0).getTargetRef();
+                    }
+                    break;
+                }
+            }
+            if (isCompensate) {
+                if (compensateActionId != null) {
+                    String nodeId = event.getAttachedToRefId();
+                    Map<String, Object> compensateInfo = compensateActionMap.get(compensateActionId);
+                    Object actionInfo = compensateInfo.get(DefConstants.NODE_PROP_ACTION);
+                    Map<String, Object> nodeInfo = null;
+                    for (Map<String, Object> info : nodeList) {
+                        if (nodeId.equals(info.get(DefConstants.COMMON_PROP_ID))) {
+                            nodeInfo = info;
+                            break;
+                        }
+                    }
+                    Map<String, Object> properties = ConvertUtil.getMapValue(nodeInfo, DefConstants.COMMON_PROP_PROPERTIES);
+                    if (properties.get(DefConstants.NODE_PROPERTIES_PROP_COMPENSATE_ACTION) == null) {
+                        properties.put(DefConstants.NODE_PROPERTIES_PROP_COMPENSATE_ACTION, actionInfo);
+                    }
+                }
+            } else {
+                throw new FlowException(
+                        "Unsupported BPMN element:ID" + event.getId() + " TYPE:" + event.getClass().getCanonicalName());
             }
         }
     }

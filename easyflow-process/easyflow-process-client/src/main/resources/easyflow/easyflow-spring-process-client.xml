@@ -79,4 +79,9 @@
     <bean id="easyflow-process-elUtil" class="com.jd.easyflow.process.client.util.ElUtil"></bean>
     
     <bean id="easyflow-taskbizservice-call" class="com.jd.easyflow.process.client.task.biz.impl.CallTaskBizService"/>
+    <!-- compensate -->
+    <bean id="easyflow-process-compensateNodeFilter" class="com.jd.easyflow.process.client.flow.compensate.StdProcessCompensateNodeFilter">
+    </bean>  
+    <bean id="easyflow-process-compensateFlowFilter" class="com.jd.easyflow.process.client.flow.compensate.StdProcessCompensateFlowFilter">
+    </bean>      
 </beans>

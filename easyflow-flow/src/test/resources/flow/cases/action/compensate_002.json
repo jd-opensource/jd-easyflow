@@ -1,0 +1,10 @@
+{
+	"id":"compensate_002",
+	"nodes":[
+		{"id":"node001", "start":true, "action":{"createExp":"new com.jd.easyflow.flow.cases.action.CompensateTest.TestCompensateNodeAction()"}, "post":{"to":["node002","node003"]}},
+		{"id":"node002", "action":{"createExp":"new com.jd.easyflow.flow.cases.action.CompensateTest.TestCompensateNodeAction()"}, "post":{"to":"node004"}},
+		{"id":"node003", "action":{"createExp":"new com.jd.easyflow.flow.cases.action.CompensateTest.TestCompensateNodeAction()"}, "post":{"to":"node004"}},
+		{"id":"node004", "pre":{"preNodes":["node002","node003"]}, "action":{"createExp":"new com.jd.easyflow.flow.cases.action.CompensateTest.TestCompensateNodeAction()"}, "post":{"to":"node005"}},
+		{"id":"node005", "action":{"createExp":"new com.jd.easyflow.flow.model.action.CompensateNodeAction()"}}
+	]
+}

@@ -1,5 +1,7 @@
 package com.jd.easyflow.flow.bpmn.cases.converter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -87,5 +89,20 @@ public class BpmnConverterTest {
         param2.put("input", 10);
         FlowResult result2 = flowEngine.execute(param2);
         logger.info("Execute flow instance 2 result:" + result2);        
+    }
+    
+    @Test
+    public void testCompensate() throws Exception {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource resource = resolver.getResource("classpath:flow/cases/converter/compensate001.bpmn");
+        List<Map<String, Object>> model = BpmnConverter.convert(resource.getInputStream());
+        logger.info("Model is:" + JsonUtil.toJsonString(model));
+        List<Map<String, Object>> nodeList = (List<Map<String, Object>>)model.get(0).get("nodes");
+        Map<String, Object> node001 = nodeList.stream().filter(map -> map.get("id").equals("node001")).findFirst().get();
+        assertEquals(((Map<String, Object>)((Map<String, Object>)node001.get("properties")).get("compensateAction")).get("createExp"), "@compensate1Action");
+        Map<String, Object> node003 = nodeList.stream().filter(map -> map.get("id").equals("node003")).findFirst().get();
+        assertEquals(((Map<String, Object>)node003.get("action")).get("type"), "compensate");
+        Map<String, Object> node004 = nodeList.stream().filter(map -> map.get("id").equals("node004")).findFirst().get();
+        assertEquals(((Map<String, Object>)node004.get("action")).get("type"), "compensate");
     }
 }

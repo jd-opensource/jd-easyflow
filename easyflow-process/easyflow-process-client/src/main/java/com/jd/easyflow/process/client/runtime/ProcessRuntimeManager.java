@@ -497,6 +497,33 @@ public class ProcessRuntimeManager {
         });
     }
     
+    public List<ProcessNodeInstanceDTO> findAllNodeInstances(StdProcessContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Find all nodes");
+        }
+        return op(context, () -> {
+            String instanceNo = context.getInstanceNo();
+            QueryProcessNodeReqDTO queryProcessNodeReq = QueryProcessNodeReqDTO.builder().processInstanceNo(instanceNo).build();
+            List<ProcessNodeInstanceDTO> nodeInstances = ExportResponseUtil
+                    .unwrap(getProcessInstanceExport().findNodeInstances(new ExportRequest<>(queryProcessNodeReq)));
+            for (ProcessNodeInstanceDTO nodeInstance : nodeInstances) {
+                if (context.getCache().get(ProcessNodeInstanceDTO.class,
+                        nodeInstance.getNodeInstanceNo()) == null) {
+                    context.getCache().put(nodeInstance.getNodeInstanceNo(), nodeInstance, false);
+                }
+            }
+            List<ProcessNodeInstanceDTO> result = new ArrayList<ProcessNodeInstanceDTO>();
+            for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
+                    result.add(nodeInstance);
+                }
+            if (log.isDebugEnabled()) {
+                log.debug("All nodes are" + result);
+            }
+            return result;
+        });
+    }
+    
+    
     /**
      * 
      * @param context
