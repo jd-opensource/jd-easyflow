@@ -45,7 +45,7 @@ public class PerformanceTest {
     }
 
     /**
-     * test one flow with one SPEL node 
+     * test one flow with one spel node 
      */
     @Test
     public void test2() {
@@ -72,14 +72,14 @@ public class PerformanceTest {
     }
 
     /**
-     * test one flow execute multiple times
+     * test one flow execute multiple times with one loop node.
      */
     @Test
     public void test3() {
         FlowEngineImpl flowEngine = new FlowEngineImpl();
         flowEngine.setFlowPath("classpath:flow/cases/performance/flow_performance001.json");
         flowEngine.init();
-        int count = 1000;
+        int count = 100;
         FlowParam param = new FlowParam("flow_performance001", "EMPTY_NODE3", null);
         param.put("count", 1);
         FlowResult result = flowEngine.execute(param);

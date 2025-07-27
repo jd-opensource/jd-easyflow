@@ -1,5 +1,6 @@
 package com.jd.easyflow.flow.engine;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import com.jd.easyflow.flow.model.NodeContext;
  * @author liyuliang5
  *
  */
-public interface FlowContext {
+public interface FlowContext extends Serializable {
         
     /**
      * Get start node context list.

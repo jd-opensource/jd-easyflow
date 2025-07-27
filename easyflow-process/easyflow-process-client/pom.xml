@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyflow-process</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.6.2</version>
+        <version>1.6.3</version>
     </parent>
     <artifactId>easyflow-process-client</artifactId>
     <name>easyflow-process-client</name>

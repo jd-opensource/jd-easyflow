@@ -88,7 +88,6 @@ class ProcessInclusiveCheckHelper  {
         if (map == null) {
             map = new ConcurrentHashMap<String, WaitingNodeInfo>();
             context.put(ProcessInclusiveCheckHelper.CTX_WAITING_NODE_MAP, map);
-            // 查询所有Inactive节点，并判断是否是inclusive.
             List<ProcessNodeInstanceDTO> openNodeInstances = manager.findOpenNodeInstances(context);
             FlowContext flowContext = (FlowContext) context.getEngineProcessContext();
             Flow flow = flowContext.getFlow();

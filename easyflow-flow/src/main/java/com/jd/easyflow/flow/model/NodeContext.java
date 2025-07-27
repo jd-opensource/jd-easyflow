@@ -1,5 +1,6 @@
 package com.jd.easyflow.flow.model;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author liyuliang5
  *
  */
-public class NodeContext {
+public class NodeContext implements Serializable {
 
 
     public NodeContext(String nodeId) {

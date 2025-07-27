@@ -105,4 +105,5 @@ public class BpmnConverterTest {
         Map<String, Object> node004 = nodeList.stream().filter(map -> map.get("id").equals("node004")).findFirst().get();
         assertEquals(((Map<String, Object>)node004.get("action")).get("type"), "compensate");
     }
+   
 }

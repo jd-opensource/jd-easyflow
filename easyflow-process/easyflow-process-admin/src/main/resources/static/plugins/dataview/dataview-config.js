@@ -295,7 +295,7 @@
 			this.$elementConfig = $(elementConfigHtml).appendTo($container);
 			this.$elementName = this.$elementConfig.find(".j-el-name");
 			this.$elementInfo = this.$elementConfig.find(".j-el-info");
-			this.$elementExt = null;// Extend config，currently list element using. add one row after j-element-config
+			this.$elementExt = null;// Extend config, currently list element using. add one row after j-element-config
 			this.$elementType = this.$elementConfig.find(".j-el-type");
 			this.$elementName.val(cfg.data && cfg.data.name);
 			var _self = this;

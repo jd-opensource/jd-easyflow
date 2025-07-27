@@ -70,7 +70,7 @@ public class ExpNodeActionDotCheckFlowParseListener implements FlowParseEventLis
     private void validateNodeActionExp(ExpNodeAction expNodeAction, Flow flow, FlowNode node) {
         String exp = expNodeAction.getExp();
         if (!exp.contains(".")) {
-            String errorMsg =  "[EXP INVALID]Flow:" + flow.getId() + " Node:" + node.getId() + " Exp:[" + exp + "] invalid，should contains dot";
+            String errorMsg =  "[EXP INVALID]Flow:" + flow.getId() + " Node:" + node.getId() + " Exp:[" + exp + "] invalid, should contains dot";
             logger.warn(errorMsg);
             if (NODE_ACTION_EXP_NO_DOT_POLICY_EXCEPTION.equals(nodeActionExpNoDotPolicy)) {
                 throw new FlowException(errorMsg);

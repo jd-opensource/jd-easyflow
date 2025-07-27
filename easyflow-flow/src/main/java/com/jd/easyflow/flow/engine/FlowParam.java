@@ -1,5 +1,6 @@
 package com.jd.easyflow.flow.engine;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,7 +14,7 @@ import com.jd.easyflow.flow.engine.impl.FlowContextImpl;
  * @author liyuliang5
  *
  */
-public class FlowParam {
+public class FlowParam implements Serializable {
 
     public FlowParam() {
         // NOOP

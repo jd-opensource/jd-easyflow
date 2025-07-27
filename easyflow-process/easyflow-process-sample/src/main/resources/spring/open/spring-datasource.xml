@@ -19,7 +19,6 @@
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
 		<property name="mapperLocations">
 		  <array>
 		      <value>classpath*:easyflow/mapper/*Mapper.xml</value>
@@ -37,22 +36,20 @@
 		/>
 	</bean>
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+<!--     <bean id="testTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
     </bean>
 
     <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-       <property name="transactionManager" ref="transactionManager"></property>
+       <property name="transactionManager" ref="testTransactionManager"></property>
        <property name="propagationBehavior" value="0"></property>
     </bean>
 
     <bean id="newTransactionTemplate"
         class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager"
-            ref="transactionManager"></property>
+            ref="testTransactionManager"></property>
         <property name="propagationBehavior" value="3"></property>
-    </bean>
-
-    <alias name="newTransactionTemplate" alias="easyflow-processunit-newTransactionTemplate"/>
+    </bean> -->
     
 </beans>

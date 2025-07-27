@@ -4,13 +4,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
-import javax.xml.bind.ValidationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import com.jd.easyflow.common.exception.EasyFlowException;
 import com.jd.easyflow.utils.json.JSON;
@@ -20,14 +15,12 @@ import com.jd.easyflow.utils.json.JSON;
  * @author liyuliang5
  *
  */
-public abstract class BaseMessageListener<T> implements MessageListener, ApplicationContextAware {
+public abstract class BaseMessageListener<T> implements MessageListener {
     
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private boolean exceptionConsume;
     
-    private ApplicationContext applicationContext;
-
     @Override
     public void onMessage(List<Message> messages) {
         for (Message message : messages) {
@@ -56,8 +49,7 @@ public abstract class BaseMessageListener<T> implements MessageListener, Applica
         }
         logger.info("Start process message,topic:{}, bizId:{}, content:{}", message.getMsgTopic(), message.getMsgTopic(), message.getText());
         try {
-            BaseMessageListener messageListener = applicationContext.getBean(getClass());
-            messageListener.process(request, message);
+            process(request, message);
         } catch (Exception e) {
             logger.error("message[" + message.getText() + "] process exception, " + e.getMessage(), e);
             if (exceptionConsume) {
@@ -80,10 +72,4 @@ public abstract class BaseMessageListener<T> implements MessageListener, Applica
         this.exceptionConsume = exceptionConsume;
     }
     
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-
 }

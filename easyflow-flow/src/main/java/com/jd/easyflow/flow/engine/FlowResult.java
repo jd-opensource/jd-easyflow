@@ -1,5 +1,6 @@
 package com.jd.easyflow.flow.engine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author liyuliang5
  *
  */
-public class FlowResult {
+public class FlowResult implements Serializable {
 
     @JsonIgnore
     private FlowContext context;
