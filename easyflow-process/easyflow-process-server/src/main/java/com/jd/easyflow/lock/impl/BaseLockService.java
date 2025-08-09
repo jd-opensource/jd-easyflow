@@ -295,14 +295,6 @@ public abstract class BaseLockService implements LockService {
         return doInLock(lockBizType, bizKey, lockSecond, waitSecond, defaultSleepMillis, generateRequestId(), true, repeatableAction);
     }
     
-    private <T>T doInlock(String lockBizType, String bizKey, boolean throwExceptionOnLock, Supplier<T> repeatableAction) {
-        return doInLock(lockBizType, bizKey, defaultLockSeconds, defaultWaitSeconds, defaultSleepMillis, generateRequestId(), true, repeatableAction);
-    }
-    
-    private <T>T doInlock(String lockBizType, String bizKey, int lockSecond, int waitSecond, boolean throwExceptionOnLock, Supplier<T> repeatableAction) {
-        return doInLock(lockBizType, bizKey, lockSecond, waitSecond, defaultSleepMillis, generateRequestId(), throwExceptionOnLock, repeatableAction);
-    }
-    
     private <T> T doInLock(String lockBizType, String bizKey, int lockSeconds, int waitSeconds, int sleepMills,
             String requestId, boolean throwExceptionOnLock, Supplier<T> repeatableAction) {
         requestId = lock(lockBizType, bizKey, lockSeconds, waitSeconds, sleepMills, requestId, throwExceptionOnLock);

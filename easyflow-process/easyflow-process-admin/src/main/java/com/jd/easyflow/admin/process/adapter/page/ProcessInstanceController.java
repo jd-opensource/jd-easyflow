@@ -31,6 +31,7 @@ import com.jd.easyflow.codegenerator.adapter.export.dto.GenerateParam;
 import com.jd.easyflow.codegenerator.adapter.export.dto.GenerateResult;
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
+import com.jd.easyflow.common.adapter.export.dto.ExportResponseCode;
 import com.jd.easyflow.common.adapter.export.dto.pager.PagerResult;
 import com.jd.easyflow.common.adapter.export.util.ExportResponseUtil;
 import com.jd.easyflow.common.adapter.page.BasePageController;
@@ -67,6 +68,7 @@ import com.jd.easyflow.process.adapter.export.dto.instance.QueryProcessInstanceR
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.QueryTaskReq;
 import com.jd.easyflow.utils.json.JSON;
+import com.jd.easyflow.utils.json.JsonSerializeConfig;
 
 @Controller
 @RequestMapping("easyflow/processInstance")
@@ -147,7 +149,13 @@ public class ProcessInstanceController extends BasePageController {
             req.setCancelUser(currentUser);
             ExportResponse<CanCancelProcessInstanceRes> canCancelResponse = getProcessInstanceExport()
                     .canCancel(new ExportRequest<CanCancelProcessInstanceReq>(req));
-            processInstance.setCanCanCel(ExportResponseUtil.unwrap(canCancelResponse).isCanCancel());
+            boolean canCancel = false;
+            if (ExportResponseCode.SUCCESS.getCode().equals(canCancelResponse.getResCode())) {
+                canCancel = ((CanCancelProcessInstanceRes) canCancelResponse.getData()).isCanCancel();
+            } else {
+                log.warn("can cancel result exception, code:" + canCancelResponse.getResCode() + " desc:" + canCancelResponse.getResDesc() + ", default to false");
+            }
+            processInstance.setCanCancel(canCancel);
             return processInstance;
         }).collect(Collectors.toList());
 
@@ -234,11 +242,11 @@ public class ProcessInstanceController extends BasePageController {
         model.addAttribute("processNodeInstances", sortedNodeInstanceList);
         model.addAttribute("defData", JSON.toJSONString(processDef));
         
-        ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        mapper.setDateFormat(format);
-        model.addAttribute("nodeInstancesStr", JSON.toJSONString(sortedNodeInstanceList, mapper));
-        model.addAttribute("tasksStr", JSON.toJSONString(taskList, mapper));
+        JsonSerializeConfig config = new JsonSerializeConfig();
+        config.setDateFormat(format);
+        model.addAttribute("nodeInstancesStr", JSON.toJSONString(sortedNodeInstanceList, config));
+        model.addAttribute("tasksStr", JSON.toJSONString(taskList, config));
         
         return "easyflow/process/processinstance/processInstanceDetail";
     }

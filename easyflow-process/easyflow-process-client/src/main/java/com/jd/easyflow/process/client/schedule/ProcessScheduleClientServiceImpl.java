@@ -42,6 +42,8 @@ public class ProcessScheduleClientServiceImpl implements ProcessScheduleClientSe
             log.info("End process schedule client execute");
             ProcessExecuteRes res = new ProcessExecuteRes();
             res.setProcessInstanceNo(processResult.getProcessInstanceNo());
+            res.setResult(processResult.getResult());
+            res.setDataMap(processResult.getDataMap());
             return ClientResponse.build4Success(res);
         } catch (Exception e) {
             log.error("Process schedule client exception, " + e.getMessage(), e);

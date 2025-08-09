@@ -1,13 +1,13 @@
-package com.jd.easyflow.process.domain.model.vo;
+package com.jd.easyflow.process.adapter.export.dto.schedule;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
- * 
  * @author liyuliang5
  */
-public class ScheduleProcessResVO {
-
+public class ScheduleProcessRes implements Serializable {
+    
     private String processInstanceNo;
     
     private Object result;
@@ -37,11 +37,5 @@ public class ScheduleProcessResVO {
     public void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
     }
-
-    @Override
-    public String toString() {
-        return "ScheduleProcessResVO [processInstanceNo=" + processInstanceNo + ", result=" + result + ", dataMap="
-                + dataMap + "]";
-    }
-
+    
 }

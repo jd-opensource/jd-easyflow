@@ -83,5 +83,6 @@
     <bean id="easyflow-process-compensateNodeFilter" class="com.jd.easyflow.process.client.flow.compensate.StdProcessCompensateNodeFilter">
     </bean>  
     <bean id="easyflow-process-compensateFlowFilter" class="com.jd.easyflow.process.client.flow.compensate.StdProcessCompensateFlowFilter">
-    </bean>      
+    </bean>   
+   
 </beans>

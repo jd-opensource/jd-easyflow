@@ -30,11 +30,16 @@
                         return;
                     }
                     if (bo.$type == 'bpmn:Process') {
-                        if (key == 'id') {
-                            _self.$flowContainer.find("[name='defId']").val(newVal);
-                        } else if (key == 'name') {
-                            _self.$flowContainer.find("[name='defName']").val(newVal);
-                        }
+						if (key == 'id' || key == 'name') {
+							var processElements = this.findProcessElements();
+							if (bo.id == processElements[0].businessObject.id) {
+		                        if (key == 'id') {
+		                            _self.$flowContainer.find("[name='defId']").val(newVal);
+		                        } else if (key == 'name') {
+		                            _self.$flowContainer.find("[name='defName']").val(newVal);
+		                        }
+							}
+						}
                     }
                 }
             });
@@ -149,20 +154,26 @@
         var format = this.$flowContainer.find("[name='format']").val();
         ;
         if (format == 'FSM-easy') {
-            for (var i = 0; i < def.states.length; i++) {
-                table += "<tr><td>" + def.id + "</td><td>" + def.states[i].id + "</td><td>" + (def.states[i].name ? def.states[i].name : '') + "</td></tr>";
-            }
+			if (def.states) {
+	            for (var i = 0; i < def.states.length; i++) {
+	                table += "<tr><td>" + def.id + "</td><td>" + def.states[i].id + "</td><td>" + (def.states[i].name ? def.states[i].name : '') + "</td></tr>";
+	            }
+			}
         } else {
             if (def instanceof Array) {
              for (var j in def) {
-              for (var i = 0; i < def[j].nodes.length; i++) {
-                table += "<tr><td>" + def[j].id + "</td><td>" + def[j].nodes[i].id + "</td><td>" + (def[j].nodes[i].name ? def[j].nodes[i].name : '') + "</td></tr>";
-              }
+				if (def[j].nodes) {
+	              for (var i = 0; i < def[j].nodes.length; i++) {
+	                table += "<tr><td>" + def[j].id + "</td><td>" + def[j].nodes[i].id + "</td><td>" + (def[j].nodes[i].name ? def[j].nodes[i].name : '') + "</td></tr>";
+	              }
+			  }
                 }
             } else {
-            for (var i = 0; i < def.nodes.length; i++) {
-                table += "<tr><td>" + def.id + "</td><td>" + def.nodes[i].id + "</td><td>" + (def.nodes[i].name ? def.nodes[i].name : '') + "</td></tr>";
-            }
+				if (def.nodes) {
+	            for (var i = 0; i < def.nodes.length; i++) {
+	                table += "<tr><td>" + def.id + "</td><td>" + def.nodes[i].id + "</td><td>" + (def.nodes[i].name ? def.nodes[i].name : '') + "</td></tr>";
+	            }
+			}
             }
         }
         table += "</table>";

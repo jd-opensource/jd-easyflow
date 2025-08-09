@@ -140,6 +140,8 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
                 param.setFlowId(flowId);
             }
         }
+
+        
     }
 
     public void onFlowStart(FlowEvent event) {
@@ -177,6 +179,7 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         processContext.setCheckStartNode(checkStartNode);
         
         processContext.setProcessProperties(assembleProcessProperties(context));
+        
         String processDefId = StdProcessConstants.PROCESS_DEF_FLOW + context.getFlowId();
         if (context.getFlowEngine() instanceof StdFlowEngineImpl) {
             if (processDefId.endsWith(StdFlowProcessConstants.VERSION_PREFIX)) {
@@ -581,10 +584,6 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         properties.put(StdProcessConstants.PROP_END_NODE_IDS, endNodeIds);
     }
 
-    private String getLockKey(String processType, String bizNo) {
-        return processType + "_" + bizNo;
-    }
-
     public ProcessRuntimeService getProcessRuntimeService() {
         return processRuntimeService;
     }
@@ -599,6 +598,7 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         }
         return processInstanceExport;
     }
+    
     
     @Override
     public void init(InitContext initContext, Object parent) {}

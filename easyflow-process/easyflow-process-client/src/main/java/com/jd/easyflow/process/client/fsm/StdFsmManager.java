@@ -20,6 +20,7 @@ import com.jd.easyflow.fsm.parser.FsmParser;
 import com.jd.easyflow.objects.factory.ObjectFactorys;
 import com.jd.easyflow.process.adapter.export.ProcessDefinitionExport;
 import com.jd.easyflow.process.adapter.export.dto.definition.ProcessDefinitionDTO;
+import com.jd.easyflow.process.client.flow.StdFlowProcessConstants;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -34,7 +35,6 @@ public class StdFsmManager extends FsmManager {
 
     private static final String FSM_EASY = "FSM-easy";
 
-    private static final String VERSION_PREFIX = "--V_";
     /**
      * key:category
      */
@@ -67,12 +67,12 @@ public class StdFsmManager extends FsmManager {
     @Override
     public Fsm getFsm(String fsmId) {
         String wrapperFsmId = null;
-        if (fsmId.contains(VERSION_PREFIX)) {
+        if (fsmId.contains(StdFlowProcessConstants.VERSION_PREFIX)) {
             wrapperFsmId = fsmId;
         } else {
             ExportResponse<Integer> response = getProcessDefinitionExport().getLatestProcessDefVersionByDefId(new ExportRequest<>(fsmId));
             if (ExportResponseCode.DATA_EMPTY.getCode().equals(response.getResCode())) {
-                wrapperFsmId = fsmId + VERSION_PREFIX;
+                wrapperFsmId = fsmId + StdFlowProcessConstants.VERSION_PREFIX;
                 if (fsmMap.containsKey(wrapperFsmId)) {
                     return fsmMap.get(wrapperFsmId);
                 } else {
@@ -102,17 +102,17 @@ public class StdFsmManager extends FsmManager {
     private void localFsmVersioned() {
         Map<String, Fsm> versionedFsmMap = new HashMap<>();
         for (Fsm fsm : fsmMap.values()) {
-            if (fsm.getId().contains(VERSION_PREFIX)) {
-                throw new EasyFlowException("Fsm ID:" + fsm.getId() + " must not contain " + VERSION_PREFIX);
+            if (fsm.getId().contains(StdFlowProcessConstants.VERSION_PREFIX)) {
+                throw new EasyFlowException("Fsm ID:" + fsm.getId() + " must not contain " + StdFlowProcessConstants.VERSION_PREFIX);
             }
-            versionedFsmMap.put(fsm.getId() + VERSION_PREFIX, fsm);
+            versionedFsmMap.put(fsm.getId() + StdFlowProcessConstants.VERSION_PREFIX, fsm);
         }
         fsmMap.putAll(versionedFsmMap);
     }
 
     protected void localFsmPush(){
         for (Entry<String, Fsm> entry : fsmMap.entrySet()){
-            if (!entry.getKey().endsWith(VERSION_PREFIX)) {
+            if (!entry.getKey().endsWith(StdFlowProcessConstants.VERSION_PREFIX)) {
                 continue;
             }
             Fsm fsm = entry.getValue();
@@ -157,9 +157,9 @@ public class StdFsmManager extends FsmManager {
 
     private String wrapperFsmId(String fsmId,Integer latestVersion){
         if (latestVersion == null){
-            return fsmId + VERSION_PREFIX;
+            return fsmId + StdFlowProcessConstants.VERSION_PREFIX;
         }
-        return StringUtils.join(fsmId,VERSION_PREFIX,latestVersion);
+        return StringUtils.join(fsmId,StdFlowProcessConstants.VERSION_PREFIX,latestVersion);
     }
 
     public ProcessDefinitionExport getProcessDefinitionExport() {

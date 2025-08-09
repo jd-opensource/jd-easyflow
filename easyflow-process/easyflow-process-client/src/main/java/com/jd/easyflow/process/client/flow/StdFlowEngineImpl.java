@@ -36,12 +36,6 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
     private static final String FLOW_EASY = "FLOW-easy";
     private static final String FLOW_BPMN = "FLOW-bpmn";
 
-    private static final String VERSION_PREFIX = "--V_";
-    
-    private static final String PARENT_FLOW_ID_KEY = "_parent_flow_id";
-    
-    private static final String MAIN_FLOW_ID_KEY = "_main_flow_id";
-
     /**
      * key:category
      */
@@ -58,7 +52,7 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
     
     @Value("${flow.local.push:false}")
     private boolean localPush = false;
-
+    
     @Override
     protected void loadFlow() {
         if (localLoad) {
@@ -73,12 +67,12 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
     @Override
     public Flow getFlow(String flowId) {
         String wrapperFlowId = null;
-        if (flowId.contains(VERSION_PREFIX)) {
+        if (flowId.contains(StdFlowProcessConstants.VERSION_PREFIX)) {
             wrapperFlowId = flowId;
         } else {
              ExportResponse<Integer> response = getProcessDefinitionExport().getLatestProcessDefVersionByDefId(new ExportRequest<>(flowId));
              if (ExportResponseCode.DATA_EMPTY.getCode().equals(response.getResCode())) {
-                 wrapperFlowId = flowId + VERSION_PREFIX;
+                 wrapperFlowId = flowId + StdFlowProcessConstants.VERSION_PREFIX;
                  if (flowMap.containsKey(wrapperFlowId)) {
                      return flowMap.get(wrapperFlowId);
                  } else {
@@ -96,42 +90,33 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
         ProcessDefinitionDTO processDef = ExportResponseUtil
                 .unwrap(getProcessDefinitionExport().getVersionedProcessDefinition(new ExportRequest<>(wrapperFlowId)));
         if (processDef == null) {
-            log.error("Flow definition not exists {}", flowId);
+            log.error("Flow definition not exists, flowId:{}", flowId);
             throw new RuntimeException("Flow definition " + flowId + " not exists");
         }
-        wrapperFlowId = wrapperFlowId(processDef.getDefId(), processDef.getDefVersion());
         List<Flow> flowList = getFlowParser().parse(processDef.getJsonContent());
-        if (flowList.size() > 1) {
-            for (int i = 1; i < flowList.size(); i++) {
-                Flow flow = flowList.get(i);
-                if (flow.getProperty(PARENT_FLOW_ID_KEY) != null) {
-                    String wrapFlowId = flow.getId() + VERSION_PREFIX;
-                    if (!flowMap.containsKey(wrapFlowId)) {
-                        flowMap.put(wrapFlowId, flow);
-                    }
-                }
-            }
+        for (Flow flow : flowList) {
+            String wrapperId = wrapperFlowId(flow.getId(), processDef.getDefVersion());
+            flow.setId(wrapperId);
+            flowMap.putIfAbsent(wrapperId, flow);
         }
         Flow flow = flowList.get(0);
-        flow.setId(wrapperFlowId);
-        flowMap.put(wrapperFlowId, flow);
         return flow;
     }
     
     private void localFlowVersioned() {
         Map<String, Flow> versionedFlowMap = new HashMap<>();
         for (Flow flow : flowMap.values()) {
-            if (flow.getId().contains(VERSION_PREFIX)) {
-                throw new EasyFlowException("Flow ID:" + flow.getId() + " must not contain " + VERSION_PREFIX);
+            if (flow.getId().contains(StdFlowProcessConstants.VERSION_PREFIX)) {
+                throw new EasyFlowException("Flow ID:" + flow.getId() + " must not contain " + StdFlowProcessConstants.VERSION_PREFIX);
             }
-            versionedFlowMap.put(flow.getId() + VERSION_PREFIX, flow);
+            versionedFlowMap.put(flow.getId() + StdFlowProcessConstants.VERSION_PREFIX, flow);
         }
         flowMap.putAll(versionedFlowMap);
     }
 
     protected void localFlowPush() {
         for (Entry<String, Flow> entry : flowMap.entrySet()) {
-            if (! entry.getKey().endsWith(VERSION_PREFIX)) {
+            if (! entry.getKey().endsWith(StdFlowProcessConstants.VERSION_PREFIX)) {
                 continue;
             }
             Flow flow = entry.getValue();
@@ -187,9 +172,9 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
 
     private String wrapperFlowId(String flowId, Integer latestVersion) {
         if (latestVersion == null) {
-            return flowId + VERSION_PREFIX;
+            return flowId + StdFlowProcessConstants.VERSION_PREFIX;
         }
-        return StringUtils.join(flowId, VERSION_PREFIX, latestVersion);
+        return StringUtils.join(flowId, StdFlowProcessConstants.VERSION_PREFIX, latestVersion);
     }
 
     private ProcessDefinitionExport getProcessDefinitionExport() {

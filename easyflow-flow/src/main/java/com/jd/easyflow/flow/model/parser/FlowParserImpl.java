@@ -33,7 +33,6 @@ import com.jd.easyflow.flow.model.action.FlowNodeAction;
 import com.jd.easyflow.flow.model.action.InterruptNodeAction;
 import com.jd.easyflow.flow.model.action.LoopNodeAction;
 import com.jd.easyflow.flow.model.action.ParamExecutorNodeAction;
-import com.jd.easyflow.flow.model.action.compensate.CompensateAction;
 import com.jd.easyflow.flow.model.definition.DefConstants;
 import com.jd.easyflow.flow.model.flow.post.ExpFlowPostHandler;
 import com.jd.easyflow.flow.model.flow.pre.ExpFlowPreHandler;
@@ -126,14 +125,13 @@ public class FlowParserImpl implements FlowParser {
                 Map<String, Object> defMap = ((List<Map<String, Object>>) defObj).get(i);
                 List<Flow> flowList = parseMapDef(defMap, param.isParseEl());
                 allFlowList.addAll(flowList);
-                for (int j = 1; j < flowList.size(); j++) {
-                    flowList.get(j).setProperty(PARENT_FLOW_ID_KEY, flowList.get(0).getId());
-                }
                 if (i > 0) {
                     flowList.get(0).setProperty(FLOW_STRING_KEY, JsonUtil.toJsonString(defMap));
-                    flowList.get(0).setProperty(MAIN_FLOW_ID_KEY, allFlowList.get(0).getId());
                 }
             }
+        }
+        for (int i = 1; i < allFlowList.size(); i++) {
+            allFlowList.get(i).setProperty(MAIN_FLOW_ID_KEY, allFlowList.get(0).getId());
         }
         allFlowList.get(0).setProperty(FLOW_STRING_KEY, stringDef);
         return allFlowList;
@@ -150,6 +148,7 @@ public class FlowParserImpl implements FlowParser {
         Flow flow = new Flow();
         flow.setFlowParser(this);
         flowList.add(flow);
+        int subFlowStartIndex = flowList.size();
         
         List<FlowParseEventListener> parseListeners = parseParseListeners(map, flow, parseEl);
         if (preListeners != null && preListeners.size() > 0) {
@@ -264,6 +263,12 @@ public class FlowParserImpl implements FlowParser {
         initContext.setFlow(flow);
         flow.init(initContext, null);
         triggerParseEvent(parseListeners, FlowParseEventTypes.INIT_FLOW_END, map, flow, null, parseEl);
+        
+        for (int j = subFlowStartIndex; j < flowList.size(); j++) {
+            if (flowList.get(j).getProperty(PARENT_FLOW_ID_KEY) == null) {
+                flowList.get(j).setProperty(PARENT_FLOW_ID_KEY, flowList.get(subFlowStartIndex - 1).getId());
+            }
+        }
         return flow;
     }
     
@@ -721,6 +726,7 @@ public class FlowParserImpl implements FlowParser {
                         param.isParseEl());
                 flow.setProperty(FLOW_STRING_KEY, JsonUtil.toJsonString(action.get(DefConstants.COMMON_PROP_FLOW)));
                 nodeAction.setFlowId(flow.getId());
+                nodeAction.setFlow(flow);
             } else if (action.containsKey(DefConstants.COMMON_PROP_FLOW_ID)) {
                 nodeAction.setFlowId((String) action.get(DefConstants.COMMON_PROP_FLOW_ID));
             }

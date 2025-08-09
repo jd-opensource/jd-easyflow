@@ -73,6 +73,8 @@ public class ProcessScheduleSpiInvoker implements ProcessScheduleInvoker {
         ScheduleProcessResVO res = new ScheduleProcessResVO();
         ProcessExecuteRes executeRes = clientResponse.getData();
         res.setProcessInstanceNo(executeRes == null ? null : executeRes.getProcessInstanceNo()); 
+        res.setResult(executeRes == null ? null : executeRes.getResult()); 
+        res.setDataMap(executeRes == null ? null : executeRes.getDataMap()); 
         return res;
     }
 

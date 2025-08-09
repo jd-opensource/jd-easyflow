@@ -9,6 +9,7 @@ import com.jd.easyflow.common.adapter.export.dto.pager.PagerResult;
 import com.jd.easyflow.process.adapter.export.dto.task.CanWithdrawTaskReq;
 import com.jd.easyflow.process.adapter.export.dto.task.CanWithdrawTaskRes;
 import com.jd.easyflow.process.adapter.export.dto.task.ExecuteTaskReq;
+import com.jd.easyflow.process.adapter.export.dto.task.ExecuteTaskRes;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskAssignDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.QueryTaskReq;
@@ -26,7 +27,7 @@ public interface ProcessTaskExport {
     
     ExportResponse<List<ProcessTaskDTO>> queryTask(ExportRequest<QueryTaskReq> req);
     
-    ExportResponse<Object> executeTask(ExportRequest<ExecuteTaskReq> req);
+    ExportResponse<ExecuteTaskRes> executeTask(ExportRequest<ExecuteTaskReq> req);
     
     ExportResponse<PagerResult> pagerQueryTask(ExportRequest<PagerCondition> req);
 

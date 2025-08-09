@@ -1,7 +1,5 @@
 package com.jd.easyflow.process.adapter.export;
 
-import java.util.List;
-
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
 import com.jd.easyflow.process.adapter.export.dto.transaction.BatchObjectIdReq;

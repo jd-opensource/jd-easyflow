@@ -103,7 +103,10 @@ public class EventPostHandler implements NodePostHandler {
                 NodePostHandler nodePostHandler = initContext.getFlowParser()
                         .parseNodePostHandler(new PostParseParam(eventPostHandlerConfMap, initContext.getFlowList(),
                                 initContext.isParseEl(), initContext.getFlow(), flowNode));
-                eventPostHandlerMap.put(event, nodePostHandler);
+                if (nodePostHandler != null) {
+                    nodePostHandler.init(initContext, flowNode);
+                    eventPostHandlerMap.put(event, nodePostHandler);
+                }
             }
         }
 

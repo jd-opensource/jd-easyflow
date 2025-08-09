@@ -102,7 +102,7 @@
             {
                 field: 'op', title: '[(#{easyflow.process.admin.page.processDefinitionList.op})]', formatter: function (data, item) {
                     var content = ''
-                            + "<button type='button' class='btn btn-link j-op editBtn' data-def_id='" + item.defId + "' data-def_version='" + item.defVersion + "'>[(#{easyflow.process.admin.page.processDefinitionList.edit})]</button>"
+                            + "<button type='button' class='btn btn-link j-op editBtn' data-def_id='" + item.defId + "' data-def_version='" + (item.defVersion==undefined?"null":item.defVersion) + "'>[(#{easyflow.process.admin.page.processDefinitionList.edit})]</button>"
                     return content;
                 }
             }

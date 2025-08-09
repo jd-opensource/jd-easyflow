@@ -33,7 +33,7 @@
 	<alias name="dataSource" alias="easyflow-lock-dataSource"/>
     <import resource="classpath:easyflow/easyflow-spring-lock-db.xml"/>
     <alias name="easyflow-lock-dbLocker" alias="easyflow-process-locker"/>
-    <bean id="easyflow-codegenerator-locker" class="com.jd.easyflow.lock.impl.NoopLocker"/>
+    <alias name="easyflow-lock-dbLocker" alias="easyflow-codegenerator-locker"/>
     <import resource="classpath:easyflow/easyflow-spring-message-spring.xml"/>
     <import resource="spring-datasource.xml"/>
     <alias name="dataSource" alias="easyflow-codegenerator-dataSource"/>

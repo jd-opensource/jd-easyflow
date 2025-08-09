@@ -12,9 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.jd.easyflow.cache.CacheService;
+import com.jd.easyflow.common.adapter.export.dto.ExportResponseCode;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.dto.pager.PagerResult;
 import com.jd.easyflow.common.exception.UserException;
@@ -72,6 +75,9 @@ public class ProcessDefinitionDomainService {
     private Map<String, Object> processMap = new ConcurrentHashMap<>();
 
     private FlowParser flowParser = new FlowParserImpl();
+    
+    // default false. true is for old version compatible. if set to true, sub flow is not reported.
+    private boolean onlyProcessListAttachedProcess = false;
 
     public ProcessDefinitionEntity findLatestProcessDefinitionDetail(String defId) {
         return processRepository.findLatestProcessDefinition(defId);
@@ -103,6 +109,7 @@ public class ProcessDefinitionDomainService {
         AssertUtils.isNotBlank(processDefinition.getFormat(), "processDefinitionVO format must not be blank");
         AssertUtils.isNotBlank(processDefinition.getContent(), "processDefinitionVO content must not be blank");
         AssertUtils.isNotBlank(processDefinition.getJsonContent(), "processDefinitionVO jsonContent must not be blank");
+        checkMainProcessIdConsistent(processDefinition);
         locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinition.getDefId(), () -> {
             boolean exist = existProcessDefinition(processDefinition.getDefId());
             if (exist) {
@@ -111,8 +118,10 @@ public class ProcessDefinitionDomainService {
             }
             processDefinition.setDefVersion(INIT_VERSION);
             processDefinition.setLatest(true);
-            innerAddProcessDefinition(processDefinition);
-            addOrUpdateAttachedProcesses(processDefinition);
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                innerAddProcessDefinition(processDefinition);
+                addOrUpdateAttachedProcesses(processDefinition);
+            });
             return null;
         });
     }
@@ -126,30 +135,34 @@ public class ProcessDefinitionDomainService {
         ProcessDefinitionEntity processDefinition = processRepository.findProcessDefinitionByDefIdAndVersion(
                 processDefinitionEntity.getDefId(), processDefinitionEntity.getDefVersion());
         if (processDefinition != null) {
-            processDefinitionEntity.setId(processDefinition.getId());
-            updateReportProcessDefinitionById(processDefinition, processDefinitionEntity);
-            processDefinitionEntity.setLatest(processDefinition.getLatest());
-            addOrUpdateAttachedProcesses(processDefinitionEntity);
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                processDefinitionEntity.setId(processDefinition.getId());
+                updateReportProcessDefinitionById(processDefinition, processDefinitionEntity);
+                processDefinitionEntity.setLatest(processDefinition.getLatest());
+                addOrUpdateAttachedProcesses(processDefinitionEntity);
+            });
         } else {
             locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinitionEntity.getDefId(), () -> {
-                String defId = processDefinitionEntity.getDefId();
-                ProcessDefinitionEntity processDefEntity = processRepository
-                        .findProcessDefinitionByDefIdAndVersion(defId, processDefinitionEntity.getDefVersion());
-                if (processDefEntity != null) {
-                    processDefinitionEntity.setId(processDefEntity.getId());
-                    updateReportProcessDefinitionById(processDefEntity, processDefinitionEntity);
-                    processDefinitionEntity.setLatest(processDefEntity.getLatest());
-                } else {
-                    addReportProcessDefinition(processDefinitionEntity);
-                }
-                addOrUpdateAttachedProcesses(processDefinitionEntity);
+                transactionTemplate.executeWithoutResult(transactionStatus -> {
+                    String defId = processDefinitionEntity.getDefId();
+                    ProcessDefinitionEntity processDefEntity = processRepository
+                            .findProcessDefinitionByDefIdAndVersion(defId, processDefinitionEntity.getDefVersion());
+                    if (processDefEntity != null) {
+                        processDefinitionEntity.setId(processDefEntity.getId());
+                        updateReportProcessDefinitionById(processDefEntity, processDefinitionEntity);
+                        processDefinitionEntity.setLatest(processDefEntity.getLatest());
+                    } else {
+                        addReportProcessDefinition(processDefinitionEntity);
+                    }
+                    addOrUpdateAttachedProcesses(processDefinitionEntity);
+                });
                 return null;
             });
         }
 
     }
     
-    public void addReportProcessDefinition(ProcessDefinitionEntity processDefinitionEntity) {
+    private void addReportProcessDefinition(ProcessDefinitionEntity processDefinitionEntity) {
 
         ProcessDefinitionEntity latestProcessDefinition = processRepository
                 .findLatestProcessDefinition(processDefinitionEntity.getDefId());
@@ -160,7 +173,7 @@ public class ProcessDefinitionDomainService {
         innerAddProcessDefinition(processDefinitionEntity);
     }
     
-    public void updateReportProcessDefinitionById(ProcessDefinitionEntity originProcessDef,ProcessDefinitionEntity targetProcessDef) {
+    private void updateReportProcessDefinitionById(ProcessDefinitionEntity originProcessDef,ProcessDefinitionEntity targetProcessDef) {
         fixBizTypeAndCategory(originProcessDef,targetProcessDef);
         updateProcessDefinitionById(targetProcessDef);
     }
@@ -177,49 +190,70 @@ public class ProcessDefinitionDomainService {
         }
 
     }
-
+    
     private void updateDefLatestCacheVersion(String defId, Integer latestVersion) {
+        TransactionSynchronization synchronization = new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                doUpdateDefLatestCacheVersion(defId, latestVersion);
+            }
+        };
+        TransactionSynchronizationManager.registerSynchronization(synchronization);
+    }
+
+    private void doUpdateDefLatestCacheVersion(String defId, Integer latestVersion) {
         String latestVersionStr = null == latestVersion ? "null" : latestVersion.toString();
         String cacheKey = CACHE_KEY_PREFIX.concat(defId);
         cacheService.set(cacheKey, latestVersionStr);
     }
 
-    private String getDefLatestCacheVersion(String defId) {
-        String cacheKey = CACHE_KEY_PREFIX.concat(defId);
-        return cacheService.get(cacheKey);
-    }
-
     public void updateProcessDefinition(ProcessDefinitionEntity processDefinition) {
         AssertUtils.isNotNull(processDefinition, "processDefinition must not be null");
         AssertUtils.isNotBlank(processDefinition.getDefId(), "ProcessDefinition defId must not be null");
+        checkMainProcessIdConsistent(processDefinition);
+        
         locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinition.getDefId(), () -> {
-            ProcessDefinitionEntity currentProcessDefinition = processRepository.findProcessDefinitionByDefIdAndVersion(
-                    processDefinition.getDefId(), processDefinition.getDefVersion());
-            if (currentProcessDefinition == null) {
-                log.error("find none process definition, defId:{}, defVersion:{}", processDefinition.getDefId(),
-                        processDefinition.getDefVersion());
-                throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.latestDefinitionNotFound"));
-            }
-            String extDataStr = currentProcessDefinition.getExtData();
-            if (StringUtils.isNotEmpty(extDataStr)) {
-                Map<String, Object> extData = JSON.parseObject(extDataStr, Map.class);
-                if (extData != null && StringUtils.isNotEmpty((String) extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID))) {
-                    throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.AttachedProcessDefinitionCannotUpdate", new Object[] { extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID)}));
-                }
-            }
-
-            if (StringUtils.equals(currentProcessDefinition.getContent(), processDefinition.getContent())) {
-                processDefinition.setId(currentProcessDefinition.getId());                
-                updateProcessDefinitionById(processDefinition);
-                return null;
-            }
             transactionTemplate.executeWithoutResult(transactionStatus -> {
-                processDefinition.setCreatedBy(processDefinition.getModifiedBy());
-                addProcessDefinition4Update(processDefinition);
+                ProcessDefinitionEntity currentProcessDefinition = processRepository.findProcessDefinitionByDefIdAndVersion(
+                        processDefinition.getDefId(), processDefinition.getDefVersion());
+                if (currentProcessDefinition == null) {
+                    log.error("find none process definition, defId:{}, defVersion:{}", processDefinition.getDefId(),
+                            processDefinition.getDefVersion());
+                    throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.latestDefinitionNotFound"));
+                }
+                String extDataStr = currentProcessDefinition.getExtData();
+                if (StringUtils.isNotEmpty(extDataStr)) {
+                    Map<String, Object> extData = JSON.parseObject(extDataStr, Map.class);
+                    if (extData != null && StringUtils.isNotEmpty((String) extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID))) {
+                        throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.attachedProcessDefinitionCannotUpdate", new Object[] { extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID)}));
+                    }
+                }
+    
+                if (StringUtils.equals(currentProcessDefinition.getContent(), processDefinition.getContent())) {
+                    processDefinition.setId(currentProcessDefinition.getId());                
+                    updateProcessDefinitionById(processDefinition);
+                } else {
+                    processDefinition.setCreatedBy(processDefinition.getModifiedBy());
+                    addProcessDefinition4Update(processDefinition);
+                    addOrUpdateAttachedProcesses(processDefinition);
+                }
             });
-            addOrUpdateAttachedProcesses(processDefinition);
             return null;
         });
+    }
+    
+    private void checkMainProcessIdConsistent(ProcessDefinitionEntity definition) {
+        String mainId = null;
+        if (ProcessDefinitionConstants.PROCESS_FORMAT_FSM_EASY.equals(definition.getFormat())) {
+            Fsm fsm = FsmParser.parse(definition.getJsonContent(), false);
+            mainId = fsm.getId();
+        } else {
+            Flow flow = flowParser.parse(definition.getJsonContent(), false).get(0);
+            mainId = flow.getId();
+        }
+        if (! StringUtils.equals(mainId, definition.getDefId())) {
+            throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.processIdInconsistent"));
+        }
     }
 
     public void updateProcessDefinitionById(ProcessDefinitionEntity processDefinition) {
@@ -240,6 +274,7 @@ public class ProcessDefinitionDomainService {
     public void forceUpdateProcessDefinition(ProcessDefinitionEntity processDefinition) {
         AssertUtils.isNotNull(processDefinition, "processDefinition must not be null");
         AssertUtils.isNotBlank(processDefinition.getDefId(), "ProcessDefinition defId must not be empty");
+        checkMainProcessIdConsistent(processDefinition);
         locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinition.getDefId(), () -> {
             transactionTemplate.executeWithoutResult(transactionStatus -> {
             ProcessDefinitionEntity processDefEntity = processRepository.findProcessDefinitionByDefIdAndVersion(
@@ -257,9 +292,8 @@ public class ProcessDefinitionDomainService {
             }
             processDefinition.setId(processDefEntity.getId());
             processRepository.updateProcessDefinitionById(processDefinition);
-
-            });
             addOrUpdateAttachedProcesses(processDefinition);
+            });
             return null;
         });
     }
@@ -348,7 +382,7 @@ public class ProcessDefinitionDomainService {
         if (defVersion == null) {
             ProcessDefinitionEntity latestProcessDef = processRepository.findLatestProcessDefinition(defId);
             if (latestProcessDef == null) {
-                log.info("Process definition ID{} not exists", defId);
+                log.info("Process definition ID {} not exists", defId);
                 defVersion = DEF_VERSION_NONE;
             } else {
                 defVersion = latestProcessDef.getDefVersion() == null ? DEF_VERSION_NULL
@@ -450,68 +484,91 @@ public class ProcessDefinitionDomainService {
     }
 
     private void addOrUpdateAttachedProcesses(ProcessDefinitionEntity definition) {
-        String jsonContent = definition.getJsonContent();
-        if (! jsonContent.trim().startsWith("[")) {
-            return;
-        }
-        List<Map<String, Object>> list = JSON.parseObject(jsonContent, List.class);
-        for (int i = 1; i < list.size(); i++) {
-            Map<String, Object> def = list.get(i);
-            addOrUpdateOneRemainProcess(definition, def);
+        if (onlyProcessListAttachedProcess) {
+            String jsonContent = definition.getJsonContent();
+            if (! jsonContent.trim().startsWith("[")) {
+                return;
+            }
+            List<Map<String, Object>> list = JSON.parseObject(jsonContent, List.class);
+            for (int i = 1; i < list.size(); i++) {
+                Map<String, Object> def = list.get(i);
+                String flowId = (String) def.get("id");
+                String flowName = (String) def.get("name");
+                String flowJsonStr = JSON.toJSONString(def);
+                addOrUpdateOneRemainProcess(definition, flowId, flowName, flowJsonStr);
+            }
+        } else {
+            String jsonContent = definition.getJsonContent();
+            List<Flow> flowList = flowParser.parse(jsonContent, false);
+            if (flowList.size() == 1) {
+                return;
+            }
+            for (int i = 1; i < flowList.size(); i++) {
+                Flow flow = flowList.get(i);
+                String flowId = flow.getId();
+                String flowName = flow.getName();
+                String flowStr = flow.stringify();
+                addOrUpdateOneRemainProcess(definition, flowId, flowName, flowStr);
+            }
         }
     }
 
-    private void addOrUpdateOneRemainProcess(ProcessDefinitionEntity definition, Map<String, Object> def) {
-        String flowId = (String) def.get("id");
-        String name = (String) def.get("name");
+    private void addOrUpdateOneRemainProcess(ProcessDefinitionEntity definition, String flowId, String flowName,
+            String flowJsonStr) {
+
         Integer defVersion = definition.getDefVersion();
         Boolean latest = definition.getLatest();
-        transactionTemplate.executeWithoutResult(transactionStatus -> {
-            ProcessDefinitionEntity existsDefinition = processRepository.findProcessDefinitionByDefIdAndVersion(flowId,
-                    defVersion);
-            ProcessDefinitionEntity latestDefinition = processRepository.findLatestProcessDefinition(flowId);
-            String jsonContent = JSON.toJSONString(def);
-            if (existsDefinition == null) {
-                ProcessDefinitionEntity entity = new ProcessDefinitionEntity();
-                entity.setBizType(definition.getBizType());
-                entity.setContent(jsonContent);
-                entity.setDefId(flowId);
-                entity.setDefSource(definition.getDefSource());
-                entity.setDefVersion(defVersion);
-                entity.setFormat(ProcessDefinitionConstants.PROCESS_FORMAT_FLOW_EASY);
-                entity.setJsonContent(jsonContent);
-                entity.setLatest(latest);
-                entity.setName(name);
-                entity.setCreatedBy(definition.getCreatedBy());
-                entity.setModifiedBy(definition.getModifiedBy());
-                Map<String, Object> extData = new HashMap<String, Object>();
-                extData.put(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID, definition.getDefId());
-                entity.setExtData(JSON.toJSONString(extData));
-                processRepository.saveProcessDefinition(entity);
-                if (Boolean.TRUE.equals(latest) && latestDefinition != null) {
-                    latestDefinition.setLatest(false);
-                    processRepository.updateProcessDefinitionById(latestDefinition);
-                }
-            } else {
-                existsDefinition.setBizType(definition.getBizType());
-                existsDefinition.setContent(jsonContent);
-                existsDefinition.setDefId(flowId);
-                existsDefinition.setDefSource(definition.getDefSource());
-                existsDefinition.setDefVersion(defVersion);
-                existsDefinition.setFormat(ProcessDefinitionConstants.PROCESS_FORMAT_FLOW_EASY);
-                existsDefinition.setJsonContent(jsonContent);
-                existsDefinition.setLatest(latest);
-                existsDefinition.setName(name);
-                existsDefinition.setCreatedBy(definition.getCreatedBy());
-                existsDefinition.setModifiedBy(definition.getModifiedBy());
-                processRepository.updateProcessDefinitionById(existsDefinition);
-                if (Boolean.TRUE.equals(latest) && latestDefinition != null
-                        && !latestDefinition.getId().equals(existsDefinition.getId())) {
-                    processRepository.updateProcessDefinitionLatestById(latestDefinition.getId());
-
-                }
+        ProcessDefinitionEntity existsDefinition = processRepository.findProcessDefinitionByDefIdAndVersion(flowId,
+                defVersion);
+        ProcessDefinitionEntity latestDefinition = processRepository.findLatestProcessDefinition(flowId);
+        if (latestDefinition != null) {
+            Map<String, Object> extDataMap = JSON.parseObject(latestDefinition.getExtData(), Map.class);
+            String mainProcessId = extDataMap == null ? null : (String) extDataMap.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID);
+            if (mainProcessId == null || ! mainProcessId.equals(definition.getDefId())) {
+                log.error("remain process " + flowId + " exists!");
+                throw new UserException(ExportResponseCode.FAIL.getCode(), MessageUtil.getMessage("easyflow.process.server.tip.processDefinitionExists"));
             }
-        });
+        }
+        
+        if (existsDefinition == null) {
+            ProcessDefinitionEntity entity = new ProcessDefinitionEntity();
+            entity.setBizType(definition.getBizType());
+            entity.setContent(flowJsonStr);
+            entity.setDefId(flowId);
+            entity.setDefSource(definition.getDefSource());
+            entity.setDefVersion(defVersion);
+            entity.setFormat(ProcessDefinitionConstants.PROCESS_FORMAT_FLOW_EASY);
+            entity.setJsonContent(flowJsonStr);
+            entity.setLatest(latest);
+            entity.setName(flowName);
+            entity.setCreatedBy(definition.getCreatedBy());
+            entity.setModifiedBy(definition.getModifiedBy());
+            Map<String, Object> extData = new HashMap<String, Object>();
+            extData.put(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID, definition.getDefId());
+            entity.setExtData(JSON.toJSONString(extData));
+            processRepository.saveProcessDefinition(entity);
+            if (Boolean.TRUE.equals(latest) && latestDefinition != null) {
+                processRepository.updateProcessDefinitionLatestById(latestDefinition.getId());
+            }
+        } else {
+            existsDefinition.setBizType(definition.getBizType());
+            existsDefinition.setContent(flowJsonStr);
+            existsDefinition.setDefId(flowId);
+            existsDefinition.setDefSource(definition.getDefSource());
+            existsDefinition.setDefVersion(defVersion);
+            existsDefinition.setFormat(ProcessDefinitionConstants.PROCESS_FORMAT_FLOW_EASY);
+            existsDefinition.setJsonContent(flowJsonStr);
+            existsDefinition.setLatest(latest);
+            existsDefinition.setName(flowName);
+            existsDefinition.setCreatedBy(definition.getCreatedBy());
+            existsDefinition.setModifiedBy(definition.getModifiedBy());
+            processRepository.updateProcessDefinitionById(existsDefinition);
+            if (Boolean.TRUE.equals(latest) && latestDefinition != null
+                    && !latestDefinition.getId().equals(existsDefinition.getId())) {
+                processRepository.updateProcessDefinitionLatestById(latestDefinition.getId());
+
+            }
+        }
         if (latest) {
             updateDefLatestCacheVersion(flowId, definition.getDefVersion());
         }
@@ -556,7 +613,13 @@ public class ProcessDefinitionDomainService {
     public void setProcessRepository(ProcessRepository processRepository) {
         this.processRepository = processRepository;
     }
-    
-    
 
+    public boolean isOnlyProcessListAttachedProcess() {
+        return onlyProcessListAttachedProcess;
+    }
+
+    public void setOnlyProcessListAttachedProcess(boolean onlyProcessListAttachedProcess) {
+        this.onlyProcessListAttachedProcess = onlyProcessListAttachedProcess;
+    }
+    
 }

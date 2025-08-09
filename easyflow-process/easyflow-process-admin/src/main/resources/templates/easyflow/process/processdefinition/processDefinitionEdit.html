@@ -40,6 +40,7 @@
 <script type="text/javascript" th:src="@{/static/plugins/flow/flow.js}" class="script"></script>
 <script type="text/javascript" id="script" th:inline="javascript">
     var defData = /*[(${defData})]*/ {};
+    var originalDefId = defData.defId;
     var flowBizType={};
     var flowCategory={};
     var flowControl = new J.FlowControl({$container: $("#flowControl"), data:defData, mode:"edit"});
@@ -47,6 +48,10 @@
     flowControl.render();
     $(".j-btn-save-flow").click(async function(){
         var controlData = await flowControl.collect();
+        if (controlData.defId != originalDefId) {
+            alert("process id cannot change!");
+            return;
+        }
         $("[name='defId']").val(controlData.defId);
         $("[name='defName']").val(controlData.defName);
         $("[name='bizType']").val(controlData.bizType);
@@ -61,6 +66,10 @@
         $("#addForm").attr('action', forceUpdateUrl); 
         var controlData = await flowControl.collect();
         $("[name='defId']").val(controlData.defId);
+        if (controlData.defId != originalDefId) {
+            alert("process id cannot change!");
+            return;
+        }     
         $("[name='defName']").val(controlData.defName);
         $("[name='bizType']").val(controlData.bizType);
         $("[name='category']").val(controlData.category);

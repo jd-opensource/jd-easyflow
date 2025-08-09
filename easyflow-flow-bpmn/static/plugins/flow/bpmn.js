@@ -1479,6 +1479,10 @@
 /**
 * Find BPMN Element
 */
+	J.BpmnControl.prototype.findProcessElements = function() {
+		var bpmnModeler = this.bpmnModeler;
+		return _findProcessElement(bpmnModeler);
+	}
     function _findProcessElement(bpmnModeler) {
         var elementRegistry = bpmnModeler.get('elementRegistry');
         var processes = elementRegistry.filter(function(element) {
@@ -1545,8 +1549,7 @@
                 element.$body = value;
             } else {
                 // add element
-                const moddle = bpmnModeler.get('moddle'),
-                    modeling = bpmnModeler.get('modeling');
+                const moddle = bpmnModeler.get('moddle');
                 (!bo.extensionElements) && (bo.extensionElements = moddle.create('bpmn:ExtensionElements'));
                 var element = moddle.create(type);
                 element.$body = value;

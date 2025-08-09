@@ -15,6 +15,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.engine.impl.FlowEngineImpl;
 import com.jd.easyflow.flow.model.Flow;
+import com.jd.easyflow.flow.model.parser.FlowParser;
 import com.jd.easyflow.flow.model.parser.FlowParserImpl;
 import com.jd.easyflow.flow.util.FlowIOUtil;
 import com.jd.easyflow.flow.util.JsonUtil;
@@ -83,16 +84,35 @@ public class FlowParserTest {
         flowEngine.execute(param2);
     }
 	
-	   @Test
-	    public void testAddFilterForAllFlow() throws Exception {
-	        FlowEngineImpl flowEngine = new FlowEngineImpl();
-	        flowEngine.setFlowPath("classpath:flow/cases/parser/parser_test_003.json");
-	        flowEngine.setFlowParser(new TestFlowParserImpl());
-	        flowEngine.init();
-	        
-	        FlowParam param = new FlowParam("parser_test_003", new String[] {}, null);
-	        flowEngine.execute(param);
-	    }
+    @Test
+    public void testAddFilterForAllFlow() throws Exception {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/parser/parser_test_003.json");
+        flowEngine.setFlowParser(new TestFlowParserImpl());
+        flowEngine.init();
+
+        FlowParam param = new FlowParam("parser_test_003", new String[] {}, null);
+        flowEngine.execute(param);
+    }
+    
+    @Test
+    public void testSubFlow001()  throws Exception {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources;
+        InputStream is = null;
+        resources = resolver.getResources("classpath:flow/cases/parser/parser_test_subflow_001.json");
+        for (Resource resource : resources) {
+            logger.info("Start parse flow definition:" + resource.getURI());
+            is = resource.getInputStream();
+            String flowConfigStr = FlowIOUtil.toString(is);
+            List<Flow> flowList = new FlowParserImpl().parse(flowConfigStr);
+            is.close();
+            assertEquals(flowList.get(1).getProperty("_parent_flow_id"), "flow1");
+            assertEquals(flowList.get(2).getProperty("_parent_flow_id"), "flow11");
+        }
+    }
+	   
+	   
 	
 	
 }

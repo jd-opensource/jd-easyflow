@@ -33,7 +33,7 @@ public class FlowNodeAction implements NodeAction {
     protected String flowId;
     protected String[] startNodeIds;
     protected Boolean inherit;
-
+    protected Flow flow;
 
     public FlowNodeAction() {
         // NOOP
@@ -57,7 +57,7 @@ public class FlowNodeAction implements NodeAction {
     protected FlowParam buildFlowParam(NodeContext nodeContext, FlowContext context) {
         // init param.
         FlowParam param = new FlowParam();
-        param.setFlowId(flowId);
+        param.setFlowId(flow == null ? flowId : flow.getId());
         param.setNodeIds(startNodeIds);
         if (inherit) {
             param.setParam(context.getParam().getParam());
@@ -84,7 +84,7 @@ public class FlowNodeAction implements NodeAction {
             result.setResult(context.getResult().getResult());
             result.setDataMapFrom(context.getResult());
         }
-
+        subContext.setFlow(flow);
         param.setContext(subContext);
         subContext.setResult(result);
         return param;
@@ -137,6 +137,7 @@ public class FlowNodeAction implements NodeAction {
                     Flow subFlow = flowList.get(0);
                     initContext.getFlowList().add(subFlow);
                     flowId = subFlow.getId();
+                    flow = subFlow;
                 }
             }
         }
@@ -159,4 +160,12 @@ public class FlowNodeAction implements NodeAction {
         }
     }
 
+    public void setFlow(Flow flow) {
+        this.flow = flow;
+    }
+
+    public Flow getFlow() {
+        return flow;
+    }
+    
 }

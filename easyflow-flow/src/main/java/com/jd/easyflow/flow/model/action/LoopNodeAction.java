@@ -168,13 +168,16 @@ public class LoopNodeAction implements NodeAction {
                     initContext.isParseEl(), initContext.getFlow(), node);
             loopAction = initContext.getFlowParser().parseNodeAction(param);
         }
-        
-        if (loopAction == null) {
-            throw new FlowException("Loop node action can not be null");
+        if (loopAction != null) {
+            loopAction.init(initContext, node);
         }
-        loopAction.init(initContext, node);
-        if (loopMaxCount == null && loopMaxCountExp == null && loopMaxCountExecutor == null && loopConditionExp == null && loopConditionExecutor == null) {
-            throw new FlowException("Loop maximum and loop condition can not both be null");
+        if (initContext.isParseEl()) {
+            if (loopAction == null) {
+                throw new FlowException("Loop node action can not be null");
+            }
+            if (loopMaxCount == null && loopMaxCountExp == null && loopMaxCountExecutor == null && loopConditionExp == null && loopConditionExecutor == null) {
+                throw new FlowException("Loop maximum and loop condition can not both be null");
+            }
         }
         
     }

@@ -15,6 +15,7 @@ import com.jd.easyflow.process.adapter.export.converter.ProcessTaskConverter;
 import com.jd.easyflow.process.adapter.export.dto.task.CanWithdrawTaskReq;
 import com.jd.easyflow.process.adapter.export.dto.task.CanWithdrawTaskRes;
 import com.jd.easyflow.process.adapter.export.dto.task.ExecuteTaskReq;
+import com.jd.easyflow.process.adapter.export.dto.task.ExecuteTaskRes;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskAssignDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.QueryTaskReq;
@@ -43,10 +44,11 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
 
     @Action(code = "easyflow-process-0301", name = "executeTask")
     @Override
-    public ExportResponse<Object> executeTask(ExportRequest<ExecuteTaskReq> req) {
+    public ExportResponse<ExecuteTaskRes> executeTask(ExportRequest<ExecuteTaskReq> req) {
         ExecuteProcessTaskReqVO vo = ProcessTaskConverter.INSTANCE.convert(req.getData());
         processTaskDomainService.executeTask(vo);
-        return ExportResponse.build4Success();
+        ExecuteTaskRes res = new ExecuteTaskRes();
+        return ExportResponse.build4Success(res);
     }
 
     @Action(code = "easyflow-process-0302", name = "pagerQueryTask")

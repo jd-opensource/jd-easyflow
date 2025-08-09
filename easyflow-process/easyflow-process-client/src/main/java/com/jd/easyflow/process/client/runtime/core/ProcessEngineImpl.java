@@ -23,6 +23,7 @@ public class ProcessEngineImpl implements ProcessEngine {
         FlowResult result = flowEngine.execute(flowParam);
         ProcessResult processResult = new ProcessResult();
         processResult.setResult(result.getResult());
+        processResult.setDataMap(result.getDataMap());
         if (result.getContext() != null) {
             StdProcessContext processContext = result.getContext().get(StdFlowProcessConstants.FLOW_CTX_PROCESS_CTX);
             if (processContext != null) {

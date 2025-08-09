@@ -1,0 +1,23 @@
+{
+	"id": "flow1",
+	"nodes": [
+		{
+			"id": "node1",
+			"action": {
+				"flow": {
+					"id": "flow11",
+					"nodes": [
+						{
+							"id": "node11",
+							"action": {
+								"flow": {
+									"id": "flow111"
+								}
+							}
+						}
+					]
+				}
+			}
+		}
+	]
+}

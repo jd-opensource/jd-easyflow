@@ -7,7 +7,9 @@ import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
 import com.jd.easyflow.process.adapter.export.converter.ProcessScheduleConverter;
 import com.jd.easyflow.process.adapter.export.dto.schedule.ScheduleProcessReq;
+import com.jd.easyflow.process.adapter.export.dto.schedule.ScheduleProcessRes;
 import com.jd.easyflow.process.domain.model.vo.ScheduleProcessReqVO;
+import com.jd.easyflow.process.domain.model.vo.ScheduleProcessResVO;
 import com.jd.easyflow.process.domain.service.ProcessScheduleDomainService;
 
 /**
@@ -22,10 +24,11 @@ public class ProcessScheduleExportImpl implements ProcessScheduleExport {
 
     @Action(code = "easyflow-process-0401", name = "schedule")
     @Override
-    public ExportResponse<Object> schedule(ExportRequest<ScheduleProcessReq> req) {
-        ScheduleProcessReqVO vo = ProcessScheduleConverter.INSTANCE.convert(req.getData());
-        processScheduleDomainService.schedule(vo);
-        return ExportResponse.build4Success();
+    public ExportResponse<ScheduleProcessRes> schedule(ExportRequest<ScheduleProcessReq> req) {
+        ScheduleProcessReqVO reqVo = ProcessScheduleConverter.INSTANCE.convert(req.getData());
+        ScheduleProcessResVO resVo = processScheduleDomainService.schedule(reqVo);
+        ScheduleProcessRes res = ProcessScheduleConverter.INSTANCE.convert(resVo);
+        return ExportResponse.build4Success(res);
     }
 
 }

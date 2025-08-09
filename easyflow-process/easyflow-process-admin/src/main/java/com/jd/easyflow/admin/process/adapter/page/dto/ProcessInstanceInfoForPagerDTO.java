@@ -8,20 +8,21 @@ import com.jd.easyflow.process.adapter.export.dto.instance.ProcessInstanceDTO;
 public class ProcessInstanceInfoForPagerDTO extends ProcessInstanceDTO {
 
     
-    private boolean canCanCel;
+    private boolean canCancel;
 
-    public boolean isCanCanCel() {
-        return canCanCel;
+    public boolean isCanCancel() {
+        return canCancel;
     }
 
-    public void setCanCanCel(boolean canCanCel) {
-        this.canCanCel = canCanCel;
+    public void setCanCancel(boolean canCancel) {
+        this.canCancel = canCancel;
     }
 
     @Override
     public String toString() {
-        return "ProcessInstanceInfoForPagerDTO [canCanCel=" + canCanCel + "]";
+        return "ProcessInstanceInfoForPagerDTO [canCancel=" + canCancel + ", toString()=" + super.toString() + "]";
     }
-    
+
+
     
 }
