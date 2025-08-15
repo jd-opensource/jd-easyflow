@@ -125,6 +125,14 @@ public class ProcessRuntimeService {
             processInstance.setBizData(instance.getBizData());
             update = true;
         }
+        if (instance.getParentInstanceNo() != null && !StringUtils.equals(processInstance.getParentInstanceNo(), instance.getParentInstanceNo())) {
+            processInstance.setParentInstanceNo(instance.getParentInstanceNo());
+            update = true;
+        }
+        if (instance.getParentNodeInstanceNo() != null && !StringUtils.equals(processInstance.getParentNodeInstanceNo(), instance.getParentNodeInstanceNo())) {
+            processInstance.setParentNodeInstanceNo(instance.getParentNodeInstanceNo());
+            update = true;
+        }
         if (update) {
             manager.updateProcessInstance(processInstance, context);
         }
@@ -355,10 +363,14 @@ public class ProcessRuntimeService {
             if (start == null) {
                 start = true;
                 List<String> startNodeIds = context.getProcessProperty(StdProcessConstants.PROP_START_NODE_IDS);
-                if ((startNodeIds != null && ! startNodeIds.isEmpty()) && (context.getStartNodeIds() != null && ! context.getStartNodeIds().isEmpty())) {
-                    for (String startNodeId : context.getStartNodeIds()) {
-                        if (!startNodeIds.contains(startNodeId)) {
-                            start = false;
+                if (context.getStartNodeIds() != null && ! context.getStartNodeIds().isEmpty()) {
+                    if (startNodeIds == null || startNodeIds.isEmpty()) {
+                        start = false;
+                    } else {
+                        for (String startNodeId : context.getStartNodeIds()) {
+                            if (!startNodeIds.contains(startNodeId)) {
+                                start = false;
+                            }
                         }
                     }
                 }

@@ -13,7 +13,7 @@
     <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processDefinitionEdit.defEdit}]]</li>
 </ol>
 <div id="content">
-    <form th:action="@{/easyflow/processDefinition/ajax/edit}" method="post" id="addForm" class="j-ajax-form j-form-container j-form-horizontal container-fluid"
+    <form th:action="@{/easyflow/processDefinition/ajax/edit}" method="post" id="editForm" class="j-ajax-form j-form-container j-form-horizontal container-fluid"
           th:data-success-url="@{/easyflow/processDefinition/list}">
         <input type="hidden" name="defId"/>
         <input type="hidden" name="defVersion" th:value="${definition.defVersion}"/>
@@ -59,11 +59,11 @@
         $("[name='format']").val(controlData.format);
         $("[name='bpmnXmlData']").val(controlData.bpmnXmlData);
         $("[name='jsonData']").val(controlData.jsonData);
-        $("#addForm").submit();
+        var updateUrl = "[(@{/easyflow/processDefinition/ajax/edit})]";
+        $("#editForm").attr('action', updateUrl); 
+        $("#editForm").submit();
     });
     $(".j-btn-forceUpdate-flow").click(async function(){
-        var forceUpdateUrl = "/easyflow/processDefinition/ajax/forceUpdate";
-        $("#addForm").attr('action', forceUpdateUrl); 
         var controlData = await flowControl.collect();
         $("[name='defId']").val(controlData.defId);
         if (controlData.defId != originalDefId) {
@@ -76,7 +76,9 @@
         $("[name='format']").val(controlData.format);
         $("[name='bpmnXmlData']").val(controlData.bpmnXmlData);
         $("[name='jsonData']").val(controlData.jsonData);
-        $("#addForm").submit();
+        var forceUpdateUrl = "[(@{/easyflow/processDefinition/ajax/forceUpdate})]";
+        $("#editForm").attr('action', forceUpdateUrl); 
+        $("#editForm").submit();
     });
     $(".j-btn-cancel").click(function(){
         window.location.href=root + "/list";

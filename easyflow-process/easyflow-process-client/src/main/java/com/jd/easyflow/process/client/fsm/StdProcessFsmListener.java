@@ -178,7 +178,7 @@ public class StdProcessFsmListener implements FsmEventListener {
                 return Arrays.asList(context.getCurrentState().getId());
             }
             if (processInstance == null) {
-                return Arrays.asList(context.getFsm().getStartStateId());
+                return context.getFsm().getStartStateId() == null ? new ArrayList<String>() : Arrays.asList(context.getFsm().getStartStateId());
             } else {
                 Set<String> activeNodeIds = processRuntimeService.getManager().findOpenNodeIds(processContext);
                 if (activeNodeIds != null && ! activeNodeIds.isEmpty()) {
@@ -191,7 +191,7 @@ public class StdProcessFsmListener implements FsmEventListener {
                         return Arrays.asList(currentStateId);
                     }
                 } else {
-                    return Arrays.asList(context.getFsm().getStartStateId());
+                    return context.getFsm().getStartStateId() == null ? new ArrayList<String>() : Arrays.asList(context.getFsm().getStartStateId());
                 }
             }
 

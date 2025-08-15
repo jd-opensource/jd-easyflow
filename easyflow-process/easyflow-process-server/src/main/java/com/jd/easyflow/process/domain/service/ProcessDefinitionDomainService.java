@@ -292,6 +292,7 @@ public class ProcessDefinitionDomainService {
             }
             processDefinition.setId(processDefEntity.getId());
             processRepository.updateProcessDefinitionById(processDefinition);
+            processDefinition.setLatest(processDefEntity.getLatest());
             addOrUpdateAttachedProcesses(processDefinition);
             });
             return null;

@@ -282,6 +282,19 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         List<ProcessNodeInstanceDTO> nodeInstanceDTO = ProcessInstanceConverter.INSTANCE.convertNodeInstanceList(nodeInstanceEntityList);
         return ExportResponse.build4Success(nodeInstanceDTO);
     }
+    
+    @Action(code = "easyflow-process-0220", name = "queryProcessInstanceByParentInstanceNo")
+    @Override
+    public ExportResponse<List<ProcessInstanceDTO>> queryProcessInstanceByParentInstanceNo(ExportRequest<String> request) {
+        if (StringUtils.isBlank(request.getData())) {
+            return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY.getCode(), " parent instance no cannot be null");
+        }
+        List<ProcessInstanceDTO> processInstances = getTransactionTemplate().execute(status -> {
+            return processRepository.queryProcessInstanceByParentInstanceNo(request.getData());
+        });
+        return ExportResponse.build4Success(processInstances);
+    }
+    
 
     private TransactionTemplate getTransactionTemplate() {
         return processInstanceDomainService.getTransactionTemplate();
@@ -302,7 +315,6 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     public void setProcessRepository(ProcessRepository processRepository) {
         this.processRepository = processRepository;
     }
-    
     
 
 }

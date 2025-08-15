@@ -433,13 +433,19 @@ public class ProcessTaskController extends BasePageController {
         ExportResponse<ProcessDefinitionDTO> definitionResponse = getProcessDefinitionExport()
                 .getProcessDefinition(new ExportRequest<String>(instance.getProcessDefId()));
         ProcessDefinitionDTO definition = ExportResponseUtil.unwrap(definitionResponse);
-        Flow flow = flowParser.parse(definition.getJsonContent(), false).get(0);
-        FlowNode flowNode = flow.getNode(task.getTaskBizCode());
+        Flow flow = null; 
+        FlowNode flowNode = null;
+        if (definition != null) {
+            flow = flowParser.parse(definition.getJsonContent(), false).get(0);
+            flowNode = flow.getNode(task.getTaskBizCode());
+        } else {
+            logger.warn("process:" + instance.getProcessDefId() + " is null");
+        }
 
-        Map<String, Object> taskProperties = (Map<String, Object>) flowNode.getProperty("task");
-        Map<String, Object> detailProperties = (Map<String, Object>) taskProperties.get("detail");
-        Map<String, Object> flowTaskProperties = flow.getProperty("task");
-        Map<String, Object> processProperties = flow.getProperty("process");
+        Map<String, Object> taskProperties = flowNode == null ? null : (Map<String, Object>) flowNode.getProperty("task");
+        Map<String, Object> detailProperties = taskProperties == null ? null :  (Map<String, Object>) taskProperties.get("detail");
+        Map<String, Object> flowTaskProperties = flow == null ? null : flow.getProperty("task");
+        Map<String, Object> processProperties = flow == null ? null : flow.getProperty("process");
         Map<String, Object> flowDetailProperties = flowTaskProperties == null ? null : (Map<String, Object>) flowTaskProperties.get("taskDetail");
         model.addAttribute("task", task);
         model.addAttribute("instance", instance);
@@ -487,7 +493,7 @@ public class ProcessTaskController extends BasePageController {
             instanceFormId = (String) flowDetailProperties.get("instanceFormId");
         }
         if (instanceFormId == null) {
-            instanceFormId = (String) processProperties.get("formId");
+            instanceFormId = processProperties == null ? null : (String) processProperties.get("formId");
         }
         model.addAttribute("instanceFormId", instanceFormId);
 

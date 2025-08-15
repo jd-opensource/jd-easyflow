@@ -39,5 +39,6 @@ public interface ProcessInstanceMapper {
 
     List<ProcessInstance> selectProcessInstanceByPageCondition(PagerCondition pagerQueryReq);
     List<ProcessInstance> queryProcessInstanceByInstanceNos(@Param("processInstanceNos") List<String> processInstanceNos);
+    List<ProcessInstance> selectProcessInstanceByParentInstanceNo(String parentInstanceNo);
 
 }

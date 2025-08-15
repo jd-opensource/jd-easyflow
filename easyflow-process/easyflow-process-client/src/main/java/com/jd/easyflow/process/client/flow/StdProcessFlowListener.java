@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,7 +205,7 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
                     return new ArrayList<String>();
                 }
             }
-            if (ArrayUtils.isNotEmpty(context.getParam().getNodeIds())) {
+            if (context.getParam().getNodeIds() != null) {
                 return Arrays.asList(context.getParam().getNodeIds());
             } else if (processInstance != null) {
                 Set<String> openNodeIds = processRuntimeService.getManager().findOpenNodeIds(processContext);
@@ -216,13 +215,17 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
                 } else {
                     List<String> startNodeList = (List<String>) processContext.getProcessProperties()
                             .get(StdProcessConstants.PROP_START_NODE_IDS);
-                    context.getParam().setNodeIds(startNodeList.toArray(new String[] {}));
+                    if (startNodeList != null && ! startNodeList.isEmpty()) {
+                        context.getParam().setNodeIds(startNodeList.toArray(new String[] {}));
+                    }
                     return startNodeList;
                 }
             } else {
                 List<String> startNodeList = (List<String>) processContext.getProcessProperties()
                         .get(StdProcessConstants.PROP_START_NODE_IDS);
-                context.getParam().setNodeIds(startNodeList.toArray(new String[] {}));
+                if (startNodeList != null && ! startNodeList.isEmpty()) {
+                    context.getParam().setNodeIds(startNodeList.toArray(new String[] {}));
+                }
                 return startNodeList;
             }
         });

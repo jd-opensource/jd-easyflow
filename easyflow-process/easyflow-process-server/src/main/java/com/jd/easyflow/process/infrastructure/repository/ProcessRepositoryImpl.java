@@ -257,4 +257,10 @@ public class ProcessRepositoryImpl implements ProcessRepository {
         return ProcessConverter.INSTANCE.convertNodeInstanceList(processNodeInstances);
     }
 
+    @Override
+    public List<ProcessInstanceDTO> queryProcessInstanceByParentInstanceNo(String parentInstanceNo) {
+        List<ProcessInstance> processInstances = processInstanceMapper.selectProcessInstanceByParentInstanceNo(parentInstanceNo);
+        return ProcessConverter.INSTANCE.convertProcessInstanceDtoList(processInstances);
+    }
+
 }

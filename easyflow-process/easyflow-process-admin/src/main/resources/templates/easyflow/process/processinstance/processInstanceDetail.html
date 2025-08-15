@@ -67,9 +67,19 @@
                         class="form-control" th:text="${processInstance.vars}" style="height:27px" readonly="readonly"></textarea>
                 </div>
                 <div class="form-group col">
-                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.processDef}]]:</label><a th:href="@{/easyflow/processDefinition/detail(defId=${processDef.defId},defVersion=${processDef.defVersion})}" th:text="${processInstance.processDefId}" class="form-control-plaintext" style="color:rgb(0, 123, 255)" onclick="javascript:J.openWindow(this.href, '_blank','','');return false;"></a>
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.processDef}]]:</label>
+                    <a th:if="${processDef!=null}" th:href="@{/easyflow/processDefinition/detail(defId=${processDef.defId},defVersion=${processDef.defVersion})}" th:text="${processInstance.processDefId}" class="form-control-plaintext" style="color:rgb(0, 123, 255)" onclick="javascript:J.openWindow(this.href, '_blank','','');return false;"></a>
+                    <span th:if="${processDef==null}" th:text="${processInstance.processDefId}" class="form-control-plaintext"></span>
                 </div>
             </div>
+          <th:if test="${processInstance.parentInstanceNo!=null}">
+          <div class="row">
+                <div class="form-group col-2">
+                    <label>[[#{easyflow.process.admin.page.processInstanceDetail.parentInstanceNo}]]:</label>
+                                        <a th:href="@{/easyflow/processInstance/detail(instanceNo=${processInstance.parentInstanceNo})}" th:text="${processInstance.parentInstanceNo}" class="form-control-plaintext" style="color:rgb(0, 123, 255)" onclick="javascript:J.openWindow(this.href, '_blank','','');return false;"></a>
+                </div>
+          </div> 
+          </th:if> 
             <div id="processBizDataDiv" class="card">
                 <h5 class="card-header">[[#{easyflow.process.admin.page.processInstanceDetail.processBizData}]]</h5>
                 <div class="card-body">
@@ -125,7 +135,7 @@
     instancePage = new J.Page({data:instanceData, ctx:{"op":"detail"}, init:false, templates:[{"code":instanceTemplateId}], $container:$("#instanceForm"), saveAction:null, helper:{show:false}});
     instancePage.loadAndRender();
 // Graph view
-if (defData.bpmnXmlData) {
+if (defData && defData.bpmnXmlData) {
         var bpmnControl = new J.BpmnControl({
             $bpmnContainer : $("#bpmnContainer"),
             data : {bpmnXmlData:defData.bpmnXmlData},
@@ -162,6 +172,7 @@ if (defData.bpmnXmlData) {
         showRefresh: false,
         showColumns: false,
         columns:[
+            {field:"processInstanceNo", title:"[(#{easyflow.process.admin.page.processInstanceDetail.instanceNo})]"},
             {field:"nodeInstanceNo", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeInstanceNo})]"},
             {field:"nodeId", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeId})]"},
             {field:"nodeName", title:"[(#{easyflow.process.admin.page.processInstanceDetail.nodeName})]"},

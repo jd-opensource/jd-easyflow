@@ -186,14 +186,16 @@ public class ProcessInstanceController extends BasePageController {
                 .queryProcessDefinitionByVersion(new ExportRequest(req));
         ProcessDefinitionDTO processDefinition = exportResponse.getData();
         ProcessDefDTO processDef = ProcessDefinitionConverter.INSTANCE.adapterConvert(processDefinition);
-        if (BPMN_FORMAT.equals(processDefinition.getFormat())) {
-            processDef.setBpmnXmlData(processDefinition.getContent());
-        } else {
-            String extData = processDefinition.getExtData();
-            if (StringUtils.isNotEmpty(extData)) {
-                Map<String, Object> extDataMap = JSON.parseObject(extData, Map.class);
-                String bpmnData = (String) extDataMap.get(EXT_DATA_BPMN_OF_JSON_KEY);
-                processDef.setBpmnXmlData(bpmnData);
+        if (processDefinition != null) {
+            if (BPMN_FORMAT.equals(processDefinition.getFormat())) {
+                processDef.setBpmnXmlData(processDefinition.getContent());
+            } else {
+                String extData = processDefinition.getExtData();
+                if (StringUtils.isNotEmpty(extData)) {
+                    Map<String, Object> extDataMap = JSON.parseObject(extData, Map.class);
+                    String bpmnData = (String) extDataMap.get(EXT_DATA_BPMN_OF_JSON_KEY);
+                    processDef.setBpmnXmlData(bpmnData);
+                }
             }
         }
 
@@ -208,12 +210,14 @@ public class ProcessInstanceController extends BasePageController {
         fillNodeName(processDef, sortedNodeInstanceList);
 
         Map<String, Object> processProperties = null;
-        if (FORMAT_FSM_EASY.equals(processDefinition.getFormat())) {
-            Fsm fsm = FsmParser.parse(processDefinition.getJsonContent(), false);
-            processProperties = fsm.getProperty("process");
-        } else {
-            Flow flow = flowParser.parse(processDefinition.getJsonContent(), false).get(0);
-            processProperties = flow.getProperty("process");
+        if (processDefinition != null) {
+            if (FORMAT_FSM_EASY.equals(processDefinition.getFormat())) {
+                Fsm fsm = FsmParser.parse(processDefinition.getJsonContent(), false);
+                processProperties = fsm.getProperty("process");
+            } else {
+                Flow flow = flowParser.parse(processDefinition.getJsonContent(), false).get(0);
+                processProperties = flow.getProperty("process");
+            }
         }
         String pageUrl = processProperties == null ? null : (String) processProperties.get("pageUrl");
         if (pageUrl != null) {

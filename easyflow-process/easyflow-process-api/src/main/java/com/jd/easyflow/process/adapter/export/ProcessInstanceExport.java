@@ -20,6 +20,17 @@ public interface ProcessInstanceExport {
 
     ExportResponse<CreateProcessInstanceRes> createProcessInstance(ExportRequest<CreateProcessInstanceReq> req);
     
+    ExportResponse<String> lockProcessInstance(ExportRequest<LockProcessInstanceReq> req);
+
+    ExportResponse<Boolean> unLockProcessInstance(ExportRequest<UnlockProcessInstanceReq> req);
+    
+    ExportResponse<Object> updateProcessInstance(ExportRequest<ProcessInstanceDTO> request);
+
+    ExportResponse<CanCancelProcessInstanceRes> canCancel(ExportRequest<CanCancelProcessInstanceReq> request);
+
+    ExportResponse<CancelProcessInstanceRes> cancel(ExportRequest<CancelProcessInstanceReq> request);
+    
+    /* process instance query */
     ExportResponse<PagerResult> pagerQueryProcessInstance(ExportRequest<PagerCondition> req);
     
     ExportResponse<ProcessInstanceDTO> getProcessInstance(ExportRequest<String> req);
@@ -27,12 +38,13 @@ public interface ProcessInstanceExport {
     ExportResponse<ProcessInstanceDTO> queryProcessInstanceByProcessTypeAndBizNo(ExportRequest<QueryProcessInstanceReq> req);
     
     ExportResponse<ProcessInstanceDTO> queryActiveProcessInstanceByProcessTypeAndBizNo(ExportRequest<QueryProcessInstanceReq> req);
+    
+    ExportResponse<List<ProcessInstanceDTO>> queryInstanceByInstanceNos(ExportRequest<List<String>> request);
+    
+    ExportResponse<List<ProcessInstanceDTO>> queryProcessInstanceByParentInstanceNo(ExportRequest<String> request);
 
+    /*process node instance query*/
     ExportResponse<List<ProcessNodeInstanceDTO>> queryProcessNodeInstanceByInstanceNo(ExportRequest<String> req);
-
-    ExportResponse<String> lockProcessInstance(ExportRequest<LockProcessInstanceReq> req);
-
-    ExportResponse<Boolean> unLockProcessInstance(ExportRequest<UnlockProcessInstanceReq> req);
 
     ExportResponse<ProcessNodeInstanceDTO> queryOpenNodeInstance(ExportRequest<QueryOpenNodeInstanceReq> request);
 
@@ -42,14 +54,8 @@ public interface ProcessInstanceExport {
 
     ExportResponse<List<ProcessNodeInstanceDTO>> queryNodeInstanceByNos(ExportRequest<List<String>> request);
 
+    /*process execution query*/
     ExportResponse<ProcessNodeExecutionDTO> queryNodeExecutionByNo(ExportRequest<String> request);
 
-    ExportResponse<Object> updateProcessInstance(ExportRequest<ProcessInstanceDTO> request);
-
-    ExportResponse<CanCancelProcessInstanceRes> canCancel(ExportRequest<CanCancelProcessInstanceReq> request);
-
-    ExportResponse<CancelProcessInstanceRes> cancel(ExportRequest<CancelProcessInstanceReq> request);
-
-    ExportResponse<List<ProcessInstanceDTO>> queryInstanceByInstanceNos(ExportRequest<List<String>> request);
 
 }

@@ -70,7 +70,7 @@ public class ProcessRuntimeManager {
         return op(context, () -> {
             ProcessCache cache = context.getCache();
             for (ProcessInstanceDTO dto : cache.objects(ProcessInstanceDTO.class)) {
-                if (StringUtils.equals(dto.getProcessType(), dto.getProcessType())
+                if (StringUtils.equals(dto.getProcessType(), processType)
                         && StringUtils.equals(dto.getBizNo(), bizNo)) {
                     return dto;
                 }

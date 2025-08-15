@@ -349,7 +349,15 @@
       </foreach>
     </where>
   </select>
-
+  <select id="selectProcessInstanceByParentInstanceNo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from process_instance
+    <where>
+      deleted = 0 and parent_instance_no=#{parentInstanceNo}
+    </where>
+  </select>
+  
   <sql id="pagerWhere">
     <where> deleted = 0
       <if test="fieldMap.instanceNo != null">

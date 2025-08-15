@@ -79,6 +79,8 @@ public interface ProcessRepository {
 
     List<ProcessInstanceDTO> queryProcessInstanceByInstanceNos(List<String> processInstanceNos);
     
+    List<ProcessInstanceDTO> queryProcessInstanceByParentInstanceNo(String parentInstanceNo);
+    
     List<ProcessNodeInstanceEntity> queryNodeInstanceByNos(List<String> nodeInstanceNos);
 
 }

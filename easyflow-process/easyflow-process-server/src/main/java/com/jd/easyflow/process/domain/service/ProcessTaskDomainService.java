@@ -452,6 +452,10 @@ public class ProcessTaskDomainService {
         ProcessNodeInstanceEntity processNodeInstance = processRepository.getByNodeInstanceNo(task.getNodeInstanceNo());
         ProcessDefinitionEntity processDefinitionEntity = processDefinitionDomainService
                 .getProcessDefinition(processInstance.getProcessDefId());
+        if (processDefinitionEntity == null) {
+            log.warn("process:" + processInstance.getProcessDefId() + " is null");
+            return null;
+        }
         Flow flow = flowParser.parse(processDefinitionEntity.getJsonContent(), false).get(0);
         FlowNode flowNode = flow.getNode(processNodeInstance.getNodeId());
         Map<String, Object> taskConf = flowNode.getProperty("task");
