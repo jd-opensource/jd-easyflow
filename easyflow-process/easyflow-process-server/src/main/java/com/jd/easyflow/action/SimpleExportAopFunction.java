@@ -1,10 +1,10 @@
 package com.jd.easyflow.action;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class SimpleExportAopFunction implements Function<ActionInfo<?, ?>, Void>
             Object param = actionInfo.getParam();
             String paramStr = null;
             if (format == null) {
-                paramStr = ArrayUtils.toString(actionInfo.getParam());
+                paramStr = toString(param);
             } else if (FORMAT_JSON.equals(format)) {
                 paramStr = JSON.toJSONString(actionInfo.getParam());
             }
@@ -46,7 +46,7 @@ public class SimpleExportAopFunction implements Function<ActionInfo<?, ?>, Void>
             // log result
             String resultStr = null;
             if (format == null) {
-                resultStr = result == null ? null : result.toString();
+                resultStr = toString(result);
             } else {
                 resultStr = JSON.toJSONString(result);
             }
@@ -86,6 +86,15 @@ public class SimpleExportAopFunction implements Function<ActionInfo<?, ?>, Void>
         this.format = format;
     }
     
+    private String toString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        if (o instanceof Object[]) {
+            return Arrays.toString((Object[]) o);
+        }
+        return o.toString();
+    }
     
 
 }

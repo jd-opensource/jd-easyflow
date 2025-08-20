@@ -350,7 +350,7 @@ public class ProcessRuntimeService {
     }
 
     public void processCompleteExec(StdProcessContext context) {
-        if (ObjectUtils.isNotEmpty(context)) {
+        if (context != null) {
             manager.unLockProcessInstance(context.getProcessType(), context.getBizNo(), context.getLockRequestId());
         } else {
             log.warn("ProcessRuntimeService-processCompleteExec-stdProcessContext is null. please to check it");

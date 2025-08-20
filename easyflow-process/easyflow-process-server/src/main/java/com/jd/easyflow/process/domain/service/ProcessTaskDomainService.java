@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ import com.jd.easyflow.process.domain.model.vo.QueryTaskReqVO;
 import com.jd.easyflow.process.domain.model.vo.ScheduleProcessReqVO;
 import com.jd.easyflow.process.domain.repository.ProcessRepository;
 import com.jd.easyflow.process.domain.repository.ProcessTaskRepository;
-import com.jd.easyflow.spring.MessageUtil;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -113,7 +113,7 @@ public class ProcessTaskDomainService {
     }
 
     public void executeTask(ExecuteProcessTaskReqVO req) {
-        AssertUtils.isNotBlank(req.getUser(), "User must not be null");
+        AssertUtils.isNotNull(req.getUser(), "User must not be null");
 
         ProcessTaskEntity processTask = transactionTemplate.execute(status -> {
             return processTaskRepository.getTask(req.getTaskNo());
@@ -155,7 +155,7 @@ public class ProcessTaskDomainService {
         CanWithdrawTaskRes res = new CanWithdrawTaskRes();
         res.setCanWithDraw(false);
         ProcessTaskEntity taskEntity = processTaskRepository.getTask(taskNo);
-        if (!StringUtils.equals(taskEntity.getExecutor(), user)) {
+        if (!Objects.equals(taskEntity.getExecutor(), user)) {
             res.setReason(MessageUtil.getMessage("easyflow.process.server.tip.taskExecuteUserAndWithdrawUserInconsistent",  new Object[] {taskEntity.getExecutor(), user}));
         }
         if (!com.jd.easyflow.process.adapter.export.constant.ProcessTaskConstants.TASK_STATUS_FINISH
@@ -371,10 +371,10 @@ public class ProcessTaskDomainService {
                     String eventInstanceBizData = eventEntity.getInstanceBizData();
                     log.info("With draw process instance data, instanceBizStatus:" + eventInstanceBizStatus + " instanceBizData:"
                             + eventInstanceBizData);
-                    if (StringUtils.isNotEmpty(eventInstanceBizStatus)) {
+                    if (eventInstanceBizStatus != null && ! eventInstanceBizStatus.isEmpty()) {
                         processInstance.setBizStatus(eventInstanceBizStatus);
                     }
-                    if (StringUtils.isNotEmpty(eventInstanceBizData)) {
+                    if (eventInstanceBizData != null && ! eventInstanceBizData.isEmpty()) {
                         processInstance.setBizData(eventInstanceBizData);
                     }
                 }
@@ -391,7 +391,7 @@ public class ProcessTaskDomainService {
         for (ProcessNodeInstanceEntity node : nodeInstanceList) {
             openNodeIds.add(node.getNodeId());
         }
-        processInstance.setCurrentNodeIds(StringUtils.join(openNodeIds, ","));
+        processInstance.setCurrentNodeIds(String.join( ",", openNodeIds));
         log.info("Process instance info after withdraw:" + processInstance);
         processRepository.updateProcessInstanceById(processInstance);
 

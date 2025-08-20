@@ -1,6 +1,6 @@
 package com.jd.easyflow.process.domain.model.enums;
 
-import com.jd.easyflow.spring.MessageUtil;
+import com.jd.easyflow.common.util.MessageUtil;
 
 /**
  * @author liyuliang5

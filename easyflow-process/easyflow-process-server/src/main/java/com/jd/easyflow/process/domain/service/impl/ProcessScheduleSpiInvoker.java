@@ -2,7 +2,6 @@ package com.jd.easyflow.process.domain.service.impl;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class ProcessScheduleSpiInvoker implements ProcessScheduleInvoker {
         String runtimeSerivce = getRuntimeService(vo);
         log.info("Runtime Service:" + runtimeSerivce);
         ProcessScheduleClientService processScheduleClientService = null;
-        if (StringUtils.isEmpty(runtimeSerivce)) {
+        if (runtimeSerivce == null || runtimeSerivce.isEmpty()) {
             processScheduleClientService = ObjectFactorys.getDefault().getObject(ProcessScheduleClientService.class);
         } else {
             String[] serviceInfo = runtimeSerivce.split(":");
@@ -85,12 +84,12 @@ public class ProcessScheduleSpiInvoker implements ProcessScheduleInvoker {
      */
     private String getRuntimeService(ScheduleProcessReqVO vo) {
         String processId = vo.getProcessId();
-        if (StringUtils.isEmpty(processId) && StringUtils.isNotEmpty(vo.getProcessInstanceNo())) {
+        if ((processId == null || processId.isEmpty()) && (vo.getProcessInstanceNo() != null && ! vo.getProcessInstanceNo().isEmpty())) {
             ProcessInstanceEntity entity = processRepository.getByProcessInstanceNo(vo.getProcessInstanceNo());
             processId = entity.getProcessDefId();
         }
 
-        if (StringUtils.isNotEmpty(processId)) {
+        if (processId != null && ! processId.isEmpty()) {
             ProcessDefinitionEntity entity = processDefinitionDomainService.getLatestProcessDefinition(processId);
             String latestProcessId = processDefinitionDomainService.generateDefIdWithVersion(entity.getDefId(),
                     entity.getDefVersion());

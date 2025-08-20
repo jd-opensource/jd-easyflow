@@ -3,8 +3,6 @@ package com.jd.easyflow.process.adapter.export;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +94,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
             ExportRequest<String> req) {
         ExportResponse response;
         String instanceNo = req.getData();
-        if (StringUtils.isBlank(instanceNo)) {
+        if (instanceNo == null || instanceNo.isEmpty()) {
             response = ExportResponse.build4Failed(ExportResponseCode.INVALID);
             return response;
         }
@@ -114,7 +112,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         String processType = query.getProcessType();
         String bizNo = query.getBizNo();
         ExportResponse response;
-        if (StringUtils.isAnyBlank(processType, bizNo)) {
+        if (processType == null || bizNo == null) {
             response = ExportResponse.build4Failed(ExportResponseCode.INVALID);
             return response;
         }
@@ -148,7 +146,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     public ExportResponse<ProcessNodeInstanceDTO> queryOpenNodeInstance(
             ExportRequest<QueryOpenNodeInstanceReq> request) {
         QueryOpenNodeInstanceReq queryReq = request.getData();
-        if (StringUtils.isAnyBlank(queryReq.getInstanceNo(), queryReq.getNodeId())) {
+        if (queryReq.getInstanceNo() == null || queryReq.getNodeId() == null) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         ProcessNodeInstanceEntity nodeInstance = getTransactionTemplate().execute(status -> {
@@ -163,7 +161,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     public ExportResponse<List<ProcessNodeInstanceDTO>> findNodeInstances(
             ExportRequest<QueryProcessNodeReqDTO> queryReq) {
         QueryProcessNodeReqDTO reqDTO = queryReq.getData();
-        if (StringUtils.isAnyBlank(reqDTO.getProcessInstanceNo())) {
+        if (reqDTO.getProcessInstanceNo() == null) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         QueryProcessNodeReq queryProcessNodeReq = ProcessInstanceConverter.INSTANCE.convert(reqDTO);
@@ -177,7 +175,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Action(code = "easyflow-process-0212", name = "queryNodeInstanceByNo")
     @Override
     public ExportResponse<ProcessNodeInstanceDTO> queryNodeInstanceByNo(ExportRequest<String> request) {
-        if (StringUtils.isBlank(request.getData())) {
+        if (request.getData() == null || request.getData().isEmpty()) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         ProcessNodeInstanceEntity nodeInstanceEntity = getTransactionTemplate().execute(status -> {
@@ -190,7 +188,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Action(code = "easyflow-process-0213", name = "queryNodeExecutionByNo")
     @Override
     public ExportResponse<ProcessNodeExecutionDTO> queryNodeExecutionByNo(ExportRequest<String> request) {
-        if (StringUtils.isBlank(request.getData())) {
+        if (request.getData() == null || request.getData().isEmpty()) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         ProcessNodeExecutionEntity executionEntity = getTransactionTemplate().execute(status -> {
@@ -218,7 +216,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         String processType = query.getProcessType();
         String bizNo = query.getBizNo();
         ExportResponse response;
-        if (StringUtils.isAnyBlank(processType, bizNo)) {
+        if (processType == null || bizNo == null) {
             response = ExportResponse.build4Failed(ExportResponseCode.INVALID);
             return response;
         }
@@ -235,8 +233,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Override
     public ExportResponse<CanCancelProcessInstanceRes> canCancel(ExportRequest<CanCancelProcessInstanceReq> request) {
         CanCancelProcessInstanceReq canCancelProcessInstanceReq = request.getData();
-        if (StringUtils.isAnyBlank(canCancelProcessInstanceReq.getInstanceNo(),
-                canCancelProcessInstanceReq.getCancelUser())) {
+        if (canCancelProcessInstanceReq.getInstanceNo() == null || canCancelProcessInstanceReq.getCancelUser() == null) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         CanCancelProcessInstanceRes canCancelProcessInstanceRes = getTransactionTemplate().execute(status -> {
@@ -249,8 +246,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Override
     public ExportResponse<CancelProcessInstanceRes> cancel(ExportRequest<CancelProcessInstanceReq> request) {
         CancelProcessInstanceReq cancelProcessInstanceReq = request.getData();
-        if (StringUtils.isAnyBlank(cancelProcessInstanceReq.getInstanceNo(),
-                cancelProcessInstanceReq.getCancelUser())) {
+        if (cancelProcessInstanceReq.getInstanceNo() == null ||  cancelProcessInstanceReq.getCancelUser() == null) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         processInstanceDomainService.cancel(cancelProcessInstanceReq);
@@ -261,7 +257,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Action(code = "easyflow-process-0218", name = "queryInstanceByInstanceNos")
     public ExportResponse<List<ProcessInstanceDTO>> queryInstanceByInstanceNos(ExportRequest<List<String>> request) {
         List<String> instanceNos = request.getData();
-        if (ObjectUtils.isEmpty(instanceNos)) {
+        if (instanceNos == null || instanceNos.isEmpty()) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         List<ProcessInstanceDTO> processInstanceDTOS = getTransactionTemplate().execute(status -> {
@@ -273,7 +269,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Action(code = "easyflow-process-0219", name = "queryNodeInstanceByNos")
     @Override
     public ExportResponse<List<ProcessNodeInstanceDTO>> queryNodeInstanceByNos(ExportRequest<List<String>> request) {
-        if (request.getData() == null || request.getData().isEmpty()) {
+        if (request.getData() == null) {
             return ExportResponse.build4Success(new ArrayList<>());
         }
         List<ProcessNodeInstanceEntity> nodeInstanceEntityList = getTransactionTemplate().execute(status -> {
@@ -286,7 +282,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Action(code = "easyflow-process-0220", name = "queryProcessInstanceByParentInstanceNo")
     @Override
     public ExportResponse<List<ProcessInstanceDTO>> queryProcessInstanceByParentInstanceNo(ExportRequest<String> request) {
-        if (StringUtils.isBlank(request.getData())) {
+        if (request.getData() == null) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY.getCode(), " parent instance no cannot be null");
         }
         List<ProcessInstanceDTO> processInstances = getTransactionTemplate().execute(status -> {

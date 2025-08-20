@@ -81,8 +81,10 @@
     <bean id="easyflow-taskbizservice-call" class="com.jd.easyflow.process.client.task.biz.impl.CallTaskBizService"/>
     <!-- compensate -->
     <bean id="easyflow-process-compensateNodeFilter" class="com.jd.easyflow.process.client.flow.compensate.StdProcessCompensateNodeFilter">
+    	<property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
     </bean>  
     <bean id="easyflow-process-compensateFlowFilter" class="com.jd.easyflow.process.client.flow.compensate.StdProcessCompensateFlowFilter">
+    	<property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
     </bean>   
    
 </beans>

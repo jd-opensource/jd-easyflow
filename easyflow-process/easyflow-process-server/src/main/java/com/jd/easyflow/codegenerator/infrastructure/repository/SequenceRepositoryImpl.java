@@ -29,7 +29,7 @@ public class SequenceRepositoryImpl implements SequenceRepository {
     @Override
     public int addSequence(SequenceEntity entity) {
         AssertUtils.isNotNull(entity);
-        AssertUtils.isNotBlank(entity.getSeqKey());
+        AssertUtils.isNotNull(entity.getSeqKey());
         Sequence sequence = SequenceConverter.INSTANCE.convert(entity);
         return sequenceMapper.insert(sequence);
     }

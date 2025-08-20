@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:easyflow="http://jd.com/easyflow" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="flow_chaintest1" isExecutable="false">
+    <bpmn:scriptTask id="plugin1" name="Plugin1" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":159,"commentPosition":{"top":18,"left":71}}</easyflow:extProperties>
+        <easyflow:conditionType>exclusive</easyflow:conditionType>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0modaq2</bpmn:incoming>
+      <bpmn:incoming>Flow_1h77pr5</bpmn:incoming>
+      <bpmn:outgoing>Flow_161s0ml</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ipaej0</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.cases.chain.FlowChainTest.TestPlugin("Plugin1")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="plugin2" name="Plugin2" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":155,"commentPosition":{"top":21,"left":68}}</easyflow:extProperties>
+        <easyflow:conditionType>exclusive</easyflow:conditionType>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_161s0ml</bpmn:incoming>
+      <bpmn:incoming>Flow_0hype9i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nnnvyb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1h77pr5</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.cases.chain.FlowChainTest.TestPlugin("Plugin2")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_161s0ml" sourceRef="plugin1" targetRef="plugin2">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentPosition":{"top":-52,"left":4},"commentWidth":256}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">context.get('chainStage')=='PRE'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="plugin3" name="Plugin3" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":152,"commentPosition":{"top":19,"left":70}}</easyflow:extProperties>
+        <easyflow:conditionType>exclusive</easyflow:conditionType>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0nnnvyb</bpmn:incoming>
+      <bpmn:incoming>Flow_0woq951</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rtbe85</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0hype9i</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.bpmn.cases.chain.FlowChainTest.TestPlugin("Plugin3")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0nnnvyb" sourceRef="plugin2" targetRef="plugin3">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":252,"commentPosition":{"top":-51,"left":0}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">context.get('chainStage')=='PRE'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="realTarget" name="Request Execute" scriptFormat="createExp">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":164,"commentPosition":{"top":87,"left":4}}</easyflow:extProperties>
+        <easyflow:conditionType>exclusive</easyflow:conditionType>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1rtbe85</bpmn:incoming>
+      <bpmn:outgoing>Flow_0woq951</bpmn:outgoing>
+      <bpmn:script>new com.jd.easyflow.flow.ext.chain.TargetAction()</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1rtbe85" sourceRef="plugin3" targetRef="realTarget">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentPosition":{"top":-52,"left":12},"commentWidth":248}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">context.get('chainStage')=='PRE'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>Flow_0modaq2</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0modaq2" sourceRef="start" targetRef="plugin1" />
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>Flow_1ipaej0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1h77pr5" sourceRef="plugin2" targetRef="plugin1">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":239,"commentPosition":{"top":21,"left":1}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">context.get('chainStage')=='POST'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0hype9i" sourceRef="plugin3" targetRef="plugin2">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":239,"commentPosition":{"top":18,"left":2}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">context.get('chainStage')=='POST'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0woq951" sourceRef="realTarget" targetRef="plugin3" />
+    <bpmn:sequenceFlow id="Flow_1ipaej0" sourceRef="plugin1" targetRef="end">
+      <bpmn:extensionElements>
+        <easyflow:extProperties>{"commentWidth":237,"commentPosition":{"top":10,"left":1}}</easyflow:extProperties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">context.get('chainStage')=='POST'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flow_chaintest1">
+      <bpmndi:BPMNShape id="Activity_1rpzq9o_di" bpmnElement="plugin1">
+        <dc:Bounds x="380" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w952ml_di" bpmnElement="plugin2">
+        <dc:Bounds x="600" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07q7d4a_di" bpmnElement="plugin3">
+        <dc:Bounds x="800" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1epnn2p_di" bpmnElement="realTarget">
+        <dc:Bounds x="1020" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02b4nma_di" bpmnElement="start">
+        <dc:Bounds x="232" y="72" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="115" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1mifkab_di" bpmnElement="end">
+        <dc:Bounds x="232" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="175" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_161s0ml_di" bpmnElement="Flow_161s0ml" waypoints="">
+        <di:waypoint x="480" y="100" />
+        <di:waypoint x="600" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nnnvyb_di" bpmnElement="Flow_0nnnvyb" waypoints="">
+        <di:waypoint x="700" y="100" />
+        <di:waypoint x="800" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rtbe85_di" bpmnElement="Flow_1rtbe85" waypoints="">
+        <di:waypoint x="900" y="100" />
+        <di:waypoint x="1020" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0modaq2_di" bpmnElement="Flow_0modaq2" waypoints="">
+        <di:waypoint x="268" y="90" />
+        <di:waypoint x="380" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h77pr5_di" bpmnElement="Flow_1h77pr5" waypoints="">
+        <di:waypoint x="600" y="140" />
+        <di:waypoint x="480" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hype9i_di" bpmnElement="Flow_0hype9i" waypoints="">
+        <di:waypoint x="800" y="140" />
+        <di:waypoint x="700" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0woq951_di" bpmnElement="Flow_0woq951" waypoints="">
+        <di:waypoint x="1020" y="150" />
+        <di:waypoint x="900" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ipaej0_di" bpmnElement="Flow_1ipaej0" waypoints="">
+        <di:waypoint x="380" y="150" />
+        <di:waypoint x="268" y="150" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

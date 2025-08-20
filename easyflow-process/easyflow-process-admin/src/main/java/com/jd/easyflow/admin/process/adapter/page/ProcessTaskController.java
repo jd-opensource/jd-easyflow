@@ -55,7 +55,7 @@ import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskAssignDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.WithdrawTaskReq;
 import com.jd.easyflow.process.adapter.export.dto.task.cmd.TaskCreateCmd;
-import com.jd.easyflow.spring.MessageUtil;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -157,13 +157,13 @@ public class ProcessTaskController extends BasePageController {
                             }
                         } else if (assign.getAssignType().equals(ProcessTaskConstants.ASSIGN_TYPE_GROUP)) {
                             boolean assignInGroup = null == assign.getAssignGroup2()
-                                    && ObjectUtils.isNotEmpty(groupList) && groupList.contains(assign.getAssignGroup());
+                                    && groupList != null && groupList.contains(assign.getAssignGroup());
                             boolean assignInGroup2 = null == assign.getAssignGroup()
-                                    && ObjectUtils.isNotEmpty(group2List)
+                                    && group2List != null
                                     && group2List.contains(assign.getAssignGroup2());
-                            boolean assignInAllGroup = (ObjectUtils.isNotEmpty(groupList)
-                                    && ObjectUtils.isNotEmpty(group2List) && groupList.contains(assign.getAssignGroup())
-                                    && group2List.contains(assign.getAssignGroup2()));
+                            boolean assignInAllGroup = groupList != null
+                                    && group2List != null && groupList.contains(assign.getAssignGroup())
+                                    && group2List.contains(assign.getAssignGroup2());
                             if (assignInGroup || assignInGroup2 || assignInAllGroup) {
                                 canHandle = true;
                                 break;
@@ -544,7 +544,7 @@ public class ProcessTaskController extends BasePageController {
     }
 
     protected Map<String, Object> queryTaskAdminPropertyByProcessInstanceNo(List<String> processInstanceNos, String propertyKey) {
-        if (ObjectUtils.isEmpty(processInstanceNos)) {
+        if (processInstanceNos == null || processInstanceNos.isEmpty()) {
             return null;
         }
         ExportResponse<List<ProcessInstanceDTO>> exportResponse = getProcessInstanceExport().queryInstanceByInstanceNos(new ExportRequest<List<String>>(processInstanceNos));

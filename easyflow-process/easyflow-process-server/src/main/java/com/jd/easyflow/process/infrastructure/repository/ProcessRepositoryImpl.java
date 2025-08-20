@@ -204,7 +204,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public ProcessDefinitionEntity findProcessDefinitionByDefIdAndVersion(String defId, Integer defVersion) {
-        AssertUtils.isNotBlank(defId);
+        AssertUtils.isNotNull(defId);
         ProcessDefinition processDefinition = processDefinitionMapper.selectByDefIdAndVersion(defId, defVersion);
         return ProcessConverter.INSTANCE.convert(processDefinition);
     }
@@ -217,7 +217,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public boolean existProcessDefinition(String defId) {
-        AssertUtils.isNotBlank(defId);
+        AssertUtils.isNotNull(defId);
         return processDefinitionMapper.existProcessDefinition(defId);
     }
 

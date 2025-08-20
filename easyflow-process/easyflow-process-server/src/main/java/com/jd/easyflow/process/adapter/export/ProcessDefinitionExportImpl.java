@@ -1,6 +1,5 @@
 package com.jd.easyflow.process.adapter.export;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import com.jd.easyflow.process.adapter.export.dto.definition.QueryProcessDefinit
 import com.jd.easyflow.process.domain.model.entity.ProcessDefinitionEntity;
 import com.jd.easyflow.process.domain.model.vo.ProcessDefinitionForListVO;
 import com.jd.easyflow.process.domain.service.ProcessDefinitionDomainService;
-import com.jd.easyflow.spring.MessageUtil;
+import com.jd.easyflow.common.util.MessageUtil;
 
 /**
  *
@@ -122,7 +121,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     @Override
     public ExportResponse<Integer> getLatestProcessDefVersionByDefId(ExportRequest<String> request) {
         String definitionId = request.getData();
-        if (StringUtils.isBlank(definitionId)){
+        if (definitionId == null || definitionId.isEmpty()){
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         Integer latestDefVersion = processDefinitionDomainService.getLatestProcessDefVersionByDefId(definitionId);

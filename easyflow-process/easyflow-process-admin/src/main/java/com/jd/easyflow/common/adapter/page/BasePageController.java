@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -130,13 +129,13 @@ public class BasePageController implements ServletContextAware {
             }
             String[] values = request.getParameterValues(name);
             if (values.length == 1) {
-                if (StringUtils.isNotEmpty(values[0])) {
+                if (values[0] != null && values[0].length() > 0) {
                     condition.addField(new FieldEntry(name, values[0].trim()));
                 }
             } else if (values.length > 1) {
                 List<String> valueList = new ArrayList<>();
                 for (String val : values) {
-                    if (StringUtils.isNotEmpty(val)) {
+                    if (val != null && val.length() > 0) {
                         valueList.add(val.trim());
                     }
                 }

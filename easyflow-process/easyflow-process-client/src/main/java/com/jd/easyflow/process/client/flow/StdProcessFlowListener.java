@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.util.ExportResponseUtil;
@@ -66,7 +65,6 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
             Pair.of(FlowEventTypes.FLOW_COMPLETE, -FlowConstants.EVENT_ORDER_START - 100) };
    
 
-    @Autowired
     private ProcessRuntimeService processRuntimeService;
 
     private ProcessInstanceExport processInstanceExport;

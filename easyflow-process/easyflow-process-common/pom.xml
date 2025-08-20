@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyflow-process</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.6.5</version>
+        <version>1.6.6</version>
     </parent>
     <artifactId>easyflow-process-common</artifactId>
     <name>easyflow-process-common</name>
@@ -26,10 +26,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

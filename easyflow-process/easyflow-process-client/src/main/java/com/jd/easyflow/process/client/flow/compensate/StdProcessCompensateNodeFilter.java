@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.filter.FilterChain;
@@ -39,7 +38,6 @@ public class StdProcessCompensateNodeFilter extends CompensateNodeFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(StdProcessCompensateNodeFilter.class);
     
-    @Autowired
     private ProcessRuntimeManager processRuntimeManager;
     
     public StdProcessCompensateNodeFilter() {

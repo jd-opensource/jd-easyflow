@@ -1,7 +1,6 @@
 package com.jd.easyflow.integration.open;
 
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +19,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import com.jd.easyflow.spel.SpelHelper;
-
 /**
  * @author liyuliang5
  *
@@ -36,9 +33,6 @@ public class IntegrationOpenApplication implements WebMvcConfigurer, CommandLine
 
 
     private static final String CLIENT_NAME = "IntegrationOpenApplication";
-    
-    @Autowired
-    private ApplicationContext applicationContext;
     
     /**
      *
@@ -55,7 +49,6 @@ public class IntegrationOpenApplication implements WebMvcConfigurer, CommandLine
     @Override
     public void run(String... args) throws Exception {
        log.info("Start");
-       SpelHelper.setApplicationContext(applicationContext);
     }
     
     @Override

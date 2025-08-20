@@ -2,9 +2,9 @@ package com.jd.easyflow.process.infrastructure.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,7 +141,7 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
                 list = new ArrayList<>();
                 for (ProcessTask taskNo : taskNoList) {
                     for (ProcessTask task : noOrderList) {
-                        if (StringUtils.equals(taskNo.getTaskNo(), task.getTaskNo())) {
+                        if (Objects.equals(taskNo.getTaskNo(), task.getTaskNo())) {
                             list.add(task);
                             break;
                         }

@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
@@ -47,10 +46,8 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
 
     private ProcessDefinitionExport processDefinitionExport;
 
-    @Value("${flow.local.load:true}")
     private boolean localLoad = true;
     
-    @Value("${flow.local.push:false}")
     private boolean localPush = false;
     
     @Override
@@ -187,5 +184,23 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
     public void setProcessDefinitionService(ProcessDefinitionExport processDefinitionExport) {
         this.processDefinitionExport = processDefinitionExport;
     }
+
+    public boolean isLocalLoad() {
+        return localLoad;
+    }
+
+    public void setLocalLoad(boolean localLoad) {
+        this.localLoad = localLoad;
+    }
+
+    public boolean isLocalPush() {
+        return localPush;
+    }
+
+    public void setLocalPush(boolean localPush) {
+        this.localPush = localPush;
+    }
+    
+    
 
 }

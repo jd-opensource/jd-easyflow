@@ -2,8 +2,6 @@ package com.jd.easyflow.message.util;
 
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 
  * @author liyuliang5
@@ -25,7 +23,7 @@ public class MsgBizIdWrapper {
         if (bizId == null) {
             return null;
         }
-        if (StringUtils.isNotEmpty(bizIdPrefix) && wrapTopics != null && wrapTopics.contains(topic)) {
+        if (bizIdPrefix != null && bizIdPrefix.length() > 0 && wrapTopics != null && wrapTopics.contains(topic)) {
             return bizIdPrefix + bizId;
         }
         return bizId;
@@ -35,7 +33,7 @@ public class MsgBizIdWrapper {
         if (bizId == null) {
             return true;
         }
-        if (StringUtils.isNotEmpty(bizIdPrefix) && wrapTopics != null && wrapTopics.contains(topic)) {
+        if (bizIdPrefix != null && bizIdPrefix.length() > 0 && wrapTopics != null && wrapTopics.contains(topic)) {
             if (!bizId.startsWith(bizIdPrefix)) {
                 return false;
             }
@@ -48,7 +46,7 @@ public class MsgBizIdWrapper {
         if (bizId == null) {
             return null;
         }
-        if (StringUtils.isNotEmpty(bizIdPrefix) && wrapTopics != null && wrapTopics.contains(topic)) {
+        if (bizIdPrefix != null && bizIdPrefix.length() > 0 && wrapTopics != null && wrapTopics.contains(topic)) {
             if (!bizId.startsWith(bizIdPrefix)) {
                 return null;
             }

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ import com.jd.easyflow.process.domain.constant.ProcessDefinitionConstants;
 import com.jd.easyflow.process.domain.model.entity.ProcessDefinitionEntity;
 import com.jd.easyflow.process.domain.model.vo.ProcessDefinitionForListVO;
 import com.jd.easyflow.process.domain.repository.ProcessRepository;
-import com.jd.easyflow.spring.MessageUtil;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -84,12 +84,12 @@ public class ProcessDefinitionDomainService {
     }
 
     public boolean existProcessDefinition(String defId) {
-        AssertUtils.isNotBlank(defId, "defId must not be null");
+        AssertUtils.isNotNull(defId, "defId must not be null");
         return processRepository.existProcessDefinition(defId);
     }
 
     public boolean existProcessDefinition(String defId, Integer defVersion) {
-        AssertUtils.isNotBlank(defId, "defId must not be null");
+        AssertUtils.isNotNull(defId, "defId must not be null");
         AssertUtils.isNotNull(defVersion, "defVersion must not be null");
         ProcessDefinitionEntity processDef = processRepository.findProcessDefinitionByDefIdAndVersion(defId,
                 defVersion);
@@ -105,10 +105,10 @@ public class ProcessDefinitionDomainService {
 
     public void addProcessDefinition(ProcessDefinitionEntity processDefinition) {
         AssertUtils.isNotNull(processDefinition, "processDefinitionVO must not be null");
-        AssertUtils.isNotBlank(processDefinition.getDefId(), "processDefinitionVO defId must not be blank");
-        AssertUtils.isNotBlank(processDefinition.getFormat(), "processDefinitionVO format must not be blank");
-        AssertUtils.isNotBlank(processDefinition.getContent(), "processDefinitionVO content must not be blank");
-        AssertUtils.isNotBlank(processDefinition.getJsonContent(), "processDefinitionVO jsonContent must not be blank");
+        AssertUtils.isNotNull(processDefinition.getDefId(), "processDefinitionVO defId must not be null");
+        AssertUtils.isNotNull(processDefinition.getFormat(), "processDefinitionVO format must not be null");
+        AssertUtils.isNotNull(processDefinition.getContent(), "processDefinitionVO content must not be null");
+        AssertUtils.isNotNull(processDefinition.getJsonContent(), "processDefinitionVO jsonContent must not be null");
         checkMainProcessIdConsistent(processDefinition);
         locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinition.getDefId(), () -> {
             boolean exist = existProcessDefinition(processDefinition.getDefId());
@@ -128,10 +128,10 @@ public class ProcessDefinitionDomainService {
 
     public void reportProcessDef(ProcessDefinitionEntity processDefinitionEntity) {
         AssertUtils.isNotNull(processDefinitionEntity, "processDefinitionVO must not be null");
-        AssertUtils.isNotBlank(processDefinitionEntity.getDefId(), "ProcessDefinition defId must not be blank");
-        AssertUtils.isNotBlank(processDefinitionEntity.getFormat(), "ProcessDefinition format must not be blank");
-        AssertUtils.isNotBlank(processDefinitionEntity.getContent(), "ProcessDefinition content must not be blank");
-        AssertUtils.isNotBlank(processDefinitionEntity.getJsonContent(), "ProcessDefinition jsonContent must not be blank");
+        AssertUtils.isNotNull(processDefinitionEntity.getDefId(), "ProcessDefinition defId must not be null");
+        AssertUtils.isNotNull(processDefinitionEntity.getFormat(), "ProcessDefinition format must not be null");
+        AssertUtils.isNotNull(processDefinitionEntity.getContent(), "ProcessDefinition content must not be null");
+        AssertUtils.isNotNull(processDefinitionEntity.getJsonContent(), "ProcessDefinition jsonContent must not be null");
         ProcessDefinitionEntity processDefinition = processRepository.findProcessDefinitionByDefIdAndVersion(
                 processDefinitionEntity.getDefId(), processDefinitionEntity.getDefVersion());
         if (processDefinition != null) {
@@ -182,10 +182,10 @@ public class ProcessDefinitionDomainService {
         if(null == originProcessDef){
             return;
         }
-        if(StringUtils.isNotBlank(originProcessDef.getBizType())){
+        if(originProcessDef.getBizType() != null){
             targetProcessDef.setBizType(originProcessDef.getBizType());
         }
-        if(StringUtils.isNotBlank(originProcessDef.getCategory())){
+        if(originProcessDef.getCategory() != null){
             targetProcessDef.setCategory(originProcessDef.getCategory());
         }
 
@@ -209,7 +209,7 @@ public class ProcessDefinitionDomainService {
 
     public void updateProcessDefinition(ProcessDefinitionEntity processDefinition) {
         AssertUtils.isNotNull(processDefinition, "processDefinition must not be null");
-        AssertUtils.isNotBlank(processDefinition.getDefId(), "ProcessDefinition defId must not be null");
+        AssertUtils.isNotNull(processDefinition.getDefId(), "ProcessDefinition defId must not be null");
         checkMainProcessIdConsistent(processDefinition);
         
         locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinition.getDefId(), () -> {
@@ -222,14 +222,14 @@ public class ProcessDefinitionDomainService {
                     throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.latestDefinitionNotFound"));
                 }
                 String extDataStr = currentProcessDefinition.getExtData();
-                if (StringUtils.isNotEmpty(extDataStr)) {
+                if (extDataStr != null && ! extDataStr.isEmpty()) {
                     Map<String, Object> extData = JSON.parseObject(extDataStr, Map.class);
-                    if (extData != null && StringUtils.isNotEmpty((String) extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID))) {
+                    if (extData != null && extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID) != null) {
                         throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.attachedProcessDefinitionCannotUpdate", new Object[] { extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID)}));
                     }
                 }
     
-                if (StringUtils.equals(currentProcessDefinition.getContent(), processDefinition.getContent())) {
+                if (Objects.equals(currentProcessDefinition.getContent(), processDefinition.getContent())) {
                     processDefinition.setId(currentProcessDefinition.getId());                
                     updateProcessDefinitionById(processDefinition);
                 } else {
@@ -251,7 +251,7 @@ public class ProcessDefinitionDomainService {
             Flow flow = flowParser.parse(definition.getJsonContent(), false).get(0);
             mainId = flow.getId();
         }
-        if (! StringUtils.equals(mainId, definition.getDefId())) {
+        if (! Objects.equals(mainId, definition.getDefId())) {
             throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.processIdInconsistent"));
         }
     }
@@ -273,7 +273,7 @@ public class ProcessDefinitionDomainService {
     
     public void forceUpdateProcessDefinition(ProcessDefinitionEntity processDefinition) {
         AssertUtils.isNotNull(processDefinition, "processDefinition must not be null");
-        AssertUtils.isNotBlank(processDefinition.getDefId(), "ProcessDefinition defId must not be empty");
+        AssertUtils.isNotNull(processDefinition.getDefId(), "ProcessDefinition defId must not be empty");
         checkMainProcessIdConsistent(processDefinition);
         locker.doInLock(PROCESS_DEFINITION_LOCK, processDefinition.getDefId(), () -> {
             transactionTemplate.executeWithoutResult(transactionStatus -> {
@@ -284,9 +284,9 @@ public class ProcessDefinitionDomainService {
                 throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.matchedDefinitionNotFound"));
             }
             String extDataStr = processDefEntity.getExtData();
-            if (StringUtils.isNotEmpty(extDataStr)) {
+            if (extDataStr != null && ! extDataStr.isEmpty()) {
                 Map<String, Object> extData = JSON.parseObject(extDataStr, Map.class);
-                if (extData != null && StringUtils.isNotEmpty((String) extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID))) {
+                if (extData != null &&  extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID) != null) {
                     throw new UserException(MessageUtil.getMessage("easyflow.process.server.tip.AttachedProcessDefinitionCannotUpdate", new Object[] { extData.get(ProcessDefinitionConstants.EXT_DATA_KEY_MAIN_PROCESS_ID)}));
                 }
             }
@@ -391,10 +391,10 @@ public class ProcessDefinitionDomainService {
             }
             cacheService.set(cacheKey, defVersion);
         }
-        if (StringUtils.equals(defVersion, DEF_VERSION_NONE)) {
+        if (Objects.equals(defVersion, DEF_VERSION_NONE)) {
             return -1;
         }
-        return StringUtils.equals(DEF_VERSION_NULL, defVersion) ? null : Integer.parseInt(defVersion);
+        return Objects.equals(DEF_VERSION_NULL, defVersion) ? null : Integer.parseInt(defVersion);
     }
 
     public ProcessDTO getProcessProperties(String processId) {

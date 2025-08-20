@@ -79,7 +79,7 @@ public class CodeGenerateDomainService {
     
     public String next(CodeGenerateReq codeGenerateReq) {
         AssertUtils.isNotNull(codeGenerateReq, "codeGenerateReq must not be null");
-        AssertUtils.isNotBlank(codeGenerateReq.getTypeId(), "CodeGenerateReq typeId must not be blank");
+        AssertUtils.isNotNull(codeGenerateReq.getTypeId(), "CodeGenerateReq typeId must not be blank");
         CodeGenerator generator = generatorMap.get(codeGenerateReq.getTypeId());
         if (generator == null) {
             generator = createCodeGenerator(codeGenerateReq);
@@ -89,7 +89,7 @@ public class CodeGenerateDomainService {
 
     public String[] nextBatch(CodeGenerateReq codeGenerateReq) {
         AssertUtils.isNotNull(codeGenerateReq, "codeGenerateReq must not be null");
-        AssertUtils.isNotBlank(codeGenerateReq.getTypeId(), "CodeGenerateReq typeId must not be blank");
+        AssertUtils.isNotNull(codeGenerateReq.getTypeId(), "CodeGenerateReq typeId must not be blank");
         AssertUtils.isTrue(codeGenerateReq.getBatchSize() > 0, "batchSize should be greater than 0");
         AssertUtils.isTrue(codeGenerateReq.getBatchSize() <= maxBatchSize, "batchSize exceed limit");
         CodeGenerator generator = generatorMap.get(codeGenerateReq.getTypeId());

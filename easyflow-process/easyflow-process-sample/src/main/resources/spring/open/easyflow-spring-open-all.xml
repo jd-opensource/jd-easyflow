@@ -6,7 +6,7 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-<!-- For admin and client -->
+<!-- For admin,server and client -->
     <bean id="springEnvPropertiesAccessor" class="com.jd.easyflow.properties.spring.SpringEnvPropertiesAccessor"/>
 	<bean id="defaultObjectFactory" class="com.jd.easyflow.objects.factory.DefaultObjectFactory">
 	   <property name="propertiesAccessor" ref="springEnvPropertiesAccessor"></property>
@@ -24,8 +24,7 @@
 	<bean class="com.jd.easyflow.objects.factory.ObjectFactorys">
 	   <property name="defaultObjectFactory" ref="defaultObjectFactory"></property>
 	</bean>
-	<bean class="com.jd.easyflow.spring.ContextUtil"></bean>
-
+	<bean class="com.jd.easyflow.spel.SpelHelper"/>
 <!-- For client -->
     <import resource="classpath:easyflow/easyflow-spring-process-client.xml"/>
 
@@ -85,6 +84,8 @@
                 <ref bean="easyflow-process-processFlowEngineFilter"/>
             </list>
         </property>
+        <property name="localLoad" value="${flow.local.load:true}"></property>
+        <property name="localPush" value="${flow.local.push:false}"></property>        
     </bean>
     <alias name="flowEngine" alias="easyflow-flowEngine"/>
     
@@ -95,6 +96,8 @@
                 <ref bean="easyflow-process-processFsmListener"/>
             </list>
         </property>
+        <property name="localLoad" value="${flow.local.load:true}"></property>
+        <property name="localPush" value="${flow.local.push:false}"></property>        
     </bean>   
     
     <bean id="eventFlowListener" class="com.jd.easyflow.flow.engine.event.impl.EventFlowListener"/>

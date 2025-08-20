@@ -1,9 +1,11 @@
-package com.jd.easyflow.spring;
+package com.jd.easyflow.common.util;
 
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import com.jd.easyflow.objects.factory.ObjectFactorys;
 
 /**
  * 
@@ -22,10 +24,10 @@ public class MessageUtil {
     }
 
     private static MessageSource getMessageSource() {
-        if (messageSource != null) {
-            return messageSource;
+        if (messageSource == null) {
+            messageSource = ObjectFactorys.getDefault().getObject(MessageSource.class);
         }
-        return ContextUtil.getBean(MessageSource.class);
+        return messageSource;
     }
     
     public static String locale() {

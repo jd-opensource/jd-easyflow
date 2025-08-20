@@ -1,9 +1,8 @@
 package com.jd.easyflow.codegenerator.domain.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Random;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,7 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.jd.easyflow.codegenerator.domain.model.entity.SequenceEntity;
 import com.jd.easyflow.codegenerator.domain.repository.SequenceRepository;
 import com.jd.easyflow.lock.Locker;
-import com.jd.easyflow.spring.PropertyUtil;
+import com.jd.easyflow.properties.PropertyUtil;
 
 /**
  * @author liyuliang5
@@ -71,26 +70,47 @@ public class CodeGenerator {
     private TransactionTemplate newTransactionTemplate;
 
     private Random random = new Random();
+    
+    public class SimpleDateFormatThreadLocal extends ThreadLocal<SimpleDateFormat> {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyyMMdd");
+        }
+    }
+    SimpleDateFormatThreadLocal sdfThreadLocal = new SimpleDateFormatThreadLocal();
 
+    
     public CodeGenerator() {
     }
 
 
     public synchronized String next() {
         long nextNumVal = nextNum();
-        String nextNumStr = StringUtils.leftPad(nextNumVal + "", numLength, '0');
-        String coffeeCodePrefix = StringUtils.isBlank(PropertyUtil.get(EASYFLOW_CODE_PREFIX_KEY)) ? "" : PropertyUtil.get(EASYFLOW_CODE_PREFIX_KEY);
+        String nextNumStr = leftPad(nextNumVal + "", numLength, '0');
+        String codePrefixKey = PropertyUtil.get(EASYFLOW_CODE_PREFIX_KEY);
+        String coffeeCodePrefix = codePrefixKey == null ? "" : codePrefixKey;
         return coffeeCodePrefix + (codePrefix == null ? "" : codePrefix) + seperator1 + (subKey == null ? "" : subKey + seperator2) + nextNumStr;
     }
-
+    
+    private static String leftPad(String str, int size, char ch) {
+        int pads = size - str.length();
+        if (pads <= 0) {
+            return str; 
+        }
+        final char[] buf = new char[pads];
+        for (int i = 0; i < pads; i++) {
+            buf[i] = ch;
+        }
+        return new String(buf).concat(str);
+    }
 
     public synchronized long nextNum() {
         if (ROLLING_TYPE_DAY == rollingType) {
             long currentTime = System.currentTimeMillis();
             boolean needCheckDate = subKey == null || currentTime - lastSubKeyCheckTime > subKeyCheckInterval;
             if (needCheckDate) {
-                String currentSubKey = FastDateFormat.getInstance("yyyyMMdd").format(currentTime);
-                if (!StringUtils.equals(currentSubKey, subKey)) {
+                String currentSubKey = sdfThreadLocal.get().format(currentTime);
+                if (! currentSubKey.equals(subKey)) {
                     logger.info("subkey change, old:{} new:{}", subKey, currentSubKey);
                     subKey = currentSubKey;
                     currentValue = null;

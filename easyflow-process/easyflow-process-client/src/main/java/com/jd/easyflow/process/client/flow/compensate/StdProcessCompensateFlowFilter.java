@@ -3,8 +3,6 @@ package com.jd.easyflow.process.client.flow.compensate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.jd.easyflow.flow.engine.FlowContext;
 import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.filter.FilterChain;
@@ -23,7 +21,6 @@ import com.jd.easyflow.process.client.util.StdProcessUtil;
  */
 public class StdProcessCompensateFlowFilter extends CompensateFlowFilter {
     
-    @Autowired
     private ProcessRuntimeManager processRuntimeManager;
 
     public StdProcessCompensateFlowFilter() {

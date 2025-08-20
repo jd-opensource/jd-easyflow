@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.MapAccessor;
@@ -216,11 +217,16 @@ public class SpelHelper {
             throw e;
         }
     }
+    
+    @Autowired
+    public void setSpringApplicationContext(ApplicationContext applicationContext) {
+        setApplicationContext(applicationContext);
+    }
 
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
-
+    
     public static void setApplicationContext(ApplicationContext applicationContext) {
         SpelHelper.applicationContext = applicationContext;
         context.setBeanResolver(new BeanFactoryResolver(applicationContext));

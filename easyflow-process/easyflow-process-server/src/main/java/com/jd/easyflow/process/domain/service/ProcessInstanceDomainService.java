@@ -10,17 +10,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.ObjectUtils;
 
 import com.jd.easyflow.codegenerator.client.CodeGenerateHelper;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
@@ -61,7 +61,7 @@ import com.jd.easyflow.process.domain.model.vo.ScheduleProcessReqVO;
 import com.jd.easyflow.process.domain.model.vo.ScheduleProcessResVO;
 import com.jd.easyflow.process.domain.repository.ProcessRepository;
 import com.jd.easyflow.process.domain.repository.ProcessTaskRepository;
-import com.jd.easyflow.spring.MessageUtil;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -449,7 +449,7 @@ public class ProcessInstanceDomainService {
             boolean sendNodeInstanceStatusMessage, String nodeInstanceStatusTopic, String engine) {
         if (sendNodeInstanceStatusMessage) {
             ProcessNodeInstanceEntity oldEntity = processRepository.getByNodeInstanceNo(newEntity.getNodeInstanceNo());
-            if (StringUtils.equals(oldEntity.getStatus(), newEntity.getStatus())) {
+            if (Objects.equals(oldEntity.getStatus(), newEntity.getStatus())) {
                 return;
             }
             if ("CLOSE".equals(newEntity.getStatus()) && "INACTIVE".equals(oldEntity.getStatus()) && "flow".equals(engine)) {
@@ -549,7 +549,7 @@ public class ProcessInstanceDomainService {
             queryTaskReqVO.setProcessInstanceNo(instanceNo);
             queryTaskReqVO.setStatus(TASK_STATUS_PENDING);
             List<ProcessTaskEntity> processTaskEntities = processTaskRepository.queryTask(queryTaskReqVO);
-            if (ObjectUtils.isNotEmpty(processTaskEntities)) {
+            if (processTaskEntities != null) {
                 log.info("Executing task num:{}", processTaskEntities.size());
                 for (ProcessTaskEntity processTaskEntity : processTaskEntities) {
                     processTaskEntity.setStatus(TASK_STATUS_CANCELED);
@@ -611,7 +611,7 @@ public class ProcessInstanceDomainService {
         queryTaskReqVO.setProcessInstanceNo(instanceNo);
         queryTaskReqVO.setStatus(TASK_STATUS_PENDING);
         List<ProcessTaskEntity> processTaskEntities = processTaskRepository.queryTask(queryTaskReqVO);
-        if (ObjectUtils.isNotEmpty(processTaskEntities)) {
+        if (processTaskEntities != null) {
             log.info("Executing task num:{}", processTaskEntities.size());
             for (ProcessTaskEntity processTaskEntity : processTaskEntities) {
                 processTaskEntity.setStatus(TASK_STATUS_CANCELED);
