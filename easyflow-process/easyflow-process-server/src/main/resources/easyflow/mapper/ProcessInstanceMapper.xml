@@ -298,6 +298,13 @@
     where instance_no = #{instanceNo,jdbcType=VARCHAR} and deleted=0
   </update>
   
+  <update id="deleteByProcessInstanceNo" parameterType="java.lang.String">
+    update process_instance
+    set 
+      deleted=1
+    where instance_no = #{instanceNo,jdbcType=VARCHAR} and deleted=0
+  </update>
+  
   <select id="getProcessInstanceByProcessTypeAndBizNo" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -357,7 +364,14 @@
       deleted = 0 and parent_instance_no=#{parentInstanceNo}
     </where>
   </select>
-  
+  <select id="selectProcessInstanceByParentNodeInstanceNo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from process_instance
+    <where>
+      deleted = 0 and parent_instance_no=#{parentInstanceNo} and parent_node_instance_no=#{parentNodeInstanceNo}
+    </where>
+  </select>  
   <sql id="pagerWhere">
     <where> deleted = 0
       <if test="fieldMap.instanceNo != null">

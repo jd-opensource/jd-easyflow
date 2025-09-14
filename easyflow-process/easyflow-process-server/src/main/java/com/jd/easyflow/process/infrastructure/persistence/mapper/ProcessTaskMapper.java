@@ -12,8 +12,6 @@ import com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask;
  *
  */
 public interface ProcessTaskMapper {
-    
-    int deleteByPrimaryKey(Long id);
 
     int insert(ProcessTask record);
     
@@ -21,15 +19,15 @@ public interface ProcessTaskMapper {
 
     int insertSelective(ProcessTask record);
 
-    ProcessTask selectByPrimaryKey(Long id);
-    
-    List<ProcessTask> list(QueryTaskReqVO query);
-
     int updateByPrimaryKeySelective(ProcessTask record);
 
     int updateByPrimaryKey(ProcessTask record);
     
     int updateByTaskNo(ProcessTask record);
+    
+    int deleteByPrimaryKey(Long id);
+    
+    int deleteByTaskNo(String taskNo);
     
     long countTaskAndAssignByPagerCondition(PagerCondition condition);
     
@@ -38,4 +36,8 @@ public interface ProcessTaskMapper {
     long countTaskByPagerCondition(PagerCondition condition);
     
     List<ProcessTask> selectTaskByPagerCondition(PagerCondition condition);
+    
+    ProcessTask selectByPrimaryKey(Long id);
+    
+    List<ProcessTask> list(QueryTaskReqVO query);
 }

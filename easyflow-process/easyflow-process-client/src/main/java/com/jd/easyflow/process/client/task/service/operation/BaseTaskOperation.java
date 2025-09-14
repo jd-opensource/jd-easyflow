@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +135,7 @@ public abstract class BaseTaskOperation<P, R> implements TaskClientOperation<P, 
         boolean pass = false;
         for (ProcessTaskAssignDTO assign : assignList) {
             if (ProcessTaskConstants.ASSIGN_TYPE_USER.equals(assign.getAssignType())) {
-                if (StringUtils.equals(assign.getAssignUser(), executor)) {
+                if (Objects.equals(assign.getAssignUser(), executor)) {
                     pass = true;
                     break;
                 }

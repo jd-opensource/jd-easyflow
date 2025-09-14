@@ -29,6 +29,8 @@ public interface ProcessInstanceMapper {
     
     int updateByProcessInstanceNo(ProcessInstance record);
     
+    int deleteByProcessInstanceNo(String processInstanceNo);
+    
     ProcessInstance getProcessInstanceByProcessTypeAndBizNo(@Param("processType") String processType, @Param("bizNo") String bizNo);
     
     ProcessInstance getActiveProcessInstanceByProcessTypeAndBizNo(@Param("processType") String processType, @Param("bizNo") String bizNo);
@@ -40,5 +42,6 @@ public interface ProcessInstanceMapper {
     List<ProcessInstance> selectProcessInstanceByPageCondition(PagerCondition pagerQueryReq);
     List<ProcessInstance> queryProcessInstanceByInstanceNos(@Param("processInstanceNos") List<String> processInstanceNos);
     List<ProcessInstance> selectProcessInstanceByParentInstanceNo(String parentInstanceNo);
+    List<ProcessInstance> selectProcessInstanceByParentNodeInstanceNo(@Param("parentInstanceNo") String parentInstanceNo, @Param("parentNodeInstanceNo") String parentNodeInstanceNo);
 
 }

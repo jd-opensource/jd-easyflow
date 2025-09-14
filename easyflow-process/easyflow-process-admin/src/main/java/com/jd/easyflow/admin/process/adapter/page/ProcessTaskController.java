@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +19,6 @@ import com.jd.easyflow.admin.process.adapter.page.dto.ProcessTaskInfoForPagerDTO
 import com.jd.easyflow.admin.process.adapter.page.extension.UserGroupAdminExtension;
 import com.jd.easyflow.admin.process.adapter.page.util.AdminProcessConstants;
 import com.jd.easyflow.admin.process.adapter.page.util.ClientErrorCode;
-import com.jd.easyflow.admin.process.adapter.page.util.ProcessPageUtils;
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponseCode;
@@ -34,6 +31,7 @@ import com.jd.easyflow.common.dto.pager.FieldEntry;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.exception.UserException;
 import com.jd.easyflow.common.util.CommonErrorCode;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.el.ElFactory;
 import com.jd.easyflow.flow.bpmn.BpmnFlowParser;
 import com.jd.easyflow.flow.model.Flow;
@@ -55,7 +53,6 @@ import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskAssignDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.WithdrawTaskReq;
 import com.jd.easyflow.process.adapter.export.dto.task.cmd.TaskCreateCmd;
-import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -127,7 +124,7 @@ public class ProcessTaskController extends BasePageController {
                 return processTask.getProcessInstanceNo();
             }
             return null;
-        }).filter(t -> StringUtils.isNoneBlank(t)).collect(Collectors.toList());
+        }).filter(t -> t != null && ! t.isEmpty()).collect(Collectors.toList());
         Map<String, Object> taskHandleMap = queryTaskAdminPropertyByProcessInstanceNo(collectInstanceNos, "taskHandle");
         for (int i = 0; i < processTaskList.size(); i++) {
             ProcessTaskInfoForPagerDTO dto = processTaskList.get(i);
@@ -222,7 +219,7 @@ public class ProcessTaskController extends BasePageController {
             root.put("processProperties", processProperties);
             root.put("taskProperties", taskProperties);
             String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-            if (StringUtils.isNotEmpty(pageUrlVal)) {
+            if (pageUrlVal != null && ! pageUrlVal.isEmpty()) {
                 return "redirect:" + pageUrlVal;
             }
         }
@@ -237,7 +234,7 @@ public class ProcessTaskController extends BasePageController {
                 root.put("processProperties", processProperties);
                 root.put("taskProperties", taskProperties);
                 String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-                if (StringUtils.isNotEmpty(pageUrlVal)) {
+                if (pageUrlVal != null && !pageUrlVal.isEmpty()) {
                     return "redirect:" + pageUrlVal;
                 }
             }
@@ -274,7 +271,7 @@ public class ProcessTaskController extends BasePageController {
         String instanceBizData = instance.getBizData();
         String extDataStr = task.getExtData();
         Integer taskVersion = null;
-        if (StringUtils.isNotEmpty(extDataStr)) {
+        if (extDataStr != null && ! extDataStr.isEmpty()) {
             Map<String, Object> extData = JSON.parseObject(extDataStr, Map.class);
             taskVersion = (Integer) extData.get("taskVersion");
             
@@ -319,7 +316,7 @@ public class ProcessTaskController extends BasePageController {
         ExportResponse<ProcessTaskDTO> taskResponse = getProcessTaskExport().getTask(new ExportRequest<String>(executeDto.getTaskNo()));
         ProcessTaskDTO task = ExportResponseUtil.unwrap(taskResponse);
         Integer currentVersion = null;
-        if (StringUtils.isNotEmpty(task.getExtData())) {
+        if (task.getExtData() != null && ! task.getExtData().isEmpty()) {
             Map<String, Object> taskExtData = JSON.parseObject(task.getExtData(), Map.class);
             currentVersion = (Integer) taskExtData.get("taskVersion");
         }
@@ -342,11 +339,11 @@ public class ProcessTaskController extends BasePageController {
             req.setInstanceBizStatus(executeDto.getExecuteBizResult());
             req.setExecuteBizData(executeDto.getExecuteBizData());
             req.setInstanceBizData(
-                    StringUtils.isNotEmpty(executeDto.getInstanceBizData()) ? executeDto.getInstanceBizData() : null);
+                    (executeDto.getInstanceBizData() != null && ! executeDto.getInstanceBizData().isEmpty()) ? executeDto.getInstanceBizData() : null);
             extData.put("taskTmpSaveData", new HashMap<>());
             extData.put("userTmpSaveData", new HashMap<>());
             req.setTaskExtData(JSON.toJSONString(extData));
-            if (StringUtils.isNotBlank(executeDto.getAssignUserList())) {
+            if (executeDto.getAssignUserList() != null && ! executeDto.getAssignUserList().isEmpty()) {
                 TaskCreateCmd cmd = new TaskCreateCmd();
                 Map<String, Object> assignInfo = new HashMap<>();
                 assignInfo.put("user", Arrays.asList(executeDto.getAssignUserList().split(",")));
@@ -369,7 +366,7 @@ public class ProcessTaskController extends BasePageController {
             Map<String, Object> tmpSaveData = new HashMap<>();
             tmpSaveData.put("executeBizResult", executeDto.getExecuteBizResult());
             tmpSaveData.put("executeBizData", executeDto.getExecuteBizData());
-            if (StringUtils.isNotEmpty(executeDto.getInstanceBizData())) {
+            if (executeDto.getInstanceBizData() != null && ! executeDto.getInstanceBizData().isEmpty()) {
                 tmpSaveData.put("instanceBizData", executeDto.getInstanceBizData());
             }
             if ("TASK".equals(saveScope)) {
@@ -470,7 +467,7 @@ public class ProcessTaskController extends BasePageController {
             
             String currentUser = userGroupAdminExtension.getCurrentUser(null);
             String extDataStr = task.getExtData();
-            if (StringUtils.isNotEmpty(extDataStr)) {
+            if (extDataStr != null && ! extDataStr.isEmpty()) {
                 Map<String, Object> extData = JSON.parseObject(extDataStr, Map.class);
                 Map<String, Object> taskTmpSaveData = (Map<String, Object>) extData.get("taskTmpSaveData");
                 if (taskTmpSaveData != null) {
@@ -505,7 +502,7 @@ public class ProcessTaskController extends BasePageController {
             root.put("processProperties", processProperties);
             root.put("taskProperties", taskProperties);
             String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-            if (StringUtils.isNotEmpty(pageUrlVal)) {
+            if (pageUrlVal != null && ! pageUrlVal.isEmpty()) {
                 return "redirect:" + pageUrlVal;
             }
         }
@@ -520,7 +517,7 @@ public class ProcessTaskController extends BasePageController {
                 root.put("processProperties", processProperties);
                 root.put("taskProperties", taskProperties);
                 String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-                if (StringUtils.isNotEmpty(pageUrlVal)) {
+                if (pageUrlVal != null && ! pageUrlVal.isEmpty()) {
                     return "redirect:" + pageUrlVal;
                 }
             }
@@ -530,8 +527,8 @@ public class ProcessTaskController extends BasePageController {
             pageId = "commonProcessTaskDetail";
         }
         String taskDetailFormId = detailProperties == null ? null : (String) detailProperties.get("formId");
-        model.addAttribute("taskDetailFormId", ProcessPageUtils.handleAddDefaultValue(taskDetailFormId));
-        model.addAttribute("taskExecuteBizData", ProcessPageUtils.handleAddDefaultValue(task.getExecuteBizData()));
+        model.addAttribute("taskDetailFormId", (taskDetailFormId == null || taskDetailFormId.isEmpty()) ? "null" : taskDetailFormId);
+        model.addAttribute("taskExecuteBizData", (task.getExecuteBizData() == null || task.getExecuteBizData().isEmpty()) ? "null" : task.getExecuteBizData());
         Map<String, Object> pageData = new HashMap<>();
         pageData.put("taskNo", task.getTaskNo());
         pageData.put("instanceBizData", JSON.parseObject(instanceBizData, Map.class));

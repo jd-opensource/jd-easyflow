@@ -342,6 +342,13 @@
     where task_no = #{taskNo,jdbcType=VARCHAR} and deleted=0
   </update>
   
+ <update id="deleteByTaskNo" parameterType="java.lang.String">
+    update process_task
+    set
+      deleted=false
+    where task_no = #{taskNo,jdbcType=VARCHAR} and deleted=0
+  </update>
+  
     <select id="list" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

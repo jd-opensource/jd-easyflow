@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.jd.easyflow.flow.cases.action.ActionTest;
 import com.jd.easyflow.flow.cases.action.LoopNodeActionTest;
+import com.jd.easyflow.flow.cases.action.MultipleActionTest;
 import com.jd.easyflow.flow.cases.event.EventFlowTest;
 import com.jd.easyflow.flow.cases.filter.FilterTest;
 import com.jd.easyflow.flow.cases.flowengine.FlowEngineImplTest;
@@ -62,7 +63,8 @@ import com.jd.easyflow.flow.quickstart.QuickStartTest;
     ConditionalPostHandlerTest.class,
     PreHandlerTest.class,
     FlowDefPrettyHelperTest.class,
-    SpringFlowTest.class
+    SpringFlowTest.class,
+    MultipleActionTest.class
 })
 public class FlowTestSuite {
 

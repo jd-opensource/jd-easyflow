@@ -225,6 +225,13 @@
     where node_instance_no = #{nodeInstanceNo,jdbcType=VARCHAR} and deleted=0
   </update>  
   
+    <update id="deleteByProcessNodeInstanceNo" parameterType="java.lang.String">
+    update process_node_instance
+    set 
+      deleted=1
+    where node_instance_no = #{nodeInstanceNo,jdbcType=VARCHAR} and deleted=0
+  </update>  
+  
   <select id="getOpenNodeInstance" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

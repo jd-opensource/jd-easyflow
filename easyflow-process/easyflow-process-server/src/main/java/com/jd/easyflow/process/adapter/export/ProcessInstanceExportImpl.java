@@ -14,6 +14,7 @@ import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponseCode;
 import com.jd.easyflow.common.adapter.export.dto.pager.PagerCondition;
 import com.jd.easyflow.common.adapter.export.dto.pager.PagerResult;
+import com.jd.easyflow.common.util.AssertUtils;
 import com.jd.easyflow.process.adapter.export.converter.PagerConverter;
 import com.jd.easyflow.process.adapter.export.converter.ProcessInstanceConverter;
 import com.jd.easyflow.process.adapter.export.dto.instance.CanCancelProcessInstanceReq;
@@ -30,6 +31,8 @@ import com.jd.easyflow.process.adapter.export.dto.instance.QueryOpenNodeInstance
 import com.jd.easyflow.process.adapter.export.dto.instance.QueryProcessInstanceReq;
 import com.jd.easyflow.process.adapter.export.dto.instance.QueryProcessNodeReqDTO;
 import com.jd.easyflow.process.adapter.export.dto.instance.UnlockProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.RollbackNodeReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.RollbackNodeRes;
 import com.jd.easyflow.process.domain.model.entity.ProcessInstanceEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessNodeExecutionEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessNodeInstanceEntity;
@@ -53,7 +56,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     @Autowired
     private ProcessRepository processRepository;
 
-    @Action(code = "easyflow-process-0201", name = "createProcessInstance")
+    @Action(code = "easyflow-process-createProcessInstance", name = "createProcessInstance")
     public ExportResponse<CreateProcessInstanceRes> createProcessInstance(ExportRequest<CreateProcessInstanceReq> req) {
         log.info("Start create process instance , req:{}", req);
         CreateProcessInstanceReqVO vo = ProcessInstanceConverter.INSTANCE.convert(req.getData());
@@ -65,7 +68,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     }
 
 
-    @Action(code = "easyflow-process-0202", name = "getProcessInstance")
+    @Action(code = "easyflow-process-getProcessInstance", name = "getProcessInstance")
     @Override
     public ExportResponse<ProcessInstanceDTO> getProcessInstance(ExportRequest<String> req) {
         ProcessInstanceEntity entity = getTransactionTemplate().execute(status -> {
@@ -75,7 +78,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(dto);
     }
 
-    @Action(code = "easyflow-process-0203", name = "pagerQueryProcessInstance")
+    @Action(code = "easyflow-process-pagerQueryProcessInstance", name = "pagerQueryProcessInstance")
     @Override
     public ExportResponse<PagerResult> pagerQueryProcessInstance(ExportRequest<PagerCondition> req) {
         com.jd.easyflow.common.dto.pager.PagerCondition condition = PagerConverter.INSTANCE.convert(req.getData());
@@ -88,7 +91,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(exportResult);
     }
 
-    @Action(code = "easyflow-process-0204", name = "queryProcessNodeInstanceByInstanceNo")
+    @Action(code = "easyflow-process-queryProcessNodeInstanceByInstanceNo", name = "queryProcessNodeInstanceByInstanceNo")
     @Override
     public ExportResponse<List<ProcessNodeInstanceDTO>> queryProcessNodeInstanceByInstanceNo(
             ExportRequest<String> req) {
@@ -104,7 +107,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(ProcessInstanceConverter.INSTANCE.convertDTOList(processNodeInstanceList));
     }
 
-    @Action(code = "easyflow-process-0205", name = "queryProcessInstanceByProcessTypeAndBizNo")
+    @Action(code = "easyflow-process-queryProcessInstanceByProcessTypeAndBizNo", name = "queryProcessInstanceByProcessTypeAndBizNo")
     @Override
     public ExportResponse<ProcessInstanceDTO> queryProcessInstanceByProcessTypeAndBizNo(
             ExportRequest<QueryProcessInstanceReq> req) {
@@ -125,7 +128,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(ProcessInstanceConverter.INSTANCE.convert(processInstance));
     }
 
-    @Action(code = "easyflow-process-0206", name = "lockProcessInstance")
+    @Action(code = "easyflow-process-lockProcessInstance", name = "lockProcessInstance")
     @Override
     public ExportResponse<String> lockProcessInstance(ExportRequest<LockProcessInstanceReq> req) {
         String requestId = processInstanceDomainService.lockProcessInstance(req.getData().getProcessType(),
@@ -133,7 +136,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(requestId);
     }
 
-    @Action(code = "easyflow-process-0207", name = "unLockProcessInstance")
+    @Action(code = "easyflow-process-unLockProcessInstance", name = "unLockProcessInstance")
     @Override
     public ExportResponse<Boolean> unLockProcessInstance(ExportRequest<UnlockProcessInstanceReq> req) {
         Boolean result = processInstanceDomainService.unLockProcessInstance(req.getData().getProcessType(),
@@ -141,7 +144,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(result);
     }
 
-    @Action(code = "easyflow-process-0209", name = "queryOpenNodeInstance")
+    @Action(code = "easyflow-process-queryOpenNodeInstance", name = "queryOpenNodeInstance")
     @Override
     public ExportResponse<ProcessNodeInstanceDTO> queryOpenNodeInstance(
             ExportRequest<QueryOpenNodeInstanceReq> request) {
@@ -156,7 +159,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(nodeInstanceDTO);
     }
 
-    @Action(code = "easyflow-process-0210", name = "findNodeInstances")
+    @Action(code = "easyflow-process-findNodeInstances", name = "findNodeInstances")
     @Override
     public ExportResponse<List<ProcessNodeInstanceDTO>> findNodeInstances(
             ExportRequest<QueryProcessNodeReqDTO> queryReq) {
@@ -172,7 +175,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(instanceDTOList);
     }
 
-    @Action(code = "easyflow-process-0212", name = "queryNodeInstanceByNo")
+    @Action(code = "easyflow-process-queryNodeInstanceByNo", name = "queryNodeInstanceByNo")
     @Override
     public ExportResponse<ProcessNodeInstanceDTO> queryNodeInstanceByNo(ExportRequest<String> request) {
         if (request.getData() == null || request.getData().isEmpty()) {
@@ -185,7 +188,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(nodeInstanceDTO);
     }
 
-    @Action(code = "easyflow-process-0213", name = "queryNodeExecutionByNo")
+    @Action(code = "easyflow-process-queryNodeExecutionByNo", name = "queryNodeExecutionByNo")
     @Override
     public ExportResponse<ProcessNodeExecutionDTO> queryNodeExecutionByNo(ExportRequest<String> request) {
         if (request.getData() == null || request.getData().isEmpty()) {
@@ -198,7 +201,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(executionDTO);
     }
 
-    @Action(code = "easyflow-process-0214", name = "updateProcessInstance")
+    @Action(code = "easyflow-process-updateProcessInstance", name = "updateProcessInstance")
     @Override
     public ExportResponse<Object> updateProcessInstance(ExportRequest<ProcessInstanceDTO> request) {
         ProcessInstanceEntity entity = ProcessInstanceConverter.INSTANCE.convert(request.getData());
@@ -208,7 +211,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success();
     }
 
-    @Action(code = "easyflow-process-0215", name = "queryActiveProcessInstanceByProcessTypeAndBizNo")
+    @Action(code = "easyflow-process-queryActiveProcessInstanceByProcessTypeAndBizNo", name = "queryActiveProcessInstanceByProcessTypeAndBizNo")
     @Override
     public ExportResponse<ProcessInstanceDTO> queryActiveProcessInstanceByProcessTypeAndBizNo(
             ExportRequest<QueryProcessInstanceReq> req) {
@@ -229,7 +232,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(ProcessInstanceConverter.INSTANCE.convert(processInstance));
     }
 
-    @Action(code = "easyflow-process-0216", name = "canCancel")
+    @Action(code = "easyflow-process-canCancel", name = "canCancel")
     @Override
     public ExportResponse<CanCancelProcessInstanceRes> canCancel(ExportRequest<CanCancelProcessInstanceReq> request) {
         CanCancelProcessInstanceReq canCancelProcessInstanceReq = request.getData();
@@ -242,7 +245,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(canCancelProcessInstanceRes);
     }
 
-    @Action(code = "easyflow-process-0217", name = "cancel")
+    @Action(code = "easyflow-process-cancel", name = "cancel")
     @Override
     public ExportResponse<CancelProcessInstanceRes> cancel(ExportRequest<CancelProcessInstanceReq> request) {
         CancelProcessInstanceReq cancelProcessInstanceReq = request.getData();
@@ -254,19 +257,20 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     }
 
     @Override
-    @Action(code = "easyflow-process-0218", name = "queryInstanceByInstanceNos")
+    @Action(code = "easyflow-process-queryInstanceByInstanceNos", name = "queryInstanceByInstanceNos")
     public ExportResponse<List<ProcessInstanceDTO>> queryInstanceByInstanceNos(ExportRequest<List<String>> request) {
         List<String> instanceNos = request.getData();
         if (instanceNos == null || instanceNos.isEmpty()) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY);
         }
         List<ProcessInstanceDTO> processInstanceDTOS = getTransactionTemplate().execute(status -> {
-            return processRepository.queryProcessInstanceByInstanceNos(instanceNos);
+            List<ProcessInstanceEntity> processInstances = processRepository.queryProcessInstanceByInstanceNos(instanceNos);
+            return ProcessInstanceConverter.INSTANCE.convert(processInstances);
         });
         return ExportResponse.build4Success(processInstanceDTOS);
     }
 
-    @Action(code = "easyflow-process-0219", name = "queryNodeInstanceByNos")
+    @Action(code = "easyflow-process-queryNodeInstanceByNos", name = "queryNodeInstanceByNos")
     @Override
     public ExportResponse<List<ProcessNodeInstanceDTO>> queryNodeInstanceByNos(ExportRequest<List<String>> request) {
         if (request.getData() == null) {
@@ -279,14 +283,15 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(nodeInstanceDTO);
     }
     
-    @Action(code = "easyflow-process-0220", name = "queryProcessInstanceByParentInstanceNo")
+    @Action(code = "easyflow-process-queryProcessInstanceByParentInstanceNo", name = "queryProcessInstanceByParentInstanceNo")
     @Override
     public ExportResponse<List<ProcessInstanceDTO>> queryProcessInstanceByParentInstanceNo(ExportRequest<String> request) {
         if (request.getData() == null) {
             return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY.getCode(), " parent instance no cannot be null");
         }
         List<ProcessInstanceDTO> processInstances = getTransactionTemplate().execute(status -> {
-            return processRepository.queryProcessInstanceByParentInstanceNo(request.getData());
+            List<ProcessInstanceEntity> instances =  processRepository.queryProcessInstanceByParentInstanceNo(request.getData());
+            return ProcessInstanceConverter.INSTANCE.convert(instances);
         });
         return ExportResponse.build4Success(processInstances);
     }
@@ -311,6 +316,7 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     public void setProcessRepository(ProcessRepository processRepository) {
         this.processRepository = processRepository;
     }
-    
+
+
 
 }

@@ -1,16 +1,13 @@
 package com.jd.easyflow.common.util;
 
-import java.util.Collection;
-import java.util.Map;
-
 import org.slf4j.helpers.MessageFormatter;
 
-import com.jd.easyflow.common.exception.EasyFlowException;
+import com.jd.easyflow.common.exception.UserException;
 
 public class AssertUtils {
 
     public static IAssertUtils TIPS = (e, p) ->{
-        throw new EasyFlowException(CommonErrorCode.E0000001.getCode(), MessageFormatter.arrayFormat(e, p).getMessage());
+        throw new UserException(CommonErrorCode.E0000001.getCode(), MessageFormatter.arrayFormat(e, p).getMessage());
     };
 
     public static void isTrue(boolean expression, String message, Object... params) {

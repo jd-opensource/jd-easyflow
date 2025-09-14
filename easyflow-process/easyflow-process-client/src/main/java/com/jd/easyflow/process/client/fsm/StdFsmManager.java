@@ -3,8 +3,8 @@ package com.jd.easyflow.process.client.fsm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +119,7 @@ public class StdFsmManager extends FsmManager {
                 continue;
             }
             String content = fsmDefinitionMap.get(fsm.getId());
-            if (StringUtils.isBlank(content)){
+            if (content == null || content.isEmpty()){
                 log.warn("Fsm definition content is blank:{}",fsm.getId());
                 continue;
             }
@@ -148,7 +148,7 @@ public class StdFsmManager extends FsmManager {
             return true;
         }
         String jsonData = fsmDefinitionMap.get(fsm.getId());
-        return !StringUtils.equals(jsonData,processDef.getContent());
+        return !Objects.equals(jsonData,processDef.getContent());
     }
 
 
@@ -156,7 +156,7 @@ public class StdFsmManager extends FsmManager {
         if (latestVersion == null){
             return fsmId + StdFlowProcessConstants.VERSION_PREFIX;
         }
-        return StringUtils.join(fsmId,StdFlowProcessConstants.VERSION_PREFIX,latestVersion);
+        return fsmId + StdFlowProcessConstants.VERSION_PREFIX + latestVersion;
     }
 
     public ProcessDefinitionExport getProcessDefinitionExport() {

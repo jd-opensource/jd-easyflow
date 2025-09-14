@@ -150,6 +150,8 @@ CREATE TABLE `process_task` (
   PRIMARY KEY (`id`),
   INDEX `idx_taskNo` (`task_no`),
   INDEX `idx_bizNoProcessType` (`biz_no`, process_type),
+  INDEX `idx_processInstanceNo` (`process_instance_no`),
+  INDEX `idx_nodeInstanceNo` (`node_instance_no`),
   INDEX `idx_executeTime` (`execute_time`),
   INDEX `idx_assignTime` (`assign_time`),
   INDEX `idx_executor` (`executor`),

@@ -182,6 +182,13 @@
       ext_data = #{extData,jdbcType=OTHER}
     where assign_no = #{assignNo,jdbcType=VARCHAR} and deleted=0
   </update>
+  <update id="deleteTaskAssignByAssignNo" parameterType="java.lang.String">
+    update process_task_assign
+    set 
+      deleted=1
+    where assign_no = #{assignNo,jdbcType=VARCHAR} and deleted=0
+  </update>  
+  
     
     <select id="list" resultMap="BaseResultMap">
     select 

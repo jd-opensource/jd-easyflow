@@ -1,0 +1,25 @@
+{
+	"id": "flow1",
+	"nodes": [
+		{
+			"id": "node1",
+			"action":{"type":"flow"},
+			"properties": {
+				"flow": {
+					"id": "flow11",
+					"nodes": [
+						{
+							"id": "node11",
+							"action":{"type":"flow"},
+							"properties": {
+								"flow": {
+									"id": "flow111"
+								}
+							}
+						}
+					]
+				}
+			}
+		}
+	]
+}

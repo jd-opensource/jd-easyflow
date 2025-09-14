@@ -7,11 +7,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +43,7 @@ public class ProcessRuntimeService {
         if (!Boolean.TRUE
                 .equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_CREATE_INSTANCE_EVERY_TIME))) {
             String bizRelation = PropertiesUtil.get(processProperties, StdProcessConstants.PROP_BIZ_RELATION);
-            if (StringUtils.isEmpty(bizRelation) || StdProcessConstants.BIZ_RELATION_ONE_ONE.equals(bizRelation)) {
+            if (bizRelation == null || StdProcessConstants.BIZ_RELATION_ONE_ONE.equals(bizRelation)) {
                 processInstance = manager.getProcessInstanceByProcessTypeAndBizNo(instance.getProcessType(),
                         instance.getBizNo(), context);
 
@@ -59,7 +57,7 @@ public class ProcessRuntimeService {
                     throw exception;
                 }
 
-            } else if (StdProcessConstants.BIZ_RELATION_MANY_ONE.equals(bizRelation)) {
+            }  else if (StdProcessConstants.BIZ_RELATION_MANY_ONE.equals(bizRelation)) {
                 processInstance = manager.getActiveProcessInstanceByProcessTypeAndBizNo(instance.getProcessType(),
                         instance.getBizNo(), context);
             } else {
@@ -112,24 +110,24 @@ public class ProcessRuntimeService {
         }
 
         boolean update = false;
-        if (!StringUtils.equals(processInstance.getProcessDefId(), instance.getProcessDefId())) {
+        if (!Objects.equals(processInstance.getProcessDefId(), instance.getProcessDefId())) {
             processInstance.setProcessDefId(instance.getProcessDefId());
             update = true;
         }
         if (instance.getBizStatus() != null
-                && !StringUtils.equals(processInstance.getBizStatus(), instance.getBizStatus())) {
+                && !Objects.equals(processInstance.getBizStatus(), instance.getBizStatus())) {
             processInstance.setBizStatus(instance.getBizStatus());
             update = true;
         }
-        if (instance.getBizData() != null && !StringUtils.equals(processInstance.getBizData(), instance.getBizData())) {
+        if (instance.getBizData() != null && !Objects.equals(processInstance.getBizData(), instance.getBizData())) {
             processInstance.setBizData(instance.getBizData());
             update = true;
         }
-        if (instance.getParentInstanceNo() != null && !StringUtils.equals(processInstance.getParentInstanceNo(), instance.getParentInstanceNo())) {
+        if (instance.getParentInstanceNo() != null && !Objects.equals(processInstance.getParentInstanceNo(), instance.getParentInstanceNo())) {
             processInstance.setParentInstanceNo(instance.getParentInstanceNo());
             update = true;
         }
-        if (instance.getParentNodeInstanceNo() != null && !StringUtils.equals(processInstance.getParentNodeInstanceNo(), instance.getParentNodeInstanceNo())) {
+        if (instance.getParentNodeInstanceNo() != null && !Objects.equals(processInstance.getParentNodeInstanceNo(), instance.getParentNodeInstanceNo())) {
             processInstance.setParentNodeInstanceNo(instance.getParentNodeInstanceNo());
             update = true;
         }
@@ -140,7 +138,7 @@ public class ProcessRuntimeService {
         checkStartNodes(context);
 
         String variablesStr = processInstance.getVars();
-        if (StringUtils.isNotEmpty(variablesStr)) {
+        if (variablesStr != null && ! variablesStr.isEmpty()) {
             Map<String, String> variables = JSON.parseObject(variablesStr, Map.class);
             context.getVariableSetter().accept(variables);
         }
@@ -168,7 +166,7 @@ public class ProcessRuntimeService {
                 nodeNewCreate = nodeInstanceInfo.getRight();
             }
             
-            if (StringUtils.isNotEmpty(nodeInstance.getVars())) {
+            if (nodeInstance.getVars() != null && ! nodeInstance.getVars().isEmpty()) {
                 context.getNodeVariableSetter().accept(Pair.of(nodeContext, JSON.parseObject(nodeInstance.getVars(), Map.class)));
             }
             if (nodeNewCreate && context.getNodeStartEventPolicy() == StdProcessConstants.NODE_START_EVENT_POLICY_CREATE) {
@@ -177,7 +175,7 @@ public class ProcessRuntimeService {
             if (FlowConstants.NODE_PRE_CHECK_TYPE_MULTICHECK.equals(nodeContext.getPreCheckType())) {
                 if (StdProcessConstants.NODE_STATUS_ACTIVE.equals(nodeInstance.getStatus())) {
                     log.info("Node " + nodeContext + " finish precheck");
-                    nodeContext.setPreResult(false);
+                    nodeContext.setPreResult(true);
                 } else if (StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus())) {
                     boolean preResult = false;
                     String previousNodeInstanceNos = nodeInstance.getPreviousNodeInstances();
@@ -251,9 +249,9 @@ public class ProcessRuntimeService {
             Map<String, String> nodeVariables = context.getNodeVariableGetter().apply(nodeContext);
             String currentVariableStr = instance.getVars();
             String newVariablesStr = null;
-            if (!(StringUtils.isEmpty(currentVariableStr) && (nodeVariables == null || nodeVariables.isEmpty()))) {
+            if (!((currentVariableStr == null || currentVariableStr.isEmpty()) && (nodeVariables == null || nodeVariables.isEmpty()))) {
                 newVariablesStr = JSON.toJSONString(nodeVariables);
-                if (!StringUtils.equals(newVariablesStr, currentVariableStr)) {
+                if (!Objects.equals(newVariablesStr, currentVariableStr)) {
                     instance.setVars(newVariablesStr);
                     manager.updateNodeInstance(instance, context);
                 }
@@ -282,13 +280,20 @@ public class ProcessRuntimeService {
                             StdProcessConstants.PROP_SAVE_PREVIOUS_POLICY);
                     if (!StdProcessConstants.SAVE_PREVIOUS_POLICY_NONE.equals(savePreviousPolicy)) {
                         String previousStr = nodeInstance.getPreviousNodeInstances();
-                        if (StringUtils.isEmpty(previousStr)) {
+                        if (previousStr == null || previousStr.isEmpty()) {
                             previousStr = nodeContext.getNodeInstanceNo();
                             nodeInstance.setPreviousNodeInstances(previousStr);
                             manager.updateNodeInstance(nodeInstance, context);
                         } else {
-                            String[] previousNodeInstanceNos = StringUtils.split(previousStr, ",");
-                            if (!ArrayUtils.contains(previousNodeInstanceNos, nodeContext.getNodeInstanceNo())) {
+                            String[] previousNodeInstanceNos = previousStr.split(",");
+                            boolean contains = false;
+                            for (String no : previousNodeInstanceNos) {
+                                if (no.equals(nodeContext.getNodeInstanceNo())) {
+                                    contains = true;
+                                    break;
+                                }
+                            }
+                            if (! contains) {
                                 previousStr += "," + nodeContext.getNodeInstanceNo();
                                 nodeInstance.setPreviousNodeInstances(previousStr);
                                 manager.updateNodeInstance(nodeInstance, context);
@@ -299,7 +304,7 @@ public class ProcessRuntimeService {
 
                 nodeContext.setNextNodeInstanceNos(nextNodeInstanceNos.toArray(new String[] {}));
 
-                instance.setNextNodeInstances(StringUtils.join(nextNodeInstanceNos, ","));
+                instance.setNextNodeInstances(String.join(",", nextNodeInstanceNos));
                 manager.updateNodeInstance(instance, context);
                 context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_NODE_INSTANCE_END,
                         new Object[] { instance, nodeContext } });
@@ -339,11 +344,11 @@ public class ProcessRuntimeService {
         Map<String, String> variables = context.getVariableGetter().get();
         ProcessInstanceDTO instance = manager.getProcessInstance(context);
         String currentVariableStr = instance.getVars();
-        if (StringUtils.isEmpty(currentVariableStr) && (variables == null || variables.isEmpty())) {
+        if ((currentVariableStr == null || currentVariableStr.isEmpty()) && (variables == null || variables.isEmpty())) {
             return;
         }
         String newVariables = JSON.toJSONString(variables);
-        if (!StringUtils.equals(instance.getVars(), newVariables)) {
+        if (!Objects.equals(instance.getVars(), newVariables)) {
             instance.setVars(newVariables);
             manager.updateProcessInstance(instance, context);
         }

@@ -42,7 +42,7 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
     @Autowired
     private ProcessTaskRepository processTaskRepository;
 
-    @Action(code = "easyflow-process-0301", name = "executeTask")
+    @Action(code = "easyflow-process-executeTask", name = "executeTask")
     @Override
     public ExportResponse<ExecuteTaskRes> executeTask(ExportRequest<ExecuteTaskReq> req) {
         ExecuteProcessTaskReqVO vo = ProcessTaskConverter.INSTANCE.convert(req.getData());
@@ -51,7 +51,7 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
         return ExportResponse.build4Success(res);
     }
 
-    @Action(code = "easyflow-process-0302", name = "pagerQueryTask")
+    @Action(code = "easyflow-process-pagerQueryTask", name = "pagerQueryTask")
     @Override
     public ExportResponse<PagerResult> pagerQueryTask(ExportRequest<PagerCondition> req) {
         com.jd.easyflow.common.dto.pager.PagerCondition condition = PagerConverter.INSTANCE.convert(req.getData());
@@ -62,7 +62,7 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
         return ExportResponse.build4Success(PagerConverter.INSTANCE.convert(result));
     }
 
-    @Action(code = "easyflow-process-0303", name = "getTask")
+    @Action(code = "easyflow-process-getTask", name = "getTask")
     @Override
     public ExportResponse<ProcessTaskDTO> getTask(ExportRequest<String> req) {
         ProcessTaskDTO processTask = getTransactionTemplate().execute(status -> {
@@ -71,7 +71,7 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
         return ExportResponse.build4Success(processTask);
     }
 
-    @Action(code = "easyflow-process-0305", name = "queryTask")
+    @Action(code = "easyflow-process-queryTask", name = "queryTask")
     @Override
     public ExportResponse<List<ProcessTaskDTO>> queryTask(ExportRequest<QueryTaskReq> req) {
         QueryTaskReqVO query = ProcessTaskConverter.INSTANCE.convert(req.getData());
@@ -81,7 +81,7 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
         return ExportResponse.build4Success(ProcessTaskConverter.INSTANCE.convertEntityList(list));
     }
 
-    @Action(code = "easyflow-process-0306", name = "canWithdraw")
+    @Action(code = "easyflow-process-canWithdraw", name = "canWithdraw")
     @Override
     public ExportResponse<CanWithdrawTaskRes> canWithdraw(ExportRequest<CanWithdrawTaskReq> req) {
         CanWithdrawTaskRes res = getTransactionTemplate().execute(status -> {
@@ -90,7 +90,7 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
         return ExportResponse.build4Success(res);
     }
 
-    @Action(code = "easyflow-process-0307", name = "withDraw")
+    @Action(code = "easyflow-process-withDraw", name = "withDraw")
     @Override
     public ExportResponse<WithdrawTaskRes> withDraw(ExportRequest<WithdrawTaskReq> req) {
         processTaskDomainService.withdrawTask(req.getData().getTaskNo(), req.getData().getUser(),
@@ -99,13 +99,13 @@ public class ProcessTaskExportImpl implements ProcessTaskExport {
         return ExportResponse.build4Success(new WithdrawTaskRes());
     }
 
-    @Action(code = "easyflow-process-0308", name = "doExecuteOperations")
+    @Action(code = "easyflow-process-doExecuteOperations", name = "doExecuteOperations")
     @Override
     public ExportResponse<TaskOperationsRes> doExecuteOperations(ExportRequest<TaskOperationsReq> req) {
         throw new UnsupportedOperationException();
     }
 
-    @Action(code = "easyflow-process-0309", name = "findTaskAssignListByTaskNo")
+    @Action(code = "easyflow-process-findTaskAssignListByTaskNo", name = "findTaskAssignListByTaskNo")
     @Override
     public ExportResponse<List<ProcessTaskAssignDTO>> findTaskAssignListByTaskNo(ExportRequest<String> req) {
         List<ProcessTaskAssignEntity> assignList = getTransactionTemplate().execute(status -> {

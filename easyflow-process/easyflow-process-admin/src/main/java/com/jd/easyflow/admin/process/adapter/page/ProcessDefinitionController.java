@@ -3,7 +3,6 @@ package com.jd.easyflow.admin.process.adapter.page;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -106,7 +105,7 @@ public class ProcessDefinitionController extends BasePageController {
         if (latest) {
             exportResponse = getProcessDefinitionExport().getLatestProcessDefinition(new ExportRequest(defId));
         } else {
-            if (StringUtils.isNotEmpty(fullDefinitionId)) {
+            if (fullDefinitionId != null && ! fullDefinitionId.isEmpty()) {
                 // Process instance page definition link to here, empty id represent empty version.
                 exportResponse = getProcessDefinitionExport()
                         .getProcessDefinition(new ExportRequest<String>(fullDefinitionId));

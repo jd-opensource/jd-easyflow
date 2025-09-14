@@ -134,8 +134,8 @@ public class FlowNodeAction implements NodeAction {
                     param.setObjectDefinition(flowDef);
                     param.setParseEl(initContext.isParseEl());
                     List<Flow> flowList = initContext.getFlowParser().parse(param);
+                    initContext.getFlowList().addAll(flowList);
                     Flow subFlow = flowList.get(0);
-                    initContext.getFlowList().add(subFlow);
                     flowId = subFlow.getId();
                     flow = subFlow;
                 }

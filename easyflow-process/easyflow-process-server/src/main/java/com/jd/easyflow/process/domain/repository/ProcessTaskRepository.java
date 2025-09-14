@@ -17,13 +17,6 @@ import com.jd.easyflow.process.domain.model.vo.TaskInfoForPagerVO;
  */
 public interface ProcessTaskRepository {
 
-    List<ProcessTaskEntity> queryTask(QueryTaskReqVO query);
-    
-    ProcessTaskEntity getTask(String taskNo);
-    
-    ProcessTaskAssignEntity getTaskAssign(String taskAssignNo);
-    
-    ProcessTaskEventEntity getTaskEvent(String taskEventNo);
     
     void saveOrUpdate(ProcessTaskEntity taskEntity, List<ProcessTaskEventEntity> eventList, List<ProcessTaskAssignEntity> assignEntityList);
     
@@ -50,6 +43,21 @@ public interface ProcessTaskRepository {
     void updateById(ProcessTaskEventEntity eventEntity);
     
     void updateByTaskEventNo(ProcessTaskEventEntity eventEntity);
+    
+    void deleteTaskByTaskNo(String taskNo);
+    
+    void deleteTaskAssignByAssignNo(String assignNo);
+    
+    
+    
+
+    List<ProcessTaskEntity> queryTask(QueryTaskReqVO query);
+    
+    ProcessTaskEntity getTask(String taskNo);
+    
+    ProcessTaskAssignEntity getTaskAssign(String taskAssignNo);
+    
+    ProcessTaskEventEntity getTaskEvent(String taskEventNo);
 
     List<ProcessTaskAssignEntity> findTaskAssignListByTaskNo(String taskNo);
     

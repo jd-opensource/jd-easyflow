@@ -3,10 +3,12 @@ package com.jd.easyflow.cache.impl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.jd.easyflow.cache.CacheService;
+
 /**
  * @author liyuliang5
  */
-public class LocalCacheServiceImpl extends UnsupportedCacheServiceImpl {
+public class LocalCacheServiceImpl implements CacheService {
     
     private long setTimeoutMillis = 60 * 1000;
     

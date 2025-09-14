@@ -6,7 +6,22 @@ import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
 import com.jd.easyflow.common.adapter.export.dto.pager.PagerCondition;
 import com.jd.easyflow.common.adapter.export.dto.pager.PagerResult;
-import com.jd.easyflow.process.adapter.export.dto.instance.*;
+import com.jd.easyflow.process.adapter.export.dto.instance.CanCancelProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.CanCancelProcessInstanceRes;
+import com.jd.easyflow.process.adapter.export.dto.instance.CancelProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.CancelProcessInstanceRes;
+import com.jd.easyflow.process.adapter.export.dto.instance.CreateProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.CreateProcessInstanceRes;
+import com.jd.easyflow.process.adapter.export.dto.instance.LockProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.ProcessInstanceDTO;
+import com.jd.easyflow.process.adapter.export.dto.instance.ProcessNodeExecutionDTO;
+import com.jd.easyflow.process.adapter.export.dto.instance.ProcessNodeInstanceDTO;
+import com.jd.easyflow.process.adapter.export.dto.instance.QueryOpenNodeInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.QueryProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.QueryProcessNodeReqDTO;
+import com.jd.easyflow.process.adapter.export.dto.instance.UnlockProcessInstanceReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.RollbackNodeReq;
+import com.jd.easyflow.process.adapter.export.dto.instance.RollbackNodeRes;
 
 /**
  * @author liyuliang5
@@ -24,7 +39,7 @@ public interface ProcessInstanceExport {
 
     ExportResponse<Boolean> unLockProcessInstance(ExportRequest<UnlockProcessInstanceReq> req);
     
-    ExportResponse<Object> updateProcessInstance(ExportRequest<ProcessInstanceDTO> request);
+    ExportResponse updateProcessInstance(ExportRequest<ProcessInstanceDTO> request);
 
     ExportResponse<CanCancelProcessInstanceRes> canCancel(ExportRequest<CanCancelProcessInstanceReq> request);
 

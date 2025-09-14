@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.jd.easyflow.flow.engine.FlowContext;
-import com.jd.easyflow.flow.engine.FlowParam;
-import com.jd.easyflow.flow.engine.FlowResult;
 import com.jd.easyflow.flow.model.NodeContext;
 
 /**
@@ -25,26 +23,11 @@ public class ElRootMap implements Map<String, Object> {
     private static final String KEY_PARAM_DATA = "paramData";
     private static final String KEY_RESULT = "result";
     private static final String KEY_BIZ_RESULT = "bizResult";
+    private static final String KEY_RESULT_DATA = "resultData";
 
     NodeContext nodeContext;
 
-    Object actionResult;
-
-    Object nodeBizContext;
-
     FlowContext context;
-
-    Object bizContext;
-
-    FlowParam param;
-
-    Object bizParam;
-
-    Map<String, Object> paramData;
-
-    FlowResult result;
-
-    Object bizResult;
 
     Map<String, Object> data;
 
@@ -70,6 +53,7 @@ public class ElRootMap implements Map<String, Object> {
             case KEY_PARAM_DATA:
             case KEY_RESULT:
             case KEY_BIZ_RESULT:
+            case KEY_RESULT_DATA:
                 return true;
             default:
                 return data == null ? null : data.containsKey(key);
@@ -90,32 +74,34 @@ public class ElRootMap implements Map<String, Object> {
                 value = nodeContext;
                 break;
             case KEY_ACTION_RESULT:
-                value = actionResult;
+                value = nodeContext == null ? null : nodeContext.getActionResult();
                 break;
             case KEY_NODE_BIZ_CONTEXT:
-                value = nodeBizContext;
+                value = nodeContext == null ? null : nodeContext.getNodeContext();
                 break;
             case KEY_CONTEXT:
                 value = context;
                 break;
             case KEY_BIZ_CONTEXT:
-                value = bizContext;
+                value = context == null ? null : context.getContext();
                 break;
             case KEY_PARAM:
-                value = param;
+                value = context == null ? null : context.getParam();
                 break;
             case KEY_BIZ_PARAM:
-                value = bizParam;
+                value = context == null ? null : (context.getParam() == null ? null : context.getParam().getParam());
                 break;
             case KEY_PARAM_DATA:
-                value = paramData;
+                value = context == null ? null : (context.getParam() == null ? null : context.getParam().getDataMap());
                 break;
             case KEY_RESULT:
-                value = result;
+                value = context == null ? null : context.getResult();
                 break;
             case KEY_BIZ_RESULT:
-                value = bizResult;
+                value = context == null ? null : (context.getResult() == null ? null : context.getResult().getResult());
                 break;
+            case KEY_RESULT_DATA:
+                value = context == null ? null : (context.getResult() == null ? null : context.getResult().getDataMap());
             default:
                 // NOOP
             }

@@ -26,6 +26,7 @@ import com.jd.easyflow.codegenerator.client.CodeGenerateHelper;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.dto.pager.PagerResult;
 import com.jd.easyflow.common.exception.UserException;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.lock.Locker;
 import com.jd.easyflow.message.MessageSendService;
@@ -61,7 +62,6 @@ import com.jd.easyflow.process.domain.model.vo.ScheduleProcessReqVO;
 import com.jd.easyflow.process.domain.model.vo.ScheduleProcessResVO;
 import com.jd.easyflow.process.domain.repository.ProcessRepository;
 import com.jd.easyflow.process.domain.repository.ProcessTaskRepository;
-import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -640,7 +640,7 @@ public class ProcessInstanceDomainService {
                 }
             }
         } else {
-            log.error("Process instance {} has no executing task", instanceNo);
+            log.info("Process instance {} has no executing task", instanceNo);
         }
     }
 
@@ -726,6 +726,7 @@ public class ProcessInstanceDomainService {
         return res;
     }
     
+    
     public ProcessRepository getProcessRepository() {
         return processRepository;
     }
@@ -770,5 +771,5 @@ public class ProcessInstanceDomainService {
     public void setExecutionPersistPolicy(String executionPersistPolicy) {
         this.executionPersistPolicy = executionPersistPolicy;
     }
-
+    
 }

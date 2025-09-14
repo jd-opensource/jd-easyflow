@@ -2,14 +2,21 @@ package com.jd.easyflow.fsm.el;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.context.expression.MapAccessor;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.model.TransitionContext;
 import com.jd.easyflow.fsm.util.JsonUtil;
-import com.jd.easyflow.fsm.util.SpelHelper;
 
 /**
  * 
@@ -28,11 +35,35 @@ public class SpelEvaluator implements ElEvaluator {
     private int rootType = ROOT_TYPE_ROOT_MAP;
     
     private boolean cache = true;
+    
+    public static StandardEvaluationContext context = new StandardEvaluationContext();
+
+    private static Map<String, Expression> cacheMap = new ConcurrentHashMap();
+
+    private static ExpressionParser parser = new SpelExpressionParser();
+
+    private static ApplicationContext applicationContext;
+
+    {
+        context.addPropertyAccessor(new MapAccessor());
+    }
 
     @Override
     public <T> T evalWithDefaultContext(String exp, Object root, boolean cache) {
         try {
-            return SpelHelper.evalWithDefaultContext(exp, root, cache);
+            Expression expression;
+            if (cache) {
+                expression = cacheMap.get(exp);
+                if (expression == null) {
+                    expression = parser.parseExpression(exp);
+                    cacheMap.put(exp, expression);
+                }
+            } else {
+                expression = parser.parseExpression(exp);
+            }
+
+            Object value = expression.getValue(context, root);
+            return (T) value;
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {
                 logger.error("eval spel exception, exp:" + exp + "," + e.getMessage());
@@ -59,7 +90,7 @@ public class SpelEvaluator implements ElEvaluator {
 
         Object result = null;
         try {
-            result =  SpelHelper.evalWithDefaultContext(exp, root, cache);
+            result =  evalWithDefaultContext(exp, root, cache);
         } catch (Exception e) {
             if ((fsmContext == null || fsmContext.isLogOn()) && logger.isErrorEnabled()) {
                 logger.error("EVAL SPEL EXCEPTION, exp:" + exp + "," + e.getMessage());
@@ -158,6 +189,17 @@ public class SpelEvaluator implements ElEvaluator {
         this.cache = cache;
     }
     
+
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        context.setBeanResolver(new BeanFactoryResolver(applicationContext));
+    }
+
     
 
 }

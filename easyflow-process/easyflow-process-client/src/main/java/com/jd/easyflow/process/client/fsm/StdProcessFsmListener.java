@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,9 +144,11 @@ public class StdProcessFsmListener implements FsmEventListener {
 
         processContext.setProcessProperties(assembleProcessProperties(context));
 
-        Boolean checkStartNode = PropertiesUtil.get(
-                context.getFsm().getProperty(StdFsmProcessConstants.FSM_PROP_PROCESS),
-                StdProcessConstants.PROP_CHECK_START_NODE);
+        Boolean checkStartNode = PropertiesUtil.get(StdProcessConstants.PROP_CHECK_START_NODE,
+                context.getData(StdFsmProcessConstants.FSM_PROP_PROCESS),
+                context.getParam().get(StdFsmProcessConstants.FSM_PROP_PROCESS),
+                context.getFsm().getProperty(StdFsmProcessConstants.FSM_PROP_PROCESS)
+                );
         checkStartNode = checkStartNode != null && checkStartNode;
         processContext.setCheckStartNode(checkStartNode);
 
@@ -356,7 +358,7 @@ public class StdProcessFsmListener implements FsmEventListener {
         StdNodeContext nodeContext = tstContext.get(StdFsmProcessConstants.FSM_TST_CTX_NODE_CTX);
         String currentStateId = context.getCurrentState().getId();
         nodeContext.setNextNodeIds(
-                StringUtils.equals(currentStateId, nodeContext.getNodeId()) ? null : new String[] { currentStateId });
+                Objects.equals(currentStateId, nodeContext.getNodeId()) ? null : new String[] { currentStateId });
         if (processContext.getBizNo() == null) {
             processContext.setBizNo(context.getStateInstanceId());
         }
@@ -426,22 +428,14 @@ public class StdProcessFsmListener implements FsmEventListener {
     }
 
     private String initDataFlushPolicy(FsmContext context) {
-        String flushPolicy = PropertiesUtil.get(context.getData(StdFsmProcessConstants.FSM_PROP_PROCESS),
-                StdProcessConstants.PROP_DATA_FLUSH_POLICY);
-        if (StringUtils.isNotEmpty(flushPolicy)) {
-            return flushPolicy;
+        String flushPolicy = PropertiesUtil.get(StdProcessConstants.PROP_DATA_FLUSH_POLICY,
+                context.getData(StdFsmProcessConstants.FSM_PROP_PROCESS),
+                context.getParam().get(StdFsmProcessConstants.FSM_PROP_PROCESS),
+                context.getFsm().getProperty(StdFsmProcessConstants.FSM_PROP_PROCESS)
+                );
+        if (flushPolicy == null) {
+            flushPolicy = StdProcessConstants.FLUSH_AFTER_PROCESS;
         }
-        flushPolicy = PropertiesUtil.get(context.getParam().get(StdFsmProcessConstants.FSM_PROP_PROCESS),
-                StdProcessConstants.PROP_DATA_FLUSH_POLICY);
-        if (StringUtils.isNotEmpty(flushPolicy)) {
-            return flushPolicy;
-        }
-        flushPolicy = PropertiesUtil.get(context.getFsm().getProperty(StdFsmProcessConstants.FSM_PROP_PROCESS),
-                StdProcessConstants.PROP_DATA_FLUSH_POLICY);
-        if (StringUtils.isNotEmpty(flushPolicy)) {
-            return flushPolicy;
-        }
-        flushPolicy = StdProcessConstants.FLUSH_AFTER_PROCESS;
         return flushPolicy;
 
     }
@@ -487,10 +481,10 @@ public class StdProcessFsmListener implements FsmEventListener {
             String bizNo = param.get(StdFlowProcessConstants.FLOW_PARAM_BIZNO);
             String instanceNo = param.get(StdFlowProcessConstants.FLOW_PARAM_INSTANCENO);
             ProcessInstanceDTO processInstanceDto = null;
-            if (StringUtils.isNotEmpty(instanceNo)) {
+            if (instanceNo != null) {
                 processInstanceDto = ExportResponseUtil
                         .unwrap(getProcessInstanceExport().getProcessInstance(new ExportRequest<>(instanceNo)));
-            } else if (StringUtils.isNotEmpty(processType) && StringUtils.isNotEmpty(bizNo)) {
+            } else if (processType != null && bizNo != null) {
                 QueryProcessInstanceReq instanceReq = QueryProcessInstanceReq.builder().processType(processType)
                         .bizNo(bizNo).build();
                 processInstanceDto = ExportResponseUtil.unwrap(getProcessInstanceExport()

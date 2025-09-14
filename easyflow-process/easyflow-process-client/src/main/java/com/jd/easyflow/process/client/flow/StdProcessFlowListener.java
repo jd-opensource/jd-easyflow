@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,10 +117,10 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
             String bizNo = param.get(StdFlowProcessConstants.FLOW_PARAM_BIZNO);
             String instanceNo = param.get(StdFlowProcessConstants.FLOW_PARAM_INSTANCENO);
             ProcessInstanceDTO processInstanceDto = null;
-            if (StringUtils.isNotEmpty(instanceNo)) {
+            if (instanceNo != null) {
                 processInstanceDto = ExportResponseUtil
                         .unwrap(getProcessInstanceExport().getProcessInstance(new ExportRequest<>(instanceNo)));
-            } else if (StringUtils.isNotEmpty(processType) && StringUtils.isNotEmpty(bizNo)) {
+            } else if (processType != null && bizNo != null) {
                 QueryProcessInstanceReq instanceReq = QueryProcessInstanceReq.builder().processType(processType)
                         .bizNo(bizNo).build();
                 processInstanceDto = ExportResponseUtil.unwrap(getProcessInstanceExport()
@@ -169,9 +168,10 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         processContext.setBizNo(instance.getBizNo());
         String requestId = processRuntimeService.lockProcessInstance(instance.getProcessType(), instance.getBizNo());
         processContext.setLockRequestId(requestId);
-        Boolean checkStartNode = PropertiesUtil.get(
-                context.getFlow().getProperty(StdFlowProcessConstants.FLOW_PROP_PROCESS),
-                StdProcessConstants.PROP_CHECK_START_NODE);
+        Boolean checkStartNode = PropertiesUtil.get(StdProcessConstants.PROP_CHECK_START_NODE,
+                context.get(StdFlowProcessConstants.FLOW_CTX_PROCESS),
+                context.getParam().get(StdFlowProcessConstants.FLOW_PARAM_PROCESS),
+                context.getFlow().getProperty(StdFlowProcessConstants.FLOW_PROP_PROCESS));
         checkStartNode = checkStartNode == null || checkStartNode;
         processContext.setCheckStartNode(checkStartNode);
         
@@ -450,7 +450,7 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         nodeContext.setConfigPreNodeIds(configPreNodes);
         nodeContext.setPreCheckType(preCheckType);
         processRuntimeService.nodeStartExec(nodeContext, processContext);
-        if (StringUtils.isNotEmpty(preCheckType)) {
+        if (preCheckType != null) {
             flowNodeContext.put(StdFlowProcessConstants.FLOW_NODE_CTX_PRE_RESULT, nodeContext.getPreResult());
         }
     }
@@ -541,24 +541,14 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
     }
 
     private String initDataFlushPolicy(FlowContext context) {
-        String flushPolicy = PropertiesUtil.get(context.get(StdFlowProcessConstants.FLOW_CTX_PROCESS),
-                StdProcessConstants.PROP_DATA_FLUSH_POLICY);
-        if (StringUtils.isNotEmpty(flushPolicy)) {
-            return flushPolicy;
+        String flushPolicy = PropertiesUtil.get(StdProcessConstants.PROP_DATA_FLUSH_POLICY,
+                context.get(StdFlowProcessConstants.FLOW_CTX_PROCESS),
+                context.getParam().get(StdFlowProcessConstants.FLOW_PARAM_PROCESS),
+                context.getFlow().getProperty(StdFlowProcessConstants.FLOW_PROP_PROCESS));
+        if (flushPolicy == null) {
+            flushPolicy = StdProcessConstants.FLUSH_AFTER_PROCESS;
         }
-        flushPolicy = PropertiesUtil.get(context.getParam().get(StdFlowProcessConstants.FLOW_PARAM_PROCESS),
-                StdProcessConstants.PROP_DATA_FLUSH_POLICY);
-        if (StringUtils.isNotEmpty(flushPolicy)) {
-            return flushPolicy;
-        }
-        flushPolicy = PropertiesUtil.get(context.getFlow().getProperty(StdFlowProcessConstants.FLOW_PROP_PROCESS),
-                StdProcessConstants.PROP_DATA_FLUSH_POLICY);
-        if (StringUtils.isNotEmpty(flushPolicy)) {
-            return flushPolicy;
-        }
-        flushPolicy = StdProcessConstants.FLUSH_AFTER_PROCESS;
         return flushPolicy;
-
     }
 
     private String[] initFlushNodes(FlowContext context) {

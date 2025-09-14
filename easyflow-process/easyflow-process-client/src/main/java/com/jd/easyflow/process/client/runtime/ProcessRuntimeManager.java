@@ -8,11 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +69,8 @@ public class ProcessRuntimeManager {
         return op(context, () -> {
             ProcessCache cache = context.getCache();
             for (ProcessInstanceDTO dto : cache.objects(ProcessInstanceDTO.class)) {
-                if (StringUtils.equals(dto.getProcessType(), processType)
-                        && StringUtils.equals(dto.getBizNo(), bizNo)) {
+                if (Objects.equals(dto.getProcessType(), processType)
+                        && Objects.equals(dto.getBizNo(), bizNo)) {
                     return dto;
                 }
             }
@@ -99,8 +98,8 @@ public class ProcessRuntimeManager {
         return op(context, () -> {
             ProcessCache cache = context.getCache();
             for (ProcessInstanceDTO dto : cache.objects(ProcessInstanceDTO.class)) {
-                if (StringUtils.equals(dto.getProcessType(), dto.getProcessType())
-                        && StringUtils.equals(dto.getBizNo(), bizNo)
+                if (Objects.equals(dto.getProcessType(), dto.getProcessType())
+                        && Objects.equals(dto.getBizNo(), bizNo)
                         && StdProcessConstants.STATUS_ACTIVE.equals(dto.getStatus())) {
                     return dto;
                 }
@@ -121,7 +120,7 @@ public class ProcessRuntimeManager {
         ProcessInstanceDTO instance = new ProcessInstanceDTO();
         ProcessConverter.INSTANCE.copy(instanceInfo, instance);
         String instanceNo = instanceInfo.getInstanceNo();
-        if (StringUtils.isBlank(instanceNo)) {
+        if (instanceNo == null) {
             instanceNo = objectIdManager.nextObjectId(ProcessTransactionConstants.TYPE_PROCESS);
         }
         instance.setInstanceNo(instanceNo);
@@ -206,10 +205,10 @@ public class ProcessRuntimeManager {
         return op(context, () -> {
             String instanceNo = context.getInstanceNo();
             for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
-                if (StringUtils.equals(nodeInstance.getProcessInstanceNo(), instanceNo)
-                        && StringUtils.equals(nodeId, nodeInstance.getNodeId())
-                        && !StringUtils.equals(nodeInstance.getStatus(), StdProcessConstants.NODE_STATUS_CLOSE)
-                        && !StringUtils.equals(nodeInstance.getStatus(), StdProcessConstants.NODE_STATUS_INVALID)) {
+                if (Objects.equals(nodeInstance.getProcessInstanceNo(), instanceNo)
+                        && Objects.equals(nodeId, nodeInstance.getNodeId())
+                        && !Objects.equals(nodeInstance.getStatus(), StdProcessConstants.NODE_STATUS_CLOSE)
+                        && !Objects.equals(nodeInstance.getStatus(), StdProcessConstants.NODE_STATUS_INVALID)) {
                     if (log.isDebugEnabled()) {
                         log.debug("cache return:{}", nodeInstance);
                     }
@@ -227,8 +226,8 @@ public class ProcessRuntimeManager {
         return op(context, () -> {
             String instanceNo = context.getInstanceNo();
             for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
-                if (StringUtils.equals(nodeInstance.getProcessInstanceNo(), instanceNo)
-                        && StringUtils.equals(nodeId, nodeInstance.getNodeId())) {
+                if (Objects.equals(nodeInstance.getProcessInstanceNo(), instanceNo)
+                        && Objects.equals(nodeId, nodeInstance.getNodeId())) {
                     if (log.isDebugEnabled()) {
                         log.debug("Cache return:{}", nodeInstance);
                     }
@@ -305,7 +304,7 @@ public class ProcessRuntimeManager {
                     currentExtData.put(entry.getKey(), entry.getValue());
                 }
                 String newExtDataStr = JSON.toJSONString(currentExtData);
-                if (!StringUtils.equals(currentExtDataStr, newExtDataStr)) {
+                if (!Objects.equals(currentExtDataStr, newExtDataStr)) {
                     nodeInstance.setExtData(newExtDataStr);
                     updateNodeInstance(nodeInstance, context);
                 }
@@ -339,20 +338,27 @@ public class ProcessRuntimeManager {
             String[] flushNodes = context.getProcessProperty(StdProcessConstants.PROP_FLUSH_NODES);
             if (flushNodes != null) {
                 for (String openNode : openNodeIds) {
-                    if (!ArrayUtils.contains(flushNodes, openNode)) {
+                    boolean contains = false;
+                    for (String  s : flushNodes) {
+                        if (openNode.equals(s)) {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if (! contains) {
                         log.info("Node:" + openNode + " not in persist node list, No persist");
                         return null;
                     }
                 }
             }
             ProcessInstanceDTO processInstance = getProcessInstance(context);
-            if (StringUtils.isEmpty(processInstance.getBizNo()) && StringUtils.isNotEmpty(context.getBizNo())) {
+            if (processInstance.getBizNo() == null && context.getBizNo() != null) {
                 processInstance.setBizNo(context.getBizNo());
                 context.getCache().put(processInstance.getInstanceNo(), processInstance, true);
             }
 
-            String currentNodeIds = StringUtils.join(openNodeIds, ",");
-            if (!StringUtils.equals(currentNodeIds, processInstance.getCurrentNodeIds())) {
+            String currentNodeIds = String.join(",", openNodeIds);
+            if (!Objects.equals(currentNodeIds, processInstance.getCurrentNodeIds())) {
                 if (log.isDebugEnabled()) {
                     log.debug("Update process instance current node IDS:" + currentNodeIds);
                 }
@@ -410,7 +416,7 @@ public class ProcessRuntimeManager {
             }
             Set<String> activeNodeIds = new HashSet<String>();
             for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
-                if (StringUtils.equals(instanceNo, nodeInstance.getProcessInstanceNo())
+                if (Objects.equals(instanceNo, nodeInstance.getProcessInstanceNo())
                         && StdProcessConstants.STATUS_ACTIVE.equals(nodeInstance.getStatus())) {
                     activeNodeIds.add(nodeInstance.getNodeId());
                 }
@@ -442,7 +448,7 @@ public class ProcessRuntimeManager {
             }
             Set<String> openNodeIds = new HashSet<String>();
             for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
-                if (StringUtils.equals(instanceNo, nodeInstance.getProcessInstanceNo())
+                if (Objects.equals(instanceNo, nodeInstance.getProcessInstanceNo())
                         && (StdProcessConstants.NODE_STATUS_ACTIVE.equals(nodeInstance.getStatus())
                                 || StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus()))) {
                     openNodeIds.add(nodeInstance.getNodeId());
@@ -463,7 +469,7 @@ public class ProcessRuntimeManager {
             String instanceNo = context.getInstanceNo();
             Set<String> openNodeIds = new HashSet<String>();
             for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
-                if (StringUtils.equals(instanceNo, nodeInstance.getProcessInstanceNo())
+                if (Objects.equals(instanceNo, nodeInstance.getProcessInstanceNo())
                         && (StdProcessConstants.NODE_STATUS_ACTIVE.equals(nodeInstance.getStatus())
                                 || StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus()))) {
                     openNodeIds.add(nodeInstance.getNodeId());
@@ -484,7 +490,7 @@ public class ProcessRuntimeManager {
             List<ProcessNodeInstanceDTO> openNodeInstances = new ArrayList<ProcessNodeInstanceDTO>();
             String instanceNo = context.getInstanceNo();
             for (ProcessNodeInstanceDTO nodeInstance : context.getCache().objects(ProcessNodeInstanceDTO.class)) {
-                if (StringUtils.equals(instanceNo, nodeInstance.getProcessInstanceNo())
+                if (Objects.equals(instanceNo, nodeInstance.getProcessInstanceNo())
                         && (StdProcessConstants.NODE_STATUS_ACTIVE.equals(nodeInstance.getStatus())
                                 || StdProcessConstants.NODE_STATUS_INACTIVE.equals(nodeInstance.getStatus()))) {
                     openNodeInstances.add(nodeInstance);
@@ -626,7 +632,7 @@ public class ProcessRuntimeManager {
             ProcessNodeExecutionDTO execution = new ProcessNodeExecutionDTO();
             execution.setEndTime(new Date());
             execution.setEventId(nodeContext.getEventId());
-            execution.setNextNodeInstances(StringUtils.join(nodeContext.getNextNodeInstanceNos(), ","));
+            execution.setNextNodeInstances(String.join(",", nodeContext.getNextNodeInstanceNos()));
             execution.setNodeExecutionNo(objectIdManager.nextObjectId(ProcessTransactionConstants.TYPE_EXECUTION));
             execution.setNodeId(nodeContext.getNodeId());
             ProcessNodeInstanceDTO nodeInstance = getNodeInstance(nodeContext.getNodeInstanceNo(), context);

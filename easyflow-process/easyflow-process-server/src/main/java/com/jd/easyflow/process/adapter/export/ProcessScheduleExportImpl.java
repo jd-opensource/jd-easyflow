@@ -22,7 +22,7 @@ public class ProcessScheduleExportImpl implements ProcessScheduleExport {
     @Autowired
     private ProcessScheduleDomainService processScheduleDomainService;
 
-    @Action(code = "easyflow-process-0401", name = "schedule")
+    @Action(code = "easyflow-process-schedule", name = "schedule")
     @Override
     public ExportResponse<ScheduleProcessRes> schedule(ExportRequest<ScheduleProcessReq> req) {
         ScheduleProcessReqVO reqVo = ProcessScheduleConverter.INSTANCE.convert(req.getData());

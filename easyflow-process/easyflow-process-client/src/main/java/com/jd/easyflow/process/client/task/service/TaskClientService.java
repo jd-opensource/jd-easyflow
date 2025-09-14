@@ -10,7 +10,6 @@ import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +113,7 @@ public class TaskClientService {
                 : ((Map<String, Object>) param.getTaskProperties().get("create"));
         String bizService = createProperties == null ? null
                 : (String) createProperties.get(TaskConstants.TASK_PROP_BIZ_SERVICE);
-        if (StringUtils.isNotEmpty(bizService)) {
+        if (bizService != null) {
             String[] bizServiceInfo = bizService.split(":");
             String providerId = bizServiceInfo.length == 1 ? null : bizServiceInfo[0];
             String serviceId = bizServiceInfo.length == 1 ? bizServiceInfo[0] : bizServiceInfo[1];
@@ -326,7 +325,7 @@ public class TaskClientService {
                 : ((Map<String, Object>) param.getTaskProperties().get("execute"));
         String bizService = executeProperties == null ? null
                 : (String) executeProperties.get(TaskConstants.TASK_PROP_BIZ_SERVICE);
-        if (StringUtils.isNotEmpty(bizService)) {
+        if (bizService != null) {
             String[] bizServiceInfo = bizService.split(":");
             String providerId = bizServiceInfo.length == 1 ? null : bizServiceInfo[0];
             String serviceId = bizServiceInfo.length == 1 ? bizServiceInfo[0] : bizServiceInfo[1];

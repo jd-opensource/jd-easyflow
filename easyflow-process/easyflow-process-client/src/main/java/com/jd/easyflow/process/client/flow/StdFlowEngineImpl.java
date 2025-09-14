@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +125,7 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
                 continue;
             }
             String content = flowDefinitionMap.get(flow.getId());
-            if (StringUtils.isBlank(content)) {
+            if (content == null || content.isEmpty()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Flow definition content is blank:{}", flow.getId());
                 }
@@ -133,7 +133,7 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
             }
             ProcessDefinitionDTO processDef = new ProcessDefinitionDTO();
             String bpmnString = BpmnFlowParser.bpmnStringify(flow);
-            if (StringUtils.isNotBlank(bpmnString)) {
+            if (bpmnString != null && ! bpmnString.isEmpty()) {
                 processDef.setContent(bpmnString);
                 processDef.setJsonContent(flow.stringify());
                 processDef.setFormat(FLOW_BPMN);
@@ -164,14 +164,14 @@ public class StdFlowEngineImpl extends FlowEngineImpl {
             return true;
         }
         String definitionData = flowDefinitionMap.get(flow.getId());
-        return !StringUtils.equals(definitionData, processDef.getContent());
+        return !Objects.equals(definitionData, processDef.getContent());
     }
 
     private String wrapperFlowId(String flowId, Integer latestVersion) {
         if (latestVersion == null) {
             return flowId + StdFlowProcessConstants.VERSION_PREFIX;
         }
-        return StringUtils.join(flowId, StdFlowProcessConstants.VERSION_PREFIX, latestVersion);
+        return flowId + StdFlowProcessConstants.VERSION_PREFIX + latestVersion;
     }
 
     private ProcessDefinitionExport getProcessDefinitionExport() {

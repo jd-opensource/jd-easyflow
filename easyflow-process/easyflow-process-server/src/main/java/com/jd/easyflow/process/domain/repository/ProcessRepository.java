@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.dto.pager.PagerResult;
-import com.jd.easyflow.process.adapter.export.dto.instance.ProcessInstanceDTO;
 import com.jd.easyflow.process.domain.model.entity.ProcessDefinitionEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessInstanceEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessNodeExecutionEntity;
@@ -18,26 +17,33 @@ import com.jd.easyflow.process.domain.model.vo.QueryProcessNodeReq;
  * 
  */
 public interface ProcessRepository {
-
-    ProcessInstanceEntity getProcessInstanceByProcessTypeAndBizNo(String processType, String bizNo);
-
-    ProcessInstanceEntity getActiveProcessInstanceByProcessTypeAndBizNo(String processType, String bizNo);
-
-    ProcessNodeInstanceEntity getOpenNodeInstance(String processInstanceNo, String nodeId);
     
-    List<ProcessNodeInstanceEntity> findNodeInstances(QueryProcessNodeReq queryReq);
-    
-    ProcessInstanceEntity getByProcessInstanceNo(String processInstanceNo);
+    /*ProcessInstance*/
     
     void saveProcessInstance(ProcessInstanceEntity entity);
     
     void saveProcessInstanceWithCreatedDate(ProcessInstanceEntity entity);
-
+    
     void updateProcessInstanceById(ProcessInstanceEntity entity);
     
     void updateProcessInstanceByNo(ProcessInstanceEntity entity);
     
-    ProcessNodeInstanceEntity getByNodeInstanceNo(String nodeInstanceNo);
+    void deleteProcessInstanceByNo(String processInstanceNo);
+
+    ProcessInstanceEntity getProcessInstanceByProcessTypeAndBizNo(String processType, String bizNo);
+
+    ProcessInstanceEntity getActiveProcessInstanceByProcessTypeAndBizNo(String processType, String bizNo);
+    
+    ProcessInstanceEntity getByProcessInstanceNo(String processInstanceNo);
+    
+    PagerResult<ProcessInstanceEntity> pageQueryProcessInstance(PagerCondition pagerQueryReq);
+    
+    List<ProcessInstanceEntity> queryProcessInstanceByInstanceNos(List<String> processInstanceNos);
+    
+    List<ProcessInstanceEntity> queryProcessInstanceByParentInstanceNo(String parentProcessInstanceNo);
+    List<ProcessInstanceEntity> queryProcessInstanceByParentNodeInstanceNo(String parentInstanceNo, String parentNodeInstanceNo);
+
+    /*NodeInstance*/
     
     void saveProcessNodeInstance(ProcessNodeInstanceEntity entity);
     
@@ -46,6 +52,22 @@ public interface ProcessRepository {
     void updateProcessNodeInstanceById(ProcessNodeInstanceEntity entity);
     
     void updateProcessNodeInstanceByNo(ProcessNodeInstanceEntity entity);
+    
+    void deleteProcessNodeInstanceByNo(String processNodeInstanceNo);
+    
+    ProcessNodeInstanceEntity getOpenNodeInstance(String processInstanceNo, String nodeId);
+    
+    List<ProcessNodeInstanceEntity> findNodeInstances(QueryProcessNodeReq queryReq);
+    
+    ProcessNodeInstanceEntity getByNodeInstanceNo(String nodeInstanceNo);
+    
+   List<ProcessNodeInstanceEntity> findActiveNodeInstances(String processInstanceNo);
+    
+    List<ProcessNodeInstanceEntity> findOpenNodeInstances(String processInstanceNo);
+    
+    List<ProcessNodeInstanceEntity> queryNodeInstanceByNos(List<String> nodeInstanceNos);
+    
+    /*NodeExecution*/
     
     ProcessNodeExecutionEntity getByNodeExecutionNo(String nodeExecutionNo);
     
@@ -57,11 +79,8 @@ public interface ProcessRepository {
     
     void updateProcessNodeExecutionByNo(ProcessNodeExecutionEntity entity);
     
-    List<ProcessNodeInstanceEntity> findActiveNodeInstances(String processInstanceNo);
-    
-    List<ProcessNodeInstanceEntity> findOpenNodeInstances(String processInstanceNo);
-
-    PagerResult<ProcessInstanceEntity> pageQueryProcessInstance(PagerCondition pagerQueryReq);
+ 
+    /*ProcessDefinition*/
 
     void saveProcessDefinition(ProcessDefinitionEntity entity);
 
@@ -76,11 +95,7 @@ public interface ProcessRepository {
     ProcessDefinitionEntity findLatestProcessDefinition(String defId);
 
     boolean existProcessDefinition(String defId);
-
-    List<ProcessInstanceDTO> queryProcessInstanceByInstanceNos(List<String> processInstanceNos);
     
-    List<ProcessInstanceDTO> queryProcessInstanceByParentInstanceNo(String parentInstanceNo);
     
-    List<ProcessNodeInstanceEntity> queryNodeInstanceByNos(List<String> nodeInstanceNos);
 
 }

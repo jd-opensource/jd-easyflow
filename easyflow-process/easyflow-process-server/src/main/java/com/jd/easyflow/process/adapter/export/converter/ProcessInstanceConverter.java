@@ -156,6 +156,32 @@ public class ProcessInstanceConverter {
 
         return processNodeInstanceDTO;
     }
+    
+    public ProcessNodeInstanceEntity convert(ProcessNodeInstanceDTO dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        ProcessNodeInstanceEntity entity = new ProcessNodeInstanceEntity();
+
+        entity.setCreatedDate( dto.getCreatedDate() );
+        entity.setEndTime( dto.getEndTime() );
+        entity.setExecutors( dto.getExecutors() );
+        entity.setExtData( dto.getExtData() );
+        entity.setModifiedDate( dto.getModifiedDate() );
+        entity.setNextNodeInstances( dto.getNextNodeInstances() );
+        entity.setNodeId( dto.getNodeId() );
+        entity.setNodeInstanceNo( dto.getNodeInstanceNo() );
+        entity.setPreviousNodeInstances( dto.getPreviousNodeInstances() );
+        entity.setProcessDefId( dto.getProcessDefId() );
+        entity.setProcessInstanceNo( dto.getProcessInstanceNo() );
+        entity.setProductCode( dto.getProductCode() );
+        entity.setStartTime( dto.getStartTime() );
+        entity.setStatus( dto.getStatus() );
+        entity.setVars( dto.getVars() );
+
+        return entity;
+    }
 
     public List<ProcessNodeInstanceDTO> convertNodeInstanceList(List<ProcessNodeInstanceEntity> entity) {
         if ( entity == null ) {

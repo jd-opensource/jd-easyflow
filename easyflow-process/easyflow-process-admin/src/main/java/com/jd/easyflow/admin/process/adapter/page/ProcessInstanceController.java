@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jd.easyflow.admin.process.adapter.page.converter.PagerConverter;
 import com.jd.easyflow.admin.process.adapter.page.converter.ProcessDefinitionConverter;
 import com.jd.easyflow.admin.process.adapter.page.converter.ProcessInstanceConverter;
@@ -25,7 +24,6 @@ import com.jd.easyflow.admin.process.adapter.page.dto.CommonTaskProcessInstanceC
 import com.jd.easyflow.admin.process.adapter.page.dto.ProcessDefDTO;
 import com.jd.easyflow.admin.process.adapter.page.dto.ProcessInstanceInfoForPagerDTO;
 import com.jd.easyflow.admin.process.adapter.page.extension.UserGroupAdminExtension;
-import com.jd.easyflow.admin.process.adapter.page.util.ProcessPageUtils;
 import com.jd.easyflow.codegenerator.adapter.export.CodeGenerateExport;
 import com.jd.easyflow.codegenerator.adapter.export.dto.GenerateParam;
 import com.jd.easyflow.codegenerator.adapter.export.dto.GenerateResult;
@@ -123,7 +121,7 @@ public class ProcessInstanceController extends BasePageController {
             FieldEntry creatorEntry = condition.getField("creator");   
             if (creatorEntry != null) {
                 String creator = (String) creatorEntry.getValue();
-                if (!StringUtils.equals(creator, currentUser)) {
+                if (!Objects.equals(creator, currentUser)) {
                     log.info("creator and current user not same. return empty data.");
                     com.jd.easyflow.common.adapter.export.dto.pager.PagerResult pagerResult = new com.jd.easyflow.common.adapter.export.dto.pager.PagerResult();
                     pagerResult.setCount(0L);
@@ -167,7 +165,7 @@ public class ProcessInstanceController extends BasePageController {
     @RequestMapping("detail")
     public String instanceView(String instanceNo, String processType, String bizNo, Model model) throws IOException {
         ExportResponse<ProcessInstanceDTO> response;
-        if (StringUtils.isNotBlank(instanceNo)) {
+        if (instanceNo != null && ! instanceNo.isEmpty()) {
             response = getProcessInstanceExport().getProcessInstance(new ExportRequest(instanceNo));
         } else {
             QueryProcessInstanceReq req = QueryProcessInstanceReq.builder().processType(processType).bizNo(bizNo)
@@ -191,7 +189,7 @@ public class ProcessInstanceController extends BasePageController {
                 processDef.setBpmnXmlData(processDefinition.getContent());
             } else {
                 String extData = processDefinition.getExtData();
-                if (StringUtils.isNotEmpty(extData)) {
+                if (extData != null && ! extData.isEmpty()) {
                     Map<String, Object> extDataMap = JSON.parseObject(extData, Map.class);
                     String bpmnData = (String) extDataMap.get(EXT_DATA_BPMN_OF_JSON_KEY);
                     processDef.setBpmnXmlData(bpmnData);
@@ -226,7 +224,7 @@ public class ProcessInstanceController extends BasePageController {
             root.put("processType", processType);
             root.put("bizNo", bizNo);
             String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-            if (StringUtils.isEmpty(pageUrlVal)) {
+            if (pageUrlVal == null || pageUrlVal.isEmpty()) {
                 return "redirect:" + pageUrlVal;
             }
         }
@@ -238,8 +236,8 @@ public class ProcessInstanceController extends BasePageController {
         List<ProcessTaskDTO> taskList = ExportResponseUtil.unwrap(taskResponse);
         
         String instanceFormId = processProperties == null ? null : (String) processProperties.get("formId");
-        model.addAttribute("instanceFormId", ProcessPageUtils.handleAddDefaultValue(instanceFormId));
-        model.addAttribute("instanceBizData", ProcessPageUtils.handleAddDefaultValue(processInstance.getBizData()));
+        model.addAttribute("instanceFormId", (instanceFormId == null || instanceFormId.isEmpty()) ? "null" : instanceFormId);
+        model.addAttribute("instanceBizData", (processInstance.getBizData() == null || processInstance.getBizData().isEmpty()) ? "null" : processInstance.getBizData());
 
         model.addAttribute("processDef", processDef);
         model.addAttribute("processInstance", processInstance);
@@ -281,11 +279,11 @@ public class ProcessInstanceController extends BasePageController {
     }
 
     private Object[] parseProcessDefIdAndVersion(String defId) {
-        defId = StringUtils.substringAfter(defId, "-");
+        defId = defId.substring(defId.indexOf("-") + 1);
         if (defId.contains(VERSION_PREFIX)) {
-            String versionStr = StringUtils.substringAfter(defId, VERSION_PREFIX);
+            String versionStr = defId.substring(defId.indexOf(VERSION_PREFIX) + VERSION_PREFIX.length());
             Integer defVersion = Integer.parseInt(versionStr);
-            String processDefId = StringUtils.substringBefore(defId, VERSION_PREFIX);
+            String processDefId = defId.substring(0, defId.indexOf(VERSION_PREFIX));
             return new Object[] {processDefId, defVersion};
         }
         return new Object[] {defId, null};
@@ -313,7 +311,7 @@ public class ProcessInstanceController extends BasePageController {
             root.put("flow", flow);
             root.put("processProperties", processProperties);
             String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-            if (StringUtils.isNotEmpty(pageUrlVal)) {
+            if (pageUrlVal != null && ! pageUrlVal.isEmpty()) {
                 return "redirect:" + pageUrlVal;
             }
         }
@@ -426,7 +424,7 @@ public class ProcessInstanceController extends BasePageController {
             List<ProcessNodeInstanceDTO> noPreviousList = new ArrayList<ProcessNodeInstanceDTO>();
             for (ProcessNodeInstanceDTO node : nodeMap.values()) {
                 String previousStr = node.getPreviousNodeInstances();
-                if (StringUtils.isEmpty(previousStr)) {
+                if (previousStr == null || previousStr.isEmpty()) {
                     noPreviousList.add(node);
                     continue;
                 }

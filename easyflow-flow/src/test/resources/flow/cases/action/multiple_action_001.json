@@ -1,0 +1,6 @@
+{"id":"multi_action_001", 
+"nodes":[
+	{"id":"node1", "start":true, "action":{"createExp":"new com.jd.easyflow.flow.cases.action.MultipleActionTest.TestMultipleActionNodeAction()"},
+	 "properties":{"action":{"exp":"T(java.lang.System).out.println('subAction')"}}}
+]
+}

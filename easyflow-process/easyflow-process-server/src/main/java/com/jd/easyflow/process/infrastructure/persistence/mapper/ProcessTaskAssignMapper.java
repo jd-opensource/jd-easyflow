@@ -33,4 +33,6 @@ public interface ProcessTaskAssignMapper {
     int updateByPrimaryKey(ProcessTaskAssign record);
     
     int updateByTaskAssignNo(ProcessTaskAssign record);
+    
+    int deleteTaskAssignByAssignNo(String assignNo);
 }

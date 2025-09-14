@@ -37,3 +37,4 @@ local/
 .DS_Store
 
 .metadata/
+.joycode

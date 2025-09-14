@@ -69,7 +69,7 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
     private Boolean isSelfInitial;
 
 
-    @Action(code = "easyflow-process-0501", name = "nextObjectId")
+    @Action(code = "easyflow-process-nextObjectId", name = "nextObjectId")
     @Override
     public ExportResponse<String> nextObjectId(ExportRequest<String> request) {
         String type = request.getData();
@@ -77,7 +77,7 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
         return ExportResponse.build4Success(objectId);
     }
 
-    @Action(code = "easyflow-process-0503", name = "batchNextObjectId")
+    @Action(code = "easyflow-process-batchNextObjectId", name = "batchNextObjectId")
     @Override
     public ExportResponse<BatchObjectIdRes> batchNextObjectId(ExportRequest<BatchObjectIdReq> request) {
         String type = request.getData().getType();
@@ -156,7 +156,7 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
         return objectIds;
     }
 
-    @Action(code = "easyflow-process-0502", name = "doTransaction")
+    @Action(code = "easyflow-process-doTransaction", name = "doTransaction")
     @Override
     public ExportResponse<TxnRes> doTransaction(ExportRequest<TxnReq> request) {
         List<Map<String, Object>> postActionList = new ArrayList<>();

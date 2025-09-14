@@ -20,13 +20,15 @@ public interface ProcessNodeInstanceMapper {
 
     int insertSelective(ProcessNodeInstance record);
 
-    ProcessNodeInstance selectByPrimaryKey(Long id);
-
     int updateByPrimaryKeySelective(ProcessNodeInstance record);
 
     int updateByPrimaryKey(ProcessNodeInstance record);
     
     int updateByProcessNodeInstanceNo(ProcessNodeInstance record);
+    
+    int deleteByProcessNodeInstanceNo(String processNodeInstanceNo);
+    
+    ProcessNodeInstance selectByPrimaryKey(Long id);
     
     ProcessNodeInstance getOpenNodeInstance(@Param("processInstanceNo") String processInstanceNo, @Param("nodeId") String nodeId);
     

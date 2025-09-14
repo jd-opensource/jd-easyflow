@@ -3,8 +3,6 @@ package com.jd.easyflow.admin.process.adapter.page.converter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.jd.easyflow.admin.process.adapter.page.dto.ProcessDefDTO;
 import com.jd.easyflow.flow.bpmn.converter.BpmnConverter;
 import com.jd.easyflow.process.adapter.export.dto.definition.ProcessDefinitionDTO;
@@ -43,7 +41,7 @@ public class ProcessDefinitionConverter {
         } else {
             processDefDTO.setJsonData(processDefinition.getContent());
             String extData = processDefinition.getExtData();
-            if (StringUtils.isNotEmpty(extData)) {
+            if (extData != null && ! extData.isEmpty()) {
                 Map<String, Object> extDataMap = JSON.parseObject(extData, Map.class);
                 String bpmnData = (String) extDataMap.get(EXT_DATA_BPMN_OF_JSON_KEY);
                 processDefDTO.setBpmnXmlData(bpmnData);
@@ -76,7 +74,7 @@ public class ProcessDefinitionConverter {
         } else {
             processDefDTO.setContent(processDef.getJsonData());
             processDefDTO.setJsonContent(processDef.getJsonData());
-            if (StringUtils.isNotEmpty(processDef.getBpmnXmlData())) {
+            if (processDef.getBpmnXmlData() != null && ! processDef.getBpmnXmlData().isEmpty()) {
                 Map<String, Object> extData = new HashMap<>();
                 extData.put(EXT_DATA_BPMN_OF_JSON_KEY, processDef.getBpmnXmlData());
                 processDefDTO.setExtData(JSON.toJSONString(extData));

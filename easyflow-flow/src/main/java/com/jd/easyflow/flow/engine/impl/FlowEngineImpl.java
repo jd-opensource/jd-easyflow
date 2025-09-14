@@ -11,7 +11,9 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.jd.easyflow.flow.util.SpelHelper;
+import com.jd.easyflow.flow.el.ElEvaluator;
+import com.jd.easyflow.flow.el.ElFactory;
+import com.jd.easyflow.flow.el.SpelEvaluator;
 
 /**
  * FlowEngineImpl. Adding spring integration based on CoreFlowEngine.
@@ -30,12 +32,19 @@ public class FlowEngineImpl extends CoreFlowEngine implements SmartLifecycle, Ap
 
     private volatile boolean isRunning = false;
     
+    @Override
     public void init() {
         if (inited) {
             return;
         }
         if (applicationContext != null) {
-            SpelHelper.setApplicationContext(applicationContext);
+            ElEvaluator elEvaluator = ElFactory.get();
+            if (elEvaluator instanceof SpelEvaluator) {
+                SpelEvaluator spelEvaluator = (SpelEvaluator) elEvaluator;
+                if (spelEvaluator.getApplicationContext() == null) {
+                    spelEvaluator.setApplicationContext(applicationContext);
+                }
+            }
         }
         super.init();
         inited = true;

@@ -2,8 +2,8 @@ package com.jd.easyflow.message.spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.jd.easyflow.message.Message;
 import com.jd.easyflow.message.MessageSendService;
@@ -12,12 +12,11 @@ import com.jd.easyflow.message.MessageSendService;
  * @author liyuliang5
  *
  */
-public class SpringMessageSendServiceImpl implements MessageSendService {
+public class SpringMessageSendServiceImpl implements MessageSendService,ApplicationEventPublisherAware  {
     
     private static final Logger log = LoggerFactory.getLogger(SpringMessageSendServiceImpl.class);
 
 
-    @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
@@ -36,5 +35,10 @@ public class SpringMessageSendServiceImpl implements MessageSendService {
     public void sendMessage(Message message, int timeoutMillis) {
         log.info("spring send message has no timeout");
         sendMessage(message);
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

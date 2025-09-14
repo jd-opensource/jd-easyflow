@@ -111,6 +111,23 @@ public class FlowParserTest {
             assertEquals(flowList.get(2).getProperty("_parent_flow_id"), "flow11");
         }
     }
+    
+    @Test
+    public void testSubFlow002()  throws Exception {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources;
+        InputStream is = null;
+        resources = resolver.getResources("classpath:flow/cases/parser/parser_test_subflow_002.json");
+        for (Resource resource : resources) {
+            logger.info("Start parse flow definition:" + resource.getURI());
+            is = resource.getInputStream();
+            String flowConfigStr = FlowIOUtil.toString(is);
+            List<Flow> flowList = new FlowParserImpl().parse(flowConfigStr);
+            is.close();
+            assertEquals(flowList.get(1).getProperty("_parent_flow_id"), "flow1");
+            assertEquals(flowList.get(2).getProperty("_parent_flow_id"), "flow11");
+        }
+    }
 	   
 	   
 	

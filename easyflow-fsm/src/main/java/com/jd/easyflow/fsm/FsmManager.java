@@ -11,7 +11,9 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.jd.easyflow.fsm.util.SpelHelper;
+import com.jd.easyflow.fsm.el.ElEvaluator;
+import com.jd.easyflow.fsm.el.ElFactory;
+import com.jd.easyflow.fsm.el.SpelEvaluator;
 
 /**
  * Fsm Manager. Adding spring integration based on CoreFsmManager.
@@ -43,7 +45,13 @@ public class FsmManager extends CoreFsmManager implements SmartLifecycle, Applic
             return;
         }
         if (applicationContext != null) {
-            SpelHelper.setApplicationContext(applicationContext);
+            ElEvaluator elEvaluator = ElFactory.get();
+            if (elEvaluator instanceof SpelEvaluator) {
+                SpelEvaluator spelEvaluator = (SpelEvaluator) elEvaluator;
+                if (spelEvaluator.getApplicationContext() == null) {
+                    spelEvaluator.setApplicationContext(applicationContext);
+                }
+            }           
         }
         super.init();
         inited = true;

@@ -38,7 +38,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
      *
      * @param req
      */
-    @Action(code = "easyflow-process-0101", name = "getLatestProcessDefinition")
+    @Action(code = "easyflow-process-getLatestProcessDefinition", name = "getLatestProcessDefinition")
     @Override
     public ExportResponse<ProcessDefinitionDTO> getLatestProcessDefinition(ExportRequest<String> req) {
         String definitionId = req.getData();
@@ -48,7 +48,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     }
 
     @Override
-    @Action(code = "easyflow-process-0102", name = "getVersionedProcessDefinition")
+    @Action(code = "easyflow-process-getVersionedProcessDefinition", name = "getVersionedProcessDefinition")
     public ExportResponse<ProcessDefinitionDTO> getVersionedProcessDefinition(ExportRequest<String> req) {
         String definitionId = req.getData();
         ProcessDefinitionEntity entity = processDefinitionDomainService.getVersionedProcessDefinition(definitionId);
@@ -60,7 +60,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
      *
      * @param req Flow ID(May contains version). format: {FLOW-|FSM-}{Flow ID}--V_{Version}
      */
-    @Action(code = "easyflow-process-0103", name = "getProcessDefinition")
+    @Action(code = "easyflow-process-getProcessDefinition", name = "getProcessDefinition")
     @Override
     public ExportResponse<ProcessDefinitionDTO> getProcessDefinition(ExportRequest<String> req) {
         String definitionId = req.getData();
@@ -69,7 +69,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
         return ExportResponse.build4Success(dto);
     }
 
-    @Action(code = "easyflow-process-0104", name = "addProcessDefinition")
+    @Action(code = "easyflow-process-addProcessDefinition", name = "addProcessDefinition")
     @Override
     public ExportResponse addProcessDefinition(ExportRequest<ProcessDefinitionDTO> processDefinitionReq) {
         ProcessDefinitionDTO definitionDTO = processDefinitionReq.getData();
@@ -82,7 +82,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
         return ExportResponse.build4Success();
     }
 
-    @Action(code = "easyflow-process-0105", name = "updateProcessDefinition")
+    @Action(code = "easyflow-process-updateProcessDefinition", name = "updateProcessDefinition")
     @Override
     public ExportResponse updateProcessDefinition(ExportRequest<ProcessDefinitionDTO> processDefinitionReq) {
         ProcessDefinitionDTO definitionDTO = processDefinitionReq.getData();
@@ -96,7 +96,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     }
 
 
-    @Action(code = "easyflow-process-0106", name = "pageQueryProcessDefinition")
+    @Action(code = "easyflow-process-pageQueryProcessDefinition", name = "pageQueryProcessDefinition")
     @Override
     public ExportResponse<PagerResult<ProcessDefinitionDTO>> pageQueryProcessDefinition(ExportRequest<PagerCondition> pagerQueryReq) {
         com.jd.easyflow.common.dto.pager.PagerCondition condition = PagerConverter.INSTANCE.convert(pagerQueryReq.getData());
@@ -106,7 +106,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     }
 
 
-    @Action(code = "easyflow-process-0107", name = "queryProcessDefinitionByVersion")
+    @Action(code = "easyflow-process-queryProcessDefinitionByVersion", name = "queryProcessDefinitionByVersion")
     @Override
     public ExportResponse<ProcessDefinitionDTO> queryProcessDefinitionByVersion(
             ExportRequest<QueryProcessDefinitionReq> req) {
@@ -117,7 +117,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     }
 
 
-    @Action(code = "easyflow-process-0108", name = "getLatestProcessDefVersionByDefId")
+    @Action(code = "easyflow-process-getLatestProcessDefVersionByDefId", name = "getLatestProcessDefVersionByDefId")
     @Override
     public ExportResponse<Integer> getLatestProcessDefVersionByDefId(ExportRequest<String> request) {
         String definitionId = request.getData();
@@ -135,7 +135,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     }
 
 
-    @Action(code = "easyflow-process-0109", name = "reportProcessDef")
+    @Action(code = "easyflow-process-reportProcessDef", name = "reportProcessDef")
     @Override
     public ExportResponse reportProcessDef(ExportRequest<ProcessDefinitionDTO> processDefinitionReq) {
         ProcessDefinitionDTO processDefDTO = processDefinitionReq.getData();
@@ -150,7 +150,7 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
     }
 
 
-    @Action(code = "easyflow-process-0110", name = "forceUpdateCurrentVersionProcessDef")
+    @Action(code = "easyflow-process-forceUpdateCurrentVersionProcessDef", name = "forceUpdateCurrentVersionProcessDef")
     @Override
     public ExportResponse forceUpdateCurrentVersionProcessDef(ExportRequest<ProcessDefinitionDTO> processDefinitionReq) {
         ProcessDefinitionDTO definitionDTO = processDefinitionReq.getData();
@@ -163,21 +163,21 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
         return ExportResponse.build4Success();
     }
 
-    @Action(code = "easyflow-process-0111", name = "getProcessProperties")
+    @Action(code = "easyflow-process-getProcessProperties", name = "getProcessProperties")
     @Override
     public ExportResponse<ProcessDTO> getProcessProperties(ExportRequest<String> request) {
         ProcessDTO processDto = processDefinitionDomainService.getProcessProperties(request.getData());
         return ExportResponse.build4Success(processDto);
     }
 
-    @Action(code = "easyflow-process-0112", name = "getNodeProperties")
+    @Action(code = "easyflow-process-getNodeProperties", name = "getNodeProperties")
     @Override
     public ExportResponse<NodeDTO> getNodeProperties(ExportRequest<QueryNodeReq> request) {
         NodeDTO nodeDto = processDefinitionDomainService.getNodeProperties(request.getData());
         return ExportResponse.build4Success(nodeDto);
     }
 
-    @Action(code = "easyflow-process-0113", name = "getProcessAndNodeProperties")
+    @Action(code = "easyflow-process-getProcessAndNodeProperties", name = "getProcessAndNodeProperties")
     @Override
     public ExportResponse<ProcessDTO> getProcessAndNodeProperties(ExportRequest<String> request) {
         ProcessDTO processDto = processDefinitionDomainService.getProcessAndNodeProperties(request.getData());

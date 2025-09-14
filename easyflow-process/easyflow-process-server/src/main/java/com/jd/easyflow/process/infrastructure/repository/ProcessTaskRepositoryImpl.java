@@ -204,7 +204,16 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
         ProcessTaskEvent event = ProcessTaskConverter.INSTANCE.convert(eventEntity);
         processTaskEventMapper.insert(event);
         eventEntity.setId(event.getId());
-
+    }
+    
+    @Override
+    public void deleteTaskByTaskNo(String taskNo) {
+        processTaskMapper.deleteByTaskNo(taskNo);
+    }
+    
+    @Override
+    public void deleteTaskAssignByAssignNo(String assignNo) {
+        processTaskAssignMapper.deleteTaskAssignByAssignNo(assignNo);
     }
 
     @Override

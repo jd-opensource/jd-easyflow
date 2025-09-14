@@ -35,4 +35,7 @@
     <bean class="com.jd.easyflow.process.infrastructure.repository.ProcessTaskRepositoryImpl"></bean>
     <!-- ProcessTransaction -->
     <bean id="easyflow-process-adapter-export-processTransactionExport" class="com.jd.easyflow.process.adapter.export.ProcessTransactionExportImpl"></bean>
+    <!-- ProcessTool -->
+    <bean class="com.jd.easyflow.process.domain.service.ProcessToolDomainService"></bean>
+    <bean id="easyflow-process-adapter-export-processToolExport" class="com.jd.easyflow.process.adapter.export.ProcessToolExportImpl"></bean>    
 </beans>

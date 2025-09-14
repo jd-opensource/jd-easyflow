@@ -5,8 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.EvaluationContext;
@@ -22,7 +22,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * @author liyuliang5
  * 
  */
-public class SpelHelper {
+public class SpelHelper implements ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(SpelHelper.class);
 
@@ -32,8 +32,6 @@ public class SpelHelper {
 
     private static Map<String, Expression> tmpCacheMap = new ConcurrentHashMap();
 
-    private static Map<String, String> safePropertyMap = new ConcurrentHashMap<String, String>();
-
     private static ExpressionParser parser = new SpelExpressionParser();
 
     private static ApplicationContext applicationContext;
@@ -42,52 +40,12 @@ public class SpelHelper {
         context.addPropertyAccessor(new MapAccessor());
     }
 
-    public static void clearCache() {
-        cacheMap.clear();
-        tmpCacheMap.clear();
-        safePropertyMap.clear();
-    }
-
     public static StandardEvaluationContext getDefaultContext() {
         return context;
     }
 
     public static Expression parse(String exp) {
         return parser.parseExpression(exp);
-    }
-
-    public static <T> T safeGetProperty(String exp, Object context) {
-        if (context == null) {
-            return null;
-        }
-        return (T) safeGetProperty(exp, context, true);
-    }
-
-    public static <T> T safeGetProperty(String exp, Object context, boolean cache) {
-        if (exp == null) {
-            return null;
-        }
-        if (!cache) {
-            String safeExp = getSafePropertyExp(exp);
-            return (T) eval(safeExp, context, false);
-        } else {
-            String safeExp = safePropertyMap.get(exp);
-            if (safeExp == null) {
-                safeExp = getSafePropertyExp(exp);
-                safePropertyMap.put(exp, safeExp);
-            }
-            return (T) eval(safeExp, context, true);
-        }
-
-    }
-
-    private static String getSafePropertyExp(String exp) {
-        String[] values = exp.split("\\.");
-        StringBuffer buffer = new StringBuffer();
-        for (String s : values) {
-            buffer.append(s).append("?.");
-        }
-        return buffer.substring(0, buffer.length() - 2);
     }
 
     public static <T> T eval(Expression exp, Object context) {
@@ -218,18 +176,17 @@ public class SpelHelper {
         }
     }
     
-    @Autowired
-    public void setSpringApplicationContext(ApplicationContext applicationContext) {
-        setApplicationContext(applicationContext);
+    public static void setSpringApplicationContext(ApplicationContext applicationContext) {
+        SpelHelper.applicationContext = applicationContext;
+        context.setBeanResolver(new BeanFactoryResolver(applicationContext));
     }
 
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
     
-    public static void setApplicationContext(ApplicationContext applicationContext) {
-        SpelHelper.applicationContext = applicationContext;
-        context.setBeanResolver(new BeanFactoryResolver(applicationContext));
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        setSpringApplicationContext(applicationContext);
     }
 
 }

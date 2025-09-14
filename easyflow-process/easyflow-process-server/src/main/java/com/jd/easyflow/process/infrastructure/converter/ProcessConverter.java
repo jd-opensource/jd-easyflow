@@ -313,19 +313,6 @@ public class ProcessConverter {
         return list;
     }
 
-    public List<ProcessInstanceDTO> convertProcessInstanceDtoList(List<ProcessInstance> processInstanceList) {
-        if ( processInstanceList == null ) {
-            return null;
-        }
-
-        List<ProcessInstanceDTO> list = new ArrayList<ProcessInstanceDTO>( processInstanceList.size() );
-        for ( ProcessInstance processInstance : processInstanceList ) {
-            list.add( processInstanceToProcessInstanceDTO( processInstance ) );
-        }
-
-        return list;
-    }
-
     public List<ProcessNodeInstanceEntity> convertNodeInstanceList(List<ProcessNodeInstance> processInstanceList) {
         if ( processInstanceList == null ) {
             return null;
@@ -363,35 +350,4 @@ public class ProcessConverter {
         return processDefinitionForListVO;
     }
 
-    protected ProcessInstanceDTO processInstanceToProcessInstanceDTO(ProcessInstance processInstance) {
-        if ( processInstance == null ) {
-            return null;
-        }
-
-        ProcessInstanceDTO processInstanceDTO = new ProcessInstanceDTO();
-
-        processInstanceDTO.setBizData( processInstance.getBizData() );
-        processInstanceDTO.setBizNo( processInstance.getBizNo() );
-        processInstanceDTO.setBizStatus( processInstance.getBizStatus() );
-        processInstanceDTO.setCreatedDate( processInstance.getCreatedDate() );
-        processInstanceDTO.setCreator( processInstance.getCreator() );
-        processInstanceDTO.setCurrentNodeIds( processInstance.getCurrentNodeIds() );
-        processInstanceDTO.setEndTime( processInstance.getEndTime() );
-        processInstanceDTO.setExtData( processInstance.getExtData() );
-        processInstanceDTO.setInstanceName( processInstance.getInstanceName() );
-        processInstanceDTO.setInstanceNo( processInstance.getInstanceNo() );
-        processInstanceDTO.setKeyField( processInstance.getKeyField() );
-        processInstanceDTO.setKeyField2( processInstance.getKeyField2() );
-        processInstanceDTO.setModifiedDate( processInstance.getModifiedDate() );
-        processInstanceDTO.setParentInstanceNo( processInstance.getParentInstanceNo() );
-        processInstanceDTO.setParentNodeInstanceNo( processInstance.getParentNodeInstanceNo() );
-        processInstanceDTO.setProcessDefId( processInstance.getProcessDefId() );
-        processInstanceDTO.setProcessType( processInstance.getProcessType() );
-        processInstanceDTO.setProductCode( processInstance.getProductCode() );
-        processInstanceDTO.setStartTime( processInstance.getStartTime() );
-        processInstanceDTO.setStatus( processInstance.getStatus() );
-        processInstanceDTO.setVars( processInstance.getVars() );
-
-        return processInstanceDTO;
-    }
 }

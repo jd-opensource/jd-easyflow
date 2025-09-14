@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +12,7 @@ import com.jd.easyflow.flow.engine.FlowParam;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.NodeAction;
 import com.jd.easyflow.flow.model.NodeContext;
+import com.jd.easyflow.flow.util.FlowStringUtil;
 import com.jd.easyflow.objects.factory.ObjectFactorys;
 import com.jd.easyflow.process.adapter.export.ProcessTaskExport;
 import com.jd.easyflow.process.adapter.export.constant.ProcessTaskConstants;
@@ -103,19 +103,19 @@ public abstract class BaseTaskNodeAction implements NodeAction {
             String instanceBizDataExp = (String) executeParamConf.get("instanceBizData");
             String userExp = (String) executeParamConf.get("user");
             Map<String, Object> dataMap = new HashMap<>();
-            if (StringUtils.isNotEmpty(executeBizResultExp)) {
+            if (FlowStringUtil.isNotEmpty(executeBizResultExp)) {
                 executeBizResult = context.getElEvaluator().eval(executeBizResultExp, nodeContext, context, dataMap);
             }
-            if (StringUtils.isNotEmpty(executeBizDataExp)) {
+            if (FlowStringUtil.isNotEmpty(executeBizDataExp)) {
                 executeBizData = context.getElEvaluator().eval(executeBizDataExp, nodeContext, context, dataMap);
             }       
-            if (StringUtils.isNotEmpty(instanceBizStatusExp)) {
+            if (FlowStringUtil.isNotEmpty(instanceBizStatusExp)) {
                 instanceBizStatus = context.getElEvaluator().eval(instanceBizStatusExp, nodeContext, context, dataMap);
             } 
-            if (StringUtils.isNotEmpty(instanceBizDataExp)) {
+            if (FlowStringUtil.isNotEmpty(instanceBizDataExp)) {
                 instanceBizData = context.getElEvaluator().eval(instanceBizDataExp, nodeContext, context, dataMap);
             } 
-            if (StringUtils.isNotEmpty(userExp)) {
+            if (FlowStringUtil.isNotEmpty(userExp)) {
                 user = context.getElEvaluator().eval(userExp, nodeContext, context, dataMap);
             }             
         } else {
@@ -181,7 +181,7 @@ public abstract class BaseTaskNodeAction implements NodeAction {
             if (ProcessTaskConstants.TASK_STATUS_FINISH.equals(task.getStatus())) {
                 finishTaskCount++;
                 String bizResult = task.getExecuteBizResult();
-                if (StringUtils.isNotEmpty(bizResult)) {
+                if (FlowStringUtil.isNotEmpty(bizResult)) {
                     Integer count = bizResultMap.get(bizResult);
                     if (count == null) {
                         count = 1;

@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -19,7 +19,7 @@ import com.jd.easyflow.properties.PropertiesAccessor;
  * @author liyuliang5
  *
  */
-public class SpringEnvPropertiesAccessor implements PropertiesAccessor {
+public class SpringEnvPropertiesAccessor implements PropertiesAccessor, EnvironmentAware {
     
     private static final Logger log = LoggerFactory.getLogger(SpringEnvPropertiesAccessor.class);
 
@@ -27,7 +27,6 @@ public class SpringEnvPropertiesAccessor implements PropertiesAccessor {
 
     private Environment env;
 
-    @Autowired
     public void setEnvironment(Environment env) {
       this.env = env;
       StringBuilder builder = new StringBuilder("\nConfig sources:");

@@ -2,8 +2,7 @@ package com.jd.easyflow.process.client.task.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Objects;
 
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
 import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
@@ -57,7 +56,7 @@ public class TaskClientManager {
             }
             List<ProcessTaskDTO> result = new ArrayList<>();
             for (ProcessTaskDTO task : cache.objects(ProcessTaskDTO.class)) {
-                if (StringUtils.equals(nodeInstanceNo, task.getNodeInstanceNo())) {
+                if (Objects.equals(nodeInstanceNo, task.getNodeInstanceNo())) {
                     result.add(task);
                 }
             }
