@@ -257,7 +257,6 @@ public class ProcessRuntimeService {
                 }
             }
             
-            
             if (nodeContext.getNextNodeIds() != null) {
                 
                 instance.setEndTime(new Date());
@@ -315,12 +314,15 @@ public class ProcessRuntimeService {
                                         new Object[] { nextNodeInstance, nodeContext } });
                     }
                 }
-
+            }
+            
+            if (StdProcessConstants.NODE_STATUS_ACTIVE.equals(instance.getStatus()) || StdProcessConstants.STATUS_CLOSE.equals(instance.getStatus())) {
                 ProcessNodeExecutionDTO execution = manager.createNodeExecution(nodeContext, context);
                 if (log.isDebugEnabled()) {
                     log.debug("Create node execution:{}", execution);
-                }
+                } 
             }
+            
             ProcessInclusiveCheckHelper.nodeEndExec(nodeContext, context, manager);
 
             String dataFlushPolicy = PropertiesUtil.getProperty(StdProcessConstants.PROP_DATA_FLUSH_POLICY, nodeContext,

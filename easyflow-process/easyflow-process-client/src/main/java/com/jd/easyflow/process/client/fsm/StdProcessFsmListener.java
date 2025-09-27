@@ -169,7 +169,15 @@ public class StdProcessFsmListener implements FsmEventListener {
                     context.getParam().setEventId(StdFsmProcessConstants.EVENT_NONE_FOR_CLOSE);
                 }
             }
-
+            
+            if (context.getCurrentEvent() == null) {
+                if (processInstance == null || processInstance.getCurrentNodeIds() == null || processInstance.getCurrentNodeIds().isEmpty()) {
+                    context.setCurrentEvent(FsmConstants.COMMON_ENTER_EVENT);
+                } else {
+                    context.setCurrentEvent(FsmConstants.COMMON_CHECK_EVENT);
+                }
+            }
+            
             if (context.getCurrentState() != null) {
                 return Arrays.asList(context.getCurrentState().getId());
             }
@@ -329,10 +337,12 @@ public class StdProcessFsmListener implements FsmEventListener {
     protected void onTstStart(TransitionContext tstContext, FsmContext context) {
         StdProcessContext processContext = context.getData(StdFsmProcessConstants.FSM_CTX_PROCESS_CTX);
         String currentStateId = context.getCurrentState().getId();
+        String currentEventId = context.getCurrentEvent().getId();
         State previousState = context.getPreviousState();
         StdNodeContext nodeContext = new StdNodeContext();
         nodeContext.setStdProcessContext(processContext);
         nodeContext.setNodeId(currentStateId);
+        nodeContext.setEventId(currentEventId);
         State state = context.getFsm().getState(currentStateId);
         StdNode node = new StdNode();
         node.setProcessProperties(state.getProperty(StdFsmProcessConstants.FSM_PROP_PROCESS));
@@ -359,6 +369,7 @@ public class StdProcessFsmListener implements FsmEventListener {
         String currentStateId = context.getCurrentState().getId();
         nodeContext.setNextNodeIds(
                 Objects.equals(currentStateId, nodeContext.getNodeId()) ? null : new String[] { currentStateId });
+        nodeContext.setActionResult(tstContext.getActionResult());
         if (processContext.getBizNo() == null) {
             processContext.setBizNo(context.getStateInstanceId());
         }

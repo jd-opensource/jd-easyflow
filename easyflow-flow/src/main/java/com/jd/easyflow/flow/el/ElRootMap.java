@@ -56,7 +56,7 @@ public class ElRootMap implements Map<String, Object> {
             case KEY_RESULT_DATA:
                 return true;
             default:
-                return data == null ? null : data.containsKey(key);
+                return data == null ? false : data.containsKey(key);
             }
         }
         return false;

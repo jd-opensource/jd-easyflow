@@ -73,7 +73,7 @@ public class ElRootMap implements Map<String, Object> {
             case KEY_TRANSITION_BIZ_CONTEXT:
                 return true;
             default:
-                return data == null ? null : data.containsKey(key);
+                return data == null ? false : data.containsKey(key);
             }
         }
         return false;

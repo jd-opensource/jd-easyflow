@@ -115,7 +115,14 @@ public class ProcessInstanceDomainService {
     public static final String EXECUTION_PERSIST_POLICY_SYNC = "SYNC";
     public static final String EXECUTION_PERSIST_POLICY_ASYNC = "ASYNC";
 
-    public String executionPersistPolicy = EXECUTION_PERSIST_POLICY_ASYNC;
+    private String executionPersistPolicy = EXECUTION_PERSIST_POLICY_ASYNC;
+    
+    public static final String EXECUTION_PERSIST_TYPE_ALL = "ALL";
+    public static final String EXECUTION_PERSIST_TYPE_NEXT = "NEXT";
+    public static final String EXECUTION_PERSIST_TYPE_EVENT_AND_NEXT = "EVENT_AND_NEXT";
+    public static final String EXECUTION_PERSIST_TYPE_NONE = "NONE";
+    
+    private String executionPeristType = EXECUTION_PERSIST_TYPE_ALL;
 
     public PagerResult<ProcessDefinitionForListVO> pageQueryProcessDefinition(PagerCondition pagerQueryReq) {
         return processRepository.pageQueryProcessDefinition(pagerQueryReq);
@@ -281,6 +288,30 @@ public class ProcessInstanceDomainService {
                 processRepository.updateProcessNodeInstanceByNo(entity);
             }
         } else if (o instanceof ProcessNodeExecutionDTO) {
+            if (EXECUTION_PERSIST_TYPE_NONE.equals(executionPeristType)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Execution persist type is none, no persist");
+                }
+                return;
+            }
+            if (EXECUTION_PERSIST_TYPE_NEXT.equals(executionPeristType)) {
+                ProcessNodeExecutionDTO dto = (ProcessNodeExecutionDTO) o;
+                if (dto.getNextNodeInstances() == null || dto.getNextNodeInstances().length() == 0) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Execution persist type is next, no persist");
+                    }
+                    return;
+                }
+            } else if (EXECUTION_PERSIST_TYPE_EVENT_AND_NEXT.equals(executionPeristType)) {
+                ProcessNodeExecutionDTO dto = (ProcessNodeExecutionDTO) o;
+                if ((dto.getNextNodeInstances() == null || dto.getNextNodeInstances().length() == 0) && dto.getEventId() == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Execution persist type is event and next, no persist");
+                    }
+                    return;
+                }
+            }
+            
             Integer finalPersistOp = persistOp;
             Runnable runnable = () -> {
                 Integer finalPersistOp2 = finalPersistOp;
@@ -771,5 +802,15 @@ public class ProcessInstanceDomainService {
     public void setExecutionPersistPolicy(String executionPersistPolicy) {
         this.executionPersistPolicy = executionPersistPolicy;
     }
+
+    public String getExecutionPeristType() {
+        return executionPeristType;
+    }
+
+    public void setExecutionPeristType(String executionPeristType) {
+        this.executionPeristType = executionPeristType;
+    }
+    
+    
     
 }

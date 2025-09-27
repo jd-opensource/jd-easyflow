@@ -53,6 +53,8 @@ public class StdNodeContext implements NodeContext {
     @JsonIgnore
     private Object engineNodeContext;
     
+    private Object actionResult;
+    
     public Node getNode() {
         return node;
     }
@@ -210,6 +212,13 @@ public class StdNodeContext implements NodeContext {
     }
     public void setEngineNodeContext(Object engineNodeContext) {
         this.engineNodeContext = engineNodeContext;
+    }
+    
+    public Object getActionResult() {
+        return actionResult;
+    }
+    public void setActionResult(Object actionResult) {
+        this.actionResult = actionResult;
     }
     @Override
     public String toString() {

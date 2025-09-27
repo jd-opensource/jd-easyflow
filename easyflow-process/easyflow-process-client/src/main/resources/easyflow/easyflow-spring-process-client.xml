@@ -35,6 +35,8 @@
         <property name="manager" ref="easyflow-process-processRuntimeManager"></property>
     </bean>
     <bean id="easyflow-process-processRuntimeManager" class="com.jd.easyflow.process.client.runtime.ProcessRuntimeManager">
+    	<property name="executionPersistType" value="${easyflow.process.executionPersistType:NEXT}"></property>
+    	<property name="executionPersistActionResult" value="${easyflow.process.executionPersistActionResult:false}"></property>
     </bean>
     
     <bean id="easyflow-process-processScheduleClientService" class="com.jd.easyflow.process.client.schedule.ProcessScheduleClientServiceImpl">

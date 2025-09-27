@@ -1,9 +1,9 @@
 package com.jd.easyflow.flow.engine.impl;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +36,10 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
     }
 
     @Override
-    protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock, String runId) {
+    protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, Lock lock, String runId) {
         List<NodeContext> startNodes = context.getStartNodes();
         if (startNodes.size() == 0) {
-            lock.countDown();
+            lock.unlock();
             return;
         }
         counter.addAndGet(startNodes.size());
@@ -52,7 +52,7 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
         }
     }
 
-    private void runNodes(NodeContext[] nodes, FlowContextImpl context, AtomicInteger counter, CountDownLatch lock,
+    private void runNodes(NodeContext[] nodes, FlowContextImpl context, AtomicInteger counter, Lock lock,
             String runId) {
         while (true) {
             if (nodes == null || nodes.length == 0) {
@@ -72,7 +72,7 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
     }
 
     private NodeContext[] doRunOneNode(NodeContext node, FlowContextImpl context, AtomicInteger counter,
-            CountDownLatch lock, String runId) {
+            Lock lock, String runId) {
         NodeContext[] nextNodes = null;
         try {
             if (context.isLogOn() && logger.isInfoEnabled()) {
@@ -86,7 +86,7 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
             if (context.isLogOn() && logger.isInfoEnabled()) {
                 logger.info("Flow state is interrupted");
             }
-            lock.countDown();
+            lock.unlock();
             return null;
         }
         if (nextNodes != null && nextNodes.length > 0) {
@@ -94,7 +94,7 @@ public class ReusableThreadFlowRunner extends MultipleThreadFlowRunner {
         }
         int count = counter.addAndGet(-1);
         if (count == 0) {
-            lock.countDown();
+            lock.unlock();
         }
         return nextNodes;
     }

@@ -56,6 +56,16 @@ public class ProcessRuntimeManager {
     private ProcessTransactionExport processTransactionExport;
 
     private ObjectIdManager objectIdManager = ObjectIdManager.INSTANCE;
+    
+    public static final String EXECUTION_PERSIST_TYPE_ALL = "ALL";
+    public static final String EXECUTION_PERSIST_TYPE_NEXT = "NEXT";
+    public static final String EXECUTION_PERSIST_TYPE_EVENT_AND_NEXT = "EVENT_AND_NEXT";
+    public static final String EXECUTION_PERSIST_TYPE_NONE = "NONE";
+    
+    private String executionPersistType = EXECUTION_PERSIST_TYPE_NEXT;
+    
+    private boolean executionPersistActionResult = false;
+
 
     /**
      * 
@@ -629,22 +639,62 @@ public class ProcessRuntimeManager {
      */
     public ProcessNodeExecutionDTO createNodeExecution(StdNodeContext nodeContext, StdProcessContext context) {
         return op(context, () -> {
+            String persistType = getExecutionPersistType(nodeContext, context);
+            if (log.isDebugEnabled()) {
+                log.debug("persist type is " + persistType);
+            }
+            if (EXECUTION_PERSIST_TYPE_NONE.equals(persistType)) {
+                return null;
+            }
+            ProcessNodeInstanceDTO nodeInstance = getNodeInstance(nodeContext.getNodeInstanceNo(), context);
+            if (EXECUTION_PERSIST_TYPE_NEXT.equals(persistType)) {
+                if (nodeInstance.getNextNodeInstances() == null || nodeInstance.getNextNodeInstances().isEmpty()) {
+                    return null;
+                }
+            } else if (EXECUTION_PERSIST_TYPE_EVENT_AND_NEXT.equals(persistType)) {
+                if ((nodeInstance.getNextNodeInstances() == null || nodeInstance.getNextNodeInstances().isEmpty()) &&  nodeContext.getEventId() == null) {
+                    return null;
+                }
+            }
+            
             ProcessNodeExecutionDTO execution = new ProcessNodeExecutionDTO();
             execution.setEndTime(new Date());
             execution.setEventId(nodeContext.getEventId());
-            execution.setNextNodeInstances(String.join(",", nodeContext.getNextNodeInstanceNos()));
+            if (nodeContext.getNextNodeInstanceNos() != null) {
+                execution.setNextNodeInstances(String.join(",", nodeContext.getNextNodeInstanceNos()));
+            }
             execution.setNodeExecutionNo(objectIdManager.nextObjectId(ProcessTransactionConstants.TYPE_EXECUTION));
             execution.setNodeId(nodeContext.getNodeId());
-            ProcessNodeInstanceDTO nodeInstance = getNodeInstance(nodeContext.getNodeInstanceNo(), context);
             execution.setNodeInstanceNo(nodeInstance.getNodeInstanceNo());
             execution.setProcessDefId(nodeInstance.getProcessDefId());
             execution.setProductCode(nodeInstance.getProductCode());
             execution.setStartTime(nodeContext.getExecutionStartTime());
-            execution.setStatus(StdProcessConstants.EXECUTION_STATUS_CLOSE);
+            execution.setStatus(nodeInstance.getStatus());
             execution.setCreatedDate(new Date());
+            boolean persistActionResult = getExecutionPersistActionResult(nodeContext, context);
+            if (persistActionResult) {
+                try {
+                    Map<String, Object> extData = new HashMap<String, Object>();
+                    extData.put("actionResult", nodeContext.getActionResult());
+                    String extDataStr = JSON.toJSONString(extData);
+                    execution.setExtData(extDataStr);
+                } catch (Exception e) {
+                    log.error("extData populate exception," + e.getMessage(), e);
+                }
+            }
             context.getCache().put(execution.getNodeExecutionNo(), execution, true);
             return execution;
         });
+    }
+    
+    private String getExecutionPersistType(StdNodeContext nodeContext, StdProcessContext context) {
+        String persistType = PropertiesUtil.getProperty("executionPersistType", nodeContext, context);
+        return persistType == null ? this.executionPersistType : persistType;
+    }
+    
+    private boolean getExecutionPersistActionResult(StdNodeContext nodeContext, StdProcessContext context) {
+        Boolean persistActionResult = PropertiesUtil.getProperty("executionPersistActionResult", nodeContext, context);
+        return persistActionResult == null ? this.executionPersistActionResult : persistActionResult;
     }
 
     public <T> T op(StdProcessContext context, Supplier<T> supplier) {
@@ -700,5 +750,23 @@ public class ProcessRuntimeManager {
     public void setObjectIdManager(ObjectIdManager objectIdManager) {
         this.objectIdManager = objectIdManager;
     }
+
+    public String getExecutionPersistType() {
+        return executionPersistType;
+    }
+
+    public void setExecutionPersistType(String executionPersistType) {
+        this.executionPersistType = executionPersistType;
+    }
+
+    public boolean isExecutionPersistActionResult() {
+        return executionPersistActionResult;
+    }
+
+    public void setExecutionPersistActionResult(boolean executionPersistActionResult) {
+        this.executionPersistActionResult = executionPersistActionResult;
+    }
+
+
 
 }

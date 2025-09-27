@@ -23,11 +23,13 @@ import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePreHandler;
+import com.jd.easyflow.flow.model.action.EventNodeAction;
 import com.jd.easyflow.flow.model.node.NodeImpl;
 import com.jd.easyflow.flow.model.pre.NodePrePropertyGetter;
 import com.jd.easyflow.flow.util.FlowConstants;
 import com.jd.easyflow.flow.util.FlowEventTypes;
 import com.jd.easyflow.flow.util.FlowNodeLinkUtil;
+import com.jd.easyflow.flow.util.FlowUtil;
 import com.jd.easyflow.flow.util.Pair;
 import com.jd.easyflow.fsm.FsmContext;
 import com.jd.easyflow.fsm.model.TransitionContext;
@@ -409,13 +411,20 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
     public void onNodeStart(NodeContext flowNodeContext, FlowContext context) {
         StdProcessContext processContext = context.get(StdFlowProcessConstants.FLOW_CTX_PROCESS_CTX);
         String currentNodeId = flowNodeContext.getNodeId();
+        FlowNode currentNode = context.getFlow().getNode(currentNodeId);
         NodeContext previousNodeCtx = flowNodeContext.getPreviousNode();
         StdNodeContext nodeContext = new StdNodeContext();
         nodeContext.setStdProcessContext(processContext);
         nodeContext.setNodeId(currentNodeId);
+        String event = flowNodeContext.get(FlowConstants.NODE_CONTEXT_DATA_EVENT);
+        if (event == null) {
+            if (currentNode instanceof NodeImpl && ((NodeImpl) currentNode).getAction() instanceof EventNodeAction) {
+                event = FlowConstants.NONE_EVENT;
+            }
+        }
+        nodeContext.setEventId(event);
         nodeContext.setEngineNodeContext(flowNodeContext);
         flowNodeContext.put(StdFlowProcessConstants.FLOW_NODE_CTX_NODE_CTX, nodeContext);
-        FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
         StdNode node = new StdNode();
         node.setProcessProperties(currentNode.getProperty(StdFlowProcessConstants.FLOW_PROP_PROCESS));
         nodeContext.setNode(node);
@@ -472,6 +481,7 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
                 nextNodeIds[i] = nextNodes[i].getNodeId();
             }
         }
+        nodeContext.setActionResult(nodeCtx.getActionResult());
         nodeContext.setNextNodeIds(nextNodeIds);
         if (processContext.getBizNo() == null) {
             processContext.setBizNo(context.get(StdFlowProcessConstants.FLOW_CTX_BIZNO));
