@@ -6,8 +6,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,14 +55,14 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         if (context.isLogOn() && logger.isInfoEnabled()) {
             logger.info("Start running flow node, runId:" + runId);
         }
-        Lock lock = createLock(context);
+        CountDownLatch lock = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger();
         scheduleNodes(context, counter, lock, runId);
         try {
             if (timeout == 0) {
-                lock.lockInterruptibly();
+                lock.await();
             } else {
-                boolean result = lock.tryLock(timeout, TimeUnit.MILLISECONDS);
+                boolean result = lock.await(timeout, TimeUnit.MILLISECONDS);
                 context.put(FlowConstants.FLOW_CTX_MULTI_AWAIT_RESULT, result);
                 if (result == false) {
                     context.setInterrupted();
@@ -86,12 +84,8 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
             throw ExceptionUtil.throwException(t);
         }
     }
-    
-    protected Lock createLock(FlowContextImpl context) {
-        return new CountDownLatchLock();
-    }
-    
-    protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, Lock lock,
+
+    protected void scheduleNodes(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock,
             String runId) {
         addTaskIfExists(context, counter, lock, runId);
     }
@@ -104,7 +98,7 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
      * @param counter
      * @param lock
      */
-    private void addTaskIfExists(FlowContextImpl context, AtomicInteger counter, Lock lock,
+    private void addTaskIfExists(FlowContextImpl context, AtomicInteger counter, CountDownLatch lock,
             String runId) {
         NodeContext currentNode;
         while ((currentNode = context.getNextNode()) != null) {
@@ -123,13 +117,13 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                         if (context.isLogOn() && logger.isInfoEnabled()) {
                             logger.info("Flow state is interrupted");
                         }
-                        lock.unlock();
+                        lock.countDown();
                         return;
                     }
                     addTaskIfExists(context, counter, lock, runId);
                     int count = counter.addAndGet(-1);
                     if (count == 0) {
-                        lock.unlock();
+                        lock.countDown();
                     }
                 } catch (Throwable t) { // NOSONAR
                     addException(context, finalCurrentNode, t);
@@ -137,12 +131,12 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
                         if (context.isLogOn() && logger.isInfoEnabled()) {
                             logger.info("Flow state is interrupted");
                         }
-                        lock.unlock();
+                        lock.countDown();
                         return;
                     }
                     int count = counter.addAndGet(-1);
                     if (count == 0) {
-                        lock.unlock();
+                        lock.countDown();
                     }
                 }
             });
@@ -201,35 +195,6 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         this.throwExceptionOnTimeout = throwExceptionOnTimeout;
     }
     
-    private static class CountDownLatchLock implements Lock {
-        
-        private CountDownLatch latch = new CountDownLatch(1);
-
-
-        @Override
-        public void lockInterruptibly() throws InterruptedException {
-            latch.await();
-        }
-        
-        @Override
-        public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-            return latch.await(time, unit);
-        }
-        
-        @Override
-        public void unlock() {
-            latch.countDown();
-        }
-
-        @Override
-        public void lock() { throw new UnsupportedOperationException(); }
-
-        @Override
-        public boolean tryLock(){ throw new UnsupportedOperationException(); }
-
-        @Override
-        public Condition newCondition(){ throw new UnsupportedOperationException(); }
-        
-    }
     
+
 }
