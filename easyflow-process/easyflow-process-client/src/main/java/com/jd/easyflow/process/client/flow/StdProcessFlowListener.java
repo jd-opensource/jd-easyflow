@@ -23,7 +23,6 @@ import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.InitContext;
 import com.jd.easyflow.flow.model.NodeContext;
 import com.jd.easyflow.flow.model.NodePreHandler;
-import com.jd.easyflow.flow.model.action.EventNodeAction;
 import com.jd.easyflow.flow.model.node.NodeImpl;
 import com.jd.easyflow.flow.model.pre.NodePrePropertyGetter;
 import com.jd.easyflow.flow.util.FlowConstants;
@@ -417,11 +416,6 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         nodeContext.setStdProcessContext(processContext);
         nodeContext.setNodeId(currentNodeId);
         String event = flowNodeContext.get(FlowConstants.NODE_CONTEXT_DATA_EVENT);
-        if (event == null) {
-            if (currentNode instanceof NodeImpl && ((NodeImpl) currentNode).getAction() instanceof EventNodeAction) {
-                event = FlowConstants.NONE_EVENT;
-            }
-        }
         nodeContext.setEventId(event);
         nodeContext.setEngineNodeContext(flowNodeContext);
         flowNodeContext.put(StdFlowProcessConstants.FLOW_NODE_CTX_NODE_CTX, nodeContext);

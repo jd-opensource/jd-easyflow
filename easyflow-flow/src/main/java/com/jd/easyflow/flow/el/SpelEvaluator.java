@@ -10,8 +10,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.MapAccessor;
+import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
@@ -45,6 +47,8 @@ public class SpelEvaluator implements ElEvaluator, ApplicationContextAware {
     private ExpressionParser parser = new SpelExpressionParser();
 
     private ApplicationContext applicationContext;
+    
+    private static Map<String, Expression> templateCacheMap = new ConcurrentHashMap();
     
     {
         context.addPropertyAccessor(new MapAccessor());
@@ -149,6 +153,63 @@ public class SpelEvaluator implements ElEvaluator, ApplicationContextAware {
         }
         return root;
     }
+    
+    @Override
+    public String evalTemplate(String template, NodeContext nodeContext, FlowContext flowContext,
+            Map<String, Object> data) {
+        if (flowContext.isLogOn() && logger.isInfoEnabled()) {
+            logger.info("EVAL TEMPLATE:" + template);
+        }
+        Object root = null;
+        switch (rootType) {
+        case ROOT_TYPE_HASH_MAP:
+            root = buildHashMapRoot(nodeContext, flowContext, data);
+            break;
+        case ROOT_TYPE_ROOT_MAP:
+            root = buildRootMapRoot(nodeContext, flowContext, data);
+            break;
+        }
+        String result = null;
+        try {
+            result = evalTemplateWithDefaultContext(template, root, cache);
+        } catch (Exception e) {
+            if (flowContext.isLogOn() && logger.isErrorEnabled()) {
+                logger.error("EVAL TEMPLATE EXCEPTION, TEMPLATE:" + template + "," + e.getMessage());
+            }
+            throw e;
+        }
+        if (flowContext.isLogOn() && logger.isInfoEnabled()) {
+            logger.info("TEMPLATE RESULT:" + result);
+        }
+        return result;
+    }
+
+    
+    @Override
+    public String evalTemplateWithDefaultContext(String template, Object root, boolean cache) {
+        try {
+            Expression expression;
+            if (cache) {
+                expression = templateCacheMap.get(template);
+                if (expression == null) {
+                    expression = parser.parseExpression(template, ParserContext.TEMPLATE_EXPRESSION);
+                    templateCacheMap.put(template, expression);
+                }
+            } else {
+                expression = parser.parseExpression(template, ParserContext.TEMPLATE_EXPRESSION);
+            }
+            Object result = null;
+            result = expression.getValue(context, root);
+            if (result == null) {
+                return null;
+            }
+            return result.toString();
+        } catch (Exception e) {
+            logger.error("SPEL template eval exception, template:" + template, e);
+            throw e;
+        }
+    }
+
 
     public int getRootType() {
         return rootType;

@@ -32,4 +32,8 @@ public interface ElEvaluator {
      * @return
      */
     <T>T eval(String exp, NodeContext nodeContext, FlowContext flowContext, Map<String, Object> data);
+    
+    String evalTemplateWithDefaultContext(String template, Object root, boolean cache);
+    
+    String evalTemplate(String template, NodeContext nodeContext, FlowContext flowContext, Map<String, Object> data);
 }

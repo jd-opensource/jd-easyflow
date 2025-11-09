@@ -41,7 +41,7 @@ BPMN模块提供了基于BPMN规范进行流程定义和可视化的能力，流
         flowEngine.setFlowPath("classpath:flow/quickstart/quickstart_001.json");
         flowEngine.init();
 ```     
-Spring环境可直接定义FlowEngineImpl bean.        
+Spring环境可直接定义FlowEngineImpl bean(不要显式配置或调用init方法).        
 4. 编写具体流程调用执行的代码
 ```
        FlowParam param = new FlowParam("quickstart_001");

@@ -595,7 +595,7 @@ var _commonInit = J._commonInit = function() {
         '</div>';
         this.$input = $(inputHtml).appendTo($container);
         this.innerRender.call(this, $container);
-        this.$label = this.$label ? this.$lable : this.$input.find(".l_" + this.componentClass);
+        this.$label = this.$label ? this.$label : this.$input.find(".l_" + this.componentClass);
         this.$label.tooltip({"trigger":"click", "title":J.msg['dataviewapp.dataKey'] + this.config.cfgKey + (this.config.cfgPath ? " " + J.msg['dataviewapp.keyPath'] + this.config.cfgPath : "")}).tooltip('disable');
         this.$element = this.$element ? this.$element : this.$input.find("." + this.componentClass);
         if (this.config.desc) {
@@ -899,6 +899,20 @@ J.CardList = J.Components['cardList'] = function(cfg) {
     this.collect = function(data) {
         var newListData = _listCollect.call(this, data);
         _commonCollect.call(this, JSON.stringify(newListData), data);
+    }
+}
+
+J.ElementsCard = J.Components['elementsCard'] = function(cfg) {
+	J.BaseComponent.call(this, 'elementsCard', cfg);
+	_commonInit.call(this);
+	
+    this.innerRender = function($container) {
+		this.$input.find("label").remove();
+        this.component.render(this.$input);
+    }
+	
+    this.collect = function(data) {
+		return this.component.collect(data);
     }
 }
 

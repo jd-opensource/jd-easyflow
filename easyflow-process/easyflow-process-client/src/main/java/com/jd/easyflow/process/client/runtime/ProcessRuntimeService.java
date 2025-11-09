@@ -99,14 +99,11 @@ public class ProcessRuntimeService {
         }
         startNodeIds = context.getStartNodesFunction().apply(processInstance);
         context.setStartNodeIds(startNodeIds);
+        boolean newProcessInstance = false;
         if (processInstance == null) {
             processInstance = tryCreateProcessInstance(instance, context);
             context.setInstanceNo(processInstance.getInstanceNo());
-            if (Boolean.TRUE
-                    .equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_DATA_FLUSH_AFTER_CREATE))) {
-                syncVariable(context);
-                manager.flushProcess(context);
-            }
+            newProcessInstance = true;
         }
 
         boolean update = false;
@@ -141,6 +138,18 @@ public class ProcessRuntimeService {
         if (variablesStr != null && ! variablesStr.isEmpty()) {
             Map<String, String> variables = JSON.parseObject(variablesStr, Map.class);
             context.getVariableSetter().accept(variables);
+        }
+        
+        context.getEventTriggerFunction().apply(
+                new Object[] { StdProcessConstants.EVENT_PROCESS_INSTANCE_EXEC_START, processInstance });
+        
+        if ((newProcessInstance && Boolean.TRUE.equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_DATA_FLUSH_AFTER_CREATE)))) {
+            syncVariable(context);
+            manager.flushProcess(StdProcessConstants.FLUSH_POINT_AFTER_CREATE, context, null);
+        }
+        if (Boolean.TRUE.equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_DATA_FLUSH_BEFORE_PROCESS))) {
+            syncVariable(context);
+            manager.flushProcess(StdProcessConstants.FLUSH_POINT_BEFORE_PROCESS, context, null);
         }
     }
 
@@ -223,12 +232,16 @@ public class ProcessRuntimeService {
             manager.updateNodeExtData(nodeInstance, nodeContext.getExtData(), context);
             nodeContext.setNodeInstanceNo(nodeInstance.getNodeInstanceNo());
             
+            context.getEventTriggerFunction()
+            .apply(new Object[] { StdProcessConstants.EVENT_NODE_INSTANCE_EXEC_START,
+                    new Object[] { nodeInstance, nodeContext } });
+            
             String dataFlushPolicy = PropertiesUtil.getProperty(StdProcessConstants.PROP_DATA_FLUSH_POLICY, nodeContext,
                     context);
             if (StdProcessConstants.FLUSH_BEFORE_NODE.equals(dataFlushPolicy)
                     || StdProcessConstants.FLUSH_BEFORE_AND_AFTER_NODE.equals(dataFlushPolicy)) {
                 syncVariable(context);
-                manager.flushProcess(context);
+                manager.flushProcess(StdProcessConstants.FLUSH_POINT_BEFORE_NODE, context, nodeContext);
             }
             return null;
         });
@@ -323,23 +336,29 @@ public class ProcessRuntimeService {
                 } 
             }
             
-            ProcessInclusiveCheckHelper.nodeEndExec(nodeContext, context, manager);
-
+            context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_NODE_INSTANCE_EXEC_END,
+                    new Object[] { instance, nodeContext } });
+                        
             String dataFlushPolicy = PropertiesUtil.getProperty(StdProcessConstants.PROP_DATA_FLUSH_POLICY, nodeContext,
                     context);
             if (StdProcessConstants.FLUSH_AFTER_NODE.equals(dataFlushPolicy)
                     || StdProcessConstants.FLUSH_BEFORE_AND_AFTER_NODE.equals(dataFlushPolicy)) {
                 syncVariable(context);
-                manager.flushProcess(context);
+                manager.flushProcess(StdProcessConstants.FLUSH_POINT_AFTER_PORCESS, context, nodeContext);
             }
+            
+            ProcessInclusiveCheckHelper.nodeEndExec(nodeContext, context, manager);
             return null;
         });
     }
 
     public void processEndExec(StdProcessContext context) {
         log.info("process end exec");
+        ProcessInstanceDTO processInstance = getProcessInstance(context);
+        context.getEventTriggerFunction().apply(
+                new Object[] { StdProcessConstants.EVENT_PROCESS_INSTANCE_EXEC_END, processInstance });
         syncVariable(context);
-        manager.flushProcess(context);
+        manager.flushProcess(StdProcessConstants.FLUSH_POINT_AFTER_NODE, context, null);
     }
 
     private void syncVariable(StdProcessContext context) {

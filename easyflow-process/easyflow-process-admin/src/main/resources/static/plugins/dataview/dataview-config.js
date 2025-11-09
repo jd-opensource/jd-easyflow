@@ -246,7 +246,8 @@
 				{value: "listSelect", "text":J.msg['dataviewcfg.listSelectType']},
 				{value: "self", "text":J.msg['dataviewcfg.selfType']},
 				{value: "cardList", "text":J.msg['dataviewcfg.cardListType']},
-				{value: "table", "text":J.msg['dataviewcfg.tableType']}
+				{value: "elementsCard", "text":J.msg['dataviewcfg.elementsCardType']},				
+				{value: "table", "text":J.msg['dataviewcfg.tableType']},
 			  ];
 			}
 			if (J.DataView.additionalConfigTypeList) {
@@ -744,5 +745,37 @@
             return collectData;
         }
     }
+	
+	J.ElementsCardConfig = J.Components['elementsCardConfig'] = function(cfg) {
+		J.BaseComponent.call(this, 'elementsCardConfig', cfg);
+		var _self = this;		
+		this.render = function($container) {
+			this.$container = $container;
+			_commonAddConfigBody.call(this, $container);
+			_commonConfigRender.call(_self,this.$bodyContainer);
+			var cardConfig = {
+		            "component": {
+		                "type": "list",
+		                "addText":J.msg['dataviewcfg.addConfigItem'],
+		                "insertRemovePosition":"Right",
+		                "component": {
+		                    "type": "elementConfig"
+		                }
+		            }
+			};
+			this.elementCard = new J.CardConfig({config:cardConfig,allConfig:cardConfig,data:cfg.data&&cfg.data.component,allData:cfg.allData,ctx:cfg.ctx});
+			var $extRow = $('<div class="row j-element-ext"></div>').insertAfter($container.parent());
+			this.elementCard.render($extRow);
+			this.elementCard.$cardConfig.addClass("col");
+			
+		}
+		
+		this.collect = function(data) {
+			var collectData = _commonConfigCollect.call(_self, data);
+			var elementCardData = this.elementCard.collect({});
+			collectData.component = elementCardData;
+			return collectData;
+		}			
+	}
 
    })(J);

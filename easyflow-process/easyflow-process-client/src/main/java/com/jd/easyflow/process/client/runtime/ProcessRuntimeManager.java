@@ -295,6 +295,28 @@ public class ProcessRuntimeManager {
             return Pair.of(nodeInstance, create);
         });
     }
+    
+    public void updateProcessExtData(Map<String, Object> extData, StdProcessContext context) {
+        op(context, () -> {
+            ProcessInstanceDTO processInstance = getProcessInstance(context);
+            if (extData != null && extData.size() > 0) {
+                String currentExtDataStr = processInstance.getExtData();
+                Map<String, Object> currentExtData = JSON.parseObject(currentExtDataStr, Map.class);
+                if (currentExtData == null) {
+                    currentExtData = new HashMap<>();
+                }
+                for (Entry<String, Object> entry : extData.entrySet()) {
+                    currentExtData.put(entry.getKey(), entry.getValue());
+                }
+                String newExtDataStr = JSON.toJSONString(currentExtData);
+                if (!Objects.equals(currentExtDataStr, newExtDataStr)) {
+                    processInstance.setExtData(newExtDataStr);
+                    updateProcessInstance(processInstance, context);
+                }
+            }
+            return null;
+        });
+    }
 
     /**
      * 
@@ -341,8 +363,12 @@ public class ProcessRuntimeManager {
             return null;
         });
     }
-
+    
     public void flushProcess(StdProcessContext context) {
+        flushProcess(null, context, null);
+    }
+
+    public void flushProcess(String flushPoint, StdProcessContext context, StdNodeContext nodeContext) {
         op(context, () -> {
             Set<String> openNodeIds = findOpenNodeIds(context);
             String[] flushNodes = context.getProcessProperty(StdProcessConstants.PROP_FLUSH_NODES);
@@ -401,7 +427,7 @@ public class ProcessRuntimeManager {
                         new Object[] { StdProcessConstants.EVENT_PROCESS_INSTANCE_END, processInstance });
                 }
             }
-            flushTxn(context);
+            flushTxn(flushPoint, context, nodeContext);
             return null;
         });
     }
@@ -544,7 +570,7 @@ public class ProcessRuntimeManager {
      * 
      * @param context
      */
-    private void flushTxn(StdProcessContext context) {
+    private void flushTxn(String flushPoint, StdProcessContext context, StdNodeContext nodeContext) {
         op(context, () -> {
             beforeFlushTxn(context);
             if (context.isSubProcess() && Boolean.TRUE.equals(PropertiesUtil
@@ -557,10 +583,10 @@ public class ProcessRuntimeManager {
             if (context.getCache().getCommandList().size() > 0) {
                 TxnReq txnReq = new TxnReq();
                 txnReq.setCommandList(context.getCache().getCommandList());
-                context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_TXN_FLUSH_START, new Object[] {txnReq}});
+                context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_TXN_FLUSH_START, new Object[] {txnReq, flushPoint, context, nodeContext}});
                 TxnRes txnRes = ExportResponseUtil
                         .unwrap(getProcessTransactionExport().doTransaction(new ExportRequest<TxnReq>(txnReq)));
-                context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_TXN_FLUSH_END, new Object[] {txnReq, txnRes}});
+                context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_TXN_FLUSH_END, new Object[] {txnReq, txnRes, flushPoint, context, nodeContext}});
                 context.getCache().clearTxnCommand();
             }
             return null;

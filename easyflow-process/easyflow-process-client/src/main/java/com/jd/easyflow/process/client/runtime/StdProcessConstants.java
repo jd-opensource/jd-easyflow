@@ -57,6 +57,7 @@ public class StdProcessConstants {
     public static final String PROP_BIZ_RELATION = "bizRelation";
     public static final String PROP_EXECUTE_CLOSE_POLICY = "executeClosePolicy";
     public static final String PROP_DATA_FLUSH_AFTER_CREATE = "dataFlushAfterCreate";
+    public static final String PROP_DATA_FLUSH_BEFORE_PROCESS = "dataFlushBeforeProcess";
     
     public static final String PROP_DATA_FLUSH_BY_PARENT = "dataFlushByParent";
     
@@ -92,6 +93,12 @@ public class StdProcessConstants {
     public static final String EVENT_TXN_FLUSH_START = "TXN_FLUSH_START";
     public static final String EVENT_TXN_FLUSH_END = "TXN_FLUSH_END";
     
+    public static final String EVENT_PROCESS_INSTANCE_EXEC_START = "PROCESS_INSTANCE_EXEC_START";
+    public static final String EVENT_PROCESS_INSTANCE_EXEC_END = "PROCESS_INSTANCE_EXEC_END";
+    
+    public static final String EVENT_NODE_INSTANCE_EXEC_START = "NODE_INSTANCE_EXEC_START";
+    public static final String EVENT_NODE_INSTANCE_EXEC_END = "NODE_INSTANCE_EXEC_END";
+    
     public static final int NODE_START_EVENT_POLICY_ACTIVE = 1;
     public static final int NODE_START_EVENT_POLICY_CREATE = 2;
     
@@ -101,5 +108,11 @@ public class StdProcessConstants {
     public static final String NODE_VAR_COMPENSATE_NODE_FLAG = "_COMPENSATE_NODE_FLAG";
     public static final String NODE_VAR_COMPENSATE_FOR = "_COMPENSATE_FOR";
     public static final String NODE_VAR_COMPENSATED_BY = "_COMPENSATED_BY";
+    
+    public static final String FLUSH_POINT_AFTER_CREATE = "AFTER_CREATE";
+    public static final String FLUSH_POINT_BEFORE_PROCESS = "BEFORE_PROCESS";
+    public static final String FLUSH_POINT_BEFORE_NODE = "BEFORE_NODE";
+    public static final String FLUSH_POINT_AFTER_NODE = "AFTER_NODE";
+    public static final String FLUSH_POINT_AFTER_PORCESS = "AFTER_PROCESS";
     
 }

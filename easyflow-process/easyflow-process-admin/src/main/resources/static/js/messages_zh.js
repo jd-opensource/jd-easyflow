@@ -334,6 +334,7 @@ $.extend(J.msg, {
 		"dataviewcfg.fileType":"文件",
 		"dataviewcfg.cardListType":"卡片列表",
 		"dataviewcfg.tableType":"表格",
+		"dataviewcfg.elementsCardType":"卡片",
 		"dataviewcfg.maskInputType":"掩码输入",
 		"dataviewcfg.gridColNum":"栅格列数",
 		"dataviewcfg.gridColAuto":"自动",

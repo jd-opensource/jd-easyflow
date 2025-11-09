@@ -43,7 +43,7 @@ QuickStart001Node01Action and so on is java node action class.
         flowEngine.setFlowPath("classpath:flow/quickstart/quickstart_001.json");
         flowEngine.init();
 ```     
-You can define FlowEngineImpl bean in Spring.  
+You can define FlowEngineImpl bean in Spring(DO NOT configure or invoke init() method explicitly).  
   
 4. Write the code of invoking flow engine.
 ```

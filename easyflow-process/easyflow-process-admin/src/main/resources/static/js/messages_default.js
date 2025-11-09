@@ -234,6 +234,7 @@ if (!window.J) {
 		"dataviewcfg.fileType":"File",
 		"dataviewcfg.cardListType":"Card list",
 		"dataviewcfg.tableType":"Table",
+		"dataviewcfg.elementsCardType":"Card",
 		"dataviewcfg.maskInputType":"Mast input",
 		"dataviewcfg.gridColNum":"Grid col num",
 		"dataviewcfg.gridColAuto":"Auto",
