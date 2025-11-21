@@ -106,11 +106,13 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public PagerResult<ProcessInstanceEntity> pageQueryProcessInstance(PagerCondition pagerQueryReq) {
-        long count = processInstanceMapper.countProcessInstanceByPagerCondition(pagerQueryReq);
+        PagerResult<ProcessInstanceEntity> result = new PagerResult<>();
+        if (pagerQueryReq.isCount()) {
+            long count = processInstanceMapper.countProcessInstanceByPagerCondition(pagerQueryReq);
+            result.setCount(count);
+        }
         List<ProcessInstance> processInstances = processInstanceMapper
                 .selectProcessInstanceByPageCondition(pagerQueryReq);
-        PagerResult<ProcessInstanceEntity> result = new PagerResult<>();
-        result.setCount(count);
         result.setPageSize(pagerQueryReq.getPageSize());
         result.setPageNum((int) pagerQueryReq.getPageIndex());
         List<ProcessInstanceEntity> entityList = ProcessConverter.INSTANCE.convertProcessInstanceList(processInstances);
@@ -217,6 +219,22 @@ public class ProcessRepositoryImpl implements ProcessRepository {
         processNodeExecutionMapper.insert(execution);
         entity.setId(execution.getId());
     }
+    
+    @Override
+    public PagerResult<ProcessNodeExecutionEntity> pagerQueryNodeExecution(PagerCondition pagerQueryReq) {
+        PagerResult<ProcessNodeExecutionEntity> result = new PagerResult<>();
+        if (Boolean.TRUE.equals(pagerQueryReq.isCount())) {
+            long count = processNodeExecutionMapper.countByPagerCondition(pagerQueryReq);
+            result.setCount(count);
+        }
+        List<ProcessNodeExecution> list = processNodeExecutionMapper.selectByPageCondition(pagerQueryReq);
+        result.setPageSize(pagerQueryReq.getPageSize());
+        result.setPageNum((int) pagerQueryReq.getPageIndex());
+        List<ProcessNodeExecutionEntity> entityList = ProcessConverter.INSTANCE.convertProcessNodeExecutionList(list);
+        result.setList(entityList);
+        return result;
+    }
+
 
     @Override
     public void updateProcessNodeExecutionById(ProcessNodeExecutionEntity entity) {
@@ -265,11 +283,13 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public PagerResult<ProcessDefinitionForListVO> pageQueryProcessDefinition(PagerCondition pagerQueryReq) {
-        long count = processDefinitionMapper.countProcessDefByPageCondition(pagerQueryReq);
+        PagerResult<ProcessDefinitionForListVO> result = new PagerResult<>();
+        if (pagerQueryReq.isCount()) {
+            long count = processDefinitionMapper.countProcessDefByPageCondition(pagerQueryReq);
+            result.setCount(count);
+        }
         List<ProcessDefinition> processDefinitionList = processDefinitionMapper
                 .selectProcessDefByPageCondition(pagerQueryReq);
-        PagerResult<ProcessDefinitionForListVO> result = new PagerResult<>();
-        result.setCount(count);
         result.setPageSize(pagerQueryReq.getPageSize());
         result.setPageNum((int) pagerQueryReq.getPageIndex());
         List<ProcessDefinitionForListVO> entityList = ProcessConverter.INSTANCE
@@ -297,6 +317,39 @@ public class ProcessRepositoryImpl implements ProcessRepository {
         return processDefinitionMapper.existProcessDefinition(defId);
     }
 
+    public ProcessInstanceMapper getProcessInstanceMapper() {
+        return processInstanceMapper;
+    }
+
+    public void setProcessInstanceMapper(ProcessInstanceMapper processInstanceMapper) {
+        this.processInstanceMapper = processInstanceMapper;
+    }
+
+    public ProcessNodeInstanceMapper getProcessNodeInstanceMapper() {
+        return processNodeInstanceMapper;
+    }
+
+    public void setProcessNodeInstanceMapper(ProcessNodeInstanceMapper processNodeInstanceMapper) {
+        this.processNodeInstanceMapper = processNodeInstanceMapper;
+    }
+
+    public ProcessNodeExecutionMapper getProcessNodeExecutionMapper() {
+        return processNodeExecutionMapper;
+    }
+
+    public void setProcessNodeExecutionMapper(ProcessNodeExecutionMapper processNodeExecutionMapper) {
+        this.processNodeExecutionMapper = processNodeExecutionMapper;
+    }
+
+    public ProcessDefinitionMapper getProcessDefinitionMapper() {
+        return processDefinitionMapper;
+    }
+
+    public void setProcessDefinitionMapper(ProcessDefinitionMapper processDefinitionMapper) {
+        this.processDefinitionMapper = processDefinitionMapper;
+    }
+    
+    
 
 
 }

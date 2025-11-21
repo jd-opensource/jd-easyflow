@@ -73,4 +73,20 @@ public class ProcessToolExportImpl implements ProcessToolExport {
     private TransactionTemplate getTransactionTemplate() {
         return processToolDomainService.getTransactionTemplate();
     }
+
+    public ProcessRepository getProcessRepository() {
+        return processRepository;
+    }
+
+    public void setProcessRepository(ProcessRepository processRepository) {
+        this.processRepository = processRepository;
+    }
+
+    public ProcessToolDomainService getProcessToolDomainService() {
+        return processToolDomainService;
+    }
+
+    public void setProcessToolDomainService(ProcessToolDomainService processToolDomainService) {
+        this.processToolDomainService = processToolDomainService;
+    }
 }

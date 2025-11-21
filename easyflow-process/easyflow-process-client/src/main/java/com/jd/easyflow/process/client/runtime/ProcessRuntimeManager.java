@@ -793,6 +793,14 @@ public class ProcessRuntimeManager {
         this.executionPersistActionResult = executionPersistActionResult;
     }
 
+    public void setProcessInstanceExport(ProcessInstanceExport processInstanceExport) {
+        this.processInstanceExport = processInstanceExport;
+    }
+
+    public void setProcessTransactionExport(ProcessTransactionExport processTransactionExport) {
+        this.processTransactionExport = processTransactionExport;
+    }
+
 
 
 }

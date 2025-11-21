@@ -71,6 +71,8 @@ public interface ProcessRepository {
     
     ProcessNodeExecutionEntity getByNodeExecutionNo(String nodeExecutionNo);
     
+    PagerResult<ProcessNodeExecutionEntity> pagerQueryNodeExecution(PagerCondition pagerQueryReq);
+    
     void saveProcessNodeExecution(ProcessNodeExecutionEntity entity);
     
     void saveProcessNodeExecutionWithCreatedDate(ProcessNodeExecutionEntity entity);

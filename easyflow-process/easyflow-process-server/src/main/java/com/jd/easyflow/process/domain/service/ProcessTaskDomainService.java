@@ -713,6 +713,62 @@ public class ProcessTaskDomainService {
     public void setNodeInstanceStatusTopic(String nodeInstanceStatusTopic) {
         this.nodeInstanceStatusTopic = nodeInstanceStatusTopic;
     }
+
+    public ProcessScheduleDomainService getProcessScheduleDomainService() {
+        return processScheduleDomainService;
+    }
+
+    public void setProcessScheduleDomainService(ProcessScheduleDomainService processScheduleDomainService) {
+        this.processScheduleDomainService = processScheduleDomainService;
+    }
+
+    public ProcessTaskRepository getProcessTaskRepository() {
+        return processTaskRepository;
+    }
+
+    public void setProcessTaskRepository(ProcessTaskRepository processTaskRepository) {
+        this.processTaskRepository = processTaskRepository;
+    }
+
+    public ProcessInstanceDomainService getProcessInstanceDomainService() {
+        return processInstanceDomainService;
+    }
+
+    public void setProcessInstanceDomainService(ProcessInstanceDomainService processInstanceDomainService) {
+        this.processInstanceDomainService = processInstanceDomainService;
+    }
+
+    public ProcessRepository getProcessRepository() {
+        return processRepository;
+    }
+
+    public void setProcessRepository(ProcessRepository processRepository) {
+        this.processRepository = processRepository;
+    }
+
+    public ProcessDefinitionDomainService getProcessDefinitionDomainService() {
+        return processDefinitionDomainService;
+    }
+
+    public void setProcessDefinitionDomainService(ProcessDefinitionDomainService processDefinitionDomainService) {
+        this.processDefinitionDomainService = processDefinitionDomainService;
+    }
+
+    public String getCreatedDatePolicy() {
+        return createdDatePolicy;
+    }
+
+    public void setCreatedDatePolicy(String createdDatePolicy) {
+        this.createdDatePolicy = createdDatePolicy;
+    }
+
+    public FlowParser getFlowParser() {
+        return flowParser;
+    }
+
+    public void setFlowParser(FlowParser flowParser) {
+        this.flowParser = flowParser;
+    }
     
     
 

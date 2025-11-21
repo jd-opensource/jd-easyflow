@@ -71,6 +71,7 @@ public interface ProcessInstanceExport {
 
     /*process execution query*/
     ExportResponse<ProcessNodeExecutionDTO> queryNodeExecutionByNo(ExportRequest<String> request);
+    ExportResponse<PagerResult> pagerQueryNodeExecution(ExportRequest<PagerCondition> req);
 
 
 }

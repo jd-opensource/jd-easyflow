@@ -143,4 +143,44 @@ public class CodeGenerateDomainService {
         this.configuredGeneratorMap = configuredGeneratorMap;
     }
 
+
+    public TransactionTemplate getNewTransactionTemplate() {
+        return newTransactionTemplate;
+    }
+
+
+    public void setNewTransactionTemplate(TransactionTemplate newTransactionTemplate) {
+        this.newTransactionTemplate = newTransactionTemplate;
+    }
+
+    public Locker getLocker() {
+        return locker;
+    }
+
+    public void setLocker(Locker locker) {
+        this.locker = locker;
+    }
+
+
+    public ConcurrentHashMap<String, CodeGenerator> getGeneratorMap() {
+        return generatorMap;
+    }
+
+
+    public void setGeneratorMap(ConcurrentHashMap<String, CodeGenerator> generatorMap) {
+        this.generatorMap = generatorMap;
+    }
+
+
+    public SequenceRepository getSequenceRepository() {
+        return sequenceRepository;
+    }
+
+
+    public void setSequenceRepository(SequenceRepository sequenceRepository) {
+        this.sequenceRepository = sequenceRepository;
+    }
+    
+    
+    
 }

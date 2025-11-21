@@ -53,4 +53,22 @@ public class FormTemplateExportImpl implements FormTemplateExport {
         return ExportResponse.build4Success(FormTemplateConverter.INSTANCE.convert(entity));
     }
 
+    public FormTemplateDomainService getFormTemplateDomainService() {
+        return formTemplateDomainService;
+    }
+
+    public void setFormTemplateDomainService(FormTemplateDomainService formTemplateDomainService) {
+        this.formTemplateDomainService = formTemplateDomainService;
+    }
+
+    public FormTemplateRepository getFormTemplateRepository() {
+        return formTemplateRepository;
+    }
+
+    public void setFormTemplateRepository(FormTemplateRepository formTemplateRepository) {
+        this.formTemplateRepository = formTemplateRepository;
+    }
+    
+    
+
 }

@@ -219,4 +219,56 @@
     from process_node_execution
     where node_execution_no = #{nodeExecutionNo} and deleted=0
   </select>
+  <select id="countByPagerCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultType="long">
+    select
+    count(node_execution_no)
+    from process_node_execution
+    <include refid="pagerWhere" />
+  </select>
+
+  <select id="selectByPageCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from process_node_execution
+    <include refid="pagerWhere" />
+    <if test="sortMap.startTime != null">
+      order by start_time ${sortMap.startTime.type},id  ${sortMap.startTime.type}
+    </if>  
+    limit #{start},#{pageSize}
+  </select>
+  <sql id="pagerWhere">
+    <where> deleted = 0
+      <if test="fieldMap.nodeInstanceNoList != null">
+        and node_instance_no in
+        <foreach collection="fieldMap.nodeInstanceNoList.value" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="fieldMap.nodeExecutionNo != null">
+        and node_execution_no=#{fieldMap.nodeExecutionNo.value}
+      </if>
+      <if test="fieldMap.eventId != null">
+        and event_id=#{fieldMap.eventId.value}
+      </if>
+      <if test="fieldMap.eventIdIsNull!=null">
+        and event_id is null
+      </if>
+      <if test="fieldMap.processDefId != null">
+        and process_def_id=#{fieldMap.processDefId.value}
+      </if>
+      <if test="fieldMap.nodeId != null">
+        and node_id=#{fieldMap.nodeId.value}
+      </if> 
+      <if test="fieldMap.startTimeStart != null">
+        and start_time &gt;=#{fieldMap.startTimeStart.value}
+      </if> 
+      <if test="fieldMap.startTimeEnd != null">
+        and start_time &lt;=#{fieldMap.startTimeEnd.value}
+      </if>  
+      <if test="fieldMap.productCode != null">
+        and product_code =#{fieldMap.productCode.value}
+      </if>
+    </where>
+  </sql>  
+  
 </mapper>

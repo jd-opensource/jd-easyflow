@@ -105,4 +105,22 @@ public class ProcessScheduleSpiInvoker implements ProcessScheduleInvoker {
         return null;
     }
 
+    public ProcessDefinitionDomainService getProcessDefinitionDomainService() {
+        return processDefinitionDomainService;
+    }
+
+    public void setProcessDefinitionDomainService(ProcessDefinitionDomainService processDefinitionDomainService) {
+        this.processDefinitionDomainService = processDefinitionDomainService;
+    }
+
+    public ProcessRepository getProcessRepository() {
+        return processRepository;
+    }
+
+    public void setProcessRepository(ProcessRepository processRepository) {
+        this.processRepository = processRepository;
+    }
+    
+    
+
 }

@@ -279,4 +279,30 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
         this.isSelfInitial = true;
         return threadPoolTaskExecutor;
     }
+
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
+
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    public ProcessInstanceDomainService getProcessInstanceDomainService() {
+        return processInstanceDomainService;
+    }
+
+    public void setProcessInstanceDomainService(ProcessInstanceDomainService processInstanceDomainService) {
+        this.processInstanceDomainService = processInstanceDomainService;
+    }
+
+    public ProcessTaskDomainService getProcessTaskDomainService() {
+        return processTaskDomainService;
+    }
+
+    public void setProcessTaskDomainService(ProcessTaskDomainService processTaskDomainService) {
+        this.processTaskDomainService = processTaskDomainService;
+    }
+    
+    
 }

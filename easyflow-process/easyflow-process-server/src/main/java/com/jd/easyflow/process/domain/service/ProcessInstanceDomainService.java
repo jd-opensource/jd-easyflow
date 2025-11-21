@@ -757,6 +757,14 @@ public class ProcessInstanceDomainService {
         return res;
     }
     
+    public PagerResult<ProcessNodeExecutionEntity> pagerQueryNodeExecution(PagerCondition pagerQueryReq) {
+        if (pagerQueryReq.getPageSize() > MAX_PAGE_SIZE) {
+            throw new UserException("The max page size is " + MAX_PAGE_SIZE);
+        }
+        
+         return processRepository.pagerQueryNodeExecution(pagerQueryReq);
+    }
+    
     
     public ProcessRepository getProcessRepository() {
         return processRepository;
@@ -809,6 +817,70 @@ public class ProcessInstanceDomainService {
 
     public void setExecutionPeristType(String executionPeristType) {
         this.executionPeristType = executionPeristType;
+    }
+
+    public String getProcessInstanceStatusTopic() {
+        return processInstanceStatusTopic;
+    }
+
+    public void setProcessInstanceStatusTopic(String processInstanceStatusTopic) {
+        this.processInstanceStatusTopic = processInstanceStatusTopic;
+    }
+
+    public String getNodeInstanceStatusTopic() {
+        return nodeInstanceStatusTopic;
+    }
+
+    public void setNodeInstanceStatusTopic(String nodeInstanceStatusTopic) {
+        this.nodeInstanceStatusTopic = nodeInstanceStatusTopic;
+    }
+
+    public String getTaskStatusTopic() {
+        return taskStatusTopic;
+    }
+
+    public void setTaskStatusTopic(String taskStatusTopic) {
+        this.taskStatusTopic = taskStatusTopic;
+    }
+
+    public String getCreatedDatePolicy() {
+        return createdDatePolicy;
+    }
+
+    public void setCreatedDatePolicy(String createdDatePolicy) {
+        this.createdDatePolicy = createdDatePolicy;
+    }
+
+    public MessageSendService getMessageSendService() {
+        return messageSendService;
+    }
+
+    public void setMessageSendService(MessageSendService messageSendService) {
+        this.messageSendService = messageSendService;
+    }
+
+    public ProcessScheduleDomainService getProcessScheduleDomainService() {
+        return processScheduleDomainService;
+    }
+
+    public void setProcessScheduleDomainService(ProcessScheduleDomainService processScheduleDomainService) {
+        this.processScheduleDomainService = processScheduleDomainService;
+    }
+
+    public ProcessDefinitionDomainService getProcessDefinitionDomainService() {
+        return processDefinitionDomainService;
+    }
+
+    public void setProcessDefinitionDomainService(ProcessDefinitionDomainService processDefinitionDomainService) {
+        this.processDefinitionDomainService = processDefinitionDomainService;
+    }
+
+    public ProcessTaskRepository getProcessTaskRepository() {
+        return processTaskRepository;
+    }
+
+    public void setProcessTaskRepository(ProcessTaskRepository processTaskRepository) {
+        this.processTaskRepository = processTaskRepository;
     }
     
     

@@ -296,6 +296,22 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
         return ExportResponse.build4Success(processInstances);
     }
     
+    @Action(code = "easyflow-process-pagerQueryNodeExecution", name = "pagerQueryNodeExecution")
+    @Override
+    public ExportResponse<PagerResult> pagerQueryNodeExecution(ExportRequest<PagerCondition> req) {
+        if (req.getData() == null) {
+            return ExportResponse.build4Failed(ExportResponseCode.FIELD_EMPTY.getCode(), " pager condition cannot be null");
+        }
+        com.jd.easyflow.common.dto.pager.PagerCondition condition = PagerConverter.INSTANCE.convert(req.getData());
+        com.jd.easyflow.common.dto.pager.PagerResult result = getTransactionTemplate().execute(status -> {
+            return processInstanceDomainService.pagerQueryNodeExecution(condition);
+        });
+        PagerResult exportResult = new PagerResult<>();
+        exportResult.setCount(result.getCount());
+        exportResult.setList(ProcessInstanceConverter.INSTANCE.convertNodeExecutionList(result.getList()));
+        return ExportResponse.build4Success(exportResult);
+    }
+    
 
     private TransactionTemplate getTransactionTemplate() {
         return processInstanceDomainService.getTransactionTemplate();
@@ -316,7 +332,6 @@ public class ProcessInstanceExportImpl implements ProcessInstanceExport {
     public void setProcessRepository(ProcessRepository processRepository) {
         this.processRepository = processRepository;
     }
-
 
 
 }

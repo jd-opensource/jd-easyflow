@@ -19,4 +19,14 @@ public class FormTemplateDomainService {
         formTemplateRepository.delete(formTemplate.getId());
         formTemplateRepository.add(entity);
     }
+
+    public FormTemplateRepository getFormTemplateRepository() {
+        return formTemplateRepository;
+    }
+
+    public void setFormTemplateRepository(FormTemplateRepository formTemplateRepository) {
+        this.formTemplateRepository = formTemplateRepository;
+    }
+    
+    
 }

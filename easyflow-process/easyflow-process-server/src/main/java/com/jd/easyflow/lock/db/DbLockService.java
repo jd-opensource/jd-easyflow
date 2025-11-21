@@ -148,8 +148,30 @@ public class DbLockService extends BaseLockService {
         this.unlockUpdateSql = unlockUpdateSql;
     }
 
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
 
-    
-    
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
+
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    public String getRenewSql() {
+        return renewSql;
+    }
+
+    public void setRenewSql(String renewSql) {
+        this.renewSql = renewSql;
+    }
+
+
 
 }

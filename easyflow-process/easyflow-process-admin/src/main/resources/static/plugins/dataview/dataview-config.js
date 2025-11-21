@@ -753,6 +753,8 @@
 			this.$container = $container;
 			_commonAddConfigBody.call(this, $container);
 			_commonConfigRender.call(_self,this.$bodyContainer);
+			this.$bodyContainer.find(".row").hide();
+			this.$bodyContainer.find(".row:last").show();
 			var cardConfig = {
 		            "component": {
 		                "type": "list",

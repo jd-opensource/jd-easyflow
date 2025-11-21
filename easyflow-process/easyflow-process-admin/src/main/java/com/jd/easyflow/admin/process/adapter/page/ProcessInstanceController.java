@@ -478,5 +478,31 @@ public class ProcessInstanceController extends BasePageController {
     public void setFlowParser(FlowParser flowParser) {
         this.flowParser = flowParser;
     }
+
+    public UserGroupAdminExtension getUserGroupAdminExtension() {
+        return userGroupAdminExtension;
+    }
+
+    public void setUserGroupAdminExtension(UserGroupAdminExtension userGroupAdminExtension) {
+        this.userGroupAdminExtension = userGroupAdminExtension;
+    }
+
+    public void setProcessInstanceExport(ProcessInstanceExport processInstanceExport) {
+        this.processInstanceExport = processInstanceExport;
+    }
+
+    public void setProcessDefinitionExport(ProcessDefinitionExport processDefinitionExport) {
+        this.processDefinitionExport = processDefinitionExport;
+    }
+
+    public void setProcessTaskExport(ProcessTaskExport processTaskExport) {
+        this.processTaskExport = processTaskExport;
+    }
+
+    public void setCodeGenerateExport(CodeGenerateExport codeGenerateExport) {
+        this.codeGenerateExport = codeGenerateExport;
+    }
+    
+    
     
 }

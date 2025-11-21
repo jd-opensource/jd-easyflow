@@ -634,4 +634,25 @@ public class ProcessTaskController extends BasePageController {
         this.flowParser = flowParser;
     }
 
+    public UserGroupAdminExtension getUserGroupAdminExtension() {
+        return userGroupAdminExtension;
+    }
+
+    public void setUserGroupAdminExtension(UserGroupAdminExtension userGroupAdminExtension) {
+        this.userGroupAdminExtension = userGroupAdminExtension;
+    }
+
+    public void setProcessTaskExport(ProcessTaskExport processTaskExport) {
+        this.processTaskExport = processTaskExport;
+    }
+
+    public void setProcessInstanceExport(ProcessInstanceExport processInstanceExport) {
+        this.processInstanceExport = processInstanceExport;
+    }
+
+    public void setProcessDefinitionExport(ProcessDefinitionExport processDefinitionExport) {
+        this.processDefinitionExport = processDefinitionExport;
+    }
+
+    
 }

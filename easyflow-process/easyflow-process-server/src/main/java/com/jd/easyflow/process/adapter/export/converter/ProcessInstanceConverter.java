@@ -195,6 +195,19 @@ public class ProcessInstanceConverter {
 
         return list;
     }
+    
+    public List<ProcessNodeExecutionDTO> convertNodeExecutionList(List<ProcessNodeExecutionEntity> entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        List<ProcessNodeExecutionDTO> list = new ArrayList<ProcessNodeExecutionDTO>( entity.size() );
+        for ( ProcessNodeExecutionEntity processNodeExecutionEntity : entity ) {
+            list.add( convert( processNodeExecutionEntity ) );
+        }
+
+        return list;
+    }
 
     public ProcessNodeExecutionDTO convert(ProcessNodeExecutionEntity entity) {
         if ( entity == null ) {

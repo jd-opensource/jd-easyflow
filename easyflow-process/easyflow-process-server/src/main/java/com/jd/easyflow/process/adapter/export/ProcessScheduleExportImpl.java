@@ -31,4 +31,14 @@ public class ProcessScheduleExportImpl implements ProcessScheduleExport {
         return ExportResponse.build4Success(res);
     }
 
+    public ProcessScheduleDomainService getProcessScheduleDomainService() {
+        return processScheduleDomainService;
+    }
+
+    public void setProcessScheduleDomainService(ProcessScheduleDomainService processScheduleDomainService) {
+        this.processScheduleDomainService = processScheduleDomainService;
+    }
+    
+    
+
 }

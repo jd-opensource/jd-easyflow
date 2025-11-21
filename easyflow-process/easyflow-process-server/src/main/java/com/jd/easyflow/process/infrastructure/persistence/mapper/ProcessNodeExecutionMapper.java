@@ -1,5 +1,8 @@
 package com.jd.easyflow.process.infrastructure.persistence.mapper;
 
+import java.util.List;
+
+import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessNodeExecution;
 
 /**
@@ -24,5 +27,9 @@ public interface ProcessNodeExecutionMapper {
     int updateByProcessNodeExecutionNo(ProcessNodeExecution record);
     
     ProcessNodeExecution selectByNodeExecutionNo(String nodeExecutionNo);
+    
+    long countByPagerCondition(PagerCondition pagerQueryReq);
+
+    List<ProcessNodeExecution> selectByPageCondition(PagerCondition pagerQueryReq);
 
 }

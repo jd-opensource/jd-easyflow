@@ -604,4 +604,8 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
     @Override
     public void destroy() {}
 
+    public void setProcessInstanceExport(ProcessInstanceExport processInstanceExport) {
+        this.processInstanceExport = processInstanceExport;
+    }
+    
 }

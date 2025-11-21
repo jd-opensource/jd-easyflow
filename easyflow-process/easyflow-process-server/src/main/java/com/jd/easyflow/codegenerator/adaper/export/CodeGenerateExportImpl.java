@@ -41,4 +41,13 @@ public class CodeGenerateExportImpl implements CodeGenerateExport {
         result.setCodes(codes);
         return ExportResponse.build4Success(result);
     }
+
+    public CodeGenerateDomainService getCodeGenerateDomainService() {
+        return codeGenerateDomainService;
+    }
+
+    public void setCodeGenerateDomainService(CodeGenerateDomainService codeGenerateDomainService) {
+        this.codeGenerateDomainService = codeGenerateDomainService;
+    }
+    
 }

@@ -124,13 +124,17 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
         FieldEntry assignUserEntry = condition.getField("assignUser");
         FieldEntry assignGroupListEntry = condition.getField("assignGroupList");
         FieldEntry assignGroup2ListEntry = condition.getField("assignGroup2List");
-        long count = -1;
+        Long count = null;
         List<ProcessTask> list = null;
         if (assignUserEntry == null && assignGroupListEntry == null && assignGroup2ListEntry == null) {
-            count = processTaskMapper.countTaskByPagerCondition(condition);
+            if (condition.isCount()) {
+                count = processTaskMapper.countTaskByPagerCondition(condition);
+            }
             list = processTaskMapper.selectTaskByPagerCondition(condition);
         } else {
-            count = processTaskMapper.countTaskAndAssignByPagerCondition(condition);
+            if (condition.isCount()) {
+                count = processTaskMapper.countTaskAndAssignByPagerCondition(condition);
+            }
             List<ProcessTask> taskNoList = processTaskMapper.selectTaskAndAssignByPagerCondition(condition);
             if (taskNoList.size() == 0) {
                 list = new ArrayList<>();
@@ -285,5 +289,31 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
         eventEntity.setId(event.getId());
         
     }
+
+    public ProcessTaskMapper getProcessTaskMapper() {
+        return processTaskMapper;
+    }
+
+    public void setProcessTaskMapper(ProcessTaskMapper processTaskMapper) {
+        this.processTaskMapper = processTaskMapper;
+    }
+
+    public ProcessTaskAssignMapper getProcessTaskAssignMapper() {
+        return processTaskAssignMapper;
+    }
+
+    public void setProcessTaskAssignMapper(ProcessTaskAssignMapper processTaskAssignMapper) {
+        this.processTaskAssignMapper = processTaskAssignMapper;
+    }
+
+    public ProcessTaskEventMapper getProcessTaskEventMapper() {
+        return processTaskEventMapper;
+    }
+
+    public void setProcessTaskEventMapper(ProcessTaskEventMapper processTaskEventMapper) {
+        this.processTaskEventMapper = processTaskEventMapper;
+    }
+    
+    
 
 }

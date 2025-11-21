@@ -163,5 +163,10 @@ public class ProcessDefinitionController extends BasePageController {
     }
 
 
+    public void setProcessDefinitionExport(ProcessDefinitionExport processDefinitionExport) {
+        this.processDefinitionExport = processDefinitionExport;
+    }
+
+
 
 }

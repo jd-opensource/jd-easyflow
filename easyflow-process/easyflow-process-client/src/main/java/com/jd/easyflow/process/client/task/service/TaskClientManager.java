@@ -118,4 +118,10 @@ public class TaskClientManager {
         this.processRuntimeManager = processRuntimeManager;
     }
 
+    public void setProcessTaskExport(ProcessTaskExport processTaskExport) {
+        this.processTaskExport = processTaskExport;
+    }
+    
+    
+
 }

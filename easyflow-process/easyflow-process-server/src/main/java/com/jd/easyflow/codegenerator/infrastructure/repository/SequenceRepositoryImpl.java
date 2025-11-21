@@ -38,4 +38,13 @@ public class SequenceRepositoryImpl implements SequenceRepository {
     public int updateSeqValueById(Long id, long seqValue) {
         return sequenceMapper.updateValueByPrimaryKey(id, seqValue);
     }
+
+    public SequenceMapper getSequenceMapper() {
+        return sequenceMapper;
+    }
+
+    public void setSequenceMapper(SequenceMapper sequenceMapper) {
+        this.sequenceMapper = sequenceMapper;
+    }
+    
 }

@@ -53,4 +53,14 @@ public class FormTemplateRepositoryImpl implements FormTemplateRepository {
         return FormTemplateConverter.INSTANCE.convert(po);
     }
 
+    public FormTemplateMapper getFormTemplateMapper() {
+        return formTemplateMapper;
+    }
+
+    public void setFormTemplateMapper(FormTemplateMapper formTemplateMapper) {
+        this.formTemplateMapper = formTemplateMapper;
+    }
+    
+    
+
 }

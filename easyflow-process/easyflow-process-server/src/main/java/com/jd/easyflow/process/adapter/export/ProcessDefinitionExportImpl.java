@@ -184,4 +184,12 @@ public class ProcessDefinitionExportImpl implements ProcessDefinitionExport {
         return ExportResponse.build4Success(processDto);
     }
 
+    public ProcessDefinitionDomainService getProcessDefinitionDomainService() {
+        return processDefinitionDomainService;
+    }
+
+    public void setProcessDefinitionDomainService(ProcessDefinitionDomainService processDefinitionDomainService) {
+        this.processDefinitionDomainService = processDefinitionDomainService;
+    }
+
 }

@@ -19,4 +19,14 @@ public class ProcessScheduleDomainService {
         return invoker.invoke(vo);
     }
 
+    public ProcessScheduleInvoker getInvoker() {
+        return invoker;
+    }
+
+    public void setInvoker(ProcessScheduleInvoker invoker) {
+        this.invoker = invoker;
+    }
+    
+    
+
 }
