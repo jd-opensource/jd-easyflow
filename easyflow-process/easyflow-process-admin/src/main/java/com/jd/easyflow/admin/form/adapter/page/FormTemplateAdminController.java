@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import com.jd.easyflow.admin.form.adapter.page.converter.PagerConverter;
 import com.jd.easyflow.common.adapter.export.dto.ExportRequest;
@@ -37,8 +39,8 @@ public class FormTemplateAdminController extends BasePageController {
 
     @RequestMapping("easyflow/formTemplate/ajax/getListData")
     @ResponseBody
-    public DataResponse<com.jd.easyflow.common.adapter.export.dto.pager.PagerResult> getData() {
-        PagerCondition condition = getPagerCondition();
+    public DataResponse<com.jd.easyflow.common.adapter.export.dto.pager.PagerResult> getData(NativeWebRequest request) {
+        PagerCondition condition = getPagerCondition(request);
         ExportResponse<com.jd.easyflow.common.adapter.export.dto.pager.PagerResult> response = getFormTemplateExport()
                 .find(new ExportRequest(PagerConverter.INSTANCE.convert(condition)));
         response.getData().getList().forEach(o -> {

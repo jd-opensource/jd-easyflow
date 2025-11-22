@@ -1,7 +1,5 @@
 package com.jd.easyflow.properties.spring;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
@@ -19,7 +17,6 @@ public class SpringPropertySourcesPropertiesAccessor implements PropertiesAccess
 
     private PropertySourcesPropertyResolver resolver;
 
-    @PostConstruct
     public void init() {
         PropertySources sources = configurer.getAppliedPropertySources();
         resolver = new PropertySourcesPropertyResolver(sources);

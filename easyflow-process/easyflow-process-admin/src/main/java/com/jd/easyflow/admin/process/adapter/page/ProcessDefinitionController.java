@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import com.jd.easyflow.admin.process.adapter.page.converter.PagerConverter;
 import com.jd.easyflow.admin.process.adapter.page.converter.ProcessDefinitionConverter;
@@ -51,8 +52,8 @@ public class ProcessDefinitionController extends BasePageController {
     
     @RequestMapping("ajax/getListData")
     @ResponseBody
-    public WebResponse<PagerResult> getData() {
-        PagerCondition condition = getPagerCondition();
+    public WebResponse<PagerResult> getData(NativeWebRequest request) {
+        PagerCondition condition = getPagerCondition(request);
         return getData(condition);
     }
 

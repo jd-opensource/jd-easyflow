@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,9 +75,7 @@ public class ProcessInstanceDomainService {
 
     @Autowired
     private ProcessRepository processRepository;
-    @Resource(name = ProcessConstants.BEAN_LOCKER)
     private Locker locker;
-    @Resource(name = ProcessConstants.BEAN_NEW_TX_TEMPLATE)
     private TransactionTemplate transactionTemplate;
 
     @Value(ProcessConstants.TOPIC_PROCESS_INSTANCE_STATUS)
@@ -94,7 +90,6 @@ public class ProcessInstanceDomainService {
     @Value(ProcessConstants.CREATED_DATE_POLICY)
     private String createdDatePolicy;
 
-    @Resource(name = ProcessConstants.BEAN_MESSAGE_SERVICE)
     private MessageSendService messageSendService;
 
     @Autowired

@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +51,8 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
     private static final Logger log = LoggerFactory.getLogger(ProcessTransactionExportImpl.class);
 
 
-    @Resource(name = ProcessConstants.BEAN_NEW_TX_TEMPLATE)
     private TransactionTemplate transactionTemplate;
 
-    @Resource(name = "easyflow-process-messageSendService")
     private MessageSendService messageSendService;
     @Autowired
     private ProcessInstanceDomainService processInstanceDomainService;
@@ -257,7 +252,6 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
         }
     }
 
-    @PostConstruct
     public void init(){
         if(executor == null){
             log.info("ProcessTransactionExportImpl set none thread pool, load default.");

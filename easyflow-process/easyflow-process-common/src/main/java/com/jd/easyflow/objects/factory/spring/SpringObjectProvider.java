@@ -1,7 +1,5 @@
 package com.jd.easyflow.objects.factory.spring;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -30,7 +28,6 @@ public class SpringObjectProvider implements ObjectProvider, ApplicationContextA
 
     private PropertiesAccessor propertiesAccessor;
 
-    @PostConstruct
     public void init() {
         if (propertiesAccessor == null) {
             propertiesAccessor = new ClassPathPropertiesAccessor(configPath);

@@ -9,8 +9,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,6 @@ public abstract class BaseLockService implements LockService {
     public BaseLockService() {
     }
     
-    @PostConstruct
     public void init() {
         if (renewEnabled) {
             Thread renewThread = new Thread(() -> {

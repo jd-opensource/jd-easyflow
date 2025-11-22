@@ -3,7 +3,6 @@ package com.jd.easyflow.lock.db;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.dao.DuplicateKeyException;
@@ -39,7 +38,6 @@ public class DbLockService extends BaseLockService {
     
     private String renewSql = "update lock_record set expired_time=? where lock_key=? and request_id=? and lock_flag='1'";
     
-    @PostConstruct
     public void init() {
         jdbcTemplate = new JdbcTemplate(dataSource);
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);

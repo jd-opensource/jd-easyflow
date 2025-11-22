@@ -3,15 +3,11 @@ package com.jd.easyflow.integration.all.admin.process;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.jd.easyflow.admin.process.adapter.page.extension.UserGroupAdminExtension;
 import com.jd.easyflow.flow.util.FlowIOUtil;
+import com.jd.easyflow.integration.all.admin.sample.SampleUserHolder;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -23,17 +19,14 @@ public class SampleUserGroupAdminExtensionImpl implements UserGroupAdminExtensio
 
     private Map<String, Object> userGroupData;
 
-    @PostConstruct
-    public void init() throws Exception {
+    public void SampleUserGroupAdminExtensionImpl() throws Exception {
         String content = FlowIOUtil.toString(this.getClass().getResourceAsStream("/config/sampleUserGroup.json"));
         userGroupData = JSON.parseObject(content, Map.class);
     }
 
     @Override
     public String getCurrentUser(Map<String, Object> extData) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest();
-        String user = (String) request.getSession().getAttribute("user");
+        String user = SampleUserHolder.get();
         return user;
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>com.jd.easyflow</groupId>
     <artifactId>easyflow-parent</artifactId>
-    <version>1.6.11</version>
+    <version>1.7.0</version>
     <name>easyflow-parent</name>
     <packaging>pom</packaging>
     <description>JDEasyFlow is a general flow orchestration component</description>
@@ -34,7 +34,8 @@
         
         <mybatis.version>3.5.6</mybatis.version>   
         <mybatis-starter.version>2.1.1</mybatis-starter.version>        
-        <servlet.version>4.0.1</servlet.version>     
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+        <jakarta.servlet-api.version>5.0.0</jakarta.servlet-api.version>
         <springboot.version>2.4.3</springboot.version>  
         <aspectj.version>1.9.6</aspectj.version>
     </properties>
@@ -154,9 +155,8 @@
              <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet.version}</version>
-            </dependency>
-                        
+                <version>${javax.servlet-api.version}</version>
+            </dependency>                      
             <dependency>
                 <groupId>com.jd.easyflow</groupId>
                 <artifactId>easyflow-flow</artifactId>
@@ -201,7 +201,12 @@
                 <groupId>com.jd.easyflow</groupId>
                 <artifactId>easyflow-process-admin</artifactId>
                 <version>${project.version}</version>
-            </dependency>                                                                                                                                                                                                                                                                                 
+            </dependency> 
+			<dependency>
+			    <groupId>jakarta.servlet</groupId>
+			    <artifactId>jakarta.servlet-api</artifactId>
+			    <version>${jakarta.servlet-api.version}</version>
+			</dependency>                                                                                                                                                                                                                                                                                            
         </dependencies>
     </dependencyManagement>
 

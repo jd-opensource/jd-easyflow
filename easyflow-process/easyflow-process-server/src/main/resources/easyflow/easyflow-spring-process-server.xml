@@ -17,11 +17,19 @@
     <bean class="com.jd.easyflow.process.infrastructure.repository.ProcessRepositoryImpl"></bean>
     <!-- ProcessInstance -->
     <bean id="easyflow-process-adapter-export-processInstanceExport" class="com.jd.easyflow.process.adapter.export.ProcessInstanceExportImpl"/>
-    <bean class="com.jd.easyflow.process.domain.service.ProcessInstanceDomainService" ></bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessInstanceDomainService" >
+    	<property name="locker" ref="easyflow-process-locker"></property>
+    	<property name="transactionTemplate" ref="easyflow-process-newTransactionTemplate"></property>
+    	<property name="messageSendService" ref="easyflow-process-messageSendService"></property>
+    </bean>
     
     <!-- ProcessDefinition -->
     <bean id="easyflow-process-adapter-export-processDefinitionExport" class="com.jd.easyflow.process.adapter.export.ProcessDefinitionExportImpl"></bean>
-    <bean class="com.jd.easyflow.process.domain.service.ProcessDefinitionDomainService"></bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessDefinitionDomainService">
+    	<property name="cacheService" ref="easyflow-process-cacheService"></property>
+    	<property name="locker" ref="easyflow-process-locker"></property>
+    	<property name="transactionTemplate" ref="easyflow-process-newTransactionTemplate"></property>
+    </bean>
     
     <!-- ProcessSchedule -->
     <bean id="easyflow-process-adapter-export-processScheduleExport" class="com.jd.easyflow.process.adapter.export.ProcessScheduleExportImpl">
@@ -31,11 +39,19 @@
     
     <!-- ProcessTask -->
     <bean id="easyflow-process-adapter-export-processTaskExport" class="com.jd.easyflow.process.adapter.export.ProcessTaskExportImpl"></bean>
-    <bean class="com.jd.easyflow.process.domain.service.ProcessTaskDomainService"></bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessTaskDomainService">
+    	<property name="messageSendService" ref="easyflow-process-messageSendService"></property>
+    	<property name="transactionTemplate" ref="easyflow-process-newTransactionTemplate"></property>
+    </bean>
     <bean class="com.jd.easyflow.process.infrastructure.repository.ProcessTaskRepositoryImpl"></bean>
     <!-- ProcessTransaction -->
-    <bean id="easyflow-process-adapter-export-processTransactionExport" class="com.jd.easyflow.process.adapter.export.ProcessTransactionExportImpl"></bean>
+    <bean id="easyflow-process-adapter-export-processTransactionExport" class="com.jd.easyflow.process.adapter.export.ProcessTransactionExportImpl" init-method="init">
+    	<property name="transactionTemplate" ref="easyflow-process-newTransactionTemplate"></property>
+    	<property name="messageSendService" ref="easyflow-process-messageSendService"></property>
+    </bean>
     <!-- ProcessTool -->
-    <bean class="com.jd.easyflow.process.domain.service.ProcessToolDomainService"></bean>
+    <bean class="com.jd.easyflow.process.domain.service.ProcessToolDomainService">
+    	<property name="transactionTemplate" ref="easyflow-process-newTransactionTemplate"></property>
+    </bean>
     <bean id="easyflow-process-adapter-export-processToolExport" class="com.jd.easyflow.process.adapter.export.ProcessToolExportImpl"></bean>    
 </beans>

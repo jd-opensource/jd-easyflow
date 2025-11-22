@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.jd.easyflow.common.exception.UserException;
 import com.jd.easyflow.common.util.AssertUtils;
 import com.jd.easyflow.process.adapter.export.constant.ProcessInstanceConstants;
-import com.jd.easyflow.process.domain.constant.ProcessConstants;
 import com.jd.easyflow.process.domain.model.entity.ProcessInstanceEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessNodeInstanceEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessTaskAssignEntity;
@@ -39,7 +36,6 @@ public class ProcessToolDomainService {
     @Autowired
     private ProcessInstanceDomainService processInstanceDomainService;
     
-    @Resource(name = ProcessConstants.BEAN_NEW_TX_TEMPLATE)
     private TransactionTemplate transactionTemplate;
 
     public void rollbackNode(RollbackNodeReqVO req) {

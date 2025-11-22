@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,7 @@ import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.dto.pager.PagerResult;
 import com.jd.easyflow.common.exception.UserException;
 import com.jd.easyflow.common.util.AssertUtils;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.parser.FlowParser;
@@ -61,7 +60,6 @@ import com.jd.easyflow.process.domain.model.vo.QueryTaskReqVO;
 import com.jd.easyflow.process.domain.model.vo.ScheduleProcessReqVO;
 import com.jd.easyflow.process.domain.repository.ProcessRepository;
 import com.jd.easyflow.process.domain.repository.ProcessTaskRepository;
-import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -76,7 +74,6 @@ public class ProcessTaskDomainService {
 
     private static final int MAX_PAGE_SIZE = 10000;
 
-    @Resource(name = "easyflow-process-messageSendService")
     private MessageSendService messageSendService;
     @Autowired
     private ProcessScheduleDomainService processScheduleDomainService;
@@ -89,7 +86,6 @@ public class ProcessTaskDomainService {
     private ProcessRepository processRepository;
     @Autowired
     private ProcessDefinitionDomainService processDefinitionDomainService;
-    @Resource(name = ProcessConstants.BEAN_NEW_TX_TEMPLATE)
     private TransactionTemplate transactionTemplate;
 
     @Value(ProcessConstants.CREATED_DATE_POLICY)

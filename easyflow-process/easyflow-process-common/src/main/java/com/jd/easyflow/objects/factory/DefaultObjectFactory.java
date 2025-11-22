@@ -3,8 +3,6 @@ package com.jd.easyflow.objects.factory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +31,6 @@ public class DefaultObjectFactory implements ObjectFactory {
     
     private PropertiesAccessor propertiesAccessor;
 
-    @PostConstruct
     public void init() {
         if (propertiesAccessor == null) {
             propertiesAccessor = new ClassPathPropertiesAccessor(configPath);

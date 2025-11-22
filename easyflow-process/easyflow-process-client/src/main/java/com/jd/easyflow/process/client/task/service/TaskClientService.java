@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +66,6 @@ public class TaskClientService {
 
     private ObjectIdManager objectIdManager = ObjectIdManager.INSTANCE;
 
-    @PostConstruct
     public void init() {
         clientOperationMap = new ConcurrentHashMap<>();
 

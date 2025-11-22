@@ -41,7 +41,7 @@ public class IntegrationOpenApplication implements WebMvcConfigurer, CommandLine
         log.info(CLIENT_NAME + "start boot,Start time:" + LocalDateTime.now());
         new SpringApplicationBuilder(IntegrationOpenApplication.class)
         .properties("spring.config.location=classpath:application-open-all.yml").run(args);
-        log.info(CLIENT_NAME + "Start success,End time:" + LocalDateTime.now());
+        log.info(CLIENT_NAME + " start success,End time:" + LocalDateTime.now());
     }
     
     @Override

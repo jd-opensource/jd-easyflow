@@ -4,13 +4,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.jd.easyflow.codegenerator.domain.constant.CodeGeneratorConstants;
 import com.jd.easyflow.codegenerator.domain.model.vo.CodeGenerateReq;
 import com.jd.easyflow.codegenerator.domain.repository.SequenceRepository;
 import com.jd.easyflow.common.util.AssertUtils;
@@ -33,12 +29,9 @@ public class CodeGenerateDomainService {
     
     @Autowired
     private SequenceRepository sequenceRepository;
-    @Resource(name = CodeGeneratorConstants.BEAN_NEW_TX_TEMPLATE)
     private TransactionTemplate newTransactionTemplate;
-    @Resource(name = CodeGeneratorConstants.BEAN_LOCKER)
     private Locker locker;
     
-    @PostConstruct
     public void init() {
         if (configuredGeneratorMap != null) {
             for (Entry<String, CodeGenerator> entry : configuredGeneratorMap.entrySet()) {

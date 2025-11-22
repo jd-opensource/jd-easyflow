@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import com.jd.easyflow.common.dto.pager.PagerResult;
 import com.jd.easyflow.common.exception.UserException;
 import com.jd.easyflow.common.util.AssertUtils;
 import com.jd.easyflow.common.util.CommonErrorCode;
+import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.flow.model.Flow;
 import com.jd.easyflow.flow.model.FlowNode;
 import com.jd.easyflow.flow.model.parser.FlowParser;
@@ -34,12 +33,10 @@ import com.jd.easyflow.lock.Locker;
 import com.jd.easyflow.process.adapter.export.dto.definition.NodeDTO;
 import com.jd.easyflow.process.adapter.export.dto.definition.ProcessDTO;
 import com.jd.easyflow.process.adapter.export.dto.definition.QueryNodeReq;
-import com.jd.easyflow.process.domain.constant.ProcessConstants;
 import com.jd.easyflow.process.domain.constant.ProcessDefinitionConstants;
 import com.jd.easyflow.process.domain.model.entity.ProcessDefinitionEntity;
 import com.jd.easyflow.process.domain.model.vo.ProcessDefinitionForListVO;
 import com.jd.easyflow.process.domain.repository.ProcessRepository;
-import com.jd.easyflow.common.util.MessageUtil;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -65,11 +62,8 @@ public class ProcessDefinitionDomainService {
     
     @Autowired
     private ProcessRepository processRepository;
-    @Resource(name = ProcessConstants.BEAN_CACHE_SERVICE)
     private CacheService cacheService;
-    @Resource(name = ProcessConstants.BEAN_LOCKER)
     private Locker locker;
-    @Resource(name = ProcessConstants.BEAN_NEW_TX_TEMPLATE)
     private TransactionTemplate transactionTemplate;
 
     private Map<String, Object> processMap = new ConcurrentHashMap<>();

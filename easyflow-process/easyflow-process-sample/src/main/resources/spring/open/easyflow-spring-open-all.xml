@@ -8,13 +8,13 @@
        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 <!-- For admin,server and client -->
     <bean id="springEnvPropertiesAccessor" class="com.jd.easyflow.properties.spring.SpringEnvPropertiesAccessor"/>
-	<bean id="defaultObjectFactory" class="com.jd.easyflow.objects.factory.DefaultObjectFactory">
+	<bean id="defaultObjectFactory" class="com.jd.easyflow.objects.factory.DefaultObjectFactory" init-method="init">
 	   <property name="propertiesAccessor" ref="springEnvPropertiesAccessor"></property>
 		<property name="providerMap">
 			<map>
 				<entry key="spring">
 					<bean
-						class="com.jd.easyflow.objects.factory.spring.SpringObjectProvider">
+						class="com.jd.easyflow.objects.factory.spring.SpringObjectProvider" init-method="init">
 						     <property name="propertiesAccessor" ref="springEnvPropertiesAccessor"></property>
 						</bean>
 				</entry>

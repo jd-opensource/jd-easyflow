@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyflow-process</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.6.11</version>
+        <version>1.7.0</version>
     </parent>
     <artifactId>easyflow-process-admin</artifactId>
     <name>easyflow-process-admin</name>
@@ -23,10 +23,6 @@
                 <artifactId>easyflow-process-common</artifactId>
             </dependency>    
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>           
@@ -37,12 +33,7 @@
              <dependency>
                 <groupId>com.jd.easyflow</groupId>
                 <artifactId>easyflow-fsm</artifactId>
-            </dependency>  
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>                                              
+            </dependency>                                              
     </dependencies>
 
 </project>

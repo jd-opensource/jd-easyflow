@@ -58,7 +58,7 @@
         <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>   
     </bean>
     
-    <bean id="easyflow-task-taskClientService" class="com.jd.easyflow.process.client.task.service.TaskClientService">
+    <bean id="easyflow-task-taskClientService" class="com.jd.easyflow.process.client.task.service.TaskClientService" init-method="init">
         <property name="processRuntimeManager" ref="easyflow-process-processRuntimeManager"></property>
         <property name="taskClientManager" ref="easyflow-task-taskClientManager"></property>
     </bean>

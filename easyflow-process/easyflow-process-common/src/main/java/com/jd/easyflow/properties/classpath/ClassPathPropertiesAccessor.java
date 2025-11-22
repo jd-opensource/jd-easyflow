@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,6 @@ public class ClassPathPropertiesAccessor implements PropertiesAccessor {
         this.path = path;
     }
     
-    @PostConstruct
     public void init() {
         properties = new Properties();
         try {
