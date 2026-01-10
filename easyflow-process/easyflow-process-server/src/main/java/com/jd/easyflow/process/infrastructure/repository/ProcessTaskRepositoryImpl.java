@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jd.easyflow.codegenerator.client.CodeGenerateHelper;
 import com.jd.easyflow.common.dto.pager.FieldEntry;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.dto.pager.PagerResult;
@@ -41,6 +42,8 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
     private ProcessTaskAssignMapper processTaskAssignMapper;
     @Autowired
     private ProcessTaskEventMapper processTaskEventMapper;
+    
+    private boolean sharding = false;
 
     @Override
     public List<ProcessTaskEntity> queryTask(QueryTaskReqVO query) {
@@ -55,6 +58,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
         if (taskEntity != null) {
             ProcessTask processTask = ProcessTaskConverter.INSTANCE.convert(taskEntity);
             if (processTask.getId() == null) {
+                if (sharding) {
+                    String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+                    processTask.setId(Long.parseLong(idStr));
+                }
                 processTaskMapper.insert(processTask);
                 taskEntity.setId(processTask.getId());
             } else {
@@ -66,6 +73,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
             for (ProcessTaskAssignEntity assignEntity : assignEntityList) {
                 ProcessTaskAssign assign = ProcessTaskConverter.INSTANCE.convert(assignEntity);
                 if (assign.getId() == null) {
+                    if (sharding) {
+                        String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+                        assign.setId(Long.parseLong(idStr));
+                    }
                     processTaskAssignMapper.insert(assign);
                     assignEntity.setId(assign.getId());
                 } else {
@@ -78,6 +89,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
             for (ProcessTaskEventEntity eventEntity : eventEntityList) {
                 ProcessTaskEvent event = ProcessTaskConverter.INSTANCE.convert(eventEntity);
                 if (event.getId() == null) {
+                    if (sharding) {
+                        String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+                        event.setId(Long.parseLong(idStr));
+                    }
                     processTaskEventMapper.insert(event);
                     eventEntity.setId(event.getId());
                 } else {
@@ -166,6 +181,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
 
     @Override
     public void save(ProcessTaskEntity taskEntity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            taskEntity.setId(Long.parseLong(idStr));
+        }
         ProcessTask processTask = ProcessTaskConverter.INSTANCE.convert(taskEntity);
         processTaskMapper.insert(processTask);
         taskEntity.setId(processTask.getId());
@@ -186,6 +205,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
 
     @Override
     public void save(ProcessTaskAssignEntity assignEntity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            assignEntity.setId(Long.parseLong(idStr));
+        }
         ProcessTaskAssign assign = ProcessTaskConverter.INSTANCE.convert(assignEntity);
         processTaskAssignMapper.insert(assign);
         assignEntity.setId(assign.getId());
@@ -205,6 +228,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
 
     @Override
     public void save(ProcessTaskEventEntity eventEntity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            eventEntity.setId(Long.parseLong(idStr));
+        }
         ProcessTaskEvent event = ProcessTaskConverter.INSTANCE.convert(eventEntity);
         processTaskEventMapper.insert(event);
         eventEntity.setId(event.getId());
@@ -270,6 +297,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
 
     @Override
     public void saveWithCreatedDate(ProcessTaskEntity taskEntity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            taskEntity.setId(Long.parseLong(idStr));
+        }
         ProcessTask processTask = ProcessTaskConverter.INSTANCE.convert(taskEntity);
         processTaskMapper.insertWithCreatedDate(processTask);
         taskEntity.setId(processTask.getId());
@@ -277,6 +308,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
 
     @Override
     public void saveWithCreatedDate(ProcessTaskAssignEntity assignEntity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            assignEntity.setId(Long.parseLong(idStr));
+        }
         ProcessTaskAssign assign = ProcessTaskConverter.INSTANCE.convert(assignEntity);
         processTaskAssignMapper.insertWithCreatedDate(assign);
         assignEntity.setId(assign.getId());
@@ -284,6 +319,10 @@ public class ProcessTaskRepositoryImpl implements ProcessTaskRepository {
 
     @Override
     public void saveWithCreatedDate(ProcessTaskEventEntity eventEntity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            eventEntity.setId(Long.parseLong(idStr));
+        }
         ProcessTaskEvent event = ProcessTaskConverter.INSTANCE.convert(eventEntity);
         processTaskEventMapper.insertWithCreatedDate(event);
         eventEntity.setId(event.getId());

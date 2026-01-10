@@ -1,0 +1,80 @@
+<div th:class="'container-fluid j-info-container frame-' + ${detail.instanceNo}">
+    <div class="card j-form-horizontal">
+        <div class="card-header mb-3">[[#{easyflow.process.admin.page.processUnitInstanceDetail.instanceDetailInfo}]]</div>
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.instanceNo}]]:</dt><dd th:text="${detail.instanceNo}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.processUnitCode}]]:</dt><dd th:text="${detail.processUnitCode}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.bizNo}]]:</dt><dd th:text="${detail.bizNo}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.productCode}]]:</dt><dd th:text="${detail.productCode}"></dd></dl>
+     </div>
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.result}]]:</dt>
+        <dd th:if="${detail.result=='SUCCESS'}">SUCCESS-[[#{easyflow.process.admin.page.processUnitInstanceDetail.resultSuccess}]]</dd>
+        <dd th:if="${detail.result=='FAIL'}">FAIL-[[#{easyflow.process.admin.page.processUnitInstanceDetail.resultFail}]]</dd>
+        <dd th:if="${detail.result=='DOING'}">DOING-[[#{easyflow.process.admin.page.processUnitInstanceDetail.resultDoing}]]</dd>
+        <dd th:if="${detail.result=='EXCEPTION'}">EXCEPTION-[[#{easyflow.process.admin.page.processUnitInstanceDetail.resultException}]]</dd>
+        </dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.autoRunTimes}]]:</dt><dd th:text="${detail.autoRunTimes}"></dd></dl>        
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.autoRunFlag}]]:</dt><dd th:text="${detail.autoRunFlag}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.nextAutoRunTime}]]:</dt><dd th:text="${#dates.format(detail.nextAutoRunTime,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>
+    </div>
+    <div class="row">
+        <dl class="j-info-group col-3"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.createdDate}]]:</dt><dd th:text="${#dates.format(detail.createdDate,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>
+        <dl class="j-info-group col-3"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.modifiedDate}]]:</dt><dd th:text="${#dates.format(detail.modifiedDate,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>
+    </div>
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.requestContent}]]:</dt><dd><pre th:text="${detail.requestContent}"></pre></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.responseContent}]]:</dt><dd><pre th:text="${detail.responseContent}"></pre></dd></dl>
+    </div>
+    <div class="row">    
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.vars}]]:</dt><dd><pre th:text="${detail.vars}"></pre></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.extData}]]:</dt><dd><pre th:text="${detail.extData}"></pre></dd></dl>
+    </div>
+        <div class="card-header  mb-3">[[#{easyflow.process.admin.page.processUnitInstanceDetail.instanceShardInfo}]]</div>
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.shard}]]:</dt><dd th:text="${shardInfo.shard}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.db}]]:</dt><dd th:text="${shardInfo.db}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.table}]]:</dt><dd th:text="${shardInfo.shard == null ? '' : 'process_unit_instance' + shardInfo.tableSuffix}"></dd></dl>
+     </div> 
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.slaveShard}]]:</dt><dd th:text="${shardInfo.slaveShard}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.slaveDb}]]:</dt><dd th:text="${shardInfo.slaveDb}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitInstanceDetail.slaveTable}]]:</dt><dd th:text="${shardInfo.slaveShard == null ? '' : 'process_unit_instance' + shardInfo.slaveTableSuffix}"></dd></dl>
+     </div>            
+    </div>
+    <table class="executionDatatable"></table>
+</div>    
+
+<script th:inline="javascript">
+(function() {
+var executionRoot = "[(@{/coffee/processUnit})]";
+var instanceNo = /*[[${detail.instanceNo}]]*/"";
+var unitCode = /*[[${detail.processUnitCode}]]*/"";
+var bizNo = /*[[${detail.bizNo}]]*/"";
+$(".frame-" + instanceNo).find('.executionDatatable').bootstrapTable({
+    url: root + "/ajax/getProcessUnitExecutionListData?queryType=INSTANCE&instanceNo=" + instanceNo + "&processUnitCode=" + unitCode + "&bizNo=" + bizNo,
+    columns: [
+        {
+            field: 'executionNo', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionNo})]', formatter: function (data, item) {
+                return data;
+            }
+        },
+        {field: 'requestNo', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionRequestNo})]'},
+            {field: 'result', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResult})]', formatter: function (data) {
+                return {"SUCCESS":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResultSuccess})]", "FAIL":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResultFail})]", "DOING":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResultDoing})]", "EXCEPTION":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResultException})]"}[data];
+                }},
+        {field: 'requestContent', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionRequestContent})]'},
+        {field: 'responseContent', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResponseContent})]'},                
+        {field: 'execType', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionExecType})]', formatter: function (data) {
+                return {"SYNC":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionExecTypeSync})]", "MANUAL_ASYNC":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionExecTypeManual})]", "TASK_ASYNC":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionExecTypeTask})]", "MSG_ASYNC":"[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionExecTypeMsg})]"}[data];
+                }}, 
+        {field: 'requestTime', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionRequestTime})]'},
+        {field: 'responseTime', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionResponseTime})]'},    
+        {field: 'elaspeTime', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionElapseTime})](ms)'},                                              
+        {field: 'extData', title: '[(#{easyflow.process.admin.page.processUnitInstanceDetail.executionExtData})]'},
+    ],
+     pageList:[10, 50, 100, 500]        
+});
+
+})();
+</script>

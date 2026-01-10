@@ -6,19 +6,19 @@ import org.apache.ibatis.annotations.Param;
 
 import com.jd.easyflow.process.domain.model.vo.QueryProcessNodeReq;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessNodeInstance;
+import com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper;
 
 /**
  * @author liyuliang5
  *
  */
+@ShardingSupportedMapper
 public interface ProcessNodeInstanceMapper {
     int deleteByPrimaryKey(Long id);
 
     int insert(ProcessNodeInstance record);
     
     int insertWithCreatedDate(ProcessNodeInstance record);
-
-    int insertSelective(ProcessNodeInstance record);
 
     int updateByPrimaryKeySelective(ProcessNodeInstance record);
 

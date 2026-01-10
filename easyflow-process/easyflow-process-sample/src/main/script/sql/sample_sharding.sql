@@ -1,0 +1,507 @@
+drop table `process_instance_001`;
+drop table `process_node_instance_001`;
+drop table `process_node_execution_001`;
+drop table `process_task_001`;
+drop table `process_task_assign_001`;
+drop table `process_task_event_001`;
+drop table `process_instance_002`;
+drop table `process_node_instance_002`;
+drop table `process_node_execution_002`;
+drop table `process_task_002`;
+drop table `process_task_assign_002`;
+drop table `process_task_event_002`;
+
+drop table `process_unit_instance_001`;
+drop table `process_unit_execution_001`;
+drop table `process_unit_instance_002`;
+drop table `process_unit_execution_002`;
+
+-- process instance
+CREATE TABLE `process_instance_001` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `instance_no` VARCHAR(64) NULL COMMENT 'instance no',
+  `instance_name` VARCHAR(128) NULL COMMENT 'instance name',
+  `process_type` VARCHAR(32) NULL COMMENT 'process type',
+  `biz_no` VARCHAR(128) NULL COMMENT 'biz no',
+  `product_code` VARCHAR(64) NULL COMMENT 'product code',
+  `creator` VARCHAR(64) NULL COMMENT 'instance creator',
+  `process_def_id` VARCHAR(128) NULL COMMENT 'definition ID',
+  `start_time` datetime NULL COMMENT 'instance start time',
+  `end_time` datetime NULL COMMENT 'instance end time',
+  `status` VARCHAR(32) NULL COMMENT 'instance status',
+  `parent_instance_no` VARCHAR(64) NULL COMMENT 'parent instance no',
+  `parent_node_instance_no` VARCHAR(64) NULL COMMENT 'parent node instance no',
+  `current_node_ids` VARCHAR(512) NULL COMMENT 'current node id list',
+  `biz_status` VARCHAR(64) NULL COMMENT 'instance biz status',
+  `biz_data` TEXT NULL COMMENT 'instance biz data',
+  `key_field` VARCHAR(128) NULL COMMENT 'key field',
+  `key_field2` VARCHAR(128) NULL COMMENT 'key field2',
+  `vars` JSON NULL COMMENT 'instance variables',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'deleted flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_instanceNo` (`instance_no`),
+  INDEX `idx_bizNo_processType` (`biz_no`, process_type),
+  INDEX `idx_startTime` (`start_time`),
+  INDEX `idx_creator` (`creator`),
+  INDEX `idx_productCode` (`product_code`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET= utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process instance table';
+
+-- process node instance
+CREATE TABLE `process_node_instance_001` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `node_instance_no` VARCHAR(64) NULL COMMENT 'node instance no',
+  `process_instance_no` VARCHAR(64) NULL COMMENT 'process instance no',
+  `process_def_id` VARCHAR(128) NULL COMMENT 'definition ID',
+  `node_id` VARCHAR(128) NULL COMMENT 'node ID',
+  `start_time` DATETIME NULL COMMENT 'node instance start time',
+  `end_time` DATETIME NULL COMMENT 'node instance end time',
+  `status` VARCHAR(32) NULL COMMENT 'node instance status',
+  `product_code` VARCHAR(64) NULL COMMENT 'product code',
+  `executors` VARCHAR(1024) NULL COMMENT 'node executor',
+  `previous_node_instances` VARCHAR(512) NULL COMMENT 'previous node instances',  
+  `next_node_instances` VARCHAR(512) NULL COMMENT 'next node instances',
+  `vars` JSON NULL COMMENT 'node instance variables',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'deleted flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_nodeInstanceNo` (`node_instance_no`),
+  INDEX `idx_processInstanceNo` (`process_instance_no`),
+  INDEX `idx_startTime` (`start_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process node instance table';
+
+-- process node execution
+CREATE TABLE `process_node_execution_001` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `node_execution_no` VARCHAR(64) NULL COMMENT 'node execution no',
+  `node_instance_no` VARCHAR(64) NULL COMMENT 'node instance no',
+  `event_id` VARCHAR(128) NULL COMMENT 'event ID',
+  `process_def_id` VARCHAR(128) NULL COMMENT 'definition ID',
+  `node_id` VARCHAR(128) NULL COMMENT 'node ID',
+  `start_time` DATETIME NULL COMMENT 'start time',
+  `end_time` DATETIME NULL COMMENT 'end time',
+  `status` VARCHAR(32) NULL COMMENT 'status',
+  `product_code` VARCHAR(64) NULL COMMENT 'product code',
+  `executor` VARCHAR(64) NULL COMMENT 'executor',
+  `next_node_instances` VARCHAR(512) NULL COMMENT 'next node instances',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_executionNo` (`node_execution_no`),
+  INDEX `idx_nodeInstanceNo` (`node_instance_no`),
+  INDEX `idx_startTime` (`start_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process node execution table';
+
+-- process task
+CREATE TABLE `process_task_001` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `task_no` VARCHAR(64)  NULL COMMENT 'task no',
+  `process_type` VARCHAR(32) NULL COMMENT 'process type',
+  `biz_no` VARCHAR(128) NULL COMMENT 'biz no',
+  `task_biz_code` VARCHAR(64)  NULL COMMENT 'task biz code',
+  `task_biz_name` VARCHAR(128)  NULL COMMENT 'task biz name',
+  `task_type` VARCHAR(64)  NULL COMMENT 'task type',
+  `process_instance_no` VARCHAR(64) NULL COMMENT 'process instance no',  
+  `node_instance_no` VARCHAR(64) NULL COMMENT 'node instance no',
+  `node_execution_no` VARCHAR(64) NULL COMMENT 'node execution no',
+  `assign_type`  VARCHAR(64) NULL COMMENT 'assign type',
+  `assign_info`  JSON NULL COMMENT 'assign info',
+  `assign_time`  DATETIME NULL COMMENT 'assign time',
+  `executor`  VARCHAR(64) NULL COMMENT 'executor',
+  `execute_biz_result` VARCHAR(64) COMMENT 'execute biz result',
+  `execute_biz_data` TEXT NULL COMMENT 'execute biz data',
+  `execute_time` DATETIME NULL COMMENT 'execute time',
+  `product_code`  VARCHAR(64) NULL COMMENT 'product code',
+  `creator` VARCHAR(64) NULL COMMENT 'creator',
+  `status` VARCHAR(32) NULL COMMENT 'task status',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `process_instance_key_field` VARCHAR(128) NULL COMMENT 'process instance key field',
+  `process_instance_key_field2` VARCHAR(128) NULL COMMENT 'process instance key field2',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_taskNo` (`task_no`),
+  INDEX `idx_bizNoProcessType` (`biz_no`, process_type),
+  INDEX `idx_executeTime` (`execute_time`),
+  INDEX `idx_assignTime` (`assign_time`),
+  INDEX `idx_executor` (`executor`),
+  INDEX `idx_processInstanceKeyField` (`process_instance_key_field`),
+  INDEX `idx_processInstanceKeyField2` (`process_instance_key_field2`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process task table';
+
+-- process task assign
+CREATE TABLE `process_task_assign_001` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `assign_no` VARCHAR(64)  NULL COMMENT 'assign no',
+  `task_no` VARCHAR(64) NULL COMMENT 'task no',
+  `assign_type` VARCHAR(32) NULL COMMENT 'assign type',
+  `assign_group` VARCHAR(64) NULL COMMENT 'assign group',
+  `assign_group2` VARCHAR(64) NULL COMMENT 'assign group2',
+  `assign_user` VARCHAR(32) NULL COMMENT 'assign user',
+  `operation`   VARCHAR(32) NULL COMMENT 'operation',
+  `status` VARCHAR(32) NULL COMMENT 'status',
+  `assign_time`  DATETIME NULL COMMENT 'assign time',
+  `product_code`  VARCHAR(64) NULL COMMENT 'product code',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_assignNo` (`assign_no`), 
+  INDEX `idx_taskNo` (`task_no`),
+  INDEX `idx_assignGroup` (`assign_group`),
+  INDEX `idx_assignGroup2` (`assign_group2`),
+  INDEX `idx_assignUser` (`assign_user`),
+  INDEX `idx_assignTime` (`assign_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process task assign table';
+
+-- process task event.
+CREATE TABLE `process_task_event_001` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `event_no` VARCHAR(64)  NULL COMMENT 'event no',
+  `task_no` VARCHAR(64) NULL COMMENT 'task no',
+  `event_type` VARCHAR(32) NULL COMMENT 'event type',
+  `event_user` VARCHAR(64) NULL COMMENT 'event user',
+  `event_time` DATETIME NULL COMMENT 'event time',
+  `event_biz_result` VARCHAR(64) COMMENT 'event biz result',
+  `event_biz_data` TEXT NULL COMMENT 'event biz data',
+  `instance_biz_status` VARCHAR(64) COMMENT 'instance biz status',
+  `instance_biz_data` TEXT NULL COMMENT 'instance biz data',  
+  `product_code`  VARCHAR(64) NULL COMMENT 'product code',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_eventNo` (`event_no`), 
+  INDEX `idx_taskNo` (`task_no`),
+  INDEX `idx_eventUser` (`event_user`),
+  INDEX `idx_eventTime` (`event_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process task event table';
+
+-- process instance
+CREATE TABLE `process_instance_002` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `instance_no` VARCHAR(64) NULL COMMENT 'instance no',
+  `instance_name` VARCHAR(128) NULL COMMENT 'instance name',
+  `process_type` VARCHAR(32) NULL COMMENT 'process type',
+  `biz_no` VARCHAR(128) NULL COMMENT 'biz no',
+  `product_code` VARCHAR(64) NULL COMMENT 'product code',
+  `creator` VARCHAR(64) NULL COMMENT 'instance creator',
+  `process_def_id` VARCHAR(128) NULL COMMENT 'definition ID',
+  `start_time` datetime NULL COMMENT 'instance start time',
+  `end_time` datetime NULL COMMENT 'instance end time',
+  `status` VARCHAR(32) NULL COMMENT 'instance status',
+  `parent_instance_no` VARCHAR(64) NULL COMMENT 'parent instance no',
+  `parent_node_instance_no` VARCHAR(64) NULL COMMENT 'parent node instance no',
+  `current_node_ids` VARCHAR(512) NULL COMMENT 'current node id list',
+  `biz_status` VARCHAR(64) NULL COMMENT 'instance biz status',
+  `biz_data` TEXT NULL COMMENT 'instance biz data',
+  `key_field` VARCHAR(128) NULL COMMENT 'key field',
+  `key_field2` VARCHAR(128) NULL COMMENT 'key field2',
+  `vars` JSON NULL COMMENT 'instance variables',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'deleted flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_instanceNo` (`instance_no`),
+  INDEX `idx_bizNo_processType` (`biz_no`, process_type),
+  INDEX `idx_startTime` (`start_time`),
+  INDEX `idx_creator` (`creator`),
+  INDEX `idx_productCode` (`product_code`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET= utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process instance table';
+
+-- process node instance
+CREATE TABLE `process_node_instance_002` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `node_instance_no` VARCHAR(64) NULL COMMENT 'node instance no',
+  `process_instance_no` VARCHAR(64) NULL COMMENT 'process instance no',
+  `process_def_id` VARCHAR(128) NULL COMMENT 'definition ID',
+  `node_id` VARCHAR(128) NULL COMMENT 'node ID',
+  `start_time` DATETIME NULL COMMENT 'node instance start time',
+  `end_time` DATETIME NULL COMMENT 'node instance end time',
+  `status` VARCHAR(32) NULL COMMENT 'node instance status',
+  `product_code` VARCHAR(64) NULL COMMENT 'product code',
+  `executors` VARCHAR(1024) NULL COMMENT 'node executor',
+  `previous_node_instances` VARCHAR(512) NULL COMMENT 'previous node instances',  
+  `next_node_instances` VARCHAR(512) NULL COMMENT 'next node instances',
+  `vars` JSON NULL COMMENT 'node instance variables',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'deleted flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_nodeInstanceNo` (`node_instance_no`),
+  INDEX `idx_processInstanceNo` (`process_instance_no`),
+  INDEX `idx_startTime` (`start_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process node instance table';
+
+-- process node execution
+CREATE TABLE `process_node_execution_002` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `node_execution_no` VARCHAR(64) NULL COMMENT 'node execution no',
+  `node_instance_no` VARCHAR(64) NULL COMMENT 'node instance no',
+  `event_id` VARCHAR(128) NULL COMMENT 'event ID',
+  `process_def_id` VARCHAR(128) NULL COMMENT 'definition ID',
+  `node_id` VARCHAR(128) NULL COMMENT 'node ID',
+  `start_time` DATETIME NULL COMMENT 'start time',
+  `end_time` DATETIME NULL COMMENT 'end time',
+  `status` VARCHAR(32) NULL COMMENT 'status',
+  `product_code` VARCHAR(64) NULL COMMENT 'product code',
+  `executor` VARCHAR(64) NULL COMMENT 'executor',
+  `next_node_instances` VARCHAR(512) NULL COMMENT 'next node instances',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_executionNo` (`node_execution_no`),
+  INDEX `idx_nodeInstanceNo` (`node_instance_no`),
+  INDEX `idx_startTime` (`start_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process node execution table';
+
+-- process task
+CREATE TABLE `process_task_002` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `task_no` VARCHAR(64)  NULL COMMENT 'task no',
+  `process_type` VARCHAR(32) NULL COMMENT 'process type',
+  `biz_no` VARCHAR(128) NULL COMMENT 'biz no',
+  `task_biz_code` VARCHAR(64)  NULL COMMENT 'task biz code',
+  `task_biz_name` VARCHAR(128)  NULL COMMENT 'task biz name',
+  `task_type` VARCHAR(64)  NULL COMMENT 'task type',
+  `process_instance_no` VARCHAR(64) NULL COMMENT 'process instance no',  
+  `node_instance_no` VARCHAR(64) NULL COMMENT 'node instance no',
+  `node_execution_no` VARCHAR(64) NULL COMMENT 'node execution no',
+  `assign_type`  VARCHAR(64) NULL COMMENT 'assign type',
+  `assign_info`  JSON NULL COMMENT 'assign info',
+  `assign_time`  DATETIME NULL COMMENT 'assign time',
+  `executor`  VARCHAR(64) NULL COMMENT 'executor',
+  `execute_biz_result` VARCHAR(64) COMMENT 'execute biz result',
+  `execute_biz_data` TEXT NULL COMMENT 'execute biz data',
+  `execute_time` DATETIME NULL COMMENT 'execute time',
+  `product_code`  VARCHAR(64) NULL COMMENT 'product code',
+  `creator` VARCHAR(64) NULL COMMENT 'creator',
+  `status` VARCHAR(32) NULL COMMENT 'task status',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `process_instance_key_field` VARCHAR(128) NULL COMMENT 'process instance key field',
+  `process_instance_key_field2` VARCHAR(128) NULL COMMENT 'process instance key field2',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_taskNo` (`task_no`),
+  INDEX `idx_bizNoProcessType` (`biz_no`, process_type),
+  INDEX `idx_executeTime` (`execute_time`),
+  INDEX `idx_assignTime` (`assign_time`),
+  INDEX `idx_executor` (`executor`),
+  INDEX `idx_processInstanceKeyField` (`process_instance_key_field`),
+  INDEX `idx_processInstanceKeyField2` (`process_instance_key_field2`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process task table';
+
+-- process task assign
+CREATE TABLE `process_task_assign_002` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `assign_no` VARCHAR(64)  NULL COMMENT 'assign no',
+  `task_no` VARCHAR(64) NULL COMMENT 'task no',
+  `assign_type` VARCHAR(32) NULL COMMENT 'assign type',
+  `assign_group` VARCHAR(64) NULL COMMENT 'assign group',
+  `assign_group2` VARCHAR(64) NULL COMMENT 'assign group2',
+  `assign_user` VARCHAR(32) NULL COMMENT 'assign user',
+  `operation`   VARCHAR(32) NULL COMMENT 'operation',
+  `status` VARCHAR(32) NULL COMMENT 'status',
+  `assign_time`  DATETIME NULL COMMENT 'assign time',
+  `product_code`  VARCHAR(64) NULL COMMENT 'product code',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_assignNo` (`assign_no`), 
+  INDEX `idx_taskNo` (`task_no`),
+  INDEX `idx_assignGroup` (`assign_group`),
+  INDEX `idx_assignGroup2` (`assign_group2`),
+  INDEX `idx_assignUser` (`assign_user`),
+  INDEX `idx_assignTime` (`assign_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process task assign table';
+
+-- process task event.
+CREATE TABLE `process_task_event_002` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `event_no` VARCHAR(64)  NULL COMMENT 'event no',
+  `task_no` VARCHAR(64) NULL COMMENT 'task no',
+  `event_type` VARCHAR(32) NULL COMMENT 'event type',
+  `event_user` VARCHAR(64) NULL COMMENT 'event user',
+  `event_time` DATETIME NULL COMMENT 'event time',
+  `event_biz_result` VARCHAR(64) COMMENT 'event biz result',
+  `event_biz_data` TEXT NULL COMMENT 'event biz data',
+  `instance_biz_status` VARCHAR(64) COMMENT 'instance biz status',
+  `instance_biz_data` TEXT NULL COMMENT 'instance biz data',  
+  `product_code`  VARCHAR(64) NULL COMMENT 'product code',
+  `ext_data` JSON NULL COMMENT 'extension data',
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  INDEX `idx_eventNo` (`event_no`), 
+  INDEX `idx_taskNo` (`task_no`),
+  INDEX `idx_eventUser` (`event_user`),
+  INDEX `idx_eventTime` (`event_time`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARSET = utf8mb4
+COLLATE = utf8mb4_bin
+COMMENT = 'process task event table';
+
+CREATE TABLE `process_unit_instance_001` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primark key',
+  `instance_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'instance no',
+  `biz_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'biz no',
+  `parent_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'parent instance no',
+  `process_unit_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'process unit code',
+  `product_code` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'product code',
+  `result` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execute result',
+  `request_content` mediumtext COLLATE utf8mb4_bin COMMENT 'request content',
+  `response_content` mediumtext COLLATE utf8mb4_bin COMMENT 'response content',
+  `auto_run_flag` tinyint(1) DEFAULT NULL COMMENT 'auto run flag',
+  `auto_run_times` int(11) DEFAULT NULL COMMENT 'auto run times',
+  `next_auto_run_time` datetime DEFAULT NULL COMMENT 'next auto run time',
+  `ext_data` json DEFAULT NULL COMMENT 'ext data',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_instance_no` (`instance_no`),
+  UNIQUE KEY `idx_bizNo_unitCode` (`biz_no`,`process_unit_code`),
+  KEY `idx_autorun` (`auto_run_flag`,`next_auto_run_time`),
+  KEY `idx_createdDate` (`created_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Process unit instance';
+
+CREATE TABLE `process_unit_execution_001` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primark key',
+  `execution_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execution no',
+  `request_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'request no',
+  `parent_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'parent instance no',
+  `process_unit_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'process unit code',
+  `biz_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'biz no',  
+  `instance_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'instance no',
+  `product_code` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'product code',
+  `result` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execute result',
+  `request_content` mediumtext COLLATE utf8mb4_bin COMMENT 'request content',
+  `response_content` mediumtext COLLATE utf8mb4_bin COMMENT 'response content',
+  `request_time` datetime DEFAULT NULL COMMENT 'request time',
+  `response_time` datetime DEFAULT NULL COMMENT 'response time',
+  `elaspe_time` int(11) DEFAULT NULL COMMENT 'elaspe time',
+  `exec_type` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'exec type',
+  `ext_data` json DEFAULT NULL COMMENT 'ext data',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'deleted',
+  PRIMARY KEY (`id`),
+  KEY  `idx_execution_no` (`execution_no`),
+  KEY `idx_instance_no` (`instance_no`),
+  KEY `idx_request_time` (`request_time`),
+  KEY `idx_bizNo_unitCode` (`biz_no`,`process_unit_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Process unit execution';
+
+CREATE TABLE `process_unit_instance_002` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primark key',
+  `instance_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'instance no',
+  `biz_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'biz no',
+  `parent_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'parent instance no',
+  `process_unit_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'process unit code',
+  `product_code` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'product code',
+  `result` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execute result',
+  `request_content` mediumtext COLLATE utf8mb4_bin COMMENT 'request content',
+  `response_content` mediumtext COLLATE utf8mb4_bin COMMENT 'response content',
+  `auto_run_flag` tinyint(1) DEFAULT NULL COMMENT 'auto run flag',
+  `auto_run_times` int(11) DEFAULT NULL COMMENT 'auto run times',
+  `next_auto_run_time` datetime DEFAULT NULL COMMENT 'next auto run time',
+  `ext_data` json DEFAULT NULL COMMENT 'ext data',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_instance_no` (`instance_no`),
+  UNIQUE KEY `idx_bizNo_unitCode` (`biz_no`,`process_unit_code`),
+  KEY `idx_autorun` (`auto_run_flag`,`next_auto_run_time`),
+  KEY `idx_createdDate` (`created_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Process unit instance';
+
+CREATE TABLE `process_unit_execution_002` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primark key',
+  `execution_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execution no',
+  `request_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'request no',
+  `parent_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'parent instance no',
+  `process_unit_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'process unit code',
+  `biz_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'biz no',  
+  `instance_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'instance no',
+  `product_code` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'product code',
+  `result` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execute result',
+  `request_content` mediumtext COLLATE utf8mb4_bin COMMENT 'request content',
+  `response_content` mediumtext COLLATE utf8mb4_bin COMMENT 'response content',
+  `request_time` datetime DEFAULT NULL COMMENT 'request time',
+  `response_time` datetime DEFAULT NULL COMMENT 'response time',
+  `elaspe_time` int(11) DEFAULT NULL COMMENT 'elaspe time',
+  `exec_type` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'exec type',
+  `ext_data` json DEFAULT NULL COMMENT 'ext data',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'deleted',
+  PRIMARY KEY (`id`),
+  KEY  `idx_execution_no` (`execution_no`),
+  KEY `idx_instance_no` (`instance_no`),
+  KEY `idx_request_time` (`request_time`),
+  KEY `idx_bizNo_unitCode` (`biz_no`,`process_unit_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Process unit execution';

@@ -4,19 +4,19 @@ import java.util.List;
 
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessNodeExecution;
+import com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper;
 
 /**
  * @author liyuliang5
  *
  */
+@ShardingSupportedMapper
 public interface ProcessNodeExecutionMapper {
     int deleteByPrimaryKey(Long id);
 
     int insert(ProcessNodeExecution record);
     
     int insertWithCreatedDate(ProcessNodeExecution record);
-
-    int insertSelective(ProcessNodeExecution record);
 
     ProcessNodeExecution selectByPrimaryKey(Long id);
 

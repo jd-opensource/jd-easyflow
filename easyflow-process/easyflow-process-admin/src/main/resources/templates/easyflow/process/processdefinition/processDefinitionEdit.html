@@ -28,7 +28,7 @@
     <div id="flowControl"></div>
     <div class="row mt-2">
         <div class="col text-center">
-            <button type="submit" class="btn btn-danger j j-btn-forceUpdate-flow">[[#{easyflow.process.admin.page.processDefinitionEdit.updateCurrentVersion}]]</button>
+            <button type="submit" class="btn btn-danger j j-btn-forceUpdate-flow" data-toggle="tooltip" th:title="${easyflow.process.admin.page.processDefinitionEdit.forceUpdateTitle}" >[[#{easyflow.process.admin.page.processDefinitionEdit.updateCurrentVersion}]]</button>
             <button type="submit" class="btn btn-primary j-btn-ok j-btn-save-flow">[[#{easyflow.process.admin.page.processDefinitionEdit.save}]]</button>
             <button type="button" class="btn btn-secondary j-btn-cancel">[[#{easyflow.process.admin.page.processDefinitionEdit.cancel}]]</button>
         </div>

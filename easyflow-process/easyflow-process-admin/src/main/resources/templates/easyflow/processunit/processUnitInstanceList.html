@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout::html(#{easyflow.process.admin.page.processUnitInstanceList.instanceManagement},~{},~{::#style}, ~{::.breadcrumb-item},~{::#content},~{},~{::#script})">
+<body>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">[[#{easyflow.process.admin.page.processUnitInstanceList.instanceManagement}]]</li>
+</ol>
+<div id="content">
+    <div id="tabs">
+        <div id="tableContainer">
+            <form id="search" class="card j-form-horizontal" autocomplete="off">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processUnitInstanceList.queryType}]]:</label>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="queryType" id="queryType-SINGLE" value="SINGLE" checked>
+                              <label class="form-check-label" for="queryType-SINGLE"><b>[[#{easyflow.process.admin.page.processUnitInstanceList.queryByInstance}]]</b>([[#{easyflow.process.admin.page.processUnitInstanceList.queryByInstanceTip}]])</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="queryType" id="queryType-CREATED_DATE_RANGE" value="CREATED_DATE_RANGE">
+                              <label class="form-check-label" for="queryType-CREATED_DATE_RANGE"><b>[[#{easyflow.process.admin.page.processUnitInstanceList.queryByTime}]]</b>([[#{easyflow.process.admin.page.processUnitInstanceList.queryByTimeTip}]]), <b>[[#{easyflow.process.admin.page.processUnitInstanceList.onlyFirstPageSupport}]]</b></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">                    
+                        <div class="form-group col">
+                            <label><span class="required">*</span>[[#{easyflow.process.admin.page.processUnitInstanceList.queryProcessUnitCode}]]:</label><select name="processUnitCode" class="form-control">
+                                <option value="">--[[#{easyflow.process.admin.page.processUnitInstanceList.querySelect}]]--</option>
+                                <option th:each="item,itemStat:${processUnitList}" th:value="${item.processUnitCode}" th:text="${item.processUnitCode}+':'+${item.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processUnitInstanceList.queryBizNo}]]:</label><input name="bizNo" id="bizNo" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processUnitInstanceList.queryInstanceNo}]]:</label><input name="instanceNo" id="instanceNo" class="form-control"></input>
+                        </div>                        
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processUnitInstanceList.queryCreatedDateStart}]]:</label>
+                            <input type="text" class="form-control" name="createdDateStart" id="createdDateStart"/>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processUnitInstanceList.queryCreatedDateEnd}]]:</label>
+                            <input type="text" class="form-control" name="createdDateEnd" id="createdDateEnd"/>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processUnitInstanceList.queryResult}]]:</label>
+                            <select class="form-control d-none" name="resultList" id="resultList"  multiple="multiple">
+                                <option value="SUCCESS">[[#{easyflow.process.admin.page.processUnitInstanceList.queryResultSuccess}]]</option>
+                                <option value="FAIL">[[#{easyflow.process.admin.page.processUnitInstanceList.queryResultFail}]]</option>
+                                <option value="DOING">[[#{easyflow.process.admin.page.processUnitInstanceList.queryResultDoing}]]</option>
+                                <option value="EXCEPTION">[[#{easyflow.process.admin.page.processUnitInstanceList.queryResultException}]]</option>
+                        </select>
+                        </div>                        
+                    </div>
+                    <div class="form-row">
+                        <div class="col text-center">
+                            <button id="query" class="btn btn-primary">[[#{easyflow.process.admin.page.processUnitInstanceList.queryBtn}]]</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <table id="datatable"></table>
+        </div>
+    </div>
+
+</div>
+<style type="text/css" id="style">
+    .pagination {display: none !important}
+    /*.page-item {display: none}    
+    .page-next {display: block !important}*/
+</style>
+<script type="text/javascript" id="script" th:inline="javascript">
+    $("#tabs").jTabs().jTabs("open", {id: "tab-table", name: "[(#{easyflow.process.admin.page.processUnitInstanceList.instanceList})]", element: $("#tableContainer"), closeable: false});
+    $.validator.addMethod("datetime", function(value, element) {
+var datetime = /^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))\s+([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+return this.optional(element) || (datetime.test(value));
+}, "[(#{easyflow.process.admin.page.processUnitInstanceList.dateFormatInvalid})]");
+    
+    $("#search").validate({
+        rules: {
+            "createdDateStart": {"datetime": true},
+            "createdDateEnd": {"datetime": true}
+        }
+    });
+    if ("datetimepicker" in $.fn) {
+	    $("#createdDateStart").datetimepicker({startView:2, minView:0, format:"yyyy-mm-dd hh:ii:ss"});    
+	    $("#createdDateEnd").datetimepicker({startView:2, minView:0, format:"yyyy-mm-dd hh:ii:ss"});  
+    }
+    var queryParam = {};
+    $("[name='processUnitCode']").multiselect({
+       enableFiltering: true
+   });
+   $("[name='resultList']").multiselect({
+       enableFiltering: true,
+       includeSelectAllOption: true,
+   });
+    $("#query").click(function (e) {
+        var currentQueryParam = $("#search").serializeObject(); 
+        if (currentQueryParam.queryType=='SINGLE') {
+            if (currentQueryParam.instanceNo=='' && (currentQueryParam.processUnitCode=='' || currentQueryParam.bizNo=='')) {
+                $.jMessage({msg: "[(#{easyflow.process.admin.page.processUnitInstanceList.instanceInfoCannotNull})]"});
+                e.preventDefault();
+                return false;
+            }
+        } else {
+            if (currentQueryParam.processUnitCode=='') {
+                $.jMessage({msg: "[(#{easyflow.process.admin.page.processUnitInstanceList.processUnitCodeCannotNull})]"});
+                e.preventDefault();
+                return false;                
+            }
+            if (currentQueryParam.createdDateStart == '' || currentQueryParam.createdDateEnd == '') {
+                $.jMessage({msg: "[(#{easyflow.process.admin.page.processUnitInstanceList.timeRangeCannotNull})]"});
+                e.preventDefault();
+                return false;
+            }
+            if (currentQueryParam.createdDateStart > currentQueryParam.createdDateEnd) {
+                $.jMessage({msg: "[(#{easyflow.process.admin.page.processUnitInstanceList.createdDateStartCannotGtEnd})]"});
+                e.preventDefault();
+                return false;
+            }
+            if(new Date(currentQueryParam.createdDateEnd).getTime() - new Date(currentQueryParam.createdDateStart).getTime() > 30 * 24 * 3600 * 1000) {
+                $.jMessage({msg: "[(#{easyflow.process.admin.page.processUnitInstanceList.TimeRangeCannotGt30Days})]"});
+                e.preventDefault();
+                return false;
+            }            
+        }
+        queryParam = currentQueryParam;        
+        $('#datatable').bootstrapTable("refresh",{url: root + "/ajax/getProcessUnitInstanceListData"});
+        e.preventDefault();
+        return false;
+    });
+    var root = "[(@{/easyflow/processUnit})]";
+    $('#datatable').bootstrapTable({
+        columns: [
+            {radio: true},
+            {
+                field: 'instanceNo', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.instanceNo})]', formatter: function (data, item) {
+                    return "<a class='j-op detailBtn' data-instance-no='" + item.instanceNo 
+                    + "' data-unit-code='" + item.processUnitCode 
+                    + "' data-biz-no='" + item.bizNo + "'>" + data + "</a>";
+                }
+            },
+            {field: 'processUnitCode', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.processUnitCode})]'},
+            {field: 'bizNo', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.bizNo})]'},
+            {field: 'productCode', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.productCode})]'},
+            {field: 'result', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.result})]', formatter: function (data) {
+                return {"SUCCESS":"[(#{easyflow.process.admin.page.processUnitInstanceList.resultSuccess})]", "FAIL":"[(#{easyflow.process.admin.page.processUnitInstanceList.resultFail})]", "DOING":"[(#{easyflow.process.admin.page.processUnitInstanceList.resultDoing})]", "EXCEPTION":"[(#{easyflow.process.admin.page.processUnitInstanceList.resultException})]"}[data];
+                }},
+            {field: 'requestContent', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.requestContent})]'},
+            {field: 'responseContent', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.responseContent})]'},
+            {field: 'autoRunTimes', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.autoRuntimes})]'},
+            {field: 'autoRunFlag', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.autoRunFlag})]'},
+            {field: 'nextAutoRunTime', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.nextAutoRunTime})]'},
+            {field: 'createdDate', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.createdDate})]'},
+            {field: 'modifiedDate', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.modifiedDate})]'},
+            {field: 'vars', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.vars})]'},
+            {field: 'extData', title: '[(#{easyflow.process.admin.page.processUnitInstanceList.extData})]'}
+        ],
+        queryParams: function (param) {
+            //var data = $('#datatable').bootstrapTable("getData", {});
+            $.extend(param, queryParam);
+            return param;
+        },
+        pageList:[10, 50, 100, 500],
+        paginationNextText: "[(#{easyflow.process.admin.page.processUnitInstanceList.nextPage})]"
+    });
+
+    $("#datatable").on("click", ".detailBtn", function () {
+        $("#tabs").jTabs("open", {id:$(this).data("instance-no"), url:root + "/processUnitInstanceDetail?instanceNo=" + $(this).data("instance-no") + "&processUnitCode=" + $(this).data("unit-code") + "&bizNo=" + $(this).data("biz-no")});
+        return false;        
+    });
+    
+    $("#queryType-SINGLE").click(function(){
+        $("#createdDateStart").val("");
+        $("#createdDateEnd").val("");
+        $("#resultList").multiselect('deselect',["SUCCESS","FAIL","DOING","EXCEPTION"]);
+    });
+    $("#queryType-CREATED_DATE_RANGE").click(function(){
+        $("#bizNo").val("");
+        $("#instanceNo").val("");
+        $("#createdDateStart").val(J.getNowDate()+" 00:00:00");
+        $("#createdDateEnd").val(J.getNowDate()+" 23:59:59");     
+    });
+
+</script>
+</body>
+</html>

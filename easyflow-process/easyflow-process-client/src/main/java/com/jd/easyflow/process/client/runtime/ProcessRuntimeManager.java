@@ -38,6 +38,7 @@ import com.jd.easyflow.process.adapter.export.dto.transaction.command.BatchUpdat
 import com.jd.easyflow.process.adapter.export.dto.transaction.command.InterruptTxnCommand;
 import com.jd.easyflow.process.client.common.PropertiesUtil;
 import com.jd.easyflow.process.client.runtime.core.ProcessException;
+import com.jd.easyflow.process.client.util.ExportRequestBuilder;
 import com.jd.easyflow.process.client.util.Pair;
 import com.jd.easyflow.utils.json.JSON;
 
@@ -65,6 +66,8 @@ public class ProcessRuntimeManager {
     private String executionPersistType = EXECUTION_PERSIST_TYPE_NEXT;
     
     private boolean executionPersistActionResult = false;
+    
+    private ExportRequestBuilder exportRequestBuilder = ExportRequestBuilder.getInstance();
 
 
     /**
@@ -86,7 +89,7 @@ public class ProcessRuntimeManager {
             }
             QueryProcessInstanceReq queryReq = QueryProcessInstanceReq.builder().processType(processType).bizNo(bizNo)
                     .build();
-            ExportRequest<QueryProcessInstanceReq> request = new ExportRequest<>(queryReq);
+            ExportRequest<QueryProcessInstanceReq> request =  exportRequestBuilder.build(queryReq, context);
             ProcessInstanceDTO instance = ExportResponseUtil
                     .unwrap(getProcessInstanceExport().queryProcessInstanceByProcessTypeAndBizNo(request));
             if (instance != null) {
@@ -116,7 +119,7 @@ public class ProcessRuntimeManager {
             }
             QueryProcessInstanceReq queryReq = QueryProcessInstanceReq.builder().processType(processType).bizNo(bizNo)
                     .build();
-            ExportRequest<QueryProcessInstanceReq> request = new ExportRequest<>(queryReq);
+            ExportRequest<QueryProcessInstanceReq> request = exportRequestBuilder.build(queryReq, context);
             ProcessInstanceDTO instance = ExportResponseUtil
                     .unwrap(getProcessInstanceExport().queryActiveProcessInstanceByProcessTypeAndBizNo(request));
             if (instance != null) {
@@ -148,7 +151,7 @@ public class ProcessRuntimeManager {
                 return instance;
             }
             instance = ExportResponseUtil
-                    .unwrap(getProcessInstanceExport().queryNodeInstanceByNo(new ExportRequest<>(nodeInstanceNo)));
+                    .unwrap(getProcessInstanceExport().queryNodeInstanceByNo(exportRequestBuilder.build(nodeInstanceNo, context)));
             context.getCache().put(instance.getNodeInstanceNo(), instance, false);
             return instance;
         });
@@ -169,7 +172,7 @@ public class ProcessRuntimeManager {
             }
             if (queryList.size() > 0) {
                 List<ProcessNodeInstanceDTO> nodeInstanceList = ExportResponseUtil
-                        .unwrap(getProcessInstanceExport().queryNodeInstanceByNos(new ExportRequest<>(queryList)));
+                        .unwrap(getProcessInstanceExport().queryNodeInstanceByNos(exportRequestBuilder.build(queryList, context)));
                 for (ProcessNodeInstanceDTO nodeInstance : nodeInstanceList) {
                     context.getCache().put(nodeInstance.getNodeInstanceNo(), context, false);
                     resultMap.put(nodeInstance.getNodeInstanceNo(), nodeInstance);
@@ -194,7 +197,7 @@ public class ProcessRuntimeManager {
                 return instance;
             }
             instance = ExportResponseUtil.unwrap(
-                    getProcessInstanceExport().getProcessInstance(new ExportRequest<>(context.getInstanceNo())));
+                    getProcessInstanceExport().getProcessInstance(exportRequestBuilder.build(context.getInstanceNo(), context)));
             if (instance != null) {
                 context.getCache().put(instance.getInstanceNo(), instance, false);
             }
@@ -247,7 +250,7 @@ public class ProcessRuntimeManager {
             QueryProcessNodeReqDTO queryProcessNodeReq = QueryProcessNodeReqDTO.builder().nodeId(nodeId)
                     .processInstanceNo(instanceNo).build();
             List<ProcessNodeInstanceDTO> nodeInstanceList = ExportResponseUtil
-                    .unwrap(getProcessInstanceExport().findNodeInstances(new ExportRequest<>(queryProcessNodeReq)));
+                    .unwrap(getProcessInstanceExport().findNodeInstances(exportRequestBuilder.build(queryProcessNodeReq, context)));
             if (log.isDebugEnabled()) {
                 log.debug("Database return:{}", nodeInstanceList);
             }
@@ -443,7 +446,7 @@ public class ProcessRuntimeManager {
             QueryProcessNodeReqDTO queryProcessNodeReq = QueryProcessNodeReqDTO.builder().processInstanceNo(instanceNo)
                     .status(status).build();
             List<ProcessNodeInstanceDTO> activeNodeInstances = ExportResponseUtil
-                    .unwrap(getProcessInstanceExport().findNodeInstances(new ExportRequest<>(queryProcessNodeReq)));
+                    .unwrap(getProcessInstanceExport().findNodeInstances(exportRequestBuilder.build(queryProcessNodeReq, context)));
             for (ProcessNodeInstanceDTO activeNodeInstance : activeNodeInstances) {
                 if (context.getCache().get(ProcessNodeInstanceDTO.class,
                         activeNodeInstance.getNodeInstanceNo()) == null) {
@@ -475,7 +478,7 @@ public class ProcessRuntimeManager {
             QueryProcessNodeReqDTO queryProcessNodeReq = QueryProcessNodeReqDTO.builder().processInstanceNo(instanceNo)
                     .status(status).build();
             List<ProcessNodeInstanceDTO> openNodeInstances = ExportResponseUtil
-                    .unwrap(getProcessInstanceExport().findNodeInstances(new ExportRequest<>(queryProcessNodeReq)));
+                    .unwrap(getProcessInstanceExport().findNodeInstances(exportRequestBuilder.build(queryProcessNodeReq, context)));
             for (ProcessNodeInstanceDTO openNodeInstance : openNodeInstances) {
                 if (context.getCache().get(ProcessNodeInstanceDTO.class,
                         openNodeInstance.getNodeInstanceNo()) == null) {
@@ -547,7 +550,7 @@ public class ProcessRuntimeManager {
             String instanceNo = context.getInstanceNo();
             QueryProcessNodeReqDTO queryProcessNodeReq = QueryProcessNodeReqDTO.builder().processInstanceNo(instanceNo).build();
             List<ProcessNodeInstanceDTO> nodeInstances = ExportResponseUtil
-                    .unwrap(getProcessInstanceExport().findNodeInstances(new ExportRequest<>(queryProcessNodeReq)));
+                    .unwrap(getProcessInstanceExport().findNodeInstances(exportRequestBuilder.build(queryProcessNodeReq, context)));
             for (ProcessNodeInstanceDTO nodeInstance : nodeInstances) {
                 if (context.getCache().get(ProcessNodeInstanceDTO.class,
                         nodeInstance.getNodeInstanceNo()) == null) {
@@ -585,7 +588,7 @@ public class ProcessRuntimeManager {
                 txnReq.setCommandList(context.getCache().getCommandList());
                 context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_TXN_FLUSH_START, new Object[] {txnReq, flushPoint, context, nodeContext}});
                 TxnRes txnRes = ExportResponseUtil
-                        .unwrap(getProcessTransactionExport().doTransaction(new ExportRequest<TxnReq>(txnReq)));
+                        .unwrap(getProcessTransactionExport().doTransaction(exportRequestBuilder.build(txnReq, context)));
                 context.getEventTriggerFunction().apply(new Object[] { StdProcessConstants.EVENT_TXN_FLUSH_END, new Object[] {txnReq, txnRes, flushPoint, context, nodeContext}});
                 context.getCache().clearTxnCommand();
             }
@@ -801,6 +804,12 @@ public class ProcessRuntimeManager {
         this.processTransactionExport = processTransactionExport;
     }
 
+    public ExportRequestBuilder getExportRequestBuilder() {
+        return exportRequestBuilder;
+    }
 
-
+    public void setExportRequestBuilder(ExportRequestBuilder exportRequestBuilder) {
+        this.exportRequestBuilder = exportRequestBuilder;
+    }
+    
 }

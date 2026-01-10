@@ -5,19 +5,19 @@ import java.util.List;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.process.domain.model.vo.QueryTaskReqVO;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessTask;
+import com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper;
 
 /**
  * 
  * @author liyuliang5
  *
  */
+@ShardingSupportedMapper
 public interface ProcessTaskMapper {
 
     int insert(ProcessTask record);
     
     int insertWithCreatedDate(ProcessTask record);
-
-    int insertSelective(ProcessTask record);
 
     int updateByPrimaryKeySelective(ProcessTask record);
 

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:bean="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+		<property name="jdbcUrl" value="${db.jdbcUrl}"/>
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+	
+	    <bean id="processUnitShardingDataSource" class="com.jd.easyflow.sharding.datasource.ShardingDataSource">
+        <property name="shardingConfigManager" ref="easyflow-processunit-shardingConfigManager"></property>
+        <property name="shardingTargetDataSources">
+            <map key-type="java.lang.String">
+            	<entry key="appDataSource" value-ref="dataSource"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="dataSource"></property>
+    </bean>
+    
+    <bean id="processShardingDataSource" class="com.jd.easyflow.sharding.datasource.ShardingDataSource">
+        <property name="shardingConfigManager" ref="easyflow-process-shardingConfigManager"></property>
+        <property name="shardingTargetDataSources">
+            <map key-type="java.lang.String">
+            	<entry key="appDataSource" value-ref="dataSource"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="dataSource"></property>
+    </bean>
+   
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<array>
+		      <value>classpath*:easyflow/mapper/SequenceMapper.xml</value>
+		      <value>classpath*:easyflow/mapper/FormTemplateMapper.xml</value>
+		      <value>classpath*:easyflow/mapper/ProcessDefinitionMapper.xml</value>
+		  </array>
+		</property>
+	</bean>
+	
+    <bean id="puSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="processUnitShardingDataSource" />
+	<property name="mapperLocations">
+		<array>
+			<value>classpath*:easyflow/shardingmapper/ProcessUnitExecutionMapper.xml</value>
+			<value>classpath*:easyflow/shardingmapper/ProcessUnitInstanceMapper.xml</value>
+		</array>
+	</property>
+		<property name="transactionFactory">
+			<bean class="com.jd.easyflow.sharding.transaction.ShardingSpringManagedTransactionFactory">
+			</bean>
+		</property>        
+    </bean>  
+    
+     <bean id="processSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="processShardingDataSource" />
+		<property name="mapperLocations">
+			<array>
+		      <value>classpath*:easyflow/shardingmapper/ProcessInstanceMapper.xml</value>
+		      <value>classpath*:easyflow/shardingmapper/ProcessNodeInstanceMapper.xml</value>
+		      <value>classpath*:easyflow/shardingmapper/ProcessNodeExecutionMapper.xml</value>
+		      <value>classpath*:easyflow/shardingmapper/ProcessTaskAssignMapper.xml</value>
+		      <value>classpath*:easyflow/shardingmapper/ProcessTaskEventMapper.xml</value>
+		      <value>classpath*:easyflow/shardingmapper/ProcessTaskMapper.xml</value>
+			</array>
+		</property>        
+		<property name="transactionFactory">
+			<bean class="com.jd.easyflow.sharding.transaction.ShardingSpringManagedTransactionFactory">
+			</bean>
+		</property>        
+    </bean>    
+    	
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="
+		com.jd.easyflow.codegenerator.infrastructure.persistence.mapper,
+		com.jd.easyflow.form.infrastructure.persistence.mapper"
+		/>
+	</bean>
+	<bean id="processDefinitionMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="com.jd.easyflow.process.infrastructure.persistence.mapper"/>
+		<property name="annotationClass" value="com.jd.easyflow.sharding.mybatis.ShardingNotSupportedMapper"></property>
+	</bean>	
+	
+    <bean id="puMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="puSqlSessionFactory" />
+        <property name="basePackage" value="com.jd.easyflow.processunit.infrastructure.persistence.mapper"
+        />
+    </bean>
+    
+    <bean id="processShardingMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="processSqlSessionFactory" />
+		<property name="basePackage" value="com.jd.easyflow.process.infrastructure.persistence.mapper"/>
+		<property name="annotationClass" value="com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper"></property>
+	</bean>
+ 
+</beans>

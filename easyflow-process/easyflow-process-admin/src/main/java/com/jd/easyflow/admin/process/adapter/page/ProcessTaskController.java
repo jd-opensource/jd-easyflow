@@ -329,10 +329,12 @@ public class ProcessTaskController extends BasePageController {
         
         ExecuteTaskReq req = new ExecuteTaskReq();
         req.setTaskNo(executeDto.getTaskNo());
-        String currentUser = userGroupAdminExtension.getCurrentUser(null);
+        Map extInfo = new HashMap<>(1);
+        extInfo.put("productCode", task.getProductCode());
+        String currentUser = userGroupAdminExtension.getCurrentUser(extInfo);
         req.setUser(currentUser);
-        req.setGroupList(userGroupAdminExtension.getUserGroupList(currentUser, null));
-        req.setGroup2List(userGroupAdminExtension.getUserGroup2List(currentUser, null));
+        req.setGroupList(userGroupAdminExtension.getUserGroupList(currentUser, extInfo));
+        req.setGroup2List(userGroupAdminExtension.getUserGroup2List(currentUser, extInfo));
         req.setOperation(executeDto.getOperation());     
         if (executeDto.getOperation() == null
                 || ProcessTaskConstants.TASK_OP_EXECUTE.equals(executeDto.getOperation())) {
@@ -528,6 +530,9 @@ public class ProcessTaskController extends BasePageController {
             pageId = "commonProcessTaskDetail";
         }
         String taskDetailFormId = detailProperties == null ? null : (String) detailProperties.get("formId");
+        if (taskDetailFormId == null) {
+            taskDetailFormId = flowDetailProperties == null ? null : (String) flowDetailProperties.get("formId");
+        }
         model.addAttribute("taskDetailFormId", (taskDetailFormId == null || taskDetailFormId.isEmpty()) ? "null" : taskDetailFormId);
         model.addAttribute("taskExecuteBizData", (task.getExecuteBizData() == null || task.getExecuteBizData().isEmpty()) ? "null" : task.getExecuteBizData());
         Map<String, Object> pageData = new HashMap<>();

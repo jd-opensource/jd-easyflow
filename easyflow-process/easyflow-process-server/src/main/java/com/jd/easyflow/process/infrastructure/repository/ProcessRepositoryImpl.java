@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.jd.easyflow.codegenerator.client.CodeGenerateHelper;
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.common.dto.pager.PagerResult;
 import com.jd.easyflow.common.util.AssertUtils;
@@ -43,11 +44,18 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     private ProcessDefinitionMapper processDefinitionMapper;
 
     private static final Integer MAX_QUERY_INSTANCENOS_NUM = 1000;
+    
+    protected boolean sharding = false;
+
 
     /* ProcessInstance */
 
     @Override
     public void saveProcessInstance(ProcessInstanceEntity entity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            entity.setId(Long.parseLong(idStr));
+        }
         ProcessInstance instance = ProcessConverter.INSTANCE.convert(entity);
         processInstanceMapper.insert(instance);
         entity.setId(instance.getId());
@@ -55,6 +63,10 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public void saveProcessInstanceWithCreatedDate(ProcessInstanceEntity entity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            entity.setId(Long.parseLong(idStr));
+        }
         ProcessInstance instance = ProcessConverter.INSTANCE.convert(entity);
         processInstanceMapper.insertWithCreatedDate(instance);
         entity.setId(instance.getId());
@@ -62,6 +74,10 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public void saveProcessNodeInstanceWithCreatedDate(ProcessNodeInstanceEntity entity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            entity.setId(Long.parseLong(idStr));
+        }
         ProcessNodeInstance instance = ProcessConverter.INSTANCE.convert(entity);
         processNodeInstanceMapper.insertWithCreatedDate(instance);
         entity.setId(instance.getId());
@@ -169,6 +185,10 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public void saveProcessNodeInstance(ProcessNodeInstanceEntity entity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            entity.setId(Long.parseLong(idStr));
+        }
         ProcessNodeInstance instance = ProcessConverter.INSTANCE.convert(entity);
         processNodeInstanceMapper.insert(instance);
         entity.setId(instance.getId());
@@ -215,6 +235,10 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public void saveProcessNodeExecution(ProcessNodeExecutionEntity entity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            entity.setId(Long.parseLong(idStr));
+        }
         ProcessNodeExecution execution = ProcessConverter.INSTANCE.convert(entity);
         processNodeExecutionMapper.insert(execution);
         entity.setId(execution.getId());
@@ -251,6 +275,10 @@ public class ProcessRepositoryImpl implements ProcessRepository {
 
     @Override
     public void saveProcessNodeExecutionWithCreatedDate(ProcessNodeExecutionEntity entity) {
+        if (sharding) {
+            String idStr = CodeGenerateHelper.generateCode("PROCESS-ID", "");
+            entity.setId(Long.parseLong(idStr));
+        }
         ProcessNodeExecution execution = ProcessConverter.INSTANCE.convert(entity);
         processNodeExecutionMapper.insertWithCreatedDate(execution);
         entity.setId(execution.getId());

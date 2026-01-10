@@ -98,7 +98,9 @@ CREATE TABLE `process_instance` (
   INDEX `idx_bizNo_processType` (`biz_no`, process_type),
   INDEX `idx_startTime` (`start_time`),
   INDEX `idx_creator` (`creator`),
-  INDEX `idx_productCode` (`product_code`))
+  INDEX `idx_productCode` (`product_code`),
+  INDEX `idx_keyField` (`key_field`),
+  INDEX `idx_parentInstanceNo`(`parent_instance_no`)))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARSET= utf8mb4
@@ -193,6 +195,8 @@ CREATE TABLE `process_task` (
   PRIMARY KEY (`id`),
   INDEX `idx_taskNo` (`task_no`),
   INDEX `idx_bizNoProcessType` (`biz_no`, process_type),
+  INDEX `idx_processInstanceNo` (`process_instance_no`),
+  INDEX `idx_nodeInstanceNo` (`node_instance_no`),
   INDEX `idx_executeTime` (`execute_time`),
   INDEX `idx_assignTime` (`assign_time`),
   INDEX `idx_executor` (`executor`),
@@ -261,3 +265,54 @@ AUTO_INCREMENT = 1
 DEFAULT CHARSET = utf8mb4
 COLLATE = utf8mb4_bin
 COMMENT = 'process task event table';
+CREATE TABLE `process_unit_instance` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primark key',
+  `instance_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'instance no',
+  `biz_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'biz no',
+  `parent_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'parent instance no',
+  `process_unit_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'process unit code',
+  `product_code` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'product code',
+  `result` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execute result',
+  `request_content` mediumtext COLLATE utf8mb4_bin COMMENT 'request content',
+  `response_content` mediumtext COLLATE utf8mb4_bin COMMENT 'response content',
+  `auto_run_flag` tinyint(1) DEFAULT NULL COMMENT 'auto run flag',
+  `auto_run_times` int(11) DEFAULT NULL COMMENT 'auto run times',
+  `next_auto_run_time` datetime DEFAULT NULL COMMENT 'next auto run time',
+  `vars` JSON NULL COMMENT 'instance variables',
+  `ext_data` json DEFAULT NULL COMMENT 'ext data',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'delete flag',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_instance_no` (`instance_no`),
+  UNIQUE KEY `idx_bizNo_unitCode` (`biz_no`,`process_unit_code`),
+  KEY `idx_autorun` (`auto_run_flag`,`next_auto_run_time`),
+  KEY `idx_createdDate` (`created_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Process unit instance';
+
+CREATE TABLE `process_unit_execution` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primark key',
+  `execution_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execution no',
+  `request_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'request no',
+  `parent_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'parent instance no',
+  `process_unit_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'process unit code',
+  `biz_no` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'biz no',  
+  `instance_no` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'instance no',
+  `product_code` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'product code',
+  `result` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'execute result',
+  `request_content` mediumtext COLLATE utf8mb4_bin COMMENT 'request content',
+  `response_content` mediumtext COLLATE utf8mb4_bin COMMENT 'response content',
+  `request_time` datetime DEFAULT NULL COMMENT 'request time',
+  `response_time` datetime DEFAULT NULL COMMENT 'response time',
+  `elaspe_time` int(11) DEFAULT NULL COMMENT 'elaspe time',
+  `exec_type` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'exec type',
+  `ext_data` json DEFAULT NULL COMMENT 'ext data',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created date',
+  `modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modified date',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'deleted',
+  PRIMARY KEY (`id`),
+  KEY  `idx_execution_no` (`execution_no`),
+  KEY `idx_instance_no` (`instance_no`),
+  KEY `idx_request_time` (`request_time`),
+  KEY `idx_bizNo_unitCode` (`biz_no`,`process_unit_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Process unit execution';

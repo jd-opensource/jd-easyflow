@@ -1,0 +1,44 @@
+<div th:class="'container-fluid j-info-container frame-' + ${detail.executionNo}">
+    <div class="card-header mb-3">[[#{easyflow.process.admin.page.processUnitExecutionDetail.excutionDetailInfo}]]</div>
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.executionNo}]]:</dt><dd th:text="${detail.executionNo}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.requestNo}]]:</dt><dd th:text="${detail.requestNo}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.processUnitCode}]]:</dt><dd th:text="${detail.processUnitCode}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.bizNo}]]:</dt><dd th:text="${detail.bizNo}"></dd></dl>
+     </div>
+    <div class="row">
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.productCode}]]:</dt><dd th:text="${detail.productCode}"></dd></dl> 
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.result}]]:</dt>
+        <dd th:if="${detail.result=='SUCCESS'}">SUCCESS-[[#{easyflow.process.admin.page.processUnitExecutionDetail.resultSuccess}]]</dd>
+        <dd th:if="${detail.result=='FAIL'}">FAIL-[[#{easyflow.process.admin.page.processUnitExecutionDetail.resultFail}]]</dd>
+        <dd th:if="${detail.result=='DOING'}">DOING-[[#{easyflow.process.admin.page.processUnitExecutionDetail.resultDoing}]]</dd>
+        <dd th:if="${detail.result=='EXCEPTION'}">EXCEPTION-[[#{easyflow.process.admin.page.processUnitExecutionDetail.resultException}]]</dd>
+        </dl>        
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.execType}]]:</dt>
+        <dd th:if="${detail.execType=='SYNC'}">[[#{easyflow.process.admin.page.processUnitExecutionDetail.execTypeSync}]]</dd>
+        <dd th:if="${detail.execType=='MANUAL_ASYNC'}">[[#{easyflow.process.admin.page.processUnitExecutionDetail.execTypeManual}]]</dd>
+        <dd th:if="${detail.execType=='TASK_ASYNC'}">[[#{easyflow.process.admin.page.processUnitExecutionDetail.execTypeTask}]]</dd>
+        <dd th:if="${detail.execType=='MSG_ASYNC'}">[[#{easyflow.process.admin.page.processUnitExecutionDetail.execTypeMsg}]]</dd>        
+        </dl>  
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.elapseTime}]]:</dt><dd th:text="${detail.elaspeTime}"></dd></dl>              
+    </div> 
+   <div class="row">     
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.requestTime}]]:</dt><dd th:text="${#dates.format(detail.requestTime,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>               
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.responseTime}]]:</dt><dd th:text="${#dates.format(detail.responseTime,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.createdDate}]]:</dt><dd th:text="${#dates.format(detail.createdDate,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.modifiedDate}]]:</dt><dd th:text="${#dates.format(detail.modifiedDate,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>        
+   </div>        
+    <div class="row">     
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.requestContent}]]:</dt><dd><pre th:text="${detail.requestContent}"></pre></dd></dl>
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.responseContent}]]:</dt><dd><pre th:text="${detail.responseContent}"></pre></dd></dl>
+    </div>
+   <div class="row">    
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.extData}]]:</dt><dd><pre th:text="${detail.extData}"></pre></dd></dl>
+  </div>
+    </div> 
+</div>
+
+<script th:inline="javascript">
+(function() {
+})();
+</script>

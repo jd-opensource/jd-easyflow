@@ -9,6 +9,7 @@ import com.jd.easyflow.common.adapter.export.dto.ExportResponse;
 import com.jd.easyflow.common.adapter.export.util.ExportResponseUtil;
 import com.jd.easyflow.objects.factory.ObjectFactorys;
 import com.jd.easyflow.process.adapter.export.ProcessTaskExport;
+import com.jd.easyflow.process.adapter.export.constant.ProcessTaskConstants;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskAssignDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskDTO;
 import com.jd.easyflow.process.adapter.export.dto.task.ProcessTaskEventDTO;
@@ -16,6 +17,7 @@ import com.jd.easyflow.process.adapter.export.dto.task.QueryTaskReq;
 import com.jd.easyflow.process.client.runtime.ProcessCache;
 import com.jd.easyflow.process.client.runtime.ProcessRuntimeManager;
 import com.jd.easyflow.process.client.runtime.StdProcessContext;
+import com.jd.easyflow.process.client.util.ExportRequestBuilder;
 
 /**
  * 
@@ -27,6 +29,8 @@ public class TaskClientManager {
     ProcessRuntimeManager processRuntimeManager;
 
     ProcessTaskExport processTaskExport;
+    
+    private ExportRequestBuilder exportRequestBuilder = ExportRequestBuilder.getInstance();
 
     public ProcessTaskDTO getTask(String taskNo, StdProcessContext context) {
         return processRuntimeManager.op(context, () -> {
@@ -35,10 +39,28 @@ public class TaskClientManager {
             if (task != null) {
                 return task;
             }
-            ExportResponse<ProcessTaskDTO> response = getProcessTaskExport().getTask(new ExportRequest(taskNo));
+            ExportResponse<ProcessTaskDTO> response = getProcessTaskExport().getTask(exportRequestBuilder.build(taskNo, context));
             task = ExportResponseUtil.unwrap(response);
             context.getCache().put(taskNo, task, false);
             return task;
+        });
+    }
+    
+    public List<ProcessTaskDTO> findPendingTask(String processInstanceNo, String taskBizCode,
+            StdProcessContext context) {
+        return processRuntimeManager.op(context, () -> {
+            ProcessCache cache = context.getCache();
+            QueryTaskReq query = new QueryTaskReq();
+            query.setProcessInstanceNo(processInstanceNo);
+            query.setTaskBizCode(taskBizCode);
+            query.setStatus(ProcessTaskConstants.TASK_STATUS_PENDING);
+            ExportResponse<List<ProcessTaskDTO>> response = getProcessTaskExport()
+                    .queryTask(exportRequestBuilder.build(query, context));
+            List<ProcessTaskDTO> taskList = ExportResponseUtil.unwrap(response);
+            for (ProcessTaskDTO task : taskList) {
+                cache.put(task.getTaskNo(), task, false);
+            }
+            return taskList;
         });
     }
 
@@ -48,7 +70,7 @@ public class TaskClientManager {
             QueryTaskReq query = new QueryTaskReq();
             query.setNodeInstanceNo(nodeInstanceNo);
             List<ProcessTaskDTO> taskList = ExportResponseUtil
-                    .unwrap(getProcessTaskExport().queryTask(new ExportRequest<QueryTaskReq>(query)));
+                    .unwrap(getProcessTaskExport().queryTask(exportRequestBuilder.build(query, context)));
             for (ProcessTaskDTO task : taskList) {
                 if (cache.get(ProcessTaskDTO.class, task.getTaskNo()) == null) {
                     cache.put(task.getTaskNo(), task, false);
@@ -68,7 +90,7 @@ public class TaskClientManager {
         return processRuntimeManager.op(context, () -> {
             ProcessCache cache = context.getCache();
             ExportResponse<List<ProcessTaskAssignDTO>> response = getProcessTaskExport()
-                    .findTaskAssignListByTaskNo(new ExportRequest(taskNo));
+                    .findTaskAssignListByTaskNo(exportRequestBuilder.build(taskNo, context));
             List<ProcessTaskAssignDTO> assignList = ExportResponseUtil.unwrap(response);
             for (ProcessTaskAssignDTO assign : assignList) {
                 if (cache.get(ProcessTaskAssignDTO.class, assign.getAssignNo()) == null) {
@@ -121,6 +143,16 @@ public class TaskClientManager {
     public void setProcessTaskExport(ProcessTaskExport processTaskExport) {
         this.processTaskExport = processTaskExport;
     }
+
+    public ExportRequestBuilder getExportRequestBuilder() {
+        return exportRequestBuilder;
+    }
+
+    public void setExportRequestBuilder(ExportRequestBuilder exportRequestBuilder) {
+        this.exportRequestBuilder = exportRequestBuilder;
+    }
+    
+    
     
     
 

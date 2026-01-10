@@ -51,15 +51,15 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
     private static final Logger log = LoggerFactory.getLogger(ProcessTransactionExportImpl.class);
 
 
-    private TransactionTemplate transactionTemplate;
+    protected TransactionTemplate transactionTemplate;
 
-    private MessageSendService messageSendService;
+    protected MessageSendService messageSendService;
     @Autowired
     private ProcessInstanceDomainService processInstanceDomainService;
     @Autowired
     private ProcessTaskDomainService processTaskDomainService;
 
-    private ThreadPoolTaskExecutor executor;
+    protected ThreadPoolTaskExecutor executor;
 
     private Boolean isSelfInitial;
 
@@ -183,6 +183,8 @@ public class ProcessTransactionExportImpl implements ProcessTransactionExport, S
         }
         return ExportResponse.build4Success(response);
     }
+    
+    
 
     public TxnRes executeTransaction(TxnReq request, List<Map<String, Object>> postActionList) {
         List<TxnCommand> commandList = request.getCommandList();

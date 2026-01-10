@@ -8,3 +8,5 @@ drop table `process_node_execution`;
 drop table `process_task`;
 drop table `process_task_assign`;
 drop table `process_task_event`;
+drop table `process_unit_instance`;
+drop table `process_unit_execution`;

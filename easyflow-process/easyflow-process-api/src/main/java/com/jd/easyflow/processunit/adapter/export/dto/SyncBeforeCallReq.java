@@ -1,0 +1,100 @@
+ package com.jd.easyflow.processunit.adapter.export.dto;
+
+import java.io.Serializable;
+import java.util.Map;
+
+/**
+  * @author liyuliang5
+  * 
+  */
+ public class SyncBeforeCallReq implements Serializable {
+
+     private String unitCode;
+     
+     private String bizNo;
+     
+     private String requestNo;
+     
+     private String requestContent;
+
+     private String version = "1.0.0";
+     
+     private String productCode;
+     
+     private String parentNo;
+     
+     private Map<String, String> clientInfo;
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
+    }
+
+    public String getBizNo() {
+        return bizNo;
+    }
+
+    public void setBizNo(String bizNo) {
+        this.bizNo = bizNo;
+    }
+
+    public String getRequestNo() {
+        return requestNo;
+    }
+
+    public void setRequestNo(String requestNo) {
+        this.requestNo = requestNo;
+    }
+
+    public String getRequestContent() {
+        return requestContent;
+    }
+
+    public void setRequestContent(String requestContent) {
+        this.requestContent = requestContent;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public String getParentNo() {
+        return parentNo;
+    }
+
+    public void setParentNo(String parentNo) {
+        this.parentNo = parentNo;
+    }
+    
+    public Map<String, String> getClientInfo() {
+        return clientInfo;
+    }
+
+    public void setClientInfo(Map<String, String> clientInfo) {
+        this.clientInfo = clientInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "SyncBeforeCallReq [unitCode=" + unitCode + ", bizNo=" + bizNo + ", requestNo=" + requestNo
+                + ", requestContent=" + requestContent + ", version=" + version + ", productCode=" + productCode
+                + ", parentNo=" + parentNo + ", clientInfo=" + clientInfo + "]";
+    }
+     
+     
+}

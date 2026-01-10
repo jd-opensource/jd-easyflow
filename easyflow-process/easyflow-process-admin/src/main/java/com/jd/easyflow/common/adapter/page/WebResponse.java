@@ -30,7 +30,7 @@ public class WebResponse<T> {
     }
 
 
-    public static <T> WebResponse buildResponse(String resultCode, String resultMsg, T resultData){
+    public static <T> WebResponse<T> buildResponse(String resultCode, String resultMsg, T resultData){
         return new WebResponse(resultCode,resultMsg,resultData);
     }
 

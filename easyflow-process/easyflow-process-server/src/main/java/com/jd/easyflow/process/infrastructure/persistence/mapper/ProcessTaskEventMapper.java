@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.jd.easyflow.process.domain.model.vo.QueryTaskEventReqVO;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskEvent;
+import com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper;
 
 /**
  * 
  * @author liyuliang5
  *
  */
+@ShardingSupportedMapper
 public interface ProcessTaskEventMapper {
     
     int deleteByPrimaryKey(Long id);
@@ -17,8 +19,6 @@ public interface ProcessTaskEventMapper {
     int insert(ProcessTaskEvent record);
     
     int insertWithCreatedDate(ProcessTaskEvent record);
-
-    int insertSelective(ProcessTaskEvent record);
 
     ProcessTaskEvent selectByPrimaryKey(Long id);
 

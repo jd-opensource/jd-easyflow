@@ -6,11 +6,13 @@ import org.apache.ibatis.annotations.Param;
 
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessDefinition;
+import com.jd.easyflow.sharding.mybatis.ShardingNotSupportedMapper;
 
 /**
  * @author liyuliang5
  *
  */
+@ShardingNotSupportedMapper
 public interface ProcessDefinitionMapper {
 
 

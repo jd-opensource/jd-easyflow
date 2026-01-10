@@ -6,7 +6,7 @@
 
     <groupId>com.jd.easyflow</groupId>
     <artifactId>easyflow-parent</artifactId>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
     <name>easyflow-parent</name>
     <packaging>pom</packaging>
     <description>JDEasyFlow is a general flow orchestration component</description>
@@ -38,6 +38,8 @@
         <jakarta.servlet-api.version>5.0.0</jakarta.servlet-api.version>
         <springboot.version>2.4.3</springboot.version>  
         <aspectj.version>1.9.6</aspectj.version>
+        <hikari.version>3.4.5</hikari.version>    
+        <mybatis-spring.version>2.0.3</mybatis-spring.version>            
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -206,7 +208,17 @@
 			    <groupId>jakarta.servlet</groupId>
 			    <artifactId>jakarta.servlet-api</artifactId>
 			    <version>${jakarta.servlet-api.version}</version>
-			</dependency>                                                                                                                                                                                                                                                                                            
+			</dependency>  
+            <dependency>
+               <groupId>com.zaxxer</groupId>
+               <artifactId>HikariCP</artifactId>
+               <version>${hikari.version}</version>
+        	</dependency>  	
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>           		                                                                                                                                                                                                                                                                                          
         </dependencies>
     </dependencyManagement>
 

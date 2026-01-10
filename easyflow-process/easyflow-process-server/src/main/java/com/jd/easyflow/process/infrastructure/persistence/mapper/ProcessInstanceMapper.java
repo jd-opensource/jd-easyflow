@@ -6,11 +6,13 @@ import org.apache.ibatis.annotations.Param;
 
 import com.jd.easyflow.common.dto.pager.PagerCondition;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessInstance;
+import com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper;
 
 /**
  * @author liyuliang5
  *
  */
+@ShardingSupportedMapper
 public interface ProcessInstanceMapper {
     
     int deleteByPrimaryKey(Long id);
@@ -18,8 +20,6 @@ public interface ProcessInstanceMapper {
     int insert(ProcessInstance record);
     
     int insertWithCreatedDate(ProcessInstance record);
-
-    int insertSelective(ProcessInstance record);
 
     ProcessInstance selectByPrimaryKey(Long id);
 

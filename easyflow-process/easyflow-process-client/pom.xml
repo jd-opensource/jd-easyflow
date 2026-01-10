@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyflow-process</artifactId>
         <groupId>com.jd.easyflow</groupId>
-        <version>1.7.0</version>
+        <version>1.7.1</version>
     </parent>
     <artifactId>easyflow-process-client</artifactId>
     <name>easyflow-process-client</name>
@@ -32,12 +32,25 @@
             </dependency>     
             <dependency>
                 <groupId>com.jd.easyflow</groupId>
+                <artifactId>easyflow-flow-extension</artifactId>
+            </dependency>              
+            <dependency>
+                <groupId>com.jd.easyflow</groupId>
                 <artifactId>easyflow-process-api</artifactId>
-            </dependency>    
+            </dependency>  
+	        <dependency>
+	            <groupId>com.jd.easyflow</groupId>
+	            <artifactId>easyflow-process-common</artifactId>
+	        </dependency>                
             <dependency>
                 <groupId>com.jd.easyflow</groupId>
                 <artifactId>easyflow-process-common</artifactId>
-            </dependency>                
+            </dependency>    
+	        <dependency>
+	            <groupId>org.springframework</groupId>
+	            <artifactId>spring-tx</artifactId>
+	            <scope>provided</scope>
+	        </dependency>                          
     </dependencies>
 
 </project>

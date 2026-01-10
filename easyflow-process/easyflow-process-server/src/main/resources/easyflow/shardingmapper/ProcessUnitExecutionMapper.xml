@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.easyflow.processunit.infrastructure.persistence.mapper.ProcessUnitExecutionMapper">
+  <resultMap id="BaseResultMap" type="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="execution_no" jdbcType="VARCHAR" property="executionNo" />
+    <result column="request_no" jdbcType="VARCHAR" property="requestNo" />
+    <result column="parent_no" jdbcType="VARCHAR" property="parentNo" />
+    <result column="process_unit_code" jdbcType="VARCHAR" property="processUnitCode" />
+    <result column="biz_no" jdbcType="VARCHAR" property="bizNo" />
+    <result column="instance_no" jdbcType="VARCHAR" property="instanceNo" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="result" jdbcType="VARCHAR" property="result" />
+    <result column="request_time" jdbcType="TIMESTAMP" property="requestTime" />
+    <result column="response_time" jdbcType="TIMESTAMP" property="responseTime" />
+    <result column="elaspe_time" jdbcType="INTEGER" property="elaspeTime" />
+    <result column="exec_type" jdbcType="VARCHAR" property="execType" />
+    <result column="request_content" jdbcType="LONGVARCHAR" property="requestContent" />
+    <result column="response_content" jdbcType="LONGVARCHAR" property="responseContent" />
+    <result column="ext_data" jdbcType="OTHER" property="extData" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, execution_no, request_no, parent_no, process_unit_code, biz_no, instance_no, product_code, 
+    result, request_time, response_time, elaspe_time, exec_type, request_content, response_content, ext_data, created_date, 
+    modified_date, deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </select>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution" useGeneratedKeys="true">
+    insert into process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()} (
+     <if test="id != null">id, </if>
+      execution_no, request_no, parent_no, 
+      process_unit_code, biz_no, instance_no, product_code, 
+      result, request_time, response_time, 
+      elaspe_time, exec_type, ext_data, 
+      request_content, response_content)
+    values (
+     <if test="id != null">#{id, jdbcType=BIGINT}, </if>
+    #{executionNo,jdbcType=VARCHAR}, #{requestNo,jdbcType=VARCHAR}, #{parentNo,jdbcType=VARCHAR}, 
+      #{processUnitCode,jdbcType=VARCHAR},#{bizNo,jdbcType=VARCHAR}, #{instanceNo,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR}, 
+      #{result,jdbcType=VARCHAR}, #{requestTime,jdbcType=TIMESTAMP}, #{responseTime,jdbcType=TIMESTAMP}, 
+      #{elaspeTime,jdbcType=INTEGER}, #{execType,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}, 
+      #{requestContent,jdbcType=LONGVARCHAR}, #{responseContent,jdbcType=LONGVARCHAR})
+  </insert>
+  
+    <insert id="insertForMigration" keyColumn="id" keyProperty="id" parameterType="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution" useGeneratedKeys="true">
+    insert into process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()} (id, execution_no, request_no, parent_no, 
+      process_unit_code, biz_no, instance_no, product_code, 
+      result, request_time, response_time, 
+      elaspe_time, exec_type, ext_data, 
+      request_content, response_content, created_date, modified_date)
+    values (#{id, jdbcType=BIGINT}, #{executionNo,jdbcType=VARCHAR}, #{requestNo,jdbcType=VARCHAR}, #{parentNo,jdbcType=VARCHAR}, 
+      #{processUnitCode,jdbcType=VARCHAR},#{bizNo,jdbcType=VARCHAR}, #{instanceNo,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR}, 
+      #{result,jdbcType=VARCHAR}, #{requestTime,jdbcType=TIMESTAMP}, #{responseTime,jdbcType=TIMESTAMP}, 
+      #{elaspeTime,jdbcType=INTEGER}, #{execType,jdbcType=VARCHAR}, #{extData,jdbcType=OTHER}, 
+      #{requestContent,jdbcType=LONGVARCHAR}, #{responseContent,jdbcType=LONGVARCHAR},
+      #{createdDate,jdbcType=TIMESTAMP}, #{modifiedDate,jdbcType=TIMESTAMP})
+  </insert> 
+   
+  <update id="updateByPrimaryKeySelective" parameterType="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution">
+    update process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    <set>
+      <if test="executionNo != null">
+        execution_no = #{executionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="requestNo != null">
+        request_no = #{requestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="parentNo != null">
+        parent_no = #{parentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="processUnitCode != null">
+        process_unit_code = #{processUnitCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bizNo != null">
+        biz_no = #{bizNo,jdbcType=VARCHAR},
+      </if>      
+      <if test="instanceNo != null">
+        instance_no = #{instanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="requestTime != null">
+        request_time = #{requestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="responseTime != null">
+        response_time = #{responseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="elaspeTime != null">
+        elaspe_time = #{elaspeTime,jdbcType=INTEGER},
+      </if>
+      <if test="execType != null">
+        exec_type = #{execType,jdbcType=VARCHAR},
+      </if>
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=OTHER},
+      </if>
+      <if test="createdDate != null">
+        created_date = #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedDate != null">
+        modified_date = #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="requestContent != null">
+        request_content = #{requestContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseContent != null">
+        response_content = #{responseContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution">
+    update process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    set execution_no = #{executionNo,jdbcType=VARCHAR},
+      request_no = #{requestNo,jdbcType=VARCHAR},
+      parent_no = #{parentNo,jdbcType=VARCHAR},
+      process_unit_code = #{processUnitCode,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=VARCHAR},
+      instance_no = #{instanceNo,jdbcType=VARCHAR},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      result = #{result,jdbcType=VARCHAR},
+      request_time = #{requestTime,jdbcType=TIMESTAMP},
+      response_time = #{responseTime,jdbcType=TIMESTAMP},
+      elaspe_time = #{elaspeTime,jdbcType=INTEGER},
+      exec_type = #{execType,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER},
+      request_content = #{requestContent,jdbcType=LONGVARCHAR},
+      response_content = #{responseContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT} and deleted=0
+  </update>
+  
+  <update id="updateForMigration" parameterType="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution">
+    update process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    set 
+      request_no = #{requestNo,jdbcType=VARCHAR},
+      parent_no = #{parentNo,jdbcType=VARCHAR},
+      process_unit_code = #{processUnitCode,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=VARCHAR},
+      instance_no = #{instanceNo,jdbcType=VARCHAR},
+      product_code = #{productCode,jdbcType=VARCHAR},
+      result = #{result,jdbcType=VARCHAR},
+      request_time = #{requestTime,jdbcType=TIMESTAMP},
+      response_time = #{responseTime,jdbcType=TIMESTAMP},
+      elaspe_time = #{elaspeTime,jdbcType=INTEGER},
+      exec_type = #{execType,jdbcType=VARCHAR},
+      ext_data = #{extData,jdbcType=OTHER},
+      request_content = #{requestContent,jdbcType=LONGVARCHAR},
+      response_content = #{responseContent,jdbcType=LONGVARCHAR},
+      created_date = #{createdDate,jdbcType=TIMESTAMP},
+      modified_date =  #{modifiedDate,jdbcType=TIMESTAMP}      
+    where execution_no=#{executionNo} and deleted=0
+  </update>
+  
+  <select id="getByExecutionNo"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    where execution_no=#{executionNo} and deleted=0
+  </select>
+
+  <select id="selectProcessUnitExecution" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    where deleted=0
+    <if test="instanceNos != null and instanceNos.size()>0 ">
+      AND instance_no IN
+      <foreach collection="instanceNos" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="instanceNos == null or instanceNos.size()==0 ">
+      and 1=0
+    </if>
+  </select>
+
+
+  <delete id="physicsDeleteProcessUnitExecution">
+    delete from process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    where 1=1
+    <if test="ids !=null and ids.size()>0 ">
+      AND id IN
+      <foreach collection="ids" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="ids ==null or ids.size()==0 ">
+      and 1 = 0
+    </if>
+  </delete>
+ <update id="updateByExecutionNo" parameterType="com.jd.easyflow.processunit.infrastructure.persistence.po.ProcessUnitExecution">
+    update process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    <set>
+      <if test="executionNo != null">
+        execution_no = #{executionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="requestNo != null">
+        request_no = #{requestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="parentNo != null">
+        parent_no = #{parentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="processUnitCode != null">
+        process_unit_code = #{processUnitCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bizNo != null">
+        biz_no = #{bizNo,jdbcType=VARCHAR},
+      </if>      
+      <if test="instanceNo != null">
+        instance_no = #{instanceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="requestTime != null">
+        request_time = #{requestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="responseTime != null">
+        response_time = #{responseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="elaspeTime != null">
+        elaspe_time = #{elaspeTime,jdbcType=INTEGER},
+      </if>
+      <if test="execType != null">
+        exec_type = #{execType,jdbcType=VARCHAR},
+      </if>
+      <if test="extData != null">
+        ext_data = #{extData,jdbcType=OTHER},
+      </if>
+      <if test="createdDate != null">
+        created_date = #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedDate != null">
+        modified_date = #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="requestContent != null">
+        request_content = #{requestContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseContent != null">
+        response_content = #{responseContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where execution_no=#{executionNo} and deleted=0
+  </update>  
+  
+    <select id="selectProcessUnitExecutionByPageCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    <include refid="pagerWhere" />
+    <if test="sortMap.requestTime != null">
+      order by request_time ${sortMap.requestTime.type}
+    </if>  
+    <if test="sortMap.id != null">
+      order by id ${sortMap.id.type}
+    </if>     
+    <if test="start&gt;=0 and pageSize!=-1">
+          limit #{start},#{pageSize}
+    </if>  
+    <if test="start&lt;0 and pageSize!=-1">
+          limit #{pageSize}
+    </if>       
+  </select>
+  
+  <select id="countProcessUnitExecutionByPageCondition" parameterType="com.jd.easyflow.common.dto.pager.PagerCondition" resultType="long">
+    select
+    count(*)
+    from process_unit_execution${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
+    <include refid="pagerWhere" />
+  </select>
+
+  <sql id="pagerWhere">
+    <where> deleted = 0
+      <if test="fieldMap.processUnitCode != null">
+        and process_unit_code = #{fieldMap.processUnitCode.value}
+      </if>
+      <if test="fieldMap.instanceNo != null">
+        and instance_no = #{fieldMap.instanceNo.value}
+      </if>
+      <if test="fieldMap.bizNo != null">
+        and biz_no = #{fieldMap.bizNo.value}
+      </if>  
+      <if test="fieldMap.executionNo != null">
+        and execution_no = #{fieldMap.executionNo.value}
+      </if>                  
+      <if test="fieldMap.requestTimeStart != null">
+        and request_time &gt;=#{fieldMap.requestTimeStart.value}
+      </if> 
+      <if test="fieldMap.requestTimeEnd != null">
+        and request_time &lt;#{fieldMap.requestTimeEnd.value}
+      </if>  
+      <if test="fieldMap.elapseTimeStart != null">
+        and elapse_time &gt;=#{fieldMap.elapseTimeStart.value}
+      </if> 
+      <if test="fieldMap.elapseTimeEnd != null">
+        and elapse_time &lt;#{fieldMap.elapseTimeEnd.value}
+      </if>       
+      <if test="fieldMap.resultList != null">
+        and result in 
+        <foreach collection="fieldMap.resultList.value" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>           
+      <if test="fieldMap.idStart != null">
+        and id &gt;#{fieldMap.idStart.value}
+      </if> 
+      <if test="fieldMap.idEnd != null">
+        and id &lt;#{fieldMap.idEnd.value}
+      </if>                    
+    </where>
+  </sql>
+  
+  
+  
+</mapper>

@@ -59,8 +59,8 @@ public class StdProcessFsmListener implements FsmEventListener {
     public Pair<String, Integer>[] getAcceptedEvents() {
         return new Pair[] { Pair.of(FsmEventTypes.FSM_MANAGER_START, FsmConstants.EVENT_ORDER_START),
                 Pair.of(FsmEventTypes.FSM_START, FsmConstants.EVENT_ORDER_START + 100),
-                Pair.of(FsmEventTypes.FSM_END, -FsmConstants.EVENT_ORDER_START + 100),
-                Pair.of(FsmEventTypes.FSM_COMPLETE, FsmConstants.EVENT_ORDER_START - 100),
+                Pair.of(FsmEventTypes.FSM_END, -FsmConstants.EVENT_ORDER_START - 100),
+                Pair.of(FsmEventTypes.FSM_COMPLETE, -FsmConstants.EVENT_ORDER_START - 100),
                 Pair.of(FsmEventTypes.TST_START, FsmConstants.EVENT_ORDER_START + 100),
                 Pair.of(FsmEventTypes.TST_END, -FsmConstants.EVENT_ORDER_START - 100) };
     }

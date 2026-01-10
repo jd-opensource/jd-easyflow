@@ -28,6 +28,7 @@ import com.jd.easyflow.process.client.runtime.ObjectIdManager;
 import com.jd.easyflow.process.client.runtime.ProcessCache;
 import com.jd.easyflow.process.client.runtime.ProcessRuntimeManager;
 import com.jd.easyflow.process.client.runtime.StdProcessContext;
+import com.jd.easyflow.process.client.runtime.core.ProcessContext;
 import com.jd.easyflow.process.client.runtime.core.ProcessException;
 import com.jd.easyflow.process.client.task.TaskConstants;
 import com.jd.easyflow.process.client.task.TaskErrorCode;
@@ -38,6 +39,7 @@ import com.jd.easyflow.process.client.task.service.dto.TaskCreateParam;
 import com.jd.easyflow.process.client.task.service.dto.TaskExecuteParam;
 import com.jd.easyflow.process.client.task.service.operation.ExecuteTaskOperation;
 import com.jd.easyflow.process.client.task.service.operation.SaveTaskOperation;
+import com.jd.easyflow.process.client.util.ExportRequestBuilder;
 import com.jd.easyflow.utils.json.JSON;
 
 /**
@@ -65,6 +67,8 @@ public class TaskClientService {
     private Map<String, TaskClientOperation> clientOperationMap;
 
     private ObjectIdManager objectIdManager = ObjectIdManager.INSTANCE;
+    
+    private ExportRequestBuilder exportRequestBuilder = ExportRequestBuilder.getInstance();
 
     public void init() {
         clientOperationMap = new ConcurrentHashMap<>();
@@ -87,18 +91,22 @@ public class TaskClientService {
     }
 
     public String createTask(TaskCreateParam param) {
-        QueryTaskReq query = new QueryTaskReq();
-        query.setProcessInstanceNo(param.getProcessContext().getInstanceNo());
-        query.setTaskBizCode(param.getTaskBizCode());
-        query.setStatus(ProcessTaskConstants.TASK_STATUS_PENDING);
-        ExportResponse<List<ProcessTaskDTO>> response = getProcessTaskExport().queryTask(new ExportRequest(query));
-        List<ProcessTaskDTO> taskList = ExportResponseUtil.unwrap(response);
-        if (taskList.size() == 0) {
-            log.info("PENDING task not exists, create new task.");
-            invokeCreateBizService(param);
-            return doCreateTaskInClientMode(param);
-        }
-        return null;
+        StdProcessContext processContext = param.getProcessContext();
+        return processRuntimeManager.op(processContext, () -> {
+            List<ProcessTaskDTO> taskList = taskClientManager.findPendingTask(processContext.getInstanceNo(),
+                    param.getTaskBizCode(), processContext);
+            if (taskList.size() == 0) {
+                log.info("PENDING task not exists, create new task.");
+                invokeCreateBizService(param);
+                return doCreateTaskInClientMode(param);
+            } else {
+                log.info("PENDING task exists");
+                if (taskList.size() == 1) {
+                    return taskList.get(0).getTaskNo();
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -160,7 +168,6 @@ public class TaskClientService {
                     .get(TaskConstants.TASK_PROP_ASIGNEE);
             ProcessTaskDTO processTask = createTaskObject(param, assignInfoConf);
             return processTask.getTaskNo();
-
         }
     }
 
@@ -187,7 +194,6 @@ public class TaskClientService {
         task.setTaskBizCode(param.getTaskBizCode());
         task.setTaskBizName(param.getTaskBizName());
         task.setCreator(param.getUser());
-        task.setAssignInfo(param.getProductCode());
         task.setAssignInfo(JSON.toJSONString(assignInfo));
         task.setCreatedDate(new Date());
         
@@ -403,5 +409,15 @@ public class TaskClientService {
     public void setObjectIdManager(ObjectIdManager objectIdManager) {
         this.objectIdManager = objectIdManager;
     }
+
+    public ExportRequestBuilder getExportRequestBuilder() {
+        return exportRequestBuilder;
+    }
+
+    public void setExportRequestBuilder(ExportRequestBuilder exportRequestBuilder) {
+        this.exportRequestBuilder = exportRequestBuilder;
+    }
+    
+    
 
 }

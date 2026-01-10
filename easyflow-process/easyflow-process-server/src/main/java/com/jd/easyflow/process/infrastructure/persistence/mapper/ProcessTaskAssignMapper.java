@@ -6,12 +6,14 @@ import org.apache.ibatis.annotations.Param;
 
 import com.jd.easyflow.process.domain.model.vo.QueryTaskAssignReqVO;
 import com.jd.easyflow.process.infrastructure.persistence.po.ProcessTaskAssign;
+import com.jd.easyflow.sharding.mybatis.ShardingSupportedMapper;
 
 /**
  * 
  * @author liyuliang5
  *
  */
+@ShardingSupportedMapper
 public interface ProcessTaskAssignMapper {
     
     int deleteByPrimaryKey(Long id);
@@ -19,8 +21,6 @@ public interface ProcessTaskAssignMapper {
     int insert(ProcessTaskAssign record);
     
     int insertWithCreatedDate(ProcessTaskAssign record);
-
-    int insertSelective(ProcessTaskAssign record);
 
     ProcessTaskAssign selectByPrimaryKey(Long id);
     

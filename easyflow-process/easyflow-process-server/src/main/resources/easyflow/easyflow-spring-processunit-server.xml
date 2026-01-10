@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <bean id="easyflow-processunit-newTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+       <property name="transactionManager">
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="easyflow-processunit-dataSource" />
+    </bean>      
+       </property>
+       <property name="propagationBehavior" value="3"></property>
+    </bean>   
+    <bean class="com.jd.easyflow.processunit.infrastructure.gateway.ProcessUnitClientGatewayImpl"/>
+    <bean class="com.jd.easyflow.processunit.infrastructure.repository.ProcessUnitRepositoryImpl" init-method="init">
+    </bean>
+    <bean id="easyflow-processunit-lockManager" class="com.jd.easyflow.processunit.domain.support.LockManager">
+    	<property name="locker" ref="easyflow-processunit-lockService"></property>
+    </bean>     
+    <bean id="easyflow-processunit-puTransactionTemplate" class="com.jd.easyflow.processunit.domain.support.PuTransactionTemplate">
+    </bean>
+    <bean class="com.jd.easyflow.processunit.domain.service.impl.SyncServerProcessUnitExecutor">
+    	<property name="lockManager" ref="easyflow-processunit-lockManager"></property>
+    </bean>
+    <bean class="com.jd.easyflow.processunit.domain.service.impl.AsyncServerProcessUnitExecutor">
+    	<property name="lockManager" ref="easyflow-processunit-lockManager"></property>
+    </bean>
+    <bean class="com.jd.easyflow.processunit.domain.service.ProcessUnitService">
+    	<property name="messageSendService" ref="easyflow-processunit-messageSendService"></property>
+    	<property name="lockManager" ref="easyflow-processunit-lockManager"></property>
+    	<property name="executeMessageTopic" value="${easyflow.processunit.executeMessageTopic:}"></property>
+    	<property name="createMessageTopic" value="${easyflow.processunit.createMessageTopic:}"></property>
+    	<property name="updateMessageTopic" value="${easyflow.processunit.updateMessageTopic:}"></property>
+    </bean>
+    <bean id="easyflow-processunit-server-processUnitExportImpl" class="com.jd.easyflow.processunit.adapter.export.ProcessUnitExportImpl"/>
+    <bean id="easyflow-processunit-server-processUnitExecuteMessageListener" class="com.jd.easyflow.processunit.adapter.message.ProcessUnitExecuteMessageListener"/>
+    
+    <bean class="com.jd.easyflow.processunit.infrastructure.repository.ProcessUnitConfigFileCache" init-method="init">
+    	<property name="processUnitConfigPath" value="${easyflow.processunit.configPath:}"></property>
+    </bean>
+    <bean id="easyflow-processunit-server-executionPersistThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="2"/>
+        <property name="maxPoolSize" value="100"/>
+        <property name="queueCapacity" value="500"/>
+        <property name="keepAliveSeconds" value="100"/>
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy"/>
+        </property>
+        <property name="waitForTasksToCompleteOnShutdown" value="true"/>
+        <property name="awaitTerminationSeconds" value="3"/>
+    </bean>    
+    <bean class="com.jd.easyflow.processunit.domain.service.impl.execution.ExecutionPersister">
+        <property name="handlerMap">
+            <map>
+                <entry key="dummyPersistHandler"><bean class="com.jd.easyflow.processunit.domain.service.impl.execution.DummyPersistHandler"/></entry>
+                <entry key="syncPersistHandler"><bean class="com.jd.easyflow.processunit.domain.service.impl.execution.SyncPersistHandler"/></entry>
+                <entry key="threadPoolAsyncPersistHandler"><bean class="com.jd.easyflow.processunit.domain.service.impl.execution.ThreadPoolAsyncPersistHandler">
+                	<property name="threadPoolExecutor" ref="easyflow-processunit-server-executionPersistThreadPool"></property>
+                </bean></entry>
+            </map>
+        </property>
+    </bean>
+    <bean id="easyflow-processunit-server-processUnitClientServiceMessageImpl" class="com.jd.easyflow.processunit.infrastructure.gateway.ProcessUnitClientServiceMessageImpl">
+    	<property name="messageSendService" ref="easyflow-processunit-messageSendService"></property>
+    </bean>
+    
+</beans>

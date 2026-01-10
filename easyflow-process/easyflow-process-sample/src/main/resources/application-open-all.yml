@@ -8,7 +8,7 @@ spring:
   mvc:
     static-path-pattern: /static/**
   messages:
-    basename: easyflow.messages.easyflow-process-admin,easyflow.messages.easyflow-process-server,easyflow.messages.easyflow-admin-framework,easyflow.messages.easyflow-form-admin      
+    basename: easyflow.messages.easyflow-process-admin,easyflow.messages.easyflow-process-server,easyflow.messages.easyflow-admin-framework,easyflow.messages.easyflow-form-admin,easyflow.messages.easyflow-processunit-admin       
  
 server:
   port: 9888

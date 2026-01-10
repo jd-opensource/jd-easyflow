@@ -53,7 +53,15 @@
                         <property name="numLength" value="12"></property>
                         <property name="cacheSize" value="10000"></property>
                     </bean>
-                </entry>                                
+                </entry> 
+                <entry key="PROCESS-ID">
+                    <bean class="com.jd.easyflow.codegenerator.domain.service.CodeGenerator">
+                        <property name="rollingType" value="-1"></property>
+                        <property name="start" value="1000000000"></property>
+                        <property name="numLength" value="12"></property>
+                        <property name="cacheSize" value="10000"></property>
+                    </bean>
+                </entry>                                                   
             </map>
         </property>    
     </bean>
