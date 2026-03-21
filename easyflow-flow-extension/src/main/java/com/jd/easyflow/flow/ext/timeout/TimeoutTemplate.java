@@ -57,7 +57,9 @@ public class TimeoutTemplate {
         try {
             result = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            logger.error("node action timeout!");
+            if (logOn) {
+                logger.error("callable timeout!");
+            }
             holder.timeout = true;
             if (interruptOnTimeout) {
                 synchronized (holder.lock) {
@@ -77,7 +79,9 @@ public class TimeoutTemplate {
             }
             throw ExceptionUtil.throwException(e.getCause());
         } catch (InterruptedException e) {
-            logger.warn("thread interrupted!");
+            if (logOn) {
+                logger.warn("thread interrupted!");
+            }
             throw ExceptionUtil.throwException(e);
         }
 

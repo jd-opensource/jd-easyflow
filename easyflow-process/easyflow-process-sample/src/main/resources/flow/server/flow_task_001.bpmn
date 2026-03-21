@@ -11,7 +11,7 @@
       "task":{
           "create":{"formId":"PROCESS_TEST_TASK_CREATE_001","processor":"", "processService":"", "assignee":{"user":"paramData['_USER']"}},
           "execute":{}, 
-          "detail":{ "formId":""}
+          "detail":{ "formId":null}
       }
   }},
 {"id":"task_node_001", "name":"001 task node", "action":{"createExp":"@eventNodeAction"}, "post":{"createExp":"@eventPostHandler"}, 
@@ -23,7 +23,7 @@
       "task":{
           "create":{"processor":"", "processService":"", "assignee":{"user":"{'zhangsan'}"}},
           "execute":{"formId":"PROCESS_TEST_TASK_EXECUTE_001"}, 
-          "detail":{"pageId":"", "formId":""}
+          "detail":{"pageId":null, "formId":null}
       }
   }
 },
@@ -53,8 +53,8 @@
         "processInstanceStatusMessage":{"enable":true}
     },
     "task":{
-        "taskExecute":{"formId":""}, 
-        "taskDetail":{"pageId":"", "formId":""}
+        "taskExecute":{"formId":null}, 
+        "taskDetail":{"pageId":null, "formId":null}
     }
 }
 }

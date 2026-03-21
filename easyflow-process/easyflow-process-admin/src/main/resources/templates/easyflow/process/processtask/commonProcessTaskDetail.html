@@ -96,14 +96,18 @@
 var pageData = /*[(${pageData})]*/ "pageData";
 
 var instanceTemplateId = /*[[${instanceFormId}]]*/ "formId";
-instanceData = pageData.instanceBizData ? pageData.instanceBizData : {};
-instancePage = new J.Page({data:instanceData, ctx:{"op":"detail"}, init:false, templates:[{"code":instanceTemplateId}], $container:$("#instanceForm"), saveAction:null, helper:{show:false}});
-instancePage.loadAndRender();
+if (instanceTemplateId) {
+	instanceData = pageData.instanceBizData ? pageData.instanceBizData : {};
+	instancePage = new J.Page({data:instanceData, ctx:{"op":"detail"}, init:false, templates:[{"code":instanceTemplateId}], $container:$("#instanceForm"), saveAction:null, helper:{show:false}});
+	instancePage.loadAndRender();
+}
 
 var taskDetailTemplateId = /*[[${taskDetailFormId}]]*/ "taskDetailFormId";
-var executeBizData =  /*[(${taskExecuteBizData})]*/ "taskExecuteBizData";
-taskExecuteDataPage = new J.Page({data:executeBizData, ctx:{"op":"detail"}, init:false, templates:[{"code":taskDetailTemplateId}], $container:$("#taskExecuteDataForm"), saveAction:null, helper:{show:false}});
-taskExecuteDataPage.loadAndRender();
+if (taskDetailTemplateId) {
+	var executeBizData =  /*[(${taskExecuteBizData})]*/ "taskExecuteBizData";
+	taskExecuteDataPage = new J.Page({data:executeBizData, ctx:{"op":"detail"}, init:false, templates:[{"code":taskDetailTemplateId}], $container:$("#taskExecuteDataForm"), saveAction:null, helper:{show:false}});
+	taskExecuteDataPage.loadAndRender();
+}
 
  var root = "[(@{/easyflow/processTask})]";
  $('#taskHistoryTable').bootstrapTable({

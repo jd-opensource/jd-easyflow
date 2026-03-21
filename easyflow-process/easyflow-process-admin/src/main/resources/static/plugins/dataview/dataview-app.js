@@ -248,12 +248,16 @@ J.helperPlugin = function() {
             _self.currentTemplateCode = templateCode;
             template = result.resultData;
             var config = JSON.parse(template.config);
-            try {
-            _renderByConf(_self, config);
-            } catch (error) {
-                console.dir(error);
-                _renderByConf(_self, J.jsonTemplateConfig);
-            }
+			if (config == null) {
+				_renderByConf(_self, J.jsonTemplateConfig);
+			} else {
+	            try {
+	            _renderByConf(_self, config);
+	            } catch (error) {
+	                console.dir(error);
+	                _renderByConf(_self, J.jsonTemplateConfig);
+	            }
+			}
         });
 
     }

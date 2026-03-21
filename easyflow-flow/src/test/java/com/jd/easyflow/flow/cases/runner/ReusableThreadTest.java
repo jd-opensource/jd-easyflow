@@ -60,4 +60,14 @@ public class ReusableThreadTest {
         FlowResult result = flowEngine.execute(param);
         logger.info("end");  
     }
+    
+    @Test
+    public void testRunner() {
+        FlowEngineImpl flowEngine = new FlowEngineImpl();
+        flowEngine.setFlowPath("classpath:flow/cases/runner/flow_reusable004.json");
+        flowEngine.init();
+        FlowParam param = new FlowParam("flow_reusable004", "EMPTY_NODE", null);
+        FlowResult result = flowEngine.execute(param);
+        logger.info("end");
+    }
 }

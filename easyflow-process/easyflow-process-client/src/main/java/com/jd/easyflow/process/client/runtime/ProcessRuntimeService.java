@@ -439,6 +439,9 @@ public class ProcessRuntimeService {
                         if (currentOpenNodeIds.size() > 0) {
                             Map<String, Object> data = new HashMap<>();
                             data.put("instanceNo", context.getInstanceNo());
+                            data.put("errorNodeId", startNodeId);
+                            data.put("startNodeIds", startNodeIds);
+                            data.put("currentOpenNodeIds", currentOpenNodeIds);
                             ProcessException exception = new ProcessException(ProcessRuntimeErrorCode.PR_0101.name(),
                                     "Process instance has opened nodes, can not start exec:" + startNodeId);
                             exception.setData(data);
@@ -450,6 +453,9 @@ public class ProcessRuntimeService {
                     if (instance != null && StdProcessConstants.NODE_STATUS_CLOSE.equals(instance.getStatus())) {
                         Map<String, Object> data = new HashMap<>();
                         data.put("instanceNo", context.getInstanceNo());
+                        data.put("errorNodeId", startNodeId);
+                        data.put("startNodeIds", startNodeIds);
+                        data.put("currentOpenNodeIds", currentOpenNodeIds);
                         ProcessException exception = new ProcessException(ProcessRuntimeErrorCode.PR_0101.name(),
                                 "Start node close, can not start exec:" + startNodeId);
                         exception.setData(data);
@@ -460,6 +466,9 @@ public class ProcessRuntimeService {
                 }
                 Map<String, Object> data = new HashMap<>();
                 data.put("instanceNo", context.getInstanceNo());
+                data.put("errorNodeId", startNodeId);
+                data.put("startNodeIds", startNodeIds);
+                data.put("currentOpenNodeIds", currentOpenNodeIds);
                 ProcessException exception = new ProcessException(ProcessRuntimeErrorCode.PR_0102.name(),
                         "Not start node or open node, cannot start exec:" + startNodeId + " current active node:" + currentOpenNodeIds);
                 exception.setData(data);

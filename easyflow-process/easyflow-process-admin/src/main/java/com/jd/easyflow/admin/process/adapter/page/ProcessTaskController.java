@@ -533,7 +533,7 @@ public class ProcessTaskController extends BasePageController {
         if (taskDetailFormId == null) {
             taskDetailFormId = flowDetailProperties == null ? null : (String) flowDetailProperties.get("formId");
         }
-        model.addAttribute("taskDetailFormId", (taskDetailFormId == null || taskDetailFormId.isEmpty()) ? "null" : taskDetailFormId);
+        model.addAttribute("taskDetailFormId", taskDetailFormId);
         model.addAttribute("taskExecuteBizData", (task.getExecuteBizData() == null || task.getExecuteBizData().isEmpty()) ? "null" : task.getExecuteBizData());
         Map<String, Object> pageData = new HashMap<>();
         pageData.put("taskNo", task.getTaskNo());
@@ -543,7 +543,7 @@ public class ProcessTaskController extends BasePageController {
         
         model.addAttribute("pageData", JSON.toJSONString(pageData));
 
-        return "easyflow/process/processtask/commonProcessTaskDetail";
+        return "easyflow/process/processtask/" + pageId;
     }
 
     protected Map<String, Object> queryTaskAdminPropertyByProcessInstanceNo(List<String> processInstanceNos, String propertyKey) {
