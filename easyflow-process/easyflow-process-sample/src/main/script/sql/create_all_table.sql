@@ -100,7 +100,7 @@ CREATE TABLE `process_instance` (
   INDEX `idx_creator` (`creator`),
   INDEX `idx_productCode` (`product_code`),
   INDEX `idx_keyField` (`key_field`),
-  INDEX `idx_parentInstanceNo`(`parent_instance_no`)))
+  INDEX `idx_parentInstanceNo`(`parent_instance_no`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARSET= utf8mb4

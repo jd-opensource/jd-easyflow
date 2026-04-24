@@ -28,7 +28,7 @@ public class ExtNodeThreadInterruptFlowFilter extends BaseFlowFilter {
     @Override
     public FlowResult doFilter(FlowContext request, FilterChain<FlowContext, FlowResult> chain) {
         Set<ExtNodeThreadHolder> holderSet = Collections.synchronizedSet(new HashSet<>());
-        request.put(ExtNodeThreadInterruptHelper.CTX_NODE_THREAD_HODLER_SET, holderSet);
+        request.put(ExtNodeThreadInterruptHelper.CTX_NODE_THREAD_HOLDER_SET, holderSet);
         try {
             return chain.doFilter(request);
         } finally {

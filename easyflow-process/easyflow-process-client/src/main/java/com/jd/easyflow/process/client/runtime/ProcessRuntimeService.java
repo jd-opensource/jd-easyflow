@@ -344,7 +344,7 @@ public class ProcessRuntimeService {
             if (StdProcessConstants.FLUSH_AFTER_NODE.equals(dataFlushPolicy)
                     || StdProcessConstants.FLUSH_BEFORE_AND_AFTER_NODE.equals(dataFlushPolicy)) {
                 syncVariable(context);
-                manager.flushProcess(StdProcessConstants.FLUSH_POINT_AFTER_PORCESS, context, nodeContext);
+                manager.flushProcess(StdProcessConstants.FLUSH_POINT_AFTER_PROCESS, context, nodeContext);
             }
             
             ProcessInclusiveCheckHelper.nodeEndExec(nodeContext, context, manager);

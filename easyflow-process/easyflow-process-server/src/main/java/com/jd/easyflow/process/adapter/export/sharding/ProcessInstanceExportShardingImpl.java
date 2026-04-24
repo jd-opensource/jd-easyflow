@@ -383,7 +383,7 @@ public class ProcessInstanceExportShardingImpl extends ProcessInstanceExportImpl
             String nodeExecutionNo = condition.getField("nodeExecutionNo") == null ? null : (String) condition.getField("nodeExecutionNo").getValue();
             if (nodeInstanceNoList != null && nodeInstanceNoList.size() == 1) {
                 shardingDataQuerier.fillByProcessNodeInstanceNo(nodeInstanceNoList.get(0), shardingData);
-            } else if (nodeExecutionNo == null) {
+            } else if (nodeExecutionNo != null) {
                 shardingDataQuerier.fillByProcessNodeExecutionNo(nodeExecutionNo, shardingData);
             } else {
                 throw new UnsupportedOperationException();

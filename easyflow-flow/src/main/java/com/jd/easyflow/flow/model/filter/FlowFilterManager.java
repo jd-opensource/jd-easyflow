@@ -50,7 +50,7 @@ public class FlowFilterManager {
             for (Filter filter: filters) {
                 filter.init(initContext, flow);
             }
-            refeshFilters();
+            refreshFilters();
         }
         if (nodeFilters != null) {
             for (Filter filter: nodeFilters) {
@@ -62,7 +62,7 @@ public class FlowFilterManager {
             for (Filter filter: nodeActionFilters) {
                 filter.init(initContext, flow);
             }
-            refeshNodeActionFilters();
+            refreshNodeActionFilters();
         }
         if (nodePreHandlerFilters != null) {
             for (Filter filter: nodePreHandlerFilters) {
@@ -74,7 +74,7 @@ public class FlowFilterManager {
             for (Filter filter: nodePostHandlerFilters) {
                 filter.init(initContext, flow);
             }
-            refeshNodePostHandlerFilters();
+            refreshNodePostHandlerFilters();
         }
         if (flowPreHandlerFilters != null) {
             for (Filter filter: flowPreHandlerFilters) {
@@ -90,7 +90,7 @@ public class FlowFilterManager {
         }
     }
     
-    public void destry() {
+    public void destroy() {
         if (filters != null) {
             for (Filter filter: filters) {
                 filter.destroy();
@@ -148,10 +148,10 @@ public class FlowFilterManager {
 
     public void setFilters(List<Filter<FlowContext, FlowResult>> filters) {
         this.filters = filters;
-        refeshFilters();
+        refreshFilters();
     }
     
-    private void refeshFilters() {
+    private void refreshFilters() {
         if (filters == null) {
             this.innerFilters = this.outerFilters = null;
         } else {
@@ -270,10 +270,10 @@ public class FlowFilterManager {
     
     public void setNodeActionFilters(List<Filter<Pair<NodeContext, FlowContext>, Object>> nodeActionFilters) {
         this.nodeActionFilters = nodeActionFilters;
-        refeshNodeActionFilters();
+        refreshNodeActionFilters();
     }
     
-    private void refeshNodeActionFilters() {
+    private void refreshNodeActionFilters() {
         if (nodeActionFilters == null) {
             this.innerNodeActionFilters = this.outerNodeActionFilters = null;
         } else {
@@ -332,7 +332,7 @@ public class FlowFilterManager {
 
     public void setNodePreHandlerFilters(List<Filter<Pair<NodeContext, FlowContext>, Boolean>> nodePreHandlerFilters) {
         this.nodePreHandlerFilters = nodePreHandlerFilters;
-        refeshNodeActionFilters();
+        refreshNodePreHandlerFilters();
     }
     
     private void refreshNodePreHandlerFilters() {
@@ -394,10 +394,10 @@ public class FlowFilterManager {
     public void setNodePostHandlerFilters(
             List<Filter<Pair<NodeContext, FlowContext>, NodeContext[]>> nodePostHandlerFilters) {
         this.nodePostHandlerFilters = nodePostHandlerFilters;
-        refeshNodePostHandlerFilters();
+        refreshNodePostHandlerFilters();
     }
     
-    private void refeshNodePostHandlerFilters() {
+    private void refreshNodePostHandlerFilters() {
         if (nodePostHandlerFilters == null) {
             this.innerNodePostHandlerFilters = this.outerNodePostHandlerFilters = null;
         } else {
@@ -477,7 +477,7 @@ public class FlowFilterManager {
             this.outerFlowPreHandlerFilters = new ArrayList<Filter<FlowContext,Boolean>>();
         }
         this.flowPreHandlerFilters.add(filter);
-        addFilter(filter, this.innerFlowPreHandlerFilters, this.outerFlowPostHandlerFilters);
+        addFilter(filter, this.innerFlowPreHandlerFilters, this.outerFlowPreHandlerFilters);
     }
     
     public boolean noOuterFlowPreHandlerFilter() {

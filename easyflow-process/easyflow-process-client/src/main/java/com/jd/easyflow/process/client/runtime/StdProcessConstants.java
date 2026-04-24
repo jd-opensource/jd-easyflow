@@ -113,6 +113,6 @@ public class StdProcessConstants {
     public static final String FLUSH_POINT_BEFORE_PROCESS = "BEFORE_PROCESS";
     public static final String FLUSH_POINT_BEFORE_NODE = "BEFORE_NODE";
     public static final String FLUSH_POINT_AFTER_NODE = "AFTER_NODE";
-    public static final String FLUSH_POINT_AFTER_PORCESS = "AFTER_PROCESS";
+    public static final String FLUSH_POINT_AFTER_PROCESS = "AFTER_PROCESS";
     
 }

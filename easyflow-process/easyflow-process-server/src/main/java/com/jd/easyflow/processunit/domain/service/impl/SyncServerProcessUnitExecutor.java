@@ -166,7 +166,7 @@ public class SyncServerProcessUnitExecutor extends BaseProcessUnitExecutor {
                 if (policyType == null) {
                     policyType = execPolicy != null ? execPolicy.get(ProcessUnitConstants.REQ_TYPE_EXCEPTION)
                             : ProcessUnitConstants.POLICY_EXCEPTION;
-                    log.info("Excetpion policy:" + policyType);
+                    log.info("Exception policy:" + policyType);
                 }
             }
             policy.setResult(context.getLastResult());

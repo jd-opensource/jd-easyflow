@@ -40,13 +40,13 @@ public class ProcessScheduleSpiInvoker implements ProcessScheduleInvoker {
     @Override
     public ScheduleProcessResVO invoke(ScheduleProcessReqVO vo) {
         log.info("Start invoke by SPI, req:{}", vo);
-        String runtimeSerivce = getRuntimeService(vo);
-        log.info("Runtime Service:" + runtimeSerivce);
+        String runtimeService = getRuntimeService(vo);
+        log.info("Runtime Service:" + runtimeService);
         ProcessScheduleClientService processScheduleClientService = null;
-        if (runtimeSerivce == null || runtimeSerivce.isEmpty()) {
+        if (runtimeService == null || runtimeService.isEmpty()) {
             processScheduleClientService = ObjectFactorys.getDefault().getObject(ProcessScheduleClientService.class);
         } else {
-            String[] serviceInfo = runtimeSerivce.split(":");
+            String[] serviceInfo = runtimeService.split(":");
             String providerId = serviceInfo.length == 1 ? null : serviceInfo[0];
             String serviceId = serviceInfo.length == 1 ? serviceInfo[0] : serviceInfo[1];
             processScheduleClientService = ObjectFactorys.getDefault().getObject(ProcessScheduleClientService.class,

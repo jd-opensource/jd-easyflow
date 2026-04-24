@@ -32,14 +32,14 @@ public class ParallelGatewayConverter extends BaseFlowNodeConverter {
         // Set pre nodes.
         List<SequenceFlow> list = parallelGateway.getIncomingFlows();
         if (list.size() == 0) {
-            throw new FlowException("Parallel gateway:" + flowNode.getId() + " no incomming flows");
+            throw new FlowException("Parallel gateway:" + flowNode.getId() + " no incoming flows");
         }
         if (list.size() > 1) {
             if (node.get(DefConstants.NODE_PROP_PRE) == null) {
                 Map<String, Object> pre = ConvertUtil.getMapValue(node, DefConstants.NODE_PROP_PRE);
                 List<String> preNodes = new ArrayList<>();
                 flowNode.getIncomingFlows().forEach(incomingFlow -> preNodes.add(incomingFlow.getSourceRef()));
-                pre.put("preNodes", preNodes);
+                pre.put(DefConstants.NODE_PRE_PROP_PRE_NODES, preNodes);
             }
         }
         return node;

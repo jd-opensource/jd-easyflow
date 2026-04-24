@@ -28,7 +28,7 @@ public class DbLockService extends BaseLockService {
 
     private DataSource dataSource;
     
-    private String selectForUpdateSql = "select request_id,lock_flag from lock_record where lock_key=? for update";
+    private String selectForUpdateSql = "select request_id,lock_flag,expired_time from lock_record where lock_key=? for update";
     
     private String insertSql = "insert into lock_record(lock_key, lock_flag, request_id, expired_time) values(?,?,?,?)";
     
@@ -71,12 +71,11 @@ public class DbLockService extends BaseLockService {
             String lockFlag = (String) lockRecord.get("lock_flag");
             Number currentExpiredTime = (Number) lockRecord.get("expired_time");
             long expireTime = currentExpiredTime == null ? 0 : currentExpiredTime.longValue();
-            if (LOCK_ON.equals(lockFlag) && expireTime <= currentTime) {
+            if (LOCK_ON.equals(lockFlag) && expireTime > currentTime) {
                 return false;
-            } else {
-                int count = jdbcTemplate.update(lockUpdateSql, requestId, expiredTime, key);
-                return count == 1;
             }
+            int count = jdbcTemplate.update(lockUpdateSql, requestId, expiredTime, key);
+            return count == 1;
         });
     }
     

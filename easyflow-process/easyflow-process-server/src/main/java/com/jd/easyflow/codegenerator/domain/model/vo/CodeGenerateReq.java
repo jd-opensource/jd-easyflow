@@ -43,9 +43,9 @@ public class CodeGenerateReq {
 
     int cacheSize = 1000;
 
-    private String seperator1 = "";
+    private String separator1 = "";
 
-    private String seperator2 = "";
+    private String separator2 = "";
     
     private int batchSize;
 
@@ -121,20 +121,20 @@ public class CodeGenerateReq {
         this.cacheSize = cacheSize;
     }
 
-    public String getSeperator1() {
-        return seperator1;
+    public String getSeparator1() {
+        return separator1;
     }
 
-    public void setSeperator1(String seperator1) {
-        this.seperator1 = seperator1;
+    public void setSeparator1(String separator1) {
+        this.separator1 = separator1;
     }
 
-    public String getSeperator2() {
-        return seperator2;
+    public String getSeparator2() {
+        return separator2;
     }
 
-    public void setSeperator2(String seperator2) {
-        this.seperator2 = seperator2;
+    public void setSeparator2(String separator2) {
+        this.separator2 = separator2;
     }
 
     public int getBatchSize() {

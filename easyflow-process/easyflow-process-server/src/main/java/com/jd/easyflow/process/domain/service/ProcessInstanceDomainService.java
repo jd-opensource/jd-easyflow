@@ -717,7 +717,7 @@ public class ProcessInstanceDomainService {
         }
         String status = currentEntity.getStatus();
         if (STATUS_CANCELED.equals(status)) {
-            log.error("Process instance is cannceled status:{}", instanceNo);
+            log.error("Process instance is canceled status:{}", instanceNo);
             res.setReason(MessageUtil.getMessage("easyflow.process.server.tip.cannotCancelForCanncelStatus"));
             return res;
         }

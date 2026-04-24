@@ -24,7 +24,7 @@ public class ProcessUnitClientGatewayImpl implements ProcessUnitClientGateway {
 
 
     @Override
-    public void ayncCallReal(ExecContext context) {
+    public void asyncCallReal(ExecContext context) {
         AsyncCallRealReq req = new AsyncCallRealReq();
         req.setExecuteExp((String) context.getProcessUnit().getConfig(ProcessUnitConstants.CONF_ASYNC_RUN_EXP));
         req.setExecutionNo(context.getExecution().getExecutionNo());

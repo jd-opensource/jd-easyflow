@@ -92,7 +92,7 @@ public class Flow implements FlowLifeCycle {
         }
         
         eventTrigger.destroy();
-        filterManager.destry();
+        filterManager.destroy();
         if (runner != null) {
             runner.destroy();
         }

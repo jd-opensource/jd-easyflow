@@ -112,7 +112,7 @@ public class AsyncServerProcessUnitExecutor extends BaseProcessUnitExecutor {
             throw new UnsupportedOperationException();
         }
         case ProcessUnitConstants.POLICY_REQUEST: {
-            processUnitClientGateway.ayncCallReal(context);
+            processUnitClientGateway.asyncCallReal(context);
             break;
         }
         default:

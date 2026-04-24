@@ -10,7 +10,7 @@ public enum CommonErrorCode {
     E0000002("Validate not pass"),
     E0000003("Record exists"),
     E0000004("Record not exists"),
-    E0000005("Field is emplty"),
+    E0000005("Field is empty"),
     E0000006("Not login"),
     E0000007("RPC invoke exception"),
     E0000008("Field validate unpass"),

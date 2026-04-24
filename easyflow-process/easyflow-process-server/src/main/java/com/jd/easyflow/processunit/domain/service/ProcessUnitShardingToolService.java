@@ -259,7 +259,7 @@ public class ProcessUnitShardingToolService {
                 }
             });
             if (failList.size() > 0) {
-                log.info("Complare fail list:" + failList);
+                log.info("Compare fail list:" + failList);
             }
         } catch (Exception e) {
             log.error("Compare shard" + shard + " exception", e);

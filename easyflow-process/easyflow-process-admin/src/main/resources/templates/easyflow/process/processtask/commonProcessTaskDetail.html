@@ -78,7 +78,7 @@
                         <label>[[#{easyflow.process.admin.page.commonProcessTaskDetail.executeResult}]]:</label><input class="form-control" th:value="${task.executeBizResult}" readonly="readonly"></input>
                     </div>
                     <div class="form-group col-3" th:if="${task.status=='PENDING'}">
-                        <label>[[#{easyflow.process.admin.page.commonProcessTaskDetail.taskTodoUser}]]:</label><input class="form-control-plaintext" th:value="${assignInfoStr}"></input>
+                        <label>[[#{easyflow.process.admin.page.commonProcessTaskDetail.taskTodoUser}]]:</label><textarea class="form-control" th:text="${assignInfoStr}" readonly="readonly"></textarea>
                     </div> 
             </div>
             <div id="taskExecuteDataForm"></div>

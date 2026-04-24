@@ -61,7 +61,6 @@ public abstract class BaseTaskOperation<P, R> implements TaskClientOperation<P, 
         task.setTaskBizCode(param.getTaskBizCode());
         task.setTaskBizName(param.getTaskBizName());
         task.setCreator(param.getUser());
-        task.setAssignInfo(param.getProductCode());
         task.setAssignInfo(JSON.toJSONString(assignInfo));
         task.setCreatedDate(new Date());
         taskClientManager.getProcessRuntimeManager().op(param.getProcessContext(), () -> { 

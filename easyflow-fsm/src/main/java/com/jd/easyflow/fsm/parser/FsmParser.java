@@ -77,7 +77,7 @@ public class FsmParser {
         String fsmId = (String) map.get(DefConstants.COMMON_PROP_ID);
         String fsmName = (String) map.get(DefConstants.COMMON_PROP_NAME);
         FsmBuilder builder = FsmBuilder.create(fsmId, fsmName);
-        builder.logFag((Boolean) map.get(DefConstants.FSM_PROP_LOG_FLAG));
+        builder.logFlag((Boolean) map.get(DefConstants.FSM_PROP_LOG_FLAG));
         List<FsmParseEventListener> parseListeners = parseParseListeners(map, builder.build(), parseEl, elEvaluator);
         if (preListeners != null) {
             if (parseListeners == null) {

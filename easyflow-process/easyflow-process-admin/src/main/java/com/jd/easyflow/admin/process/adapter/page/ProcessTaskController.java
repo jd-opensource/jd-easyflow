@@ -393,7 +393,7 @@ public class ProcessTaskController extends BasePageController {
             req.setInstanceBizStatus(null);
             req.setInstanceBizData(null);
         } else {
-            throw new UnsupportedOperationException("Unsupproted operation:" + executeDto.getOperation());
+            throw new UnsupportedOperationException("Unsupported operation:" + executeDto.getOperation());
         }
         
         

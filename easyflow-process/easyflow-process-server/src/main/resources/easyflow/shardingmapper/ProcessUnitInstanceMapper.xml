@@ -125,7 +125,7 @@
    <select id="selectListByUnitCodeAndBizNoPrefix"  resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from process_unit_instance${@com.jd.coffeeframework.processunit.infrastructure.sharding.ShardingHolder@getTableSuffix()}
+    from process_unit_instance${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
     where biz_no like concat(#{bizNoPrefix},'%') and deleted=0
     <if test="unitCode != null">
       and process_unit_code = #{unitCode}

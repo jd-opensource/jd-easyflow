@@ -13,8 +13,8 @@
         "processInstanceStatusMessage":{"enable":true}
     },
     "task":{
-        "taskExecute":{"formId":""}, 
-        "taskDetail":{"pageId":"", "formId":""}
+        "taskExecute":{"formId":null}, 
+        "taskDetail":{"pageId":null, "formId":null}
     }
 }</easyflow:properties>
     </bpmn:extensionElements>
@@ -40,7 +40,7 @@
     },
     "execute": {},
     "detail": {
-      "formId": ""
+      "formId": null
     }
   }
 }</easyflow:properties>
@@ -75,8 +75,8 @@
       "formId": "PROCESS_TEST_TASK_EXECUTE_001"
     },
     "detail": {
-      "pageId": "",
-      "formId": ""
+      "pageId": null,
+      "formId": null
     }
   }
 }</easyflow:properties>

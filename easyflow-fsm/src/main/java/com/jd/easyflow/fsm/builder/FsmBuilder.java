@@ -228,7 +228,7 @@ public class FsmBuilder {
         return this;
     }
     
-    public FsmBuilder logFag(Boolean logFlag) {
+    public FsmBuilder logFlag(Boolean logFlag) {
         fsm.setLogFlag(logFlag);;
         return this;
     }

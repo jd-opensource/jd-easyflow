@@ -1,4 +1,4 @@
-package com.jd.easyflow.codegenerator.adaper.export;
+package com.jd.easyflow.codegenerator.adapter.export;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

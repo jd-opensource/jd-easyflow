@@ -177,7 +177,7 @@ public class ProcessUnitService {
                 log.info("Process unit execute start");
                 ExecResult result = asyncServerProcessUnitExecutor.execute(param);
                 ExecuteRes res = new ExecuteRes(result.getResult(), result.getResponseContent());
-                log.info("Process unit execute end:{}");
+                log.info("Process unit execute end:{}", res);
             } else {
                 TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                     @Override
@@ -185,7 +185,7 @@ public class ProcessUnitService {
                         log.info("Process unit execute start");
                         ExecResult result = asyncServerProcessUnitExecutor.execute(param);
                         ExecuteRes res = new ExecuteRes(result.getResult(), result.getResponseContent());
-                        log.info("Process unit execute end:{}");
+                        log.info("Process unit execute end:{}", res);
                     }
                 }); 
             }
@@ -706,8 +706,8 @@ public class ProcessUnitService {
         ProcessUnitInstanceEntity entity = null;
         if (dto.getInstanceNo() != null) {
             entity = processUnitRepository.getInstance(dto.getInstanceNo(), dto.getProcessUnitCode(), dto.getBizNo());
-        } else if (dto.getBizNo() != null && dto.getBizNo() != null) {
-            entity = processUnitRepository.getInstanceByUnitCodeAndBizNo(dto.getProcessUnitCode(), dto.getInstanceNo());
+        } else if (dto.getProcessUnitCode() != null && dto.getBizNo() != null) {
+            entity = processUnitRepository.getInstanceByUnitCodeAndBizNo(dto.getProcessUnitCode(), dto.getBizNo());
         }
         if (entity == null) {
             throw new UserException("process unit instance is null");

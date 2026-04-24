@@ -90,7 +90,7 @@ public class ProcessUnitConstants {
     public static final String EXECUTION_EXT_DATA_BEFORE_VARS = "_before_vars";
     public static final String EXECUTION_EXT_DATA_AFTER_VARS = "_after_vars";
     
-    public static final String CALL_TYPE_UPDATE = "UPATE";
+    public static final String CALL_TYPE_UPDATE = "UPDATE";
     
     public static final String EXECUTION_REQUEST_CONTEXT = "_requestContext";
     

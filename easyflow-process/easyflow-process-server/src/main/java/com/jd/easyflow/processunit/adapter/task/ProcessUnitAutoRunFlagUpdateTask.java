@@ -16,9 +16,9 @@ import com.jd.easyflow.processunit.domain.service.ProcessUnitService;
 /**
  * @author liyuliang5
  */
-public class ProcessUnitAuoRunFlagUpdateTask {
+public class ProcessUnitAutoRunFlagUpdateTask {
 
-    private static final Logger log = LoggerFactory.getLogger(ProcessUnitAuoRunFlagUpdateTask.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcessUnitAutoRunFlagUpdateTask.class);
     
     @Autowired
     private ProcessUnitService processUnitService;

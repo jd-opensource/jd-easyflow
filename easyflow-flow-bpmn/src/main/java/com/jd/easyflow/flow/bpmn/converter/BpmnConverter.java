@@ -233,7 +233,7 @@ public class BpmnConverter {
                 }
                 FlowNodeConverter nodeConverter = flowNodeConverterMap.get(flowElement.getClass());
                 if (nodeConverter == null) {
-                    throw new FlowException("Unsupported BPMN elmenet:ID" + flowElement.getId() + " TYPE:"
+                    throw new FlowException("Unsupported BPMN element:ID" + flowElement.getId() + " TYPE:"
                             + flowElement.getClass().getCanonicalName());
                 }
                 Map<String, Object> node = nodeConverter.convert((FlowNode) flowElement, bpmnModel, flowDef);

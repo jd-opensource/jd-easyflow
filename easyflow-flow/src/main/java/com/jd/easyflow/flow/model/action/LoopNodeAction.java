@@ -152,7 +152,7 @@ public class LoopNodeAction implements NodeAction {
         
         Object loopMaxCountConf = node.getProperty("loopMaxCount");
         if (loopMaxCountConf != null) {
-            loopMaxCount = ((Number)loopMaxCount).longValue();
+            loopMaxCount = ((Number)loopMaxCountConf).longValue();
         }
         loopMaxCountExp = node.getProperty("loopMaxCountExp");
         Map<String, Object> loopMaxCountExecutorConf = (Map<String, Object>) node.getProperty("loopMaxCountExecutor");

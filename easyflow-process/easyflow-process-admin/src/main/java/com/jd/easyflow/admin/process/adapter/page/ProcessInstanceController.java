@@ -225,7 +225,7 @@ public class ProcessInstanceController extends BasePageController {
             root.put("processType", processType);
             root.put("bizNo", bizNo);
             String pageUrlVal = ElFactory.get(elType).evalWithDefaultContext(pageUrl, root, true);
-            if (pageUrlVal == null || pageUrlVal.isEmpty()) {
+            if (pageUrlVal != null && ! pageUrlVal.isEmpty()) {
                 return "redirect:" + pageUrlVal;
             }
         }

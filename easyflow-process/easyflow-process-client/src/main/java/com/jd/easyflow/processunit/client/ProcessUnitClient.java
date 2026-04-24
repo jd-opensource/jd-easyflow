@@ -190,7 +190,7 @@ public class ProcessUnitClient {
         }        
         log.info("Create process unit request, {}", req);
         ExportResponse<ProcessUnitCreateRes> response = getProcessUnitExport().create(new ExportRequest(req));
-        log.info("Create process unit respone:{}", response);
+        log.info("Create process unit response:{}", response);
         ProcessUnitCreateRes res = ExportResponseUtil.unwrap(response);
         return res;
     }
@@ -235,7 +235,7 @@ public class ProcessUnitClient {
         }        
         log.info("Execute process unit request, {}", req);
         ExportResponse<ProcessUnitExecuteRes> response = getProcessUnitExport().execute(new ExportRequest(req));
-        log.info("Execute process unit respone:{}", response);
+        log.info("Execute process unit response:{}", response);
         ProcessUnitExecuteRes res = ExportResponseUtil.unwrap(response);
         return res; 
     }

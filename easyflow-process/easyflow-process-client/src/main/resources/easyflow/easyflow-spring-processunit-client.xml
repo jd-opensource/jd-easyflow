@@ -7,7 +7,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="easyflow-processunit-client-procesUnitClient" class="com.jd.easyflow.processunit.client.ProcessUnitClient">
+    <bean id="easyflow-processunit-client-processUnitClient" class="com.jd.easyflow.processunit.client.ProcessUnitClient">
         <property name="executor">
             <bean class="com.jd.easyflow.processunit.client.service.impl.SyncClientProcessUnitExecutor"></bean>
         </property>

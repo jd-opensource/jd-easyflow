@@ -11,7 +11,7 @@ public class FlowConstants {
     
     public static final String NS_EASYFLOW = "easyflow";
     
-    public static final String EASYFLOW_NS_PREFIX = NS_EASYFLOW + NS_EASYFLOW;
+    public static final String EASYFLOW_NS_PREFIX = NS_EASYFLOW + NS_SEP;
 
 	/**
 	 * Param keys.

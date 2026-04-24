@@ -153,6 +153,7 @@ public class ProcessTaskDomainService {
         ProcessTaskEntity taskEntity = processTaskRepository.getTask(taskNo);
         if (!Objects.equals(taskEntity.getExecutor(), user)) {
             res.setReason(MessageUtil.getMessage("easyflow.process.server.tip.taskExecuteUserAndWithdrawUserInconsistent",  new Object[] {taskEntity.getExecutor(), user}));
+            return res;
         }
         if (!com.jd.easyflow.process.adapter.export.constant.ProcessTaskConstants.TASK_STATUS_FINISH
                 .equals(taskEntity.getStatus())) {
@@ -175,7 +176,7 @@ public class ProcessTaskDomainService {
         Map<String, Object> taskConfig = flowNode.getProperty(ProcessTaskConstants.NODE_PROP_TASK_KEY);
         Map<String, Object> withdrawConfig = (Map<String, Object>) taskConfig
                 .get(ProcessTaskConstants.TASK_PROP_WITHDRAW);
-        if (withdrawConfig == null || Boolean.FALSE.equals(withdrawConfig.get(taskEntity))) {
+        if (withdrawConfig == null || Boolean.FALSE.equals(withdrawConfig.get(ProcessTaskConstants.TASK_PROP_WITHDRAW_ENABLE))) {
             res.setReason(MessageUtil.getMessage("easyflow.process.server.tip.cannotWithdrawForNoConfig", new Object[] {nodeId}));
             return res;
         }
@@ -365,7 +366,7 @@ public class ProcessTaskDomainService {
                 if (ProcessTaskConstants.TASK_EVENT_EXECUTE.equals(eventEntity.getEventType())) {
                     String eventInstanceBizStatus = eventEntity.getInstanceBizStatus();
                     String eventInstanceBizData = eventEntity.getInstanceBizData();
-                    log.info("With draw process instance data, instanceBizStatus:" + eventInstanceBizStatus + " instanceBizData:"
+                    log.info("Withdraw process instance data, instanceBizStatus:" + eventInstanceBizStatus + " instanceBizData:"
                             + eventInstanceBizData);
                     if (eventInstanceBizStatus != null && ! eventInstanceBizStatus.isEmpty()) {
                         processInstance.setBizStatus(eventInstanceBizStatus);

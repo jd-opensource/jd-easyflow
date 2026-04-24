@@ -390,7 +390,7 @@ public class ProcessUnitRepositoryImpl implements ProcessUnitRepository {
                         return null;
                     });
         } catch (DuplicateKeyException e) {
-            log.error("Execution " + entity + " id " + idStr + " insert duplicate excetion," + e.getMessage(), e);
+            log.error("Execution " + entity + " id " + idStr + " insert duplicate exception," + e.getMessage(), e);
             if (insertDuplicateRetryTimes < 1) {
                 throw e;
             }
@@ -410,7 +410,7 @@ public class ProcessUnitRepositoryImpl implements ProcessUnitRepository {
                                 entity.setId(execution.getId());
                                 return null;
                             });
-                    log.info("Execution regenereted id:" + idStr + " retry insert success");
+                    log.info("Execution regenerateted id:" + idStr + " retry insert success");
                     break;
                 } catch (DuplicateKeyException e2) {
                     log.error("Execution " + entity + " id " + idStr + " retry insert exception," + e.getMessage(), e);

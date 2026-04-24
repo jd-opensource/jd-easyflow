@@ -8,5 +8,5 @@ import com.jd.easyflow.processunit.domain.model.vo.ExecContext;
   */
  public interface ProcessUnitClientGateway {
 
-     void ayncCallReal(ExecContext context);
+     void asyncCallReal(ExecContext context);
 }

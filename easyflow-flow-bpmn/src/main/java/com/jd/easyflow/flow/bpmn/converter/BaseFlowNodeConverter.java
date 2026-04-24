@@ -102,6 +102,7 @@ public class BaseFlowNodeConverter implements FlowNodeConverter {
                     if (conditionExp.startsWith(CONDITION_TYPE_CREATE_EXP_PREFIX)) {
                         Map<String, Object> condition = new HashMap<String, Object>();
                         condition.put(CONDITION_TYPE_CREATE_EXP, conditionExp.substring(CONDITION_TYPE_CREATE_EXP_PREFIX.length()));
+                        post.put(DefConstants.NODE_POST_PROP_WHEN, condition);
                     } else {
                         post.put(DefConstants.NODE_POST_PROP_WHEN, conditionExp);
                     }
@@ -117,8 +118,17 @@ public class BaseFlowNodeConverter implements FlowNodeConverter {
                         post.put(DefConstants.NODE_POST_PROP_DEFAULT_TO, sequenceFlow.getTargetRef());
                     } else {
                         Map<String, Object> condition = new HashMap<>();
-                        if (FlowStringUtil.isNotEmpty(sequenceFlow.getConditionExpression())) {
-                            condition.put(DefConstants.NODE_POST_PROP_WHEN, sequenceFlow.getConditionExpression());
+                        String conditionExp = sequenceFlow.getConditionExpression();
+                        if (FlowStringUtil.isNotEmpty(conditionExp)) {
+                            conditionExp = conditionExp.trim();
+                            if (conditionExp.startsWith(CONDITION_TYPE_CREATE_EXP_PREFIX)) {
+                                Map<String, Object> conditionInfo = new HashMap<String, Object>();
+                                conditionInfo.put(CONDITION_TYPE_CREATE_EXP, conditionExp.substring(CONDITION_TYPE_CREATE_EXP_PREFIX.length()));
+                                condition.put(DefConstants.NODE_POST_PROP_WHEN, conditionInfo);
+                            } else {
+                                condition.put(DefConstants.NODE_POST_PROP_WHEN, conditionExp);
+                            }
+                            
                         }
                         condition.put(DefConstants.NODE_POST_PROP_TO, sequenceFlow.getTargetRef());
                         conditionList.add(condition);

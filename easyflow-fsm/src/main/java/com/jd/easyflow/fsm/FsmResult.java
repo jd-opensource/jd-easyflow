@@ -44,7 +44,7 @@ public class FsmResult {
      */
     private State firstTransitionState;
     private Event firstTransitionEvent;
-    private Object firstTransitionResut;
+    private Object firstTransitionResult;
     /**
      * Last transition result.
      */
@@ -132,12 +132,12 @@ public class FsmResult {
         this.firstTransitionEvent = firstTransitionEvent;
     }
 
-    public Object getFirstTransitionResut() {
-        return firstTransitionResut;
+    public Object getFirstTransitionResult() {
+        return firstTransitionResult;
     }
 
-    public void setFirstTransitionResut(Object firstTransitionResut) {
-        this.firstTransitionResut = firstTransitionResut;
+    public void setFirstTransitionResult(Object firstTransitionResult) {
+        this.firstTransitionResult = firstTransitionResult;
     }
 
     public State getLastTransitionState() {

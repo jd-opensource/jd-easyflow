@@ -107,8 +107,8 @@ public class CodeGenerateDomainService {
         generator.setKey(request.getTypeId());
         generator.setNumLength(request.getNumLength());
         generator.setRollingType(request.getRollingType());
-        generator.setSeperator1(request.getSeperator1());
-        generator.setSeperator2(request.getSeperator2());
+        generator.setSeparator1(request.getSeparator1());
+        generator.setSeparator2(request.getSeparator2());
         generator.setStart(request.getStart());
         generator.setStartRandomRange(request.getStartRandomRange());
         generator.setStep(request.getStep());

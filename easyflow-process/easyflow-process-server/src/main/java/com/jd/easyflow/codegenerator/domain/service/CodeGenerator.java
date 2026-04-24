@@ -55,9 +55,9 @@ public class CodeGenerator {
 
     private int numLength;
 
-    private String seperator1 = "";
+    private String separator1 = "";
 
-    private String seperator2 = "";
+    private String separator2 = "";
 
     private long lastSubKeyCheckTime;
 
@@ -71,13 +71,13 @@ public class CodeGenerator {
 
     private Random random = new Random();
     
-    public class SimpleDateFormatThreadLocal extends ThreadLocal<SimpleDateFormat> {
+    public static class SimpleDateFormatThreadLocal extends ThreadLocal<SimpleDateFormat> {
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyyMMdd");
         }
     }
-    SimpleDateFormatThreadLocal sdfThreadLocal = new SimpleDateFormatThreadLocal();
+    public static SimpleDateFormatThreadLocal sdfThreadLocal = new SimpleDateFormatThreadLocal();
 
     
     public CodeGenerator() {
@@ -89,7 +89,7 @@ public class CodeGenerator {
         String nextNumStr = leftPad(nextNumVal + "", numLength, '0');
         String codePrefixKey = PropertyUtil.get(EASYFLOW_CODE_PREFIX_KEY);
         String coffeeCodePrefix = codePrefixKey == null ? "" : codePrefixKey;
-        return coffeeCodePrefix + (codePrefix == null ? "" : codePrefix) + seperator1 + (subKey == null ? "" : subKey + seperator2) + nextNumStr;
+        return coffeeCodePrefix + (codePrefix == null ? "" : codePrefix) + separator1 + (subKey == null ? "" : subKey + separator2) + nextNumStr;
     }
     
     private static String leftPad(String str, int size, char ch) {
@@ -277,21 +277,27 @@ public class CodeGenerator {
         this.numLength = numLength;
     }
 
-    public String getSeperator1() {
-        return seperator1;
+
+
+    public String getSeparator1() {
+        return separator1;
     }
 
-    public void setSeperator1(String seperator1) {
-        this.seperator1 = seperator1;
+
+    public void setSeparator1(String separator1) {
+        this.separator1 = separator1;
     }
 
-    public String getSeperator2() {
-        return seperator2;
+
+    public String getSeparator2() {
+        return separator2;
     }
 
-    public void setSeperator2(String seperator2) {
-        this.seperator2 = seperator2;
+
+    public void setSeparator2(String separator2) {
+        this.separator2 = separator2;
     }
+
 
     public long getSubKeyCheckInterval() {
         return subKeyCheckInterval;

@@ -175,8 +175,8 @@ public class Fsm implements FsmLifeCycle {
                 if (context.isInterrupted()) {
                     if (context.isLogOn() && logger.isInfoEnabled()) {
                         logger.info("fsm interrupted");
-                        break;
                     }
+                    break;
                 }
 
                 State currentState = context.getCurrentState();
@@ -332,7 +332,7 @@ public class Fsm implements FsmLifeCycle {
 
         result.setFirstTransitionState(context.getFirstTransitionState());
         result.setFirstTransitionEvent(context.getFirstTransitionEvent());
-        result.setFirstTransitionResut(context.getFirstTransitionActionResult());
+        result.setFirstTransitionResult(context.getFirstTransitionActionResult());
 
         result.setLastTransitionState(context.getTransitionState());
         result.setLastTransitionEvent(context.getTransitionEvent());

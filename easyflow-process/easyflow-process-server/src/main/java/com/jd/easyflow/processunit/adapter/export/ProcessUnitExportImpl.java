@@ -88,7 +88,7 @@ public class ProcessUnitExportImpl implements ProcessUnitExport {
     @Override
     public ExportResponse<ProcessUnitExecuteRes> execute(ExportRequest<ProcessUnitExecuteReq> request) {
         ProcessUnitExecuteReq req = request.getData();
-        if (req.getProcessUnitInstanceNo() == null && (req.getBizNo() == null || req.getProcessUnitInstanceNo() == null)) {
+        if (req.getProcessUnitInstanceNo() == null && (req.getBizNo() == null || req.getUnitCode() == null)) {
             return ExportResponse.build4Failed(ExportResponseCode.INVALID);
         }
         ExecuteReq executeReq = new ExecuteReq();
@@ -163,7 +163,7 @@ public class ProcessUnitExportImpl implements ProcessUnitExport {
     @Override
     public ExportResponse<Object> updateProcessUnitInstanceByInstanceNoSelective(ExportRequest<ProcessUnitInstanceDTO> req) {
         ProcessUnitInstanceEntity entity = processUnitRepository.getInstance(req.getData().getInstanceNo(),
-                req.getData().getProcessUnitCode(), req.getData().getInstanceNo());
+                req.getData().getProcessUnitCode(), req.getData().getBizNo());
         if (entity == null) {
             return ExportResponse.build4Failed(ExportResponseCode.DATA_EMPTY);
         }

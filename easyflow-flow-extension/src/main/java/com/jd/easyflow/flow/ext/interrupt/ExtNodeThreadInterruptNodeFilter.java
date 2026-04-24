@@ -26,7 +26,7 @@ public class ExtNodeThreadInterruptNodeFilter extends BaseNodeFilter {
         ExtNodeThreadHolder holder = new ExtNodeThreadHolder();
         holder.nodeContext = request.getMiddle();
         holder.executionThread = Thread.currentThread();
-        Set<ExtNodeThreadHolder> set = request.getRight().get(ExtNodeThreadInterruptHelper.CTX_NODE_THREAD_HODLER_SET);
+        Set<ExtNodeThreadHolder> set = request.getRight().get(ExtNodeThreadInterruptHelper.CTX_NODE_THREAD_HOLDER_SET);
         set.add(holder);
         try {
             return chain.doFilter(request);

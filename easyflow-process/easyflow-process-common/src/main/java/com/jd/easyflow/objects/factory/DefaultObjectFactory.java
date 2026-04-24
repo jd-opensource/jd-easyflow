@@ -61,7 +61,7 @@ public class DefaultObjectFactory implements ObjectFactory {
             return (T) o;
         }
         synchronized (clazz) {
-            o = cache.get(clazz);
+            o = cache.get(key);
             if (o != null) {
                 return (T) o;
             }

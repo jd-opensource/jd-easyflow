@@ -32,7 +32,7 @@ public class ProcessUnitClientAsyncExecuteSpel {
             log.info("Process unit client async exec start:{},{}", executeExp, param);
             ExecParam execParam = new ExecParam();
             execParam.setUnitCode(param.getUnitCode());
-            execParam.setBizNo(execParam.getBizNo());
+            execParam.setBizNo(param.getBizNo());
             execParam.setRequestNo("_E_" + param.getExecutionNo());
             param.setRequestContent(param.getRequestContent());
             param.setInvoker(context -> {

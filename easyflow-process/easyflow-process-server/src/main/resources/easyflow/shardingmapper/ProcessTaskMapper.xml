@@ -206,7 +206,7 @@
  <update id="deleteByTaskNo" parameterType="java.lang.String">
     update process_task${@com.jd.easyflow.sharding.ShardingHolder@getTableSuffix()}
     set
-      deleted=false
+      deleted=1
     where task_no = #{taskNo,jdbcType=VARCHAR} and deleted=0
   </update>
   
