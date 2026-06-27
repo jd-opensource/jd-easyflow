@@ -98,6 +98,24 @@ public class ProcessRuntimeManager {
             return instance;
         });
     }
+    
+    public ProcessInstanceDTO getProcessInstanceByInstanceNo(String instanceNo,
+            StdProcessContext context) {
+        return op(context, () -> {
+            ProcessCache cache = context.getCache();
+            for (ProcessInstanceDTO dto : cache.objects(ProcessInstanceDTO.class)) {
+                if (Objects.equals(dto.getInstanceNo(), instanceNo)) {
+                    return dto;
+                }
+            }
+            ProcessInstanceDTO instance = ExportResponseUtil
+                    .unwrap(getProcessInstanceExport().getProcessInstance(new ExportRequest<String>(instanceNo)));
+            if (instance != null) {
+                cache.put(instance.getInstanceNo(), instance, false);
+            }
+            return instance;
+        });
+    }
 
     /**
      * 

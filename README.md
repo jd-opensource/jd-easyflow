@@ -1,22 +1,23 @@
 # JDEasyFlow
 
-### Introduce
-JDEasyFlow is a general flow orchestration component, suitable for service orchestration, workflow, auditing, etc. The characteristics are easy use, flexible, easy extended. Developer can understand using it in 30 minutes, understand its principle half of the day.
+### Introduction
+
+JDEasyFlow is a general-purpose flow orchestration component for service orchestration, workflows, approvals, and similar scenarios. It is easy to use, flexible, and extensible. Developers can learn the basic usage in about 30 minutes and understand the core principles within half a day.
 
 ### Architecture
-JDEasyFlow bottom layer is flow engine/state machine.(select one when use it, flow engine is recommanded), this module supply flow orchestration ability base on JSON format flow definition.
 
-BPMN module supply define flow based on BPMN and visualization ability. visualization is based on [bpmn-js](https://bpmn.io/). The essence of this module is
-convert BPMN format definition to JDEasyFlow JSON format definition.
+JDEasyFlow is built on a flow engine and a state machine. Choose one based on your scenario; the flow engine is recommended for most use cases. The flow engine provides JSON-based flow orchestration capabilities.
 
+The BPMN module provides BPMN-based flow definition and visualization capabilities. Visualization is based on [bpmn-js](https://bpmn.io/). The module converts BPMN definitions into JDEasyFlow JSON definitions.
 
 ### Usage
 
-There are test cases in the test package of source code. You can run or debug directly to understand its usage and implement principle. 
+Test cases are available in the source code. You can run or debug them directly to understand the usage and implementation principles.
 
 #### Flow Engine
 
-1. Import easyflow-flow jar. take maven as example:
+1. Import the `easyflow-flow` JAR. Maven example:
+
 ```
     <dependency>
         <groupId>com.jd.easyflow</groupId>
@@ -25,7 +26,8 @@ There are test cases in the test package of source code. You can run or debug di
     </dependency>
 ```
 
-2. Write flow definition. For example, the sequence is node001->node002->node003:
+2. Write a flow definition. For example, the following flow runs in sequence: `node001 -> node002 -> node003`.
+
 ```
 {"id": "quickstart_001", "name": "Quick Start 001",
 "nodes": [
@@ -35,26 +37,31 @@ There are test cases in the test package of source code. You can run or debug di
 ]
 }
 ```
-QuickStart001Node01Action and so on is java node action class.
 
-3. Write the code of loading flow engine when application start.
+`QuickStart001Node01Action` and similar classes are Java node action classes.
+
+3. Load the flow engine when the application starts.
+
 ```
         FlowEngineImpl flowEngine = new FlowEngineImpl();
         flowEngine.setFlowPath("classpath:flow/quickstart/quickstart_001.json");
         flowEngine.init();
-```     
-You can define FlowEngineImpl bean in Spring(DO NOT configure or invoke init() method explicitly).  
-  
-4. Write the code of invoking flow engine.
+```
+
+You can also define `FlowEngineImpl` as a Spring bean. In that case, do not configure or invoke the `init()` method explicitly.
+
+4. Invoke the flow engine.
+
 ```
        FlowParam param = new FlowParam("quickstart_001");
         FlowResult result = flowEngine.execute(param);
 ```
 
-The executing log are as follows:
+The execution log is as follows:
+
 ```
 [main            ] INFO  FlowEngineImpl          - Start parsing definition files:easyflow-flow/target/test-classes/flow/quickstart/quickstart_001.json
-[main            ] INFO  FlowEngineImpl          - SART EXECUTE FLOW, flowId:quickstart_001 nodeIds:null
+[main            ] INFO  FlowEngineImpl          - START EXECUTE FLOW, flowId:quickstart_001 nodeIds:null
 [main            ] INFO  BaseFlowRunner          - EXECUTE NODE:node001
 [main            ] INFO  QuickStart001Node01Action  - Execute Node 001
 [main            ] INFO  BaseFlowRunner          - NEXT NODES:node002
@@ -64,26 +71,31 @@ The executing log are as follows:
 [main            ] INFO  BaseFlowRunner          - EXECUTE NODE:node003
 [main            ] INFO  QuickStart003Node01Action  - Execute Node 003
 [main            ] INFO  BaseFlowRunner          - NEXT NODES:
-[main            ] INFO  QuickStartTest          - Execute finish, current node is:node003           
+[main            ] INFO  QuickStartTest          - Execute finish, current node is:node003
 ```
-Above is simple usecase, JDEasyFlow support many configurations and use cases. More can be seen in wiki doc.
+
+This is a simple use case. JDEasyFlow supports many other configurations and usage patterns. For more information, see the wiki documentation.
 
 #### FlowEngine-BPMN
-Open flow designer with path easyflow-flow-bpmn/BPMNDesigner.html. Click import button, import easyflow-flow-bpmn/src/test/resources/flow/quickstart/quickstart_001.bpmn file. You can see bpmn flow definition of equal JSON format.
-You only need set flowPaser of FlowEngineImpl to BpmnFlowParser when use.
+
+Open the flow designer at `easyflow-flow-bpmn/BPMNDesigner.html`. Click **Import**, then import `easyflow-flow-bpmn/src/test/resources/flow/quickstart/quickstart_001.bpmn`. You will see a BPMN flow definition equivalent to the JSON definition.
+
+To use BPMN definitions, set the `flowParser` of `FlowEngineImpl` to `BpmnFlowParser`.
 
 #### Process
-Process module provide persistence and task audit ability based on flow engine, needing relation database support. Sample application in the source code can be started as follows:
-1. Checkout source code.
-1. Install relation database system, for example MYSQL(You should obey their license). 
-1. Create database and table. Database name is easyflow, Table schema can be referred by create_all_table.sql and sample_form_template.sql. 
-1. Config database connection info in application-open-all.yml of sample module, Import database driver jar in pom.xml of sample module.
-1. Build the project. Start IntegrationOpenApplication. Access http://localhost:9888.
 
+The Process module provides persistence and task approval capabilities based on the flow engine. It requires a relational database. You can start the sample application from the source code as follows:
+
+1. Check out the source code.
+1. Install a relational database, such as MySQL. Make sure you comply with the database license.
+1. Create the database and tables. The database name is `easyflow`. For the table schema, see `create_all_table.sql` and `sample_form_template.sql`.
+1. Configure the database connection in `application-open-all.yml` of the sample module, and import the database driver JAR in the sample module's `pom.xml`.
+1. Build the project, start `IntegrationOpenApplication`, and access `http://localhost:9888`.
 
 ### More
 
-JDEasyFlow has very flexible extension ability. You can implement more features based on current component. For example flow data persistence, auditting, exception retry. 
+JDEasyFlow is highly extensible. You can build more capabilities on top of the current component, such as flow data persistence, auditing, and exception retry.
 
-### Contact US
-mailTo: liyuliang5@jd.com
+### Contact Us
+
+mailto: liyuliang5@jd.com

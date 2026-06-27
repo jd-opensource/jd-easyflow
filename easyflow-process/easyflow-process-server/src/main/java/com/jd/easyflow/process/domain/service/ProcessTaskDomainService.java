@@ -140,10 +140,6 @@ public class ProcessTaskDomainService {
         scheduleReq.setDataMap(dataMap);
 
         scheduleReq.setNodeIds(new String[] { processTask.getTaskBizCode() });
-        scheduleReq.setProcessType(processTask.getProcessType());
-        scheduleReq.setBizNo(processTask.getBizNo());
-        scheduleReq.setProductCode(processTask.getProductCode());
-        scheduleReq.setProcessInstanceNo(processTask.getProcessInstanceNo());
         processScheduleDomainService.schedule(scheduleReq);
     }
     

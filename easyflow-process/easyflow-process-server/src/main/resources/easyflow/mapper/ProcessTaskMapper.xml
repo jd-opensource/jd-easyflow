@@ -282,7 +282,7 @@
         and process_instance_key_field = #{processInstanceKeyField}
       </if>
       <if test="processInstanceKeyField2 != null">
-        and process_instance_key_field2 like CONCAT(#{processInstanceKeyField2},'%')
+        and process_instance_key_field2 like #{processInstanceKeyField2} || '%'
       </if>
     </where>
   </select>  
@@ -366,7 +366,7 @@
         and process_instance_key_field =#{fieldMap.processInstanceKeyField.value}
       </if>
       <if test="fieldMap.processInstanceKeyField2 != null">
-        and process_instance_key_field2 like CONCAT(#{fieldMap.processInstanceKeyField2.value},'%')
+        and process_instance_key_field2 like #{fieldMap.processInstanceKeyField2.value} || '%'
       </if>
     </where>
   </sql>
@@ -455,7 +455,7 @@
         and task.process_instance_key_field =#{fieldMap.processInstanceKeyField.value}
       </if>
       <if test="fieldMap.processInstanceKeyField2 != null">
-        and task.process_instance_key_field2 like CONCAT(#{fieldMap.processInstanceKeyField2.value},'%')
+        and task.process_instance_key_field2 like #{fieldMap.processInstanceKeyField2.value} || '%'
       </if>
       and (
       <trim prefixOverrides="OR">

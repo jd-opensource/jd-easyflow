@@ -64,8 +64,11 @@ public class DataResponse<T> extends BaseResponse {
 
     @Override
     public String toString() {
-        return "DataResponse [resultData=" + resultData + ", extData=" + extData + "]";
+        return "DataResponse [resultData=" + resultData + ", extData=" + extData + ", resultCode=" + resultCode
+                + ", resultMsg=" + resultMsg + "]";
     }
+
+
     
     
 }

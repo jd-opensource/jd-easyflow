@@ -123,7 +123,7 @@
     select
     <include refid="Base_Column_List" />
     from process_unit_instance
-    where biz_no like concat(#{bizNoPrefix},'%') and deleted=0
+    where biz_no like #{bizNoPrefix} || '%' and deleted=0
     <if test="unitCode != null">
       and process_unit_code = #{unitCode}
     </if>
@@ -144,26 +144,60 @@
         and next_auto_run_time &gt;= #{nextAutoRunTimeStart}
     </if>
     <if test="productCodeList != null and productCodeList.size>0">
-      and `product_code` in
+      and product_code in
       <foreach collection="productCodeList" item="item" open="(" separator="," close=")">
         #{item}
       </foreach>
     </if>
     <if test="excludeProductCodeList != null and excludeProductCodeList.size>0">
-      and `product_code` not in
+      and product_code not in
       <foreach collection="excludeProductCodeList" item="item" open="(" separator="," close=")">
         #{item}
       </foreach>
     </if>  
     <if test="resultList != null and resultList.size>0">
-      and `result` in
+      and result in
       <foreach collection="resultList" item="item" open="(" separator="," close=")">
         #{item}
       </foreach>
     </if> 
     <if test="variableList != null and variableList.size>0">
 	      <foreach collection="variableList" item="item">
-	          and  `ext_data`->'$._vars.${item.name}' ${item.operator} ${item.value}
+	          and  ext_data->'$._vars.${item.name}' ${item.operator} ${item.value}
+	      </foreach>    
+    </if>        
+    limit 100000
+  </select>
+
+      <select id="findAsyncInstanceList" parameterType="com.jd.easyflow.processunit.domain.model.vo.QueryAsyncInstanceVO"  resultType="string" databaseId="SQLite">
+    select 
+    instance_no
+    from process_unit_instance
+    where process_unit_code=#{unitCode} and auto_run_flag=1 and next_auto_run_time&lt;=#{nextAutoRunTime} and deleted=0
+    <if test="nextAutoRunTimeStart != null">
+        and next_auto_run_time &gt;= #{nextAutoRunTimeStart}
+    </if>
+    <if test="productCodeList != null and productCodeList.size>0">
+      and product_code in
+      <foreach collection="productCodeList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="excludeProductCodeList != null and excludeProductCodeList.size>0">
+      and product_code not in
+      <foreach collection="excludeProductCodeList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>  
+    <if test="resultList != null and resultList.size>0">
+      and result in
+      <foreach collection="resultList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if> 
+    <if test="variableList != null and variableList.size>0">
+	      <foreach collection="variableList" item="item">
+	          and json_extract(ext_data, '$._vars.${item.name}') ${item.operator} ${item.value}
 	      </foreach>    
     </if>        
     limit 100000
@@ -178,30 +212,64 @@
         and next_auto_run_time &gt;= #{nextAutoRunTimeStart}
     </if>
     <if test="productCodeList != null and productCodeList.size>0">
-      and `product_code` in
+      and product_code in
       <foreach collection="productCodeList" item="item" open="(" separator="," close=")">
         #{item}
       </foreach>
     </if>
     <if test="excludeProductCodeList != null and excludeProductCodeList.size>0">
-      and `product_code` not in
+      and product_code not in
       <foreach collection="excludeProductCodeList" item="item" open="(" separator="," close=")">
         #{item}
       </foreach>
     </if>  
     <if test="resultList != null and resultList.size>0">
-      and `result` in
+      and result in
       <foreach collection="resultList" item="item" open="(" separator="," close=")">
         #{item}
       </foreach>
     </if> 
     <if test="variableList != null and variableList.size>0">
 	      <foreach collection="variableList" item="item">
-	          and  `ext_data`->'$._vars.${item.name}' ${item.operator} ${item.value}
+	          and  ext_data->'$._vars.${item.name}' ${item.operator} ${item.value}
 	      </foreach>    
     </if>        
     limit 100000
-  </select>  
+  </select>
+
+      <select id="findAsyncInstanceKeyList" parameterType="com.jd.easyflow.processunit.domain.model.vo.QueryAsyncInstanceVO"  resultType="com.jd.easyflow.processunit.domain.model.vo.ProcessUnitInstanceKey" databaseId="SQLite">
+    select 
+    instance_no as instanceNo,process_unit_code as unitCode,biz_no as bizNo
+    from process_unit_instance
+    where process_unit_code=#{unitCode} and auto_run_flag=1 and next_auto_run_time&lt;=#{nextAutoRunTime} and deleted=0
+    <if test="nextAutoRunTimeStart != null">
+        and next_auto_run_time &gt;= #{nextAutoRunTimeStart}
+    </if>
+    <if test="productCodeList != null and productCodeList.size>0">
+      and product_code in
+      <foreach collection="productCodeList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="excludeProductCodeList != null and excludeProductCodeList.size>0">
+      and product_code not in
+      <foreach collection="excludeProductCodeList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>  
+    <if test="resultList != null and resultList.size>0">
+      and result in
+      <foreach collection="resultList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if> 
+    <if test="variableList != null and variableList.size>0">
+	      <foreach collection="variableList" item="item">
+	          and json_extract(ext_data, '$._vars.${item.name}') ${item.operator} ${item.value}
+	      </foreach>    
+    </if>        
+    limit 100000
+  </select>
 
   <select id="selectProcessUnitInstance" resultMap="BaseResultMap">
     select

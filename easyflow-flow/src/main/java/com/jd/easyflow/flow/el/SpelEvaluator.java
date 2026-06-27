@@ -48,7 +48,7 @@ public class SpelEvaluator implements ElEvaluator, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
     
-    private static Map<String, Expression> templateCacheMap = new ConcurrentHashMap();
+    private Map<String, Expression> templateCacheMap = new ConcurrentHashMap();
     
     {
         context.addPropertyAccessor(new MapAccessor());

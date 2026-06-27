@@ -42,11 +42,6 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    public void create(Map<String, Object> actionConf, FlowNode node) throws Exception {
-        FunCallNodeAction nodeAction = new FunCallNodeAction();
-        nodeAction.applicationContext = this.applicationContext;
-        nodeAction.init(actionConf, node);
-    }
 
     public FunCallNodeAction() {
         // NOOP
@@ -72,8 +67,8 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
         }
         if (instance == null) {
             String beanMethod = (String) actionConf.get("beanMethod");
-            if (FlowStringUtil.isEmpty(beanMethod)) {
-                String[] info = classMethod.split("::");
+            if (FlowStringUtil.isNotEmpty(beanMethod)) {
+                String[] info = beanMethod.split("::");
                 methodName = info[1];
                 instance = applicationContext.getBean(methodName);
                 clazz = instance.getClass();
@@ -127,8 +122,8 @@ public class FunCallNodeAction implements NodeAction, ApplicationContextAware {
                         nodeContext.put(key, value);
                     } else if (FunCallConstants.RESULT_SCOPE_FLOW.equals(scope)) {
                         context.put(key, value);
-                    } else {
-                        result.put(key, value);
+                    } else if (FunCallConstants.RESULT_SCOPE_RESULT.equals(scope)) {
+                        context.getResult().put(key, value);
                     }
                 }
             }

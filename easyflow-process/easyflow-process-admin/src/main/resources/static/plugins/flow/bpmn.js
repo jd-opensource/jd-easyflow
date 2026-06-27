@@ -259,6 +259,11 @@
                 _self.$bpmnContainer.find(".infoPanel>form").toggle();
                 _self.$bpmnContainer.find(".infoPanel").toggleClass("infoPanel-up");
             })
+            // wide panel
+            this.$bpmnContainer.find(".j-bpmn-info-expand").click(function() {
+                _self.$bpmnContainer.find(".infoPanel").toggleClass("infoPanel-wide");
+                $(this).toggleClass("fa-expand fa-compress");
+            })
             if (this.cfg.mode == 'view') {
                 _self.$bpmnContainer.find(".j-bpmn-info-title").toggle();
                 _self.$bpmnContainer.find(".infoPanel>form").toggle();
@@ -1434,7 +1439,7 @@
                   '<option value="condition">' + J.msg['bpmn.condition'] + '</option>' +
               '</select></div> ' +
           '</div>  ' +                                                
-         '<div class="infoPanel"><div class="infoPanelHead"><span class="j-bpmn-info-title"><b>' + J.msg['bpmn.infoPanel'] + '</b></span><i class="fa fa-info-circle j-bpmn-info-switch"></i><div style="clear:both"></div></div><form class="container"></form></div>  ' +                                          
+         '<div class="infoPanel"><div class="infoPanelHead"><span class="j-bpmn-info-title"><b>' + J.msg['bpmn.infoPanel'] + '</b></span><i class="fa fa-info-circle j-bpmn-info-switch"></i><i class="fa fa-expand j-bpmn-info-expand"></i><div style="clear:both"></div></div><form class="container"></form></div>  ' +                                          
       '</div>    ';
     }
 

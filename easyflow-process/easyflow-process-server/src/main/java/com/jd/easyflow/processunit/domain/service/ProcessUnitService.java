@@ -888,7 +888,7 @@ public class ProcessUnitService {
             ProcessUnitInstanceEntity instance = processUnitRepository.getInstance(key.getInstanceNo(),
                     key.getUnitCode(), key.getBizNo());
             if (instance == null) {
-                throw new UserException("instance:" + key.getInstanceNo() + " " + key.getUnitCode() + " " + key.getBizNo() + " not exits");
+                throw new UserException("instance:" + key.getInstanceNo() + " " + key.getUnitCode() + " " + key.getBizNo() + " does not exist");
             }    
             if (entity == null) {
                 entity = processUnitRepository.getProcessUnitByCode(instance.getProcessUnitCode());

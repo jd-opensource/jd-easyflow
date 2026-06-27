@@ -54,7 +54,7 @@ public class LoopNodeAction implements NodeAction {
             maximum = loopMaxCount;
         }
         if (context.isLogOn() && logger.isDebugEnabled()) {
-            logger.debug("Loop maximum:" + loopMaxCount);
+            logger.debug("Loop maximum:" + maximum);
         }
 
         if (maximum == null && loopConditionExp == null && loopConditionExecutor == null) {

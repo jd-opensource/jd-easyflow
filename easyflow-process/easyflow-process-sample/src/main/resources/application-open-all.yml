@@ -20,6 +20,10 @@ db:
   #jdbcUrl: jdbc:mysql://localhost:3306/easyflow?characterEncoding=UTF-8 
   username: root
   password: 12345678
+  # SQLite connection (uncomment to use SQLite, comment MySQL above)
+  #jdbcUrl: jdbc:sqlite:${user.home}/.easyflow/easyflow.db?busy_timeout=30000
+  #username: 
+  #password:
    
 global-provider: spring
 

@@ -43,6 +43,30 @@ public class DbLockService extends BaseLockService {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
         transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        
+        // Auto-detect SQLite and adjust SQL accordingly
+        boolean sqlite = isSqlite(dataSource);
+        if (sqlite) {
+            selectForUpdateSql = "select request_id,lock_flag,expired_time from lock_record where lock_key=?";
+            // SQLite does not support nested transactions (REQUIRES_NEW causes SQLITE_BUSY).
+            // Use PROPAGATION_REQUIRED to join the outer transaction instead of suspending it.
+            // Note: this TransactionTemplate is new'd (not a Spring bean),
+            // so SqliteTransactionPostProcessor won't reach it — handle here instead.
+            transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        }
+    }
+    
+    /**
+     * Detect SQLite via JDBC DatabaseMetaData.
+     */
+    private boolean isSqlite(DataSource ds) {
+        try (java.sql.Connection conn = ds.getConnection()) {
+            String productName = conn.getMetaData().getDatabaseProductName();
+            return "SQLite".equalsIgnoreCase(productName);
+        } catch (Exception e) {
+            logger.warn("Failed to detect database type, fallback to MySQL: " + e.getMessage());
+            return false;
+        }
     }
     
     /**

@@ -399,6 +399,12 @@ public class StdProcessFlowListener extends BaseFlowEventListener {
         instance.setBizStatus(context.get(StdFlowProcessConstants.FLOW_CTX_BIZ_STATUS));
         instance.setParentInstanceNo(context.get(StdFlowProcessConstants.FLOW_CTX_PARENT_INSTANCE_NO));
         instance.setParentNodeInstanceNo(context.get(StdFlowProcessConstants.FLOW_CTX_PARENT_NODE_INSTANCE_NO));
+        if (instance.getProcessType() == null && instance.getBizNo() == null && instance.getInstanceNo() != null) {
+            ProcessInstanceDTO processInstanceDto = ExportResponseUtil
+                    .unwrap(getProcessInstanceExport().getProcessInstance(new ExportRequest<>(instance.getInstanceNo())));
+            instance.setProcessType(processInstanceDto.getProcessType());
+            instance.setBizNo(processInstanceDto.getBizNo());
+        }
     }
 
     public void onNodeStart(FlowEvent event) {

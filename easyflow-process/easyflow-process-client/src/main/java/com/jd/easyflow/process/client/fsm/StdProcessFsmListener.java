@@ -136,6 +136,12 @@ public class StdProcessFsmListener implements FsmEventListener {
         instance.setProcessDefId(processDefId);      
         instance.setBizData(context.getData(StdFsmProcessConstants.FSM_CTX_BIZ_DATA));
         instance.setBizStatus(context.getData(StdFsmProcessConstants.FSM_CTX_BIZ_STATUS));
+        if (instance.getProcessType() == null && instance.getBizNo() == null && instance.getInstanceNo() != null) {
+            ProcessInstanceDTO processInstanceDto = ExportResponseUtil
+                    .unwrap(getProcessInstanceExport().getProcessInstance(new ExportRequest<>(instance.getInstanceNo())));
+            instance.setProcessType(processInstanceDto.getProcessType());
+            instance.setBizNo(processInstanceDto.getBizNo());
+        }
         processContext.setProcessType(instance.getProcessType());
         processContext.setBizNo(instance.getBizNo());
 

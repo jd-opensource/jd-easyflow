@@ -47,6 +47,10 @@
 .infoPanel form {
 	width:300px;
 }
+
+.infoPanel.infoPanel-wide form {
+    width:600px;
+}
 .infoPanel .col {
     padding-left:0px;
     padding-right: 0px;
@@ -56,9 +60,11 @@
     height:30px;
 }
 
-.j-bpmn-info-switch {
+.j-bpmn-info-switch,
+.j-bpmn-info-expand {
     float:right;
     cursor: pointer;
+    margin-left:6px;
 }
 
 /**instance info style*/

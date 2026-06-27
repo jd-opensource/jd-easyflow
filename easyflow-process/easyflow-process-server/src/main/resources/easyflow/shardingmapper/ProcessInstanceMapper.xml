@@ -295,7 +295,7 @@
         and key_field =#{fieldMap.keyField.value}
       </if>
       <if test="fieldMap.keyField2 != null">
-        and key_field2 like CONCAT(#{fieldMap.keyField2.value},'%')
+        and key_field2 like #{fieldMap.keyField2.value} || '%'
       </if>
       <if test="fieldMap.instanceNoStart != null">
         and instanceNo &gt;#{fieldMap.instanceNoStart.value}

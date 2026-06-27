@@ -12,6 +12,7 @@ import com.jd.easyflow.common.client.dto.ClientResponseCode;
 import com.jd.easyflow.common.exception.UserException;
 import com.jd.easyflow.objects.factory.ObjectFactorys;
 import com.jd.easyflow.process.adapter.export.dto.definition.ProcessDTO;
+import com.jd.easyflow.process.domain.constant.StdProcessConstants;
 import com.jd.easyflow.process.domain.model.entity.ProcessDefinitionEntity;
 import com.jd.easyflow.process.domain.model.entity.ProcessInstanceEntity;
 import com.jd.easyflow.process.domain.model.vo.ScheduleProcessReqVO;
@@ -84,9 +85,19 @@ public class ProcessScheduleSpiInvoker implements ProcessScheduleInvoker {
      */
     private String getRuntimeService(ScheduleProcessReqVO vo) {
         String processId = vo.getProcessId();
-        if ((processId == null || processId.isEmpty()) && (vo.getProcessInstanceNo() != null && ! vo.getProcessInstanceNo().isEmpty())) {
-            ProcessInstanceEntity entity = processRepository.getByProcessInstanceNo(vo.getProcessInstanceNo());
-            processId = entity.getProcessDefId();
+        if ((processId == null || processId.isEmpty())) {
+            String processInstanceNo = vo.getDataMap() == null ? null : (String) vo.getDataMap().get(StdProcessConstants.PARAM_INSTANCENO);
+            if (processInstanceNo != null && ! processInstanceNo.isEmpty()) {
+                ProcessInstanceEntity entity = processRepository.getByProcessInstanceNo(processInstanceNo);
+                processId = entity.getProcessDefId();
+            } else {
+                String processType = vo.getDataMap() == null ? null : (String) vo.getDataMap().get(StdProcessConstants.PARAM_PROCESS_TYPE);
+                String bizNo = vo.getDataMap() == null ? null : (String) vo.getDataMap().get(StdProcessConstants.PARAM_BIZNO);
+                if (processType != null && bizNo != null) {
+                    ProcessInstanceEntity entity = processRepository.getProcessInstanceByProcessTypeAndBizNo(processType, bizNo);
+                    processId = entity.getProcessDefId();
+                }
+            }
         }
 
         if (processId != null && ! processId.isEmpty()) {

@@ -34,8 +34,14 @@
     </bean>
    
 
+	<!-- DatabaseIdProvider: enables MyBatis databaseId mechanism.
+	     Returns the database product name (e.g. "SQLite", "MySQL") as databaseId.
+	     No property mapping needed — Mapper XML uses databaseId="SQLite" directly. -->
+	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider"/>
+
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
+		<property name="databaseIdProvider" ref="databaseIdProvider" />
 		<property name="mapperLocations">
 			<array>
 		      <value>classpath*:easyflow/mapper/SequenceMapper.xml</value>
@@ -47,6 +53,7 @@
 	
     <bean id="puSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="processUnitShardingDataSource" />
+        <property name="databaseIdProvider" ref="databaseIdProvider" />
 	<property name="mapperLocations">
 		<array>
 			<value>classpath*:easyflow/shardingmapper/ProcessUnitExecutionMapper.xml</value>
@@ -61,6 +68,7 @@
     
      <bean id="processSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="processShardingDataSource" />
+        <property name="databaseIdProvider" ref="databaseIdProvider" />
 		<property name="mapperLocations">
 			<array>
 		      <value>classpath*:easyflow/shardingmapper/ProcessInstanceMapper.xml</value>

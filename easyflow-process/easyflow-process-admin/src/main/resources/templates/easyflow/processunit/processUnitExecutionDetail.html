@@ -1,5 +1,5 @@
 <div th:class="'container-fluid j-info-container frame-' + ${detail.executionNo}">
-    <div class="card-header mb-3">[[#{easyflow.process.admin.page.processUnitExecutionDetail.excutionDetailInfo}]]</div>
+    <div class="card-header mb-3">[[#{easyflow.process.admin.page.processUnitExecutionDetail.executionDetailInfo}]]</div>
     <div class="row">
         <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.executionNo}]]:</dt><dd th:text="${detail.executionNo}"></dd></dl>
         <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.requestNo}]]:</dt><dd th:text="${detail.requestNo}"></dd></dl>
@@ -20,7 +20,7 @@
         <dd th:if="${detail.execType=='TASK_ASYNC'}">[[#{easyflow.process.admin.page.processUnitExecutionDetail.execTypeTask}]]</dd>
         <dd th:if="${detail.execType=='MSG_ASYNC'}">[[#{easyflow.process.admin.page.processUnitExecutionDetail.execTypeMsg}]]</dd>        
         </dl>  
-        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.elapseTime}]]:</dt><dd th:text="${detail.elaspeTime}"></dd></dl>              
+        <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.elaspeTime}]]:</dt><dd th:text="${detail.elaspeTime}"></dd></dl>              
     </div> 
    <div class="row">     
         <dl class="j-info-group col"><dt>[[#{easyflow.process.admin.page.processUnitExecutionDetail.requestTime}]]:</dt><dd th:text="${#dates.format(detail.requestTime,'yyyy-MM-dd HH:mm:ss')}"></dd></dl>               

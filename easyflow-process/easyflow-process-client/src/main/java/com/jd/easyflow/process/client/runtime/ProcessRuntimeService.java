@@ -44,9 +44,13 @@ public class ProcessRuntimeService {
                 .equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_CREATE_INSTANCE_EVERY_TIME))) {
             String bizRelation = PropertiesUtil.get(processProperties, StdProcessConstants.PROP_BIZ_RELATION);
             if (bizRelation == null || StdProcessConstants.BIZ_RELATION_ONE_ONE.equals(bizRelation)) {
-                processInstance = manager.getProcessInstanceByProcessTypeAndBizNo(instance.getProcessType(),
-                        instance.getBizNo(), context);
-
+                if (instance.getInstanceNo() != null) {
+                    processInstance = manager.getProcessInstanceByInstanceNo(instance.getInstanceNo(), context);
+                    validateProcessNoAndBizNoConsistent(processInstance, instance);
+                } else {
+                    processInstance = manager.getProcessInstanceByProcessTypeAndBizNo(instance.getProcessType(),
+                            instance.getBizNo(), context);
+                }
                 if (processInstance != null
                         && StdProcessConstants.STATUS_CANCELED.equals(processInstance.getStatus())) {
                     Map<String, Object> data = new HashMap<>();
@@ -58,8 +62,13 @@ public class ProcessRuntimeService {
                 }
 
             }  else if (StdProcessConstants.BIZ_RELATION_MANY_ONE.equals(bizRelation)) {
-                processInstance = manager.getActiveProcessInstanceByProcessTypeAndBizNo(instance.getProcessType(),
-                        instance.getBizNo(), context);
+                if (instance.getInstanceNo() != null) {
+                    processInstance = manager.getProcessInstanceByInstanceNo(instance.getInstanceNo(), context);
+                    validateProcessNoAndBizNoConsistent(processInstance, instance);
+                } else {
+                    processInstance = manager.getActiveProcessInstanceByProcessTypeAndBizNo(instance.getProcessType(),
+                            instance.getBizNo(), context);
+                }
             } else {
                 throw new IllegalArgumentException("Illegal bizRelation:" + bizRelation);
             }
@@ -150,6 +159,17 @@ public class ProcessRuntimeService {
         if (Boolean.TRUE.equals(PropertiesUtil.get(processProperties, StdProcessConstants.PROP_DATA_FLUSH_BEFORE_PROCESS))) {
             syncVariable(context);
             manager.flushProcess(StdProcessConstants.FLUSH_POINT_BEFORE_PROCESS, context, null);
+        }
+    }
+    
+    private void validateProcessNoAndBizNoConsistent(ProcessInstanceDTO processInstance, ProcessInstanceDTO instance) {
+        if (instance.getProcessType() != null && !instance.getProcessType().equals(processInstance.getProcessType())) {
+            throw new IllegalArgumentException(
+                    "processType illeagal," + instance.getProcessType() + ":" + processInstance.getProcessType());
+        }
+        if (instance.getBizNo() != null && !instance.getBizNo().equals(processInstance.getBizNo())) {
+            throw new IllegalArgumentException(
+                    "bizNo illeagal," + instance.getBizNo() + ":" + processInstance.getBizNo());
         }
     }
 

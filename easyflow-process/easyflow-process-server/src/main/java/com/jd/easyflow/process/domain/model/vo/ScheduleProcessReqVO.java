@@ -17,13 +17,6 @@ public class ScheduleProcessReqVO {
     
     private Map<String, Object> dataMap;
     
-    private String processType;
-    
-    private String bizNo;
-    
-    private String processInstanceNo;
-    
-    private String productCode;
 
     public String getProcessId() {
         return processId;
@@ -57,43 +50,11 @@ public class ScheduleProcessReqVO {
         this.dataMap = dataMap;
     }
 
-    public String getProcessType() {
-        return processType;
-    }
-
-    public void setProcessType(String processType) {
-        this.processType = processType;
-    }
-
-    public String getBizNo() {
-        return bizNo;
-    }
-
-    public void setBizNo(String bizNo) {
-        this.bizNo = bizNo;
-    }
-
-    public String getProcessInstanceNo() {
-        return processInstanceNo;
-    }
-
-    public void setProcessInstanceNo(String processInstanceNo) {
-        this.processInstanceNo = processInstanceNo;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
-    }
 
     @Override
     public String toString() {
         return "ScheduleProcessReqVO [processId=" + processId + ", nodeIds=" + Arrays.toString(nodeIds) + ", param="
-                + param + ", dataMap=" + dataMap + ", processType=" + processType + ", bizNo=" + bizNo
-                + ", processInstanceNo=" + processInstanceNo + ", productCode=" + productCode + "]";
+                + param + ", dataMap=" + dataMap + "]";
     }
     
     

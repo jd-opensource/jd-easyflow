@@ -85,6 +85,9 @@ https://github.com/eclipse-aspectj/aspectj/blob/master/LICENSE
 >>> snakeyml:
 https://github.com/snakeyaml/snakeyaml/blob/master/LICENSE.txt
 
+>>> sqlite:
+https://sqlite.org/copyright.html
+
 
 
 

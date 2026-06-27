@@ -87,6 +87,16 @@
 		and deleted ='0'
 		for update
 	</select>
+
+	<select id="selectForUpdate" resultMap="BaseResultMap" databaseId="SQLite">
+		select
+		<include refid="Base_Column_List" />
+		from `sequence` where seq_key=#{key}
+		<if test="subKey != null">
+			and seq_sub_key = #{subKey}
+		</if>
+		and deleted ='0'
+	</select>
 	
   <update id="updateValueByPrimaryKey">
     update `sequence` set seq_value=#{seqValue} where id=#{id} and deleted ='0';

@@ -13,8 +13,14 @@
 		<property name="password" value="${db.password}" />
 	</bean>
 
+	<!-- DatabaseIdProvider: enables MyBatis databaseId mechanism.
+	     Returns the database product name (e.g. "SQLite", "MySQL") as databaseId.
+	     No property mapping needed — Mapper XML uses databaseId="SQLite" directly. -->
+	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider"/>
+
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
+		<property name="databaseIdProvider" ref="databaseIdProvider" />
 		<property name="mapperLocations">
 		  <array>
 		      <value>classpath*:easyflow/mapper/*Mapper.xml</value>
@@ -30,5 +36,9 @@
 		com.jd.easyflow.processunit.infrastructure.persistence.mapper"
 		/>
 	</bean>
-	
+
+	<!-- SQLite support: auto-detects SQLite from db.jdbcUrl.
+	     If SQLite: registers Date TypeHandler + downgrades REQUIRES_NEW transactions.
+	     If MySQL: no effect, zero overhead. -->
+	<bean class="com.jd.easyflow.common.sqlite.spring.SqliteSupportPostProcessor"/>
 </beans>

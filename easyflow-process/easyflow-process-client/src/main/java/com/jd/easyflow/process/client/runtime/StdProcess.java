@@ -35,7 +35,11 @@ public class StdProcess implements Process {
         if (extProperties == null) {
             extProperties = new ConcurrentHashMap<>();
         }
-        extProperties.put(key, value);
+        if (value == null) {
+            extProperties.remove(key);
+        } else {
+            extProperties.put(key, value);
+        }
     }
     
     public <T>T getExtProperty(String key) {

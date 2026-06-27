@@ -660,6 +660,7 @@ J.Select = J.Components['select'] = function(cfg) {
                 val = null;
             }
             if (val != null && cfgType == "json") {
+				val = JSON.parse(JSON.stringify(val));
                 for (var i in val) {
                     val[i] = JSON.parse(val[i]);
                 }

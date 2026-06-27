@@ -166,7 +166,7 @@
         and node_id = #{nodeId}
       </if>
       <if test="status != null and status.size>0">
-        AND `status` IN
+        AND status IN
         <foreach collection="status" item="item" open="(" separator="," close=")">
           #{item}
         </foreach>
