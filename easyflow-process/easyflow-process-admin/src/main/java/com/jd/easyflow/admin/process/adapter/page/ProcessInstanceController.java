@@ -116,6 +116,7 @@ public class ProcessInstanceController extends BasePageController {
     }
 
     protected WebResponse<PagerResult> getData(PagerCondition condition) {
+        checkPageParams(condition);
         FieldEntry fieldEntry = condition.getField("queryType");
         String currentUser = userGroupAdminExtension.getCurrentUser(null);
         if (fieldEntry != null && "MY".equals(fieldEntry.getValue())) {

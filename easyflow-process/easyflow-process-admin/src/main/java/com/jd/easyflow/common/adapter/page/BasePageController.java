@@ -1,5 +1,7 @@
 package com.jd.easyflow.common.adapter.page;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -104,23 +106,57 @@ public class BasePageController {
         if (condition.getPageSize() < 0) {
             condition.setPageSize(20);
         }
+        FieldEntry createdDateStart = condition.getField("createdDateStart");
+        if (createdDateStart != null) {
+            createdDateStart.setValue(normalizeDateStart(createdDateStart.getValue()));
+        }
         FieldEntry createdDateEnd = condition.getField("createdDateEnd");
         if (createdDateEnd != null) {
-            createdDateEnd.setValue(createdDateEnd.getValue() + " 23:59:59");
+            createdDateEnd.setValue(normalizeDateEnd(createdDateEnd.getValue()));
         }
         FieldEntry endDate = condition.getField("endDate");
         if (endDate != null) {
-            endDate.setValue(endDate.getValue() + " 23:59:59");
+            endDate.setValue(normalizeDateEnd(endDate.getValue()));
         }
         FieldEntry modifiedDateEnd = condition.getField("modifiedDateEnd");
         if (modifiedDateEnd != null) {
-            modifiedDateEnd.setValue(modifiedDateEnd.getValue() + " 23:59:59");
+            modifiedDateEnd.setValue(normalizeDateEnd(modifiedDateEnd.getValue()));
         }
         FieldEntry checkDateEnd = condition.getField("checkDateEnd");
         if (checkDateEnd != null) {
-            checkDateEnd.setValue(checkDateEnd.getValue() + " 23:59:59");
+            checkDateEnd.setValue(normalizeDateEnd(checkDateEnd.getValue()));
         }
         PagerConditionHelper.setValueType(condition, "productCodeList", List.class);
+    }
+    
+    private Object normalizeDateStart(Object value) {
+        if (value instanceof String && ((String) value).length() == 10) {
+            return parseDate(value + " 00:00:00");
+        }
+        return parseDate(value);
+    }
+
+    private Object normalizeDateEnd(Object value) {
+        if (value instanceof String && ((String) value).length() == 10) {
+            return parseDate(value + " 23:59:59");
+        }
+        return parseDate(value);
+    }
+    
+    private Object parseDate(Object value) {
+        if (!(value instanceof String)) {
+            return value;
+        }
+        String date = (String) value;
+        if (date.length() != 19) {
+            return value;
+        }
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+        } catch (ParseException e) {
+            logger.warn("Parse date param failed, value:" + date, e);
+            return value;
+        }
     }
     
     protected String getRootPath() {

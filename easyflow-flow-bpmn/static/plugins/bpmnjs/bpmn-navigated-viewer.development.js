@@ -1,5 +1,5 @@
 /*!
- * bpmn-js - bpmn-navigated-viewer v13.2.1
+ * bpmn-js - bpmn-navigated-viewer v18.16.0
  *
  * Copyright (c) 2014-present, camunda Services GmbH
  *
@@ -8,7 +8,7 @@
  *
  * Source Code: https://github.com/bpmn-io/bpmn-js
  *
- * Date: 2023-08-05
+ * Date: 2026-09-02
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -16,22 +16,22 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.BpmnNavigatedViewer = factory());
 })(this, (function () { 'use strict';
 
-  function e(e,t){t&&(e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}));}
+  function e(e,t){t&&(e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:false,writable:true,configurable:true}}));}
 
   /**
    * Flatten array, one level deep.
    *
    * @template T
    *
-   * @param {T[][]} arr
+   * @param {T[][] | T[] | null} [arr]
    *
    * @return {T[]}
    */
 
-  const nativeToString$1 = Object.prototype.toString;
-  const nativeHasOwnProperty$1 = Object.prototype.hasOwnProperty;
+  const nativeToString = Object.prototype.toString;
+  const nativeHasOwnProperty = Object.prototype.hasOwnProperty;
 
-  function isUndefined$2(obj) {
+  function isUndefined$1(obj) {
     return obj === undefined;
   }
 
@@ -39,16 +39,20 @@
     return obj !== undefined;
   }
 
-  function isArray$2(obj) {
-    return nativeToString$1.call(obj) === '[object Array]';
+  function isNil(obj) {
+    return obj == null;
+  }
+
+  function isArray$1(obj) {
+    return nativeToString.call(obj) === '[object Array]';
   }
 
   function isObject(obj) {
-    return nativeToString$1.call(obj) === '[object Object]';
+    return nativeToString.call(obj) === '[object Object]';
   }
 
   function isNumber(obj) {
-    return nativeToString$1.call(obj) === '[object Number]';
+    return nativeToString.call(obj) === '[object Number]';
   }
 
   /**
@@ -57,7 +61,7 @@
    * @return {boolean}
    */
   function isFunction(obj) {
-    const tag = nativeToString$1.call(obj);
+    const tag = nativeToString.call(obj);
 
     return (
       tag === '[object Function]' ||
@@ -69,7 +73,7 @@
   }
 
   function isString(obj) {
-    return nativeToString$1.call(obj) === '[object String]';
+    return nativeToString.call(obj) === '[object String]';
   }
 
   /**
@@ -80,8 +84,8 @@
    *
    * @return {Boolean}
    */
-  function has$1(target, key) {
-    return nativeHasOwnProperty$1.call(target, key);
+  function has(target, key) {
+    return !isNil(target) && nativeHasOwnProperty.call(target, key);
   }
 
   /**
@@ -150,7 +154,7 @@
 
     let match;
 
-    forEach$1(collection, function(val, key) {
+    forEach(collection, function(val, key) {
       if (matchFn(val, key)) {
         match = val;
 
@@ -170,15 +174,15 @@
    * @param {Collection<T>} collection
    * @param {Matcher<T>} matcher
    *
-   * @return {number}
+   * @return {number | string | undefined}
    */
   function findIndex(collection, matcher) {
 
     const matchFn = toMatcher(matcher);
 
-    let idx = isArray$2(collection) ? -1 : undefined;
+    let idx = isArray$1(collection) ? -1 : undefined;
 
-    forEach$1(collection, function(val, key) {
+    forEach(collection, function(val, key) {
       if (matchFn(val, key)) {
         idx = key;
 
@@ -205,7 +209,7 @@
 
     let result = [];
 
-    forEach$1(collection, function(val, key) {
+    forEach(collection, function(val, key) {
       if (matchFn(val, key)) {
         result.push(val);
       }
@@ -225,20 +229,20 @@
    *
    * @return {T} return result that stopped the iteration
    */
-  function forEach$1(collection, iterator) {
+  function forEach(collection, iterator) {
 
     let val,
         result;
 
-    if (isUndefined$2(collection)) {
+    if (isUndefined$1(collection)) {
       return;
     }
 
-    const convertKey = isArray$2(collection) ? toNum$1 : identity$1;
+    const convertKey = isArray$1(collection) ? toNum : identity;
 
     for (let key in collection) {
 
-      if (has$1(collection, key)) {
+      if (has(collection, key)) {
         val = collection[key];
 
         result = iterator(val, convertKey(key));
@@ -265,7 +269,7 @@
    */
   function reduce(collection, iterator, result) {
 
-    forEach$1(collection, function(value, idx) {
+    forEach(collection, function(value, idx) {
       result = iterator(result, value, idx);
     });
 
@@ -314,11 +318,11 @@
    *
    * @return {Array} transformed collection
    */
-  function map$1(collection, fn) {
+  function map(collection, fn) {
 
     let result = [];
 
-    forEach$1(collection, function(val, key) {
+    forEach(collection, function(val, key) {
       result.push(fn(val, key));
     });
 
@@ -368,15 +372,13 @@
   }
 
 
-  function identity$1(arg) {
+  function identity(arg) {
     return arg;
   }
 
-  function toNum$1(arg) {
+  function toNum(arg) {
     return Number(arg);
   }
-
-  /* global setTimeout clearTimeout */
 
   /**
    * @typedef { {
@@ -471,7 +473,7 @@
    *
    * @return {Function} bound function
    */
-  function bind$2(fn, target) {
+  function bind$1(fn, target) {
     return fn.bind(target);
   }
 
@@ -485,6 +487,58 @@
    */
   function assign$1(target, ...others) {
     return Object.assign(target, ...others);
+  }
+
+  /**
+   * Sets a nested property of a given object to the specified value.
+   *
+   * This mutates the object and returns it.
+   *
+   * @template T
+   *
+   * @param {T} target The target of the set operation.
+   * @param {(string|number)[]} path The path to the nested value.
+   * @param {any} value The value to set.
+   *
+   * @return {T}
+   */
+  function set$1(target, path, value) {
+
+    let currentTarget = target;
+
+    forEach(path, function(key, idx) {
+
+      if (typeof key !== 'number' && typeof key !== 'string') {
+        throw new Error('illegal key type: ' + typeof key + '. Key should be of type number or string.');
+      }
+
+      if (key === 'constructor') {
+        throw new Error('illegal key: constructor');
+      }
+
+      if (key === '__proto__') {
+        throw new Error('illegal key: __proto__');
+      }
+
+      let nextKey = path[idx + 1];
+      let nextTarget = currentTarget[key];
+
+      if (isDefined(nextKey) && isNil(nextTarget)) {
+        nextTarget = currentTarget[key] = isNaN(+nextKey) ? {} : [];
+      }
+
+      if (isUndefined$1(nextKey)) {
+        if (isUndefined$1(value)) {
+          delete currentTarget[key];
+        } else {
+          currentTarget[key] = value;
+        }
+      } else {
+        currentTarget = nextTarget;
+      }
+    });
+
+    return target;
   }
 
   /**
@@ -504,7 +558,7 @@
 
     let obj = Object(target);
 
-    forEach$1(properties, function(prop) {
+    forEach(properties, function(prop) {
 
       if (prop in obj) {
         result[prop] = target[prop];
@@ -531,7 +585,7 @@
 
     let obj = Object(target);
 
-    forEach$1(obj, function(prop, key) {
+    forEach(obj, function(prop, key) {
 
       if (properties.indexOf(key) === -1) {
         result[key] = prop;
@@ -730,6 +784,26 @@
    *
    * @return {boolean}
    */
+  function isHorizontal(element) {
+
+    if (!is$1(element, 'bpmn:Participant') && !is$1(element, 'bpmn:Lane')) {
+      return undefined;
+    }
+
+    var isHorizontal = getDi(element).isHorizontal;
+
+    if (isHorizontal === undefined) {
+      return true;
+    }
+
+    return isHorizontal;
+  }
+
+  /**
+   * @param {Element} element
+   *
+   * @return {boolean}
+   */
   function isEventSubProcess(element) {
     return element && !!getBusinessObject(element).triggeredByEvent;
   }
@@ -742,7 +816,18 @@
    * @return {boolean}
    */
   function isConnection(value) {
-    return isObject(value) && has$1(value, 'waypoints');
+    return isObject(value) && has(value, 'waypoints');
+  }
+
+  /**
+   * Checks whether a value is an instance of Label.
+   *
+   * @param {any} value
+   *
+   * @return {boolean}
+   */
+  function isLabel(value) {
+    return isObject(value) && has(value, 'labelTarget');
   }
 
   /**
@@ -963,6 +1048,94 @@
     }
   }
 
+  /**
+   * Returns the surrounding bbox for all elements in
+   * the array or the element primitive.
+   *
+   * @param {Element|Element[]} elements
+   * @param {boolean} [stopRecursion=false]
+   *
+   * @return {Rect}
+   */
+  function getBBox(elements, stopRecursion) {
+
+    stopRecursion = !!stopRecursion;
+    if (!isArray$1(elements)) {
+      elements = [ elements ];
+    }
+
+    var minX,
+        minY,
+        maxX,
+        maxY;
+
+    forEach(elements, function(element) {
+
+      // If element is a connection the bbox must be computed first
+      var bbox = element;
+      if (element.waypoints && !stopRecursion) {
+        bbox = getBBox(element.waypoints, true);
+      }
+
+      var x = bbox.x,
+          y = bbox.y,
+          height = bbox.height || 0,
+          width = bbox.width || 0;
+
+      if (x < minX || minX === undefined) {
+        minX = x;
+      }
+      if (y < minY || minY === undefined) {
+        minY = y;
+      }
+
+      if ((x + width) > maxX || maxX === undefined) {
+        maxX = x + width;
+      }
+      if ((y + height) > maxY || maxY === undefined) {
+        maxY = y + height;
+      }
+    });
+
+    return {
+      x: minX,
+      y: minY,
+      height: maxY - minY,
+      width: maxX - minX
+    };
+  }
+
+  /**
+   * Get the element's type
+   *
+   * @param {Element} element
+   *
+   * @return {'connection' | 'shape' | 'root'}
+   */
+  function getType(element) {
+
+    if ('waypoints' in element) {
+      return 'connection';
+    }
+
+    if ('x' in element) {
+      return 'shape';
+    }
+
+    return 'root';
+  }
+
+  /**
+   * @param {Element} element
+   *
+   * @return {boolean}
+   */
+  function isFrameElement$1(element) {
+    return !!(element && element.isFrame);
+  }
+
+  var TEXT_ANNOTATION_PADDING = 7;
+
   function ensureImported(element, target) {
 
     if (element.ownerDocument !== target.ownerDocument) {
@@ -983,6 +1156,7 @@
    * appendTo utility
    */
 
+
   /**
    * Append a node to a target element and return the appended node.
    *
@@ -998,6 +1172,7 @@
   /**
    * append utility
    */
+
 
   /**
    * Append a node to an element
@@ -1271,36 +1446,6 @@
      return this.list.contains(name);
    };
 
-  function remove$2(element) {
-    var parent = element.parentNode;
-
-    if (parent) {
-      parent.removeChild(element);
-    }
-
-    return element;
-  }
-
-  /**
-   * Clear utility
-   */
-
-  /**
-   * Removes all children from the given element
-   *
-   * @param  {DOMElement} element
-   * @return {DOMElement} the element (for chaining)
-   */
-  function clear$1(element) {
-    var child;
-
-    while ((child = element.firstChild)) {
-      remove$2(child);
-    }
-
-    return element;
-  }
-
   var ns = {
     svg: 'http://www.w3.org/2000/svg'
   };
@@ -1309,9 +1454,10 @@
    * DOM parsing utility
    */
 
+
   var SVG_START = '<svg xmlns="' + ns.svg + '"';
 
-  function parse$1(svg) {
+  function parse(svg) {
 
     var unwrap = false;
 
@@ -1360,6 +1506,7 @@
    */
 
 
+
   /**
    * Create a specific type from name or SVG markup.
    *
@@ -1371,8 +1518,10 @@
   function create$1(name, attrs) {
     var element;
 
+    name = name.trim();
+
     if (name.charAt(0) === '<') {
-      element = parse$1(name).firstChild;
+      element = parse(name).firstChild;
       element = document.importNode(element, true);
     } else {
       element = document.createElementNS(ns.svg, name);
@@ -1388,6 +1537,7 @@
   /**
    * Geometry helpers
    */
+
 
   // fake node used to instantiate svg geometry elements
   var node = null;
@@ -1442,9 +1592,7 @@
   }
 
   function createTransform(matrix) {
-    if (matrix) {
-      return getNode().createSVGTransformFromMatrix(matrix);
-    } else {
+    {
       return getNode().createSVGTransform();
     }
   }
@@ -1454,7 +1602,7 @@
    */
 
   var TEXT_ENTITIES = /([&<>]{1})/g;
-  var ATTR_ENTITIES = /([\n\r"]{1})/g;
+  var ATTR_ENTITIES = /([&<>\n\r"]{1})/g;
 
   var ENTITY_REPLACEMENT = {
     '&': '&amp;',
@@ -1526,38 +1674,6 @@
     return output;
   }
 
-  /**
-   * innerHTML like functionality for SVG elements.
-   * based on innerSVG (https://code.google.com/p/innersvg)
-   */
-
-
-  function set$1(element, svg) {
-
-    var parsed = parse$1(svg);
-
-    // clear element contents
-    clear$1(element);
-
-    if (!svg) {
-      return;
-    }
-
-    if (!isFragment(parsed)) {
-
-      // extract <svg> from parsed document
-      parsed = parsed.documentElement;
-    }
-
-    var nodes = slice$1(parsed.childNodes);
-
-    // import + append each node
-    for (var i = 0; i < nodes.length; i++) {
-      appendTo(nodes[i], element);
-    }
-
-  }
-
   function get(element) {
     var child = element.firstChild,
         output = [];
@@ -1570,29 +1686,21 @@
     return output.join('');
   }
 
-  function isFragment(node) {
-    return node.nodeName === '#document-fragment';
-  }
-
   function innerSVG(element, svg) {
 
-    if (svg !== undefined) {
-
-      try {
-        set$1(element, svg);
-      } catch (e) {
-        throw new Error('error parsing SVG: ' + e.message);
-      }
-
-      return element;
-    } else {
+    {
       return get(element);
     }
   }
 
+  function remove$2(element) {
+    var parent = element.parentNode;
 
-  function slice$1(arr) {
-    return Array.prototype.slice.call(arr);
+    if (parent) {
+      parent.removeChild(element);
+    }
+
+    return element;
   }
 
   /**
@@ -1653,7 +1761,7 @@
    * @return {string}
    */
   function componentsToPath(elements) {
-    return elements.flat().join(',').replace(/,?([A-z]),?/g, '$1');
+    return elements.flat().join(',').replace(/,?([A-Za-z]),?/g, '$1');
   }
 
   /**
@@ -1796,6 +1904,7 @@
   }
 
   var black = 'hsl(225, 10%, 15%)';
+  var white = 'white';
 
   // element utils //////////////////////
 
@@ -1843,39 +1952,42 @@
   /**
    * @param {Element} element
    * @param {string} [defaultColor]
+   * @param {string} [overrideColor]
    *
    * @return {string}
    */
-  function getFillColor(element, defaultColor) {
+  function getFillColor(element, defaultColor, overrideColor) {
     var di = getDi(element);
 
-    return di.get('color:background-color') || di.get('bioc:fill') || defaultColor || 'white';
+    return overrideColor || di.get('color:background-color') || di.get('bioc:fill') || defaultColor || white;
   }
 
   /**
    * @param {Element} element
    * @param {string} [defaultColor]
+   * @param {string} [overrideColor]
    *
    * @return {string}
    */
-  function getStrokeColor(element, defaultColor) {
+  function getStrokeColor(element, defaultColor, overrideColor) {
     var di = getDi(element);
 
-    return di.get('color:border-color') || di.get('bioc:stroke') || defaultColor || black;
+    return overrideColor || di.get('color:border-color') || di.get('bioc:stroke') || defaultColor || black;
   }
 
   /**
    * @param {Element} element
    * @param {string} [defaultColor]
    * @param {string} [defaultStrokeColor]
+   * @param {string} [overrideColor]
    *
    * @return {string}
    */
-  function getLabelColor(element, defaultColor, defaultStrokeColor) {
+  function getLabelColor(element, defaultColor, defaultStrokeColor, overrideColor) {
     var di = getDi(element),
         label = di.get('label');
 
-    return label && label.get('color:color') || defaultColor ||
+    return overrideColor || (label && label.get('color:color')) || defaultColor ||
       getStrokeColor(element, defaultStrokeColor);
   }
 
@@ -1979,6 +2091,126 @@
     return componentsToPath(rectPath);
   }
 
+  /**
+   * Get width and height from element or overrides.
+   *
+   * @param {Dimensions|Rect|ShapeLike} bounds
+   * @param {Object} overrides
+   *
+   * @returns {Dimensions}
+   */
+  function getBounds(bounds, overrides = {}) {
+    return {
+      width: getWidth(bounds, overrides),
+      height: getHeight(bounds, overrides)
+    };
+  }
+
+  /**
+   * Get width from element or overrides.
+   *
+   * @param {Dimensions|Rect|ShapeLike} bounds
+   * @param {Object} overrides
+   *
+   * @returns {number}
+   */
+  function getWidth(bounds, overrides = {}) {
+    return has(overrides, 'width') ? overrides.width : bounds.width;
+  }
+
+  /**
+   * Get height from element or overrides.
+   *
+   * @param {Dimensions|Rect|ShapeLike} bounds
+   * @param {Object} overrides
+   *
+   * @returns {number}
+   */
+  function getHeight(bounds, overrides = {}) {
+    return has(overrides, 'height') ? overrides.height : bounds.height;
+  }
+
+  /* eslint-disable no-multi-assign */
+
+  const wrapMap = {
+  	legend: [1, '<fieldset>', '</fieldset>'],
+  	tr: [2, '<table><tbody>', '</tbody></table>'],
+  	col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
+  	_default: [0, '', ''],
+  };
+
+  wrapMap.td
+  = wrapMap.th = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
+
+  wrapMap.option
+  = wrapMap.optgroup = [1, '<select multiple="multiple">', '</select>'];
+
+  wrapMap.thead
+  = wrapMap.tbody
+  = wrapMap.colgroup
+  = wrapMap.caption
+  = wrapMap.tfoot = [1, '<table>', '</table>'];
+
+  wrapMap.polyline
+  = wrapMap.ellipse
+  = wrapMap.polygon
+  = wrapMap.circle
+  = wrapMap.text
+  = wrapMap.line
+  = wrapMap.path
+  = wrapMap.rect
+  = wrapMap.g = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'];
+
+  function domify(htmlString, document = globalThis.document) {
+  	if (typeof htmlString !== 'string') {
+  		throw new TypeError('String expected');
+  	}
+
+  	// Handle comment nodes
+  	const commentMatch = /^<!--(.*?)-->$/s.exec(htmlString);
+  	if (commentMatch) {
+  		return document.createComment(commentMatch[1]);
+  	}
+
+  	const tagName = /<([\w:]+)/.exec(htmlString)?.[1];
+
+  	if (!tagName) {
+  		return document.createTextNode(htmlString);
+  	}
+
+  	htmlString = htmlString.trim();
+
+  	// Body support
+  	if (tagName === 'body') {
+  		const element = document.createElement('html');
+  		element.innerHTML = htmlString;
+  		const {lastChild} = element;
+  		lastChild.remove();
+  		return lastChild;
+  	}
+
+  	// Wrap map
+  	let [depth, prefix, suffix] = Object.hasOwn(wrapMap, tagName) ? wrapMap[tagName] : wrapMap._default;
+  	let element = document.createElement('div');
+  	element.innerHTML = prefix + htmlString + suffix;
+  	while (depth--) {
+  		element = element.lastChild;
+  	}
+
+  	// One element
+  	if (element.firstChild === element.lastChild) {
+  		const {firstChild} = element;
+  		firstChild.remove();
+  		return firstChild;
+  	}
+
+  	// Several elements
+  	const fragment = document.createDocumentFragment();
+  	fragment.append(...element.childNodes);
+
+  	return fragment;
+  }
+
   function _mergeNamespaces$1(n, m) {
     m.forEach(function (e) {
       e && typeof e !== 'string' && !Array.isArray(e) && Object.keys(e).forEach(function (k) {
@@ -1992,81 +2224,6 @@
       });
     });
     return Object.freeze(n);
-  }
-
-  /**
-   * Flatten array, one level deep.
-   *
-   * @param {Array<?>} arr
-   *
-   * @return {Array<?>}
-   */
-
-  const nativeToString = Object.prototype.toString;
-  const nativeHasOwnProperty = Object.prototype.hasOwnProperty;
-
-  function isUndefined$1(obj) {
-    return obj === undefined;
-  }
-
-  function isArray$1(obj) {
-    return nativeToString.call(obj) === '[object Array]';
-  }
-
-  /**
-   * Return true, if target owns a property with the given key.
-   *
-   * @param {Object} target
-   * @param {String} key
-   *
-   * @return {Boolean}
-   */
-  function has(target, key) {
-    return nativeHasOwnProperty.call(target, key);
-  }
-
-
-  /**
-   * Iterate over collection; returning something
-   * (non-undefined) will stop iteration.
-   *
-   * @param  {Array|Object} collection
-   * @param  {Function} iterator
-   *
-   * @return {Object} return result that stopped the iteration
-   */
-  function forEach(collection, iterator) {
-
-    let val,
-        result;
-
-    if (isUndefined$1(collection)) {
-      return;
-    }
-
-    const convertKey = isArray$1(collection) ? toNum : identity;
-
-    for (let key in collection) {
-
-      if (has(collection, key)) {
-        val = collection[key];
-
-        result = iterator(val, convertKey(key));
-
-        if (result === false) {
-          return val;
-        }
-      }
-    }
-  }
-
-
-  function identity(arg) {
-    return arg;
-  }
-
-  function toNum(arg) {
-    return Number(arg);
   }
 
   /**
@@ -2256,107 +2413,106 @@
   };
 
   /**
-   * Remove all children from the given element.
+   * Clear utility
    */
-  function clear(el) {
-
-    var c;
-
-    while (el.childNodes.length) {
-      c = el.childNodes[0];
-      el.removeChild(c);
-    }
-
-    return el;
-  }
 
   /**
-   * @param { HTMLElement } element
-   * @param { String } selector
+   * Removes all children from the given element
    *
-   * @return { boolean }
+   * @param {Element} element
+   *
+   * @return {Element} the element (for chaining)
    */
-  function matches(element, selector) {
-    return element && typeof element.matches === 'function' && element.matches(selector);
+  function clear(element) {
+    var child;
+
+    while ((child = element.firstChild)) {
+      element.removeChild(child);
+    }
+
+    return element;
   }
 
   /**
    * Closest
    *
    * @param {Element} el
-   * @param {String} selector
-   * @param {Boolean} checkYourSelf (optional)
+   * @param {string} selector
+   * @param {boolean} checkYourSelf (optional)
    */
   function closest(element, selector, checkYourSelf) {
-    var currentElem = checkYourSelf ? element : element.parentNode;
+    var actualElement = checkYourSelf ? element : element.parentNode;
 
-    while (currentElem && currentElem.nodeType !== document.DOCUMENT_NODE &&
-        currentElem.nodeType !== document.DOCUMENT_FRAGMENT_NODE) {
+    return actualElement && typeof actualElement.closest === 'function' && actualElement.closest(selector) || null;
+  }
 
-      if (matches(currentElem, selector)) {
-        return currentElem;
-      }
-
-      currentElem = currentElem.parentNode;
-    }
-
-    return matches(currentElem, selector) ? currentElem : null;
+  function getDefaultExportFromCjs$1 (x) {
+  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
   }
 
   var componentEvent = {};
 
-  var bind$1, unbind$1, prefix$6;
+  var hasRequiredComponentEvent;
 
-  function detect () {
-    bind$1 = window.addEventListener ? 'addEventListener' : 'attachEvent';
-    unbind$1 = window.removeEventListener ? 'removeEventListener' : 'detachEvent';
-    prefix$6 = bind$1 !== 'addEventListener' ? 'on' : '';
+  function requireComponentEvent () {
+  	if (hasRequiredComponentEvent) return componentEvent;
+  	hasRequiredComponentEvent = 1;
+  	var bind, unbind, prefix;
+
+  	function detect () {
+  	  bind = window.addEventListener ? 'addEventListener' : 'attachEvent';
+  	  unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent';
+  	  prefix = bind !== 'addEventListener' ? 'on' : '';
+  	}
+
+  	/**
+  	 * Bind `el` event `type` to `fn`.
+  	 *
+  	 * @param {Element} el
+  	 * @param {String} type
+  	 * @param {Function} fn
+  	 * @param {Boolean} capture
+  	 * @return {Function}
+  	 * @api public
+  	 */
+
+  	componentEvent.bind = function(el, type, fn, capture){
+  	  if (!bind) detect();
+  	  el[bind](prefix + type, fn, capture || false);
+  	  return fn;
+  	};
+
+  	/**
+  	 * Unbind `el` event `type`'s callback `fn`.
+  	 *
+  	 * @param {Element} el
+  	 * @param {String} type
+  	 * @param {Function} fn
+  	 * @param {Boolean} capture
+  	 * @return {Function}
+  	 * @api public
+  	 */
+
+  	componentEvent.unbind = function(el, type, fn, capture){
+  	  if (!unbind) detect();
+  	  el[unbind](prefix + type, fn, capture || false);
+  	  return fn;
+  	};
+  	return componentEvent;
   }
 
-  /**
-   * Bind `el` event `type` to `fn`.
-   *
-   * @param {Element} el
-   * @param {String} type
-   * @param {Function} fn
-   * @param {Boolean} capture
-   * @return {Function}
-   * @api public
-   */
-
-  var bind_1 = componentEvent.bind = function(el, type, fn, capture){
-    if (!bind$1) detect();
-    el[bind$1](prefix$6 + type, fn, capture || false);
-    return fn;
-  };
-
-  /**
-   * Unbind `el` event `type`'s callback `fn`.
-   *
-   * @param {Element} el
-   * @param {String} type
-   * @param {Function} fn
-   * @param {Boolean} capture
-   * @return {Function}
-   * @api public
-   */
-
-  var unbind_1 = componentEvent.unbind = function(el, type, fn, capture){
-    if (!unbind$1) detect();
-    el[unbind$1](prefix$6 + type, fn, capture || false);
-    return fn;
-  };
+  var componentEventExports = requireComponentEvent();
+  var index = /*@__PURE__*/getDefaultExportFromCjs$1(componentEventExports);
 
   var event = /*#__PURE__*/_mergeNamespaces$1({
     __proto__: null,
-    bind: bind_1,
-    unbind: unbind_1,
-    'default': componentEvent
-  }, [componentEvent]);
+    default: index
+  }, [componentEventExports]);
 
   /**
    * Module dependencies.
    */
+
 
   /**
    * Delegate event `type` to `selector`
@@ -2412,120 +2568,6 @@
     unbind
   };
 
-  /**
-   * Expose `parse`.
-   */
-
-  var domify = parse;
-
-  /**
-   * Tests for browser support.
-   */
-
-  var innerHTMLBug = false;
-  var bugTestDiv;
-  if (typeof document !== 'undefined') {
-    bugTestDiv = document.createElement('div');
-    // Setup
-    bugTestDiv.innerHTML = '  <link/><table></table><a href="/a">a</a><input type="checkbox"/>';
-    // Make sure that link elements get serialized correctly by innerHTML
-    // This requires a wrapper element in IE
-    innerHTMLBug = !bugTestDiv.getElementsByTagName('link').length;
-    bugTestDiv = undefined;
-  }
-
-  /**
-   * Wrap map from jquery.
-   */
-
-  var map = {
-    legend: [1, '<fieldset>', '</fieldset>'],
-    tr: [2, '<table><tbody>', '</tbody></table>'],
-    col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
-    // for script/link/style tags to work in IE6-8, you have to wrap
-    // in a div with a non-whitespace character in front, ha!
-    _default: innerHTMLBug ? [1, 'X<div>', '</div>'] : [0, '', '']
-  };
-
-  map.td =
-  map.th = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
-
-  map.option =
-  map.optgroup = [1, '<select multiple="multiple">', '</select>'];
-
-  map.thead =
-  map.tbody =
-  map.colgroup =
-  map.caption =
-  map.tfoot = [1, '<table>', '</table>'];
-
-  map.polyline =
-  map.ellipse =
-  map.polygon =
-  map.circle =
-  map.text =
-  map.line =
-  map.path =
-  map.rect =
-  map.g = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">','</svg>'];
-
-  /**
-   * Parse `html` and return a DOM Node instance, which could be a TextNode,
-   * HTML DOM Node of some kind (<div> for example), or a DocumentFragment
-   * instance, depending on the contents of the `html` string.
-   *
-   * @param {String} html - HTML string to "domify"
-   * @param {Document} doc - The `document` instance to create the Node for
-   * @return {DOMNode} the TextNode, DOM Node, or DocumentFragment instance
-   * @api private
-   */
-
-  function parse(html, doc) {
-    if ('string' != typeof html) throw new TypeError('String expected');
-
-    // default to the global `document` object
-    if (!doc) doc = document;
-
-    // tag name
-    var m = /<([\w:]+)/.exec(html);
-    if (!m) return doc.createTextNode(html);
-
-    html = html.replace(/^\s+|\s+$/g, ''); // Remove leading/trailing whitespace
-
-    var tag = m[1];
-
-    // body support
-    if (tag == 'body') {
-      var el = doc.createElement('html');
-      el.innerHTML = html;
-      return el.removeChild(el.lastChild);
-    }
-
-    // wrap map
-    var wrap = Object.prototype.hasOwnProperty.call(map, tag) ? map[tag] : map._default;
-    var depth = wrap[0];
-    var prefix = wrap[1];
-    var suffix = wrap[2];
-    var el = doc.createElement('div');
-    el.innerHTML = prefix + html + suffix;
-    while (depth--) el = el.lastChild;
-
-    // one element
-    if (el.firstChild == el.lastChild) {
-      return el.removeChild(el.firstChild);
-    }
-
-    // several elements
-    var fragment = doc.createDocumentFragment();
-    while (el.firstChild) {
-      fragment.appendChild(el.removeChild(el.firstChild));
-    }
-
-    return fragment;
-  }
-
-  var domify$1 = domify;
-
   function query(selector, el) {
     el = el || document;
 
@@ -2557,7 +2599,7 @@
     rotate.setRotate(angle || 0, 0, 0);
 
     var scale = createTransform();
-    scale.setScale(amount || 1, amount || 1);
+    scale.setScale(1, 1);
 
     transform$1(gfx, [ translate, rotate, scale ]);
   }
@@ -2587,161 +2629,173 @@
     transform$1(gfx, rotate);
   }
 
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  function getDefaultExportFromCjs (x) {
+  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
   }
 
-  var hat_1 = createCommonjsModule(function (module) {
-  var hat = module.exports = function (bits, base) {
-      if (!base) base = 16;
-      if (bits === undefined) bits = 128;
-      if (bits <= 0) return '0';
-      
-      var digits = Math.log(Math.pow(2, bits)) / Math.log(base);
-      for (var i = 2; digits === Infinity; i *= 2) {
-          digits = Math.log(Math.pow(2, bits / i)) / Math.log(base) * i;
-      }
-      
-      var rem = digits - Math.floor(digits);
-      
-      var res = '';
-      
-      for (var i = 0; i < Math.floor(digits); i++) {
-          var x = Math.floor(Math.random() * base).toString(base);
-          res = x + res;
-      }
-      
-      if (rem) {
-          var b = Math.pow(base, rem);
-          var x = Math.floor(Math.random() * b).toString(base);
-          res = x + res;
-      }
-      
-      var parsed = parseInt(res, base);
-      if (parsed !== Infinity && parsed >= Math.pow(2, bits)) {
-          return hat(bits, base)
-      }
-      else return res;
-  };
+  var hat$1 = {exports: {}};
 
-  hat.rack = function (bits, base, expandBy) {
-      var fn = function (data) {
-          var iters = 0;
-          do {
-              if (iters ++ > 10) {
-                  if (expandBy) bits += expandBy;
-                  else throw new Error('too many ID collisions, use more bits')
-              }
-              
-              var id = hat(bits, base);
-          } while (Object.hasOwnProperty.call(hats, id));
-          
-          hats[id] = data;
-          return id;
-      };
-      var hats = fn.hats = {};
-      
-      fn.get = function (id) {
-          return fn.hats[id];
-      };
-      
-      fn.set = function (id, value) {
-          fn.hats[id] = value;
-          return fn;
-      };
-      
-      fn.bits = bits || 128;
-      fn.base = base || 16;
-      return fn;
-  };
-  });
+  var hasRequiredHat;
+
+  function requireHat () {
+  	if (hasRequiredHat) return hat$1.exports;
+  	hasRequiredHat = 1;
+  	var hat = hat$1.exports = function (bits, base) {
+  	    if (!base) base = 16;
+  	    if (bits === undefined) bits = 128;
+  	    if (bits <= 0) return '0';
+  	    
+  	    var digits = Math.log(Math.pow(2, bits)) / Math.log(base);
+  	    for (var i = 2; digits === Infinity; i *= 2) {
+  	        digits = Math.log(Math.pow(2, bits / i)) / Math.log(base) * i;
+  	    }
+  	    
+  	    var rem = digits - Math.floor(digits);
+  	    
+  	    var res = '';
+  	    
+  	    for (var i = 0; i < Math.floor(digits); i++) {
+  	        var x = Math.floor(Math.random() * base).toString(base);
+  	        res = x + res;
+  	    }
+  	    
+  	    if (rem) {
+  	        var b = Math.pow(base, rem);
+  	        var x = Math.floor(Math.random() * b).toString(base);
+  	        res = x + res;
+  	    }
+  	    
+  	    var parsed = parseInt(res, base);
+  	    if (parsed !== Infinity && parsed >= Math.pow(2, bits)) {
+  	        return hat(bits, base)
+  	    }
+  	    else return res;
+  	};
+
+  	hat.rack = function (bits, base, expandBy) {
+  	    var fn = function (data) {
+  	        var iters = 0;
+  	        do {
+  	            if (iters ++ > 10) {
+  	                if (expandBy) bits += expandBy;
+  	                else throw new Error('too many ID collisions, use more bits')
+  	            }
+  	            
+  	            var id = hat(bits, base);
+  	        } while (Object.hasOwnProperty.call(hats, id));
+  	        
+  	        hats[id] = data;
+  	        return id;
+  	    };
+  	    var hats = fn.hats = {};
+  	    
+  	    fn.get = function (id) {
+  	        return fn.hats[id];
+  	    };
+  	    
+  	    fn.set = function (id, value) {
+  	        fn.hats[id] = value;
+  	        return fn;
+  	    };
+  	    
+  	    fn.bits = bits || 128;
+  	    fn.base = base || 16;
+  	    return fn;
+  	};
+  	return hat$1.exports;
+  }
+
+  var hatExports = requireHat();
+  var hat = /*@__PURE__*/getDefaultExportFromCjs(hatExports);
+
+  /**
+   * @typedef { [ number, number ] | [ number, number, number ] } Seed
+   */
 
   /**
    * Create a new id generator / cache instance.
    *
    * You may optionally provide a seed that is used internally.
    *
-   * @param {Seed} seed
+   * @param {Seed} [seed]
    */
-
   function Ids(seed) {
+
     if (!(this instanceof Ids)) {
       return new Ids(seed);
     }
 
-    seed = seed || [128, 36, 1];
-    this._seed = seed.length ? hat_1.rack(seed[0], seed[1], seed[2]) : seed;
+    seed = seed || [ 128, 36, 1 ];
+    this._seed = seed.length ? hat.rack(seed[0], seed[1], seed[2]) : seed;
   }
+
   /**
    * Generate a next id.
    *
    * @param {Object} [element] element to bind the id to
    *
-   * @return {String} id
+   * @return {string} id
    */
-
-  Ids.prototype.next = function (element) {
+  Ids.prototype.next = function(element) {
     return this._seed(element || true);
   };
+
   /**
    * Generate a next id with a given prefix.
    *
    * @param {Object} [element] element to bind the id to
    *
-   * @return {String} id
+   * @return {string} id
    */
-
-
-  Ids.prototype.nextPrefixed = function (prefix, element) {
+  Ids.prototype.nextPrefixed = function(prefix, element) {
     var id;
 
     do {
       id = prefix + this.next(true);
-    } while (this.assigned(id)); // claim {prefix}{random}
+    } while (this.assigned(id));
 
+    // claim {prefix}{random}
+    this.claim(id, element);
 
-    this.claim(id, element); // return
-
+    // return
     return id;
   };
+
   /**
    * Manually claim an existing id.
    *
-   * @param {String} id
-   * @param {String} [element] element the id is claimed by
+   * @param {string} id
+   * @param {any} [element] element the id is claimed by
    */
-
-
-  Ids.prototype.claim = function (id, element) {
+  Ids.prototype.claim = function(id, element) {
     this._seed.set(id, element || true);
   };
+
   /**
    * Returns true if the given id has already been assigned.
    *
-   * @param  {String} id
-   * @return {Boolean}
+   * @param  {string} id
+   * @return {boolean}
    */
-
-
-  Ids.prototype.assigned = function (id) {
+  Ids.prototype.assigned = function(id) {
     return this._seed.get(id) || false;
   };
+
   /**
    * Unclaim an id.
    *
-   * @param  {String} id the id to unclaim
+   * @param  {string} id the id to unclaim
    */
-
-
-  Ids.prototype.unclaim = function (id) {
+  Ids.prototype.unclaim = function(id) {
     delete this._seed.hats[id];
   };
+
+
   /**
    * Clear all claimed ids.
    */
+  Ids.prototype.clear = function() {
 
-
-  Ids.prototype.clear = function () {
     var hats = this._seed.hats,
         id;
 
@@ -2750,15 +2804,17 @@
     }
   };
 
-  var RENDERER_IDS = new Ids();
+  var markerIds = new Ids();
 
-  var TASK_BORDER_RADIUS = 10;
-  var INNER_OUTER_DIST = 3;
+  var ELEMENT_LABEL_DISTANCE = 10,
+      INNER_OUTER_DIST = 3,
+      PARTICIPANT_STROKE_WIDTH = 1.5,
+      TASK_BORDER_RADIUS = 10,
+      EXTERNAL_LABEL_BORDER_RADIUS = 4;
 
-  var DEFAULT_FILL_OPACITY = .95,
-      HIGH_FILL_OPACITY = .35;
-
-  var ELEMENT_LABEL_DISTANCE = 10;
+  var DEFAULT_OPACITY = 0.95,
+      FULL_OPACITY = 1,
+      LOW_OPACITY = 0.25;
 
   /**
    * @typedef { Partial<{
@@ -2766,10 +2822,19 @@
    *   defaultStrokeColor: string,
    *   defaultLabelColor: string
    * }> } BpmnRendererConfig
+   *
+   * @typedef { Partial<{
+   *   fill: string,
+   *   stroke: string,
+   *   width: string,
+   *   height: string
+   * }> } Attrs
    */
 
   /**
    * @typedef { import('../model/Types').Element } Element
+   * @typedef { import('../model/Types').Shape } Shape
+   * @typedef { import('../model/Types').Connection } Connection
    */
 
   /**
@@ -2792,10 +2857,6 @@
     var defaultFillColor = config && config.defaultFillColor,
         defaultStrokeColor = config && config.defaultStrokeColor,
         defaultLabelColor = config && config.defaultLabelColor;
-
-    var rendererId = RENDERER_IDS.next();
-
-    var markers = {};
 
     function shapeStyle(attrs) {
       return styles.computeStyle(attrs, {
@@ -2820,7 +2881,8 @@
       var {
         ref = { x: 0, y: 0 },
         scale = 1,
-        element
+        element,
+        parentGfx = canvas._svg
       } = options;
 
       var marker = create$1('marker', {
@@ -2835,36 +2897,28 @@
 
       append(marker, element);
 
-      var defs = query('defs', canvas._svg);
+      var defs = query(':scope > defs', parentGfx);
 
       if (!defs) {
         defs = create$1('defs');
 
-        append(canvas._svg, defs);
+        append(parentGfx, defs);
       }
 
       append(defs, marker);
-
-      markers[id] = marker;
     }
 
-    function colorEscape(str) {
+    function marker(parentGfx, type, fill, stroke) {
 
-      // only allow characters and numbers
-      return str.replace(/[^0-9a-zA-Z]+/g, '_');
-    }
 
-    function marker(type, fill, stroke) {
-      var id = type + '-' + colorEscape(fill) + '-' + colorEscape(stroke) + '-' + rendererId;
+      var id = markerIds.nextPrefixed('marker-');
 
-      if (!markers[id]) {
-        createMarker(id, type, fill, stroke);
-      }
+      createMarker(parentGfx, id, type, fill, stroke);
 
       return 'url(#' + id + ')';
     }
 
-    function createMarker(id, type, fill, stroke) {
+    function createMarker(parentGfx, id, type, fill, stroke) {
 
       if (type === 'sequenceflow-end') {
         var sequenceflowEnd = create$1('path', {
@@ -2879,7 +2933,8 @@
         addMarker(id, {
           element: sequenceflowEnd,
           ref: { x: 11, y: 10 },
-          scale: 0.5
+          scale: 0.5,
+          parentGfx
         });
       }
 
@@ -2889,7 +2944,7 @@
           cy: 6,
           r: 3.5,
           ...shapeStyle({
-            fill: fill,
+            fill,
             stroke: stroke,
             strokeWidth: 1,
 
@@ -2901,7 +2956,8 @@
 
         addMarker(id, {
           element: messageflowStart,
-          ref: { x: 6, y: 6 }
+          ref: { x: 6, y: 6 },
+          parentGfx
         });
       }
 
@@ -2909,7 +2965,7 @@
         var messageflowEnd = create$1('path', {
           d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z',
           ...shapeStyle({
-            fill: fill,
+            fill,
             stroke: stroke,
             strokeWidth: 1,
 
@@ -2921,7 +2977,8 @@
 
         addMarker(id, {
           element: messageflowEnd,
-          ref: { x: 8.5, y: 5 }
+          ref: { x: 8.5, y: 5 },
+          parentGfx
         });
       }
 
@@ -2930,7 +2987,7 @@
           d: 'M 11 5 L 1 10 L 11 15',
           ...lineStyle({
             fill: 'none',
-            stroke: stroke,
+            stroke,
             strokeWidth: 1.5,
 
             // fix for safari / chrome / firefox bug not correctly
@@ -2942,7 +2999,8 @@
         addMarker(id, {
           element: associationStart,
           ref: { x: 1, y: 10 },
-          scale: 0.5
+          scale: 0.5,
+          parentGfx
         });
       }
 
@@ -2951,7 +3009,7 @@
           d: 'M 1 5 L 11 10 L 1 15',
           ...lineStyle({
             fill: 'none',
-            stroke: stroke,
+            stroke,
             strokeWidth: 1.5,
 
             // fix for safari / chrome / firefox bug not correctly
@@ -2963,7 +3021,8 @@
         addMarker(id, {
           element: associationEnd,
           ref: { x: 11, y: 10 },
-          scale: 0.5
+          scale: 0.5,
+          parentGfx
         });
       }
 
@@ -2971,7 +3030,7 @@
         var conditionalFlowMarker = create$1('path', {
           d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z',
           ...shapeStyle({
-            fill: fill,
+            fill,
             stroke: stroke
           })
         });
@@ -2979,7 +3038,8 @@
         addMarker(id, {
           element: conditionalFlowMarker,
           ref: { x: -1, y: 10 },
-          scale: 0.5
+          scale: 0.5,
+          parentGfx
         });
       }
 
@@ -2987,19 +3047,21 @@
         var defaultFlowMarker = create$1('path', {
           d: 'M 6 4 L 10 16',
           ...shapeStyle({
-            stroke: stroke
+            stroke: stroke,
+            fill: 'none'
           })
         });
 
         addMarker(id, {
           element: defaultFlowMarker,
           ref: { x: 0, y: 10 },
-          scale: 0.5
+          scale: 0.5,
+          parentGfx
         });
       }
     }
 
-    function drawCircle(parentGfx, width, height, offset, attrs) {
+    function drawCircle(parentGfx, width, height, offset, attrs = {}) {
 
       if (isObject(offset)) {
         attrs = offset;
@@ -3009,10 +3071,6 @@
       offset = offset || 0;
 
       attrs = shapeStyle(attrs);
-
-      if (attrs.fill === 'none') {
-        delete attrs.fillOpacity;
-      }
 
       var cx = width / 2,
           cy = height / 2;
@@ -3113,7 +3171,6 @@
     }
 
     function drawPath(parentGfx, d, attrs) {
-
       attrs = lineStyle(attrs);
 
       var path = create$1('path', {
@@ -3135,205 +3192,58 @@
     }
 
     function as(type) {
-      return function(parentGfx, element, options) {
-        return renderer(type)(parentGfx, element, options);
+      return function(parentGfx, element, attrs) {
+        return renderer(type)(parentGfx, element, attrs);
       };
     }
 
-    function renderEventContent(element, parentGfx) {
-
-      var event = getBusinessObject(element);
-      var isThrowing = isThrowEvent(event);
-
-      if (event.eventDefinitions && event.eventDefinitions.length > 1) {
-        if (event.parallelMultiple) {
-          return renderer('bpmn:ParallelMultipleEventDefinition')(parentGfx, element, isThrowing);
-        }
-        else {
-          return renderer('bpmn:MultipleEventDefinition')(parentGfx, element, isThrowing);
-        }
-      }
-
-      if (isTypedEvent(event, 'bpmn:MessageEventDefinition')) {
-        return renderer('bpmn:MessageEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:TimerEventDefinition')) {
-        return renderer('bpmn:TimerEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:ConditionalEventDefinition')) {
-        return renderer('bpmn:ConditionalEventDefinition')(parentGfx, element);
-      }
-
-      if (isTypedEvent(event, 'bpmn:SignalEventDefinition')) {
-        return renderer('bpmn:SignalEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:EscalationEventDefinition')) {
-        return renderer('bpmn:EscalationEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:LinkEventDefinition')) {
-        return renderer('bpmn:LinkEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:ErrorEventDefinition')) {
-        return renderer('bpmn:ErrorEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:CancelEventDefinition')) {
-        return renderer('bpmn:CancelEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:CompensateEventDefinition')) {
-        return renderer('bpmn:CompensateEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      if (isTypedEvent(event, 'bpmn:TerminateEventDefinition')) {
-        return renderer('bpmn:TerminateEventDefinition')(parentGfx, element, isThrowing);
-      }
-
-      return null;
-    }
-
-    function renderLabel(parentGfx, label, options) {
-
-      options = assign$1({
-        size: {
-          width: 100
-        }
-      }, options);
-
-      var text = textRenderer.createText(label || '', options);
-
-      classes$1(text).add('djs-label');
-
-      append(parentGfx, text);
-
-      return text;
-    }
-
-    function renderEmbeddedLabel(parentGfx, element, align) {
-      var semantic = getBusinessObject(element);
-
-      return renderLabel(parentGfx, semantic.name, {
-        box: element,
-        align: align,
-        padding: 7,
-        style: {
-          fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor)
-        }
-      });
-    }
-
-    function renderExternalLabel(parentGfx, element) {
-
-      var box = {
-        width: 90,
-        height: 30,
-        x: element.width / 2 + element.x,
-        y: element.height / 2 + element.y
-      };
-
-      return renderLabel(parentGfx, getLabel(element), {
-        box: box,
-        fitBox: true,
-        style: assign$1(
-          {},
-          textRenderer.getExternalStyle(),
-          {
-            fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor)
-          }
-        )
-      });
-    }
-
-    function renderLaneLabel(parentGfx, text, element) {
-      var textBox = renderLabel(parentGfx, text, {
-        box: {
-          height: 30,
-          width: element.height
-        },
-        align: 'center-middle',
-        style: {
-          fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor)
-        }
-      });
-
-      var top = -1 * element.height;
-
-      transform(textBox, 0, -top, 270);
-    }
-
-    var handlers = this.handlers = {
-      'bpmn:Event': function(parentGfx, element, attrs) {
-
-        if (!('fillOpacity' in attrs)) {
-          attrs.fillOpacity = DEFAULT_FILL_OPACITY;
-        }
-
-        return drawCircle(parentGfx, element.width, element.height, attrs);
-      },
-      'bpmn:StartEvent': function(parentGfx, element, options) {
-        var attrs = {
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        };
-
-        var semantic = getBusinessObject(element);
-
-        if (!semantic.isInterrupting) {
-          attrs = {
-            strokeDasharray: '6',
-            fill: getFillColor(element, defaultFillColor),
-            stroke: getStrokeColor(element, defaultStrokeColor)
-          };
-        }
-
-        var circle = renderer('bpmn:Event')(parentGfx, element, attrs);
-
-        if (!options || options.renderIcon !== false) {
-          renderEventContent(element, parentGfx);
-        }
-
-        return circle;
-      },
-      'bpmn:MessageEventDefinition': function(parentGfx, element, isThrowing) {
+    var eventIconRenderers = {
+      'bpmn:MessageEventDefinition': function(parentGfx, element, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_MESSAGE', {
           xScaleFactor: 0.9,
           yScaleFactor: 0.9,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: attrs.width || element.width,
+          containerHeight: attrs.height || element.height,
           position: {
             mx: 0.235,
             my: 0.315
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(element, defaultStrokeColor) : getFillColor(element, defaultFillColor);
-        var stroke = isThrowing ? getFillColor(element, defaultFillColor) : getStrokeColor(element, defaultStrokeColor);
+        var fill = isThrowing
+          ? getStrokeColor(element, defaultStrokeColor, attrs.stroke)
+          : getFillColor(element, defaultFillColor, attrs.fill);
+
+        var stroke = isThrowing
+          ? getFillColor(element, defaultFillColor, attrs.fill)
+          : getStrokeColor(element, defaultStrokeColor, attrs.stroke);
 
         var messagePath = drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill,
-          stroke: stroke
+          fill,
+          stroke,
+          strokeWidth: 1
         });
 
         return messagePath;
       },
-      'bpmn:TimerEventDefinition': function(parentGfx, element) {
-        var circle = drawCircle(parentGfx, element.width, element.height, 0.2 * element.height, {
-          strokeWidth: 2,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+      'bpmn:TimerEventDefinition': function(parentGfx, element, attrs = {}) {
+        var baseWidth = attrs.width || element.width;
+        var baseHeight = attrs.height || element.height;
+
+        // use a lighter stroke for event suprocess icons
+        var strokeWidth = attrs.width ? 1 : 2;
+
+        var circle = drawCircle(parentGfx, baseWidth, baseHeight, 0.2 * baseHeight, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: strokeWidth
         });
 
         var pathData = pathMap.getScaledPath('EVENT_TIMER_WH', {
           xScaleFactor: 0.75,
           yScaleFactor: 0.75,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: baseWidth,
+          containerHeight: baseHeight,
           position: {
             mx: 0.5,
             my: 0.5
@@ -3341,61 +3251,62 @@
         });
 
         drawPath(parentGfx, pathData, {
-          strokeWidth: 2,
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: strokeWidth
         });
 
-        for (var i = 0;i < 12; i++) {
-
+        for (var i = 0; i < 12; i++) {
           var linePathData = pathMap.getScaledPath('EVENT_TIMER_LINE', {
             xScaleFactor: 0.75,
             yScaleFactor: 0.75,
-            containerWidth: element.width,
-            containerHeight: element.height,
+            containerWidth: baseWidth,
+            containerHeight: baseHeight,
             position: {
               mx: 0.5,
               my: 0.5
             }
           });
 
-          var width = element.width / 2;
-          var height = element.height / 2;
+          var width = baseWidth / 2,
+              height = baseHeight / 2;
 
           drawPath(parentGfx, linePathData, {
             strokeWidth: 1,
-            transform: 'rotate(' + (i * 30) + ',' + height + ',' + width + ')',
-            stroke: getStrokeColor(element, defaultStrokeColor)
+            stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            transform: 'rotate(' + (i * 30) + ',' + height + ',' + width + ')'
           });
         }
 
         return circle;
       },
-      'bpmn:EscalationEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:EscalationEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_ESCALATION', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
             mx: 0.5,
             my: 0.2
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing
+          ? getStrokeColor(event, defaultStrokeColor, attrs.stroke)
+          : getFillColor(event, defaultFillColor, attrs.fill);
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:ConditionalEventDefinition': function(parentGfx, event) {
+      'bpmn:ConditionalEventDefinition': function(parentGfx, event, attrs = {}) {
         var pathData = pathMap.getScaledPath('EVENT_CONDITIONAL', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
             mx: 0.5,
             my: 0.222
@@ -3403,11 +3314,12 @@
         });
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill: getFillColor(event, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:LinkEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:LinkEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_LINK', {
           xScaleFactor: 1,
           yScaleFactor: 1,
@@ -3419,35 +3331,39 @@
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing
+          ? getStrokeColor(event, defaultStrokeColor, attrs.stroke)
+          : getFillColor(event, defaultFillColor, attrs.fill);
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:ErrorEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:ErrorEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_ERROR', {
           xScaleFactor: 1.1,
           yScaleFactor: 1.1,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
             mx: 0.2,
             my: 0.722
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing
+          ? getStrokeColor(event, defaultStrokeColor, attrs.stroke)
+          : getFillColor(event, defaultFillColor, attrs.fill);
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:CancelEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:CancelEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_CANCEL_45', {
           xScaleFactor: 1.0,
           yScaleFactor: 1.0,
@@ -3459,83 +3375,90 @@
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor, attrs.stroke) : 'none';
 
         var path = drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
 
         rotate(path, 45);
 
         return path;
       },
-      'bpmn:CompensateEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:CompensateEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_COMPENSATION', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
             mx: 0.22,
             my: 0.5
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing
+          ? getStrokeColor(event, defaultStrokeColor, attrs.stroke)
+          : getFillColor(event, defaultFillColor, attrs.fill);
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:SignalEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:SignalEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_SIGNAL', {
           xScaleFactor: 0.9,
           yScaleFactor: 0.9,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
             mx: 0.5,
             my: 0.2
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing
+          ? getStrokeColor(event, defaultStrokeColor, attrs.stroke)
+          : getFillColor(event, defaultFillColor, attrs.fill);
 
         return drawPath(parentGfx, pathData, {
           strokeWidth: 1,
-          fill: fill,
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke)
         });
       },
-      'bpmn:MultipleEventDefinition': function(parentGfx, event, isThrowing) {
+      'bpmn:MultipleEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
         var pathData = pathMap.getScaledPath('EVENT_MULTIPLE', {
           xScaleFactor: 1.1,
           yScaleFactor: 1.1,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
-            mx: 0.222,
+            mx: 0.211,
             my: 0.36
           }
         });
 
-        var fill = isThrowing ? getStrokeColor(event, defaultStrokeColor) : 'none';
+        var fill = isThrowing
+          ? getStrokeColor(event, defaultStrokeColor, attrs.stroke)
+          : getFillColor(event, defaultFillColor, attrs.fill);
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: fill
+          fill,
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:ParallelMultipleEventDefinition': function(parentGfx, event) {
+      'bpmn:ParallelMultipleEventDefinition': function(parentGfx, event, attrs = {}) {
         var pathData = pathMap.getScaledPath('EVENT_PARALLEL_MULTIPLE', {
           xScaleFactor: 1.2,
           yScaleFactor: 1.2,
-          containerWidth: event.width,
-          containerHeight: event.height,
+          containerWidth: attrs.width || event.width,
+          containerHeight: attrs.height || event.height,
           position: {
             mx: 0.458,
             my: 0.194
@@ -3543,876 +3466,109 @@
         });
 
         return drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: getStrokeColor(event, defaultStrokeColor),
-          stroke: getStrokeColor(event, defaultStrokeColor)
+          fill: getFillColor(event, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(event, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       },
-      'bpmn:EndEvent': function(parentGfx, element, options) {
-        var circle = renderer('bpmn:Event')(parentGfx, element, {
-          strokeWidth: 4,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        if (!options || options.renderIcon !== false) {
-          renderEventContent(element, parentGfx);
-        }
-
-        return circle;
-      },
-      'bpmn:TerminateEventDefinition': function(parentGfx, element) {
+      'bpmn:TerminateEventDefinition': function(parentGfx, element, attrs = {}) {
         var circle = drawCircle(parentGfx, element.width, element.height, 8, {
-          strokeWidth: 4,
-          fill: getStrokeColor(element, defaultStrokeColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 4
         });
 
         return circle;
-      },
-      'bpmn:IntermediateEvent': function(parentGfx, element, options) {
-        var outer = renderer('bpmn:Event')(parentGfx, element, {
-          strokeWidth: 1.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
+      }
+    };
 
-        /* inner */
-        drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
-          strokeWidth: 1.5,
-          fill: getFillColor(element, 'none'),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
+    function renderEventIcon(element, parentGfx, attrs = {}, proxyElement) {
+      var semantic = getBusinessObject(element),
+          isThrowing = isThrowEvent(semantic);
 
-        if (!options || options.renderIcon !== false) {
-          renderEventContent(element, parentGfx);
+      var nodeElement = proxyElement || element;
+
+      if (semantic.get('eventDefinitions') && semantic.get('eventDefinitions').length > 1) {
+        if (semantic.get('parallelMultiple')) {
+          return eventIconRenderers[ 'bpmn:ParallelMultipleEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
         }
-
-        return outer;
-      },
-      'bpmn:IntermediateCatchEvent': as('bpmn:IntermediateEvent'),
-      'bpmn:IntermediateThrowEvent': as('bpmn:IntermediateEvent'),
-
-      'bpmn:Activity': function(parentGfx, element, attrs) {
-
-        attrs = attrs || {};
-
-        if (!('fillOpacity' in attrs)) {
-          attrs.fillOpacity = DEFAULT_FILL_OPACITY;
+        else {
+          return eventIconRenderers[ 'bpmn:MultipleEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
         }
+      }
 
-        return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, attrs);
-      },
+      if (isTypedEvent(semantic, 'bpmn:MessageEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:MessageEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-      'bpmn:Task': function(parentGfx, element) {
-        var attrs = {
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        };
+      if (isTypedEvent(semantic, 'bpmn:TimerEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:TimerEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        var rect = renderer('bpmn:Activity')(parentGfx, element, attrs);
+      if (isTypedEvent(semantic, 'bpmn:ConditionalEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:ConditionalEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        renderEmbeddedLabel(parentGfx, element, 'center-middle');
-        attachTaskMarkers(parentGfx, element);
+      if (isTypedEvent(semantic, 'bpmn:SignalEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:SignalEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        return rect;
-      },
-      'bpmn:ServiceTask': function(parentGfx, element) {
-        var task = renderer('bpmn:Task')(parentGfx, element);
+      if (isTypedEvent(semantic, 'bpmn:EscalationEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:EscalationEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        var pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
-          abspos: {
-            x: 12,
-            y: 18
-          }
-        });
+      if (isTypedEvent(semantic, 'bpmn:LinkEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:LinkEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        /* service bg */ drawPath(parentGfx, pathDataBG, {
-          strokeWidth: 1,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
+      if (isTypedEvent(semantic, 'bpmn:ErrorEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:ErrorEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        var fillPathData = pathMap.getScaledPath('TASK_TYPE_SERVICE_FILL', {
-          abspos: {
-            x: 17.2,
-            y: 18
-          }
-        });
+      if (isTypedEvent(semantic, 'bpmn:CancelEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:CancelEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        /* service fill */ drawPath(parentGfx, fillPathData, {
-          strokeWidth: 0,
-          fill: getFillColor(element, defaultFillColor)
-        });
+      if (isTypedEvent(semantic, 'bpmn:CompensateEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:CompensateEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        var pathData = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
-          abspos: {
-            x: 17,
-            y: 22
-          }
-        });
+      if (isTypedEvent(semantic, 'bpmn:TerminateEventDefinition')) {
+        return eventIconRenderers[ 'bpmn:TerminateEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
+      }
 
-        /* service */ drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
+      return null;
+    }
 
-        return task;
-      },
-      'bpmn:UserTask': function(parentGfx, element) {
-        var task = renderer('bpmn:Task')(parentGfx, element);
+    var taskMarkerRenderers = {
+      'ParticipantMultiplicityMarker': function(parentGfx, element, attrs = {}) {
+        var width = getWidth(element, attrs),
+            height = getHeight(element, attrs);
 
-        var x = 15;
-        var y = 12;
-
-        var pathData = pathMap.getScaledPath('TASK_TYPE_USER_1', {
-          abspos: {
-            x: x,
-            y: y
-          }
-        });
-
-        /* user path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 0.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var pathData2 = pathMap.getScaledPath('TASK_TYPE_USER_2', {
-          abspos: {
-            x: x,
-            y: y
-          }
-        });
-
-        /* user2 path */ drawPath(parentGfx, pathData2, {
-          strokeWidth: 0.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var pathData3 = pathMap.getScaledPath('TASK_TYPE_USER_3', {
-          abspos: {
-            x: x,
-            y: y
-          }
-        });
-
-        /* user3 path */ drawPath(parentGfx, pathData3, {
-          strokeWidth: 0.5,
-          fill: getStrokeColor(element, defaultStrokeColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return task;
-      },
-      'bpmn:ManualTask': function(parentGfx, element) {
-        var task = renderer('bpmn:Task')(parentGfx, element);
-
-        var pathData = pathMap.getScaledPath('TASK_TYPE_MANUAL', {
-          abspos: {
-            x: 17,
-            y: 15
-          }
-        });
-
-        /* manual path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 0.5, // 0.25,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return task;
-      },
-      'bpmn:SendTask': function(parentGfx, element) {
-        var task = renderer('bpmn:Task')(parentGfx, element);
-
-        var pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
-          xScaleFactor: 1,
-          yScaleFactor: 1,
-          containerWidth: 21,
-          containerHeight: 14,
-          position: {
-            mx: 0.285,
-            my: 0.357
-          }
-        });
-
-        /* send path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: getStrokeColor(element, defaultStrokeColor),
-          stroke: getFillColor(element, defaultFillColor)
-        });
-
-        return task;
-      },
-      'bpmn:ReceiveTask' : function(parentGfx, element) {
-        var semantic = getBusinessObject(element);
-
-        var task = renderer('bpmn:Task')(parentGfx, element);
-        var pathData;
-
-        if (semantic.instantiate) {
-          drawCircle(parentGfx, 28, 28, 20 * 0.22, { strokeWidth: 1 });
-
-          pathData = pathMap.getScaledPath('TASK_TYPE_INSTANTIATING_SEND', {
-            abspos: {
-              x: 7.77,
-              y: 9.52
-            }
-          });
-        } else {
-
-          pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
-            xScaleFactor: 0.9,
-            yScaleFactor: 0.9,
-            containerWidth: 21,
-            containerHeight: 14,
-            position: {
-              mx: 0.3,
-              my: 0.4
-            }
-          });
-        }
-
-        /* receive path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return task;
-      },
-      'bpmn:ScriptTask': function(parentGfx, element) {
-        var task = renderer('bpmn:Task')(parentGfx, element);
-
-        var pathData = pathMap.getScaledPath('TASK_TYPE_SCRIPT', {
-          abspos: {
-            x: 15,
-            y: 20
-          }
-        });
-
-        /* script path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return task;
-      },
-      'bpmn:BusinessRuleTask': function(parentGfx, element) {
-        var task = renderer('bpmn:Task')(parentGfx, element);
-
-        var headerPathData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_HEADER', {
-          abspos: {
-            x: 8,
-            y: 8
-          }
-        });
-
-        var businessHeaderPath = drawPath(parentGfx, headerPathData);
-        attr$1(businessHeaderPath, {
-          strokeWidth: 1,
-          fill: getFillColor(element, '#aaaaaa'),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var headerData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_MAIN', {
-          abspos: {
-            x: 8,
-            y: 8
-          }
-        });
-
-        var businessPath = drawPath(parentGfx, headerData);
-        attr$1(businessPath, {
-          strokeWidth: 1,
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return task;
-      },
-      'bpmn:SubProcess': function(parentGfx, element, attrs) {
-        attrs = {
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor),
-          ...attrs
-        };
-
-        var rect = renderer('bpmn:Activity')(parentGfx, element, attrs);
-
-        var expanded = isExpanded(element);
-
-        if (isEventSubProcess(element)) {
-          attr$1(rect, {
-            strokeDasharray: '0, 5.5',
-            strokeWidth: 2.5
-          });
-        }
-
-        renderEmbeddedLabel(parentGfx, element, expanded ? 'center-top' : 'center-middle');
-
-        if (expanded) {
-          attachTaskMarkers(parentGfx, element);
-        } else {
-          attachTaskMarkers(parentGfx, element, [ 'SubProcessMarker' ]);
-        }
-
-        return rect;
-      },
-      'bpmn:AdHocSubProcess': function(parentGfx, element) {
-        return renderer('bpmn:SubProcess')(parentGfx, element);
-      },
-      'bpmn:Transaction': function(parentGfx, element) {
-        var outer = renderer('bpmn:SubProcess')(parentGfx, element, { strokeWidth: 1.5 });
-
-        var innerAttrs = styles.style([ 'no-fill', 'no-events' ], {
-          stroke: getStrokeColor(element, defaultStrokeColor),
-          strokeWidth: 1.5
-        });
-
-        /* inner path */ drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS - 3, INNER_OUTER_DIST, innerAttrs);
-
-        return outer;
-      },
-      'bpmn:CallActivity': function(parentGfx, element) {
-        return renderer('bpmn:SubProcess')(parentGfx, element, {
-          strokeWidth: 5
-        });
-      },
-      'bpmn:Participant': function(parentGfx, element) {
-
-        var strokeWidth = 1.5;
-
-        var attrs = {
-          fillOpacity: DEFAULT_FILL_OPACITY,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor),
-          strokeWidth
-        };
-
-        var lane = renderer('bpmn:Lane')(parentGfx, element, attrs);
-
-        var expandedPool = isExpanded(element);
-
-        if (expandedPool) {
-          drawLine(parentGfx, [
-            { x: 30, y: 0 },
-            { x: 30, y: element.height }
-          ], {
-            stroke: getStrokeColor(element, defaultStrokeColor),
-            strokeWidth
-          });
-          var text = getBusinessObject(element).name;
-          renderLaneLabel(parentGfx, text, element);
-        } else {
-
-          // collapsed pool draw text inline
-          var text2 = getBusinessObject(element).name;
-          renderLabel(parentGfx, text2, {
-            box: element, align: 'center-middle',
-            style: {
-              fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor)
-            }
-          });
-        }
-
-        var participantMultiplicity = !!(getBusinessObject(element).participantMultiplicity);
-
-        if (participantMultiplicity) {
-          renderer('ParticipantMultiplicityMarker')(parentGfx, element);
-        }
-
-        return lane;
-      },
-      'bpmn:Lane': function(parentGfx, element, attrs) {
-        var rect = drawRect(parentGfx, element.width, element.height, 0, {
-          fill: getFillColor(element, defaultFillColor),
-          fillOpacity: HIGH_FILL_OPACITY,
-          stroke: getStrokeColor(element, defaultStrokeColor),
-          strokeWidth: 1.5,
-          ...attrs
-        });
-
-        var semantic = getBusinessObject(element);
-
-        if (semantic.$type === 'bpmn:Lane') {
-          var text = semantic.name;
-          renderLaneLabel(parentGfx, text, element);
-        }
-
-        return rect;
-      },
-      'bpmn:InclusiveGateway': function(parentGfx, element) {
-        var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-        /* circle path */
-        drawCircle(parentGfx, element.width, element.height, element.height * 0.24, {
-          strokeWidth: 2.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return diamond;
-      },
-      'bpmn:ExclusiveGateway': function(parentGfx, element) {
-        var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-        var pathData = pathMap.getScaledPath('GATEWAY_EXCLUSIVE', {
-          xScaleFactor: 0.4,
-          yScaleFactor: 0.4,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0.32,
-            my: 0.3
-          }
-        });
-
-        if ((getDi(element).isMarkerVisible)) {
-          drawPath(parentGfx, pathData, {
-            strokeWidth: 1,
-            fill: getStrokeColor(element, defaultStrokeColor),
-            stroke: getStrokeColor(element, defaultStrokeColor)
-          });
-        }
-
-        return diamond;
-      },
-      'bpmn:ComplexGateway': function(parentGfx, element) {
-        var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-        var pathData = pathMap.getScaledPath('GATEWAY_COMPLEX', {
-          xScaleFactor: 0.5,
-          yScaleFactor:0.5,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0.46,
-            my: 0.26
-          }
-        });
-
-        /* complex path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: getStrokeColor(element, defaultStrokeColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return diamond;
-      },
-      'bpmn:ParallelGateway': function(parentGfx, element) {
-        var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-        var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
-          xScaleFactor: 0.6,
-          yScaleFactor:0.6,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0.46,
-            my: 0.2
-          }
-        });
-
-        /* parallel path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: getStrokeColor(element, defaultStrokeColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return diamond;
-      },
-      'bpmn:EventBasedGateway': function(parentGfx, element) {
-
-        var semantic = getBusinessObject(element);
-
-        var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-        /* outer circle path */ drawCircle(parentGfx, element.width, element.height, element.height * 0.20, {
-          strokeWidth: 1,
-          fill: 'none',
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var type = semantic.eventGatewayType;
-        var instantiate = !!semantic.instantiate;
-
-        function drawEvent() {
-
-          var pathData = pathMap.getScaledPath('GATEWAY_EVENT_BASED', {
-            xScaleFactor: 0.18,
-            yScaleFactor: 0.18,
-            containerWidth: element.width,
-            containerHeight: element.height,
-            position: {
-              mx: 0.36,
-              my: 0.44
-            }
-          });
-
-          /* event path */ drawPath(parentGfx, pathData, {
-            strokeWidth: 2,
-            fill: getFillColor(element, 'none'),
-            stroke: getStrokeColor(element, defaultStrokeColor)
-          });
-        }
-
-        if (type === 'Parallel') {
-
-          var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
-            xScaleFactor: 0.4,
-            yScaleFactor:0.4,
-            containerWidth: element.width,
-            containerHeight: element.height,
-            position: {
-              mx: 0.474,
-              my: 0.296
-            }
-          });
-
-          drawPath(parentGfx, pathData, {
-            strokeWidth: 1,
-            fill: 'none'
-          });
-        } else if (type === 'Exclusive') {
-
-          if (!instantiate) {
-            drawCircle(parentGfx, element.width, element.height, element.height * 0.26, {
-              strokeWidth: 1,
-              fill: 'none',
-              stroke: getStrokeColor(element, defaultStrokeColor)
-            });
-          }
-
-          drawEvent();
-        }
-
-
-        return diamond;
-      },
-      'bpmn:Gateway': function(parentGfx, element) {
-        return drawDiamond(parentGfx, element.width, element.height, {
-          fill: getFillColor(element, defaultFillColor),
-          fillOpacity: DEFAULT_FILL_OPACITY,
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-      },
-      'bpmn:SequenceFlow': function(parentGfx, element) {
-        var fill = getFillColor(element, defaultFillColor),
-            stroke = getStrokeColor(element, defaultStrokeColor);
-
-        var path = drawConnectionSegments(parentGfx, element.waypoints, {
-          markerEnd: marker('sequenceflow-end', fill, stroke),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var sequenceFlow = getBusinessObject(element);
-
-        var source;
-
-        if (element.source) {
-          source = element.source.businessObject;
-
-          // conditional flow marker
-          if (sequenceFlow.conditionExpression && source.$instanceOf('bpmn:Activity')) {
-            attr$1(path, {
-              markerStart: marker('conditional-flow-marker', fill, stroke)
-            });
-          }
-
-          // default marker
-          if (source.default && (source.$instanceOf('bpmn:Gateway') || source.$instanceOf('bpmn:Activity')) &&
-              source.default === sequenceFlow) {
-            attr$1(path, {
-              markerStart: marker('conditional-default-flow-marker', fill, stroke)
-            });
-          }
-        }
-
-        return path;
-      },
-      'bpmn:Association': function(parentGfx, element, attrs) {
-
-        var semantic = getBusinessObject(element);
-
-        var fill = getFillColor(element, defaultFillColor),
-            stroke = getStrokeColor(element, defaultStrokeColor);
-
-        attrs = {
-          strokeDasharray: '0, 5',
-          stroke: getStrokeColor(element, defaultStrokeColor),
-          ...attrs
-        };
-
-        if (semantic.associationDirection === 'One' ||
-            semantic.associationDirection === 'Both') {
-          attrs.markerEnd = marker('association-end', fill, stroke);
-        }
-
-        if (semantic.associationDirection === 'Both') {
-          attrs.markerStart = marker('association-start', fill, stroke);
-        }
-
-        return drawConnectionSegments(parentGfx, element.waypoints, attrs);
-      },
-      'bpmn:DataInputAssociation': function(parentGfx, element) {
-        var fill = getFillColor(element, defaultFillColor),
-            stroke = getStrokeColor(element, defaultStrokeColor);
-
-        return renderer('bpmn:Association')(parentGfx, element, {
-          markerEnd: marker('association-end', fill, stroke)
-        });
-      },
-      'bpmn:DataOutputAssociation': function(parentGfx, element) {
-        var fill = getFillColor(element, defaultFillColor),
-            stroke = getStrokeColor(element, defaultStrokeColor);
-
-        return renderer('bpmn:Association')(parentGfx, element, {
-          markerEnd: marker('association-end', fill, stroke)
-        });
-      },
-      'bpmn:MessageFlow': function(parentGfx, element) {
-
-        var semantic = getBusinessObject(element),
-            di = getDi(element);
-
-        var fill = getFillColor(element, defaultFillColor),
-            stroke = getStrokeColor(element, defaultStrokeColor);
-
-        var path = drawConnectionSegments(parentGfx, element.waypoints, {
-          markerEnd: marker('messageflow-end', fill, stroke),
-          markerStart: marker('messageflow-start', fill, stroke),
-          strokeDasharray: '10, 11',
-          strokeWidth: 1.5,
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        if (semantic.messageRef) {
-          var midPoint = path.getPointAtLength(path.getTotalLength() / 2);
-
-          var markerPathData = pathMap.getScaledPath('MESSAGE_FLOW_MARKER', {
-            abspos: {
-              x: midPoint.x,
-              y: midPoint.y
-            }
-          });
-
-          var messageAttrs = { strokeWidth: 1 };
-
-          if (di.messageVisibleKind === 'initiating') {
-            messageAttrs.fill = 'white';
-            messageAttrs.stroke = black;
-          } else {
-            messageAttrs.fill = '#888';
-            messageAttrs.stroke = 'white';
-          }
-
-          var message = drawPath(parentGfx, markerPathData, messageAttrs);
-
-          var labelText = semantic.messageRef.name;
-          var label = renderLabel(parentGfx, labelText, {
-            align: 'center-top',
-            fitBox: true,
-            style: {
-              fill: getStrokeColor(element, defaultLabelColor)
-            }
-          });
-
-          var messageBounds = message.getBBox(),
-              labelBounds = label.getBBox();
-
-          var translateX = midPoint.x - labelBounds.width / 2,
-              translateY = midPoint.y + messageBounds.height / 2 + ELEMENT_LABEL_DISTANCE;
-
-          transform(label, translateX, translateY, 0);
-
-        }
-
-        return path;
-      },
-      'bpmn:DataObject': function(parentGfx, element) {
-        var pathData = pathMap.getScaledPath('DATA_OBJECT_PATH', {
-          xScaleFactor: 1,
-          yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0.474,
-            my: 0.296
-          }
-        });
-
-        var elementObject = drawPath(parentGfx, pathData, {
-          fill: getFillColor(element, defaultFillColor),
-          fillOpacity: DEFAULT_FILL_OPACITY,
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var semantic = getBusinessObject(element);
-
-        if (isCollection(semantic)) {
-          renderDataItemCollection(parentGfx, element);
-        }
-
-        return elementObject;
-      },
-      'bpmn:DataObjectReference': as('bpmn:DataObject'),
-      'bpmn:DataInput': function(parentGfx, element) {
-
-        var arrowPathData = pathMap.getRawPath('DATA_ARROW');
-
-        // page
-        var elementObject = renderer('bpmn:DataObject')(parentGfx, element);
-
-        /* input arrow path */ drawPath(parentGfx, arrowPathData, { strokeWidth: 1 });
-
-        return elementObject;
-      },
-      'bpmn:DataOutput': function(parentGfx, element) {
-        var arrowPathData = pathMap.getRawPath('DATA_ARROW');
-
-        // page
-        var elementObject = renderer('bpmn:DataObject')(parentGfx, element);
-
-        /* output arrow path */ drawPath(parentGfx, arrowPathData, {
-          strokeWidth: 1,
-          fill: black
-        });
-
-        return elementObject;
-      },
-      'bpmn:DataStoreReference': function(parentGfx, element) {
-        var DATA_STORE_PATH = pathMap.getScaledPath('DATA_STORE', {
-          xScaleFactor: 1,
-          yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0,
-            my: 0.133
-          }
-        });
-
-        var elementStore = drawPath(parentGfx, DATA_STORE_PATH, {
-          strokeWidth: 2,
-          fill: getFillColor(element, defaultFillColor),
-          fillOpacity: DEFAULT_FILL_OPACITY,
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        return elementStore;
-      },
-      'bpmn:BoundaryEvent': function(parentGfx, element, options) {
-
-        var semantic = getBusinessObject(element),
-            cancel = semantic.cancelActivity;
-
-        var attrs = {
-          strokeWidth: 1.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        };
-
-        if (!cancel) {
-          attrs.strokeDasharray = '6';
-        }
-
-        // apply fillOpacity
-        var outerAttrs = {
-          ...attrs,
-          fillOpacity: 1
-        };
-
-        // apply no-fill
-        var innerAttrs = {
-          ...attrs,
-          fill: 'none'
-        };
-
-        var outer = renderer('bpmn:Event')(parentGfx, element, outerAttrs);
-
-        /* inner path */ drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, innerAttrs);
-
-        if (!options || options.renderIcon !== false) {
-          renderEventContent(element, parentGfx);
-        }
-
-        return outer;
-      },
-      'bpmn:Group': function(parentGfx, element) {
-        return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, {
-          stroke: getStrokeColor(element, defaultStrokeColor),
-          strokeWidth: 1.5,
-          strokeDasharray: '10,6,0,6',
-          fill: 'none',
-          pointerEvents: 'none'
-        });
-      },
-      'label': function(parentGfx, element) {
-        return renderExternalLabel(parentGfx, element);
-      },
-      'bpmn:TextAnnotation': function(parentGfx, element) {
-        var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, {
-          'fill': 'none',
-          'stroke': 'none'
-        });
-
-        var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
-          xScaleFactor: 1,
-          yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0.0,
-            my: 0.0
-          }
-        });
-
-        drawPath(parentGfx, textPathData, {
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
-
-        var text = getBusinessObject(element).text || '';
-        renderLabel(parentGfx, text, {
-          box: element,
-          align: 'left-top',
-          padding: 7,
-          style: {
-            fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor)
-          }
-        });
-
-        return textElement;
-      },
-      'ParticipantMultiplicityMarker': function(parentGfx, element) {
         var markerPath = pathMap.getScaledPath('MARKER_PARALLEL', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: width,
+          containerHeight: height,
           position: {
-            mx: ((element.width / 2) / element.width),
-            my: (element.height - 15) / element.height
+            mx: ((width / 2 - 6) / width),
+            my: (height - 15) / height
           }
         });
 
         drawMarker('participant-multiplicity', parentGfx, markerPath, {
           strokeWidth: 2,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
       },
-      'SubProcessMarker': function(parentGfx, element) {
+      'SubProcessMarker': function(parentGfx, element, attrs = {}) {
         var markerRect = drawRect(parentGfx, 14, 14, 0, {
           strokeWidth: 1,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
 
-        // Process marker is placed in the middle of the box
-        // therefore fixed values can be used here
         translate$1(markerRect, element.width / 2 - 7.5, element.height - 20);
 
         var markerPath = pathMap.getScaledPath('MARKER_SUB_PROCESS', {
@@ -4427,176 +3583,1468 @@
         });
 
         drawMarker('sub-process', parentGfx, markerPath, {
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
       },
-      'ParallelMarker': function(parentGfx, element, position) {
+      'ParallelMarker': function(parentGfx, element, attrs) {
+        var width = getWidth(element, attrs),
+            height = getHeight(element, attrs);
+
         var markerPath = pathMap.getScaledPath('MARKER_PARALLEL', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: width,
+          containerHeight: height,
           position: {
-            mx: ((element.width / 2 + position.parallel) / element.width),
-            my: (element.height - 20) / element.height
+            mx: ((width / 2 + attrs.parallel) / width),
+            my: (height - 20) / height
           }
         });
 
         drawMarker('parallel', parentGfx, markerPath, {
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
       },
-      'SequentialMarker': function(parentGfx, element, position) {
+      'SequentialMarker': function(parentGfx, element, attrs) {
         var markerPath = pathMap.getScaledPath('MARKER_SEQUENTIAL', {
           xScaleFactor: 1,
           yScaleFactor: 1,
           containerWidth: element.width,
           containerHeight: element.height,
           position: {
-            mx: ((element.width / 2 + position.seq) / element.width),
+            mx: ((element.width / 2 + attrs.seq) / element.width),
             my: (element.height - 19) / element.height
           }
         });
 
         drawMarker('sequential', parentGfx, markerPath, {
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
       },
-      'CompensationMarker': function(parentGfx, element, position) {
+      'CompensationMarker': function(parentGfx, element, attrs) {
         var markerMath = pathMap.getScaledPath('MARKER_COMPENSATION', {
           xScaleFactor: 1,
           yScaleFactor: 1,
           containerWidth: element.width,
           containerHeight: element.height,
           position: {
-            mx: ((element.width / 2 + position.compensation) / element.width),
+            mx: ((element.width / 2 + attrs.compensation) / element.width),
             my: (element.height - 13) / element.height
           }
         });
 
         drawMarker('compensation', parentGfx, markerMath, {
           strokeWidth: 1,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
       },
-      'LoopMarker': function(parentGfx, element, position) {
+      'LoopMarker': function(parentGfx, element, attrs) {
+        var width = getWidth(element, attrs),
+            height = getHeight(element, attrs);
+
         var markerPath = pathMap.getScaledPath('MARKER_LOOP', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: width,
+          containerHeight: height,
           position: {
-            mx: ((element.width / 2 + position.loop) / element.width),
-            my: (element.height - 7) / element.height
+            mx: ((width / 2 + attrs.loop) / width),
+            my: (height - 7) / height
           }
         });
 
         drawMarker('loop', parentGfx, markerPath, {
           strokeWidth: 1.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor),
+          fill: 'none',
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
           strokeMiterlimit: 0.5
         });
       },
-      'AdhocMarker': function(parentGfx, element, position) {
+      'AdhocMarker': function(parentGfx, element, attrs) {
+        var width = getWidth(element, attrs),
+            height = getHeight(element, attrs);
+
         var markerPath = pathMap.getScaledPath('MARKER_ADHOC', {
           xScaleFactor: 1,
           yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: width,
+          containerHeight: height,
           position: {
-            mx: ((element.width / 2 + position.adhoc) / element.width),
-            my: (element.height - 15) / element.height
+            mx: ((width / 2 + attrs.adhoc) / width),
+            my: (height - 15) / height
           }
         });
 
         drawMarker('adhoc', parentGfx, markerPath, {
           strokeWidth: 1,
-          fill: getStrokeColor(element, defaultStrokeColor),
-          stroke: getStrokeColor(element, defaultStrokeColor)
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
         });
       }
     };
 
-    function attachTaskMarkers(parentGfx, element, taskMarkers) {
-      var obj = getBusinessObject(element);
+    function renderTaskMarker(type, parentGfx, element, attrs) {
+      taskMarkerRenderers[ type ](parentGfx, element, attrs);
+    }
 
-      var subprocess = taskMarkers && taskMarkers.indexOf('SubProcessMarker') !== -1;
-      var position;
+    function renderTaskMarkers(parentGfx, element, taskMarkers = [], attrs = {}) {
+      attrs = {
+        fill: attrs.fill,
+        stroke: attrs.stroke,
+        width: getWidth(element, attrs),
+        height: getHeight(element, attrs)
+      };
+
+      var semantic = getBusinessObject(element);
+
+      var subprocess = taskMarkers.includes('SubProcessMarker');
 
       if (subprocess) {
-        position = {
+        attrs = {
+          ...attrs,
           seq: -21,
           parallel: -22,
-          compensation: -42,
+          compensation: -25,
           loop: -18,
           adhoc: 10
         };
       } else {
-        position = {
-          seq: -3,
+        attrs = {
+          ...attrs,
+          seq: -5,
           parallel: -6,
-          compensation: -27,
+          compensation: -7,
           loop: 0,
-          adhoc: 10
+          adhoc: -8
         };
       }
 
-      forEach$1(taskMarkers, function(marker) {
-        renderer(marker)(parentGfx, element, position);
-      });
-
-      if (obj.isForCompensation) {
-        renderer('CompensationMarker')(parentGfx, element, position);
+      if (semantic.get('isForCompensation')) {
+        taskMarkers.push('CompensationMarker');
       }
 
-      if (obj.$type === 'bpmn:AdHocSubProcess') {
-        renderer('AdhocMarker')(parentGfx, element, position);
+      if (is$1(semantic, 'bpmn:AdHocSubProcess')) {
+        taskMarkers.push('AdhocMarker');
+
+        if (!subprocess) {
+          assign$1(attrs, { compensation: attrs.compensation - 18 });
+        }
       }
 
-      var loopCharacteristics = obj.loopCharacteristics,
-          isSequential = loopCharacteristics && loopCharacteristics.isSequential;
+      var loopCharacteristics = semantic.get('loopCharacteristics'),
+          isSequential = loopCharacteristics && loopCharacteristics.get('isSequential');
 
       if (loopCharacteristics) {
 
+        assign$1(attrs, {
+          compensation: attrs.compensation - 18,
+        });
+
+        if (taskMarkers.includes('AdhocMarker')) {
+          assign$1(attrs, {
+            seq: -23,
+            loop: -18,
+            parallel: -24
+          });
+        }
+
         if (isSequential === undefined) {
-          renderer('LoopMarker')(parentGfx, element, position);
+          taskMarkers.push('LoopMarker');
         }
 
         if (isSequential === false) {
-          renderer('ParallelMarker')(parentGfx, element, position);
+          taskMarkers.push('ParallelMarker');
         }
 
         if (isSequential === true) {
-          renderer('SequentialMarker')(parentGfx, element, position);
+          taskMarkers.push('SequentialMarker');
         }
+      }
+
+      if (taskMarkers.includes('CompensationMarker') && taskMarkers.length === 1) {
+        assign$1(attrs, {
+          compensation: -8
+        });
+      }
+
+      forEach(taskMarkers, function(marker) {
+        renderTaskMarker(marker, parentGfx, element, attrs);
+      });
+    }
+
+    function renderLabel(parentGfx, label, attrs = {}) {
+      attrs = assign$1({
+        size: {
+          width: 100
+        }
+      }, attrs);
+
+      var text = textRenderer.createText(label || '', attrs);
+
+      classes$1(text).add('djs-label');
+
+      append(parentGfx, text);
+
+      return text;
+    }
+
+    function renderEmbeddedLabel(parentGfx, element, align, attrs = {}) {
+      var semantic = getBusinessObject(element);
+
+      var box = getBounds({
+        x: element.x,
+        y: element.y,
+        width: element.width,
+        height: element.height
+      }, attrs);
+
+      return renderLabel(parentGfx, semantic.name, {
+        align,
+        box,
+        padding: 7,
+        style: {
+          fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+        }
+      });
+    }
+
+    function renderExternalLabel(parentGfx, element, attrs = {}) {
+      var box = {
+        width: element.width,
+        height: element.height,
+        x: element.width / 2 + element.x,
+        y: element.height / 2 + element.y
+      };
+
+      return renderLabel(parentGfx, getLabel(element), {
+        box: box,
+        style: assign$1(
+          {},
+          textRenderer.getExternalStyle(),
+          {
+            fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+          }
+        )
+      });
+    }
+
+    function renderLaneLabel(parentGfx, text, element, attrs = {}) {
+      var isHorizontalLane = isHorizontal(element);
+
+      var textBox = renderLabel(parentGfx, text, {
+        box: {
+          height: 30,
+          width: isHorizontalLane ? getHeight(element, attrs) : getWidth(element, attrs),
+        },
+        align: 'center-middle',
+        style: {
+          fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+        }
+      });
+
+      if (isHorizontalLane) {
+        var top = -1 * getHeight(element, attrs);
+        transform(textBox, 0, -top, 270);
       }
     }
 
-    function renderDataItemCollection(parentGfx, element) {
+    function renderActivity(parentGfx, element, attrs = {}) {
+      var {
+        width,
+        height
+      } = getBounds(element, attrs);
 
-      var yPosition = (element.height - 18) / element.height;
+      return drawRect(parentGfx, width, height, TASK_BORDER_RADIUS, {
+        ...attrs,
+        fill: getFillColor(element, defaultFillColor, attrs.fill),
+        fillOpacity: DEFAULT_OPACITY,
+        stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
+      });
+    }
 
-      var pathData = pathMap.getScaledPath('DATA_OBJECT_COLLECTION_PATH', {
+    function renderAssociation(parentGfx, element, attrs = {}) {
+      var semantic = getBusinessObject(element);
+
+      var fill = getFillColor(element, defaultFillColor, attrs.fill),
+          stroke = getStrokeColor(element, defaultStrokeColor, attrs.stroke);
+
+      if (semantic.get('associationDirection') === 'One' ||
+          semantic.get('associationDirection') === 'Both') {
+        attrs.markerEnd = marker(parentGfx, 'association-end', fill, stroke);
+      }
+
+      if (semantic.get('associationDirection') === 'Both') {
+        attrs.markerStart = marker(parentGfx, 'association-start', fill, stroke);
+      }
+
+      attrs = pickAttrs(attrs, [
+        'markerStart',
+        'markerEnd'
+      ]);
+
+      return drawConnectionSegments(parentGfx, element.waypoints, {
+        ...attrs,
+        stroke,
+        strokeDasharray: '0, 5'
+      });
+    }
+
+    function renderDataObject(parentGfx, element, attrs = {}) {
+      var fill = getFillColor(element, defaultFillColor, attrs.fill),
+          stroke = getStrokeColor(element, defaultStrokeColor, attrs.stroke);
+
+      var pathData = pathMap.getScaledPath('DATA_OBJECT_PATH', {
         xScaleFactor: 1,
         yScaleFactor: 1,
         containerWidth: element.width,
         containerHeight: element.height,
         position: {
-          mx: 0.33,
-          my: yPosition
+          mx: 0.474,
+          my: 0.296
         }
       });
 
-      /* collection path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 2
+      var dataObject = drawPath(parentGfx, pathData, {
+        fill,
+        fillOpacity: DEFAULT_OPACITY,
+        stroke
+      });
+
+      var semantic = getBusinessObject(element);
+
+      if (isCollection(semantic)) {
+        var collectionPathData = pathMap.getScaledPath('DATA_OBJECT_COLLECTION_PATH', {
+          xScaleFactor: 1,
+          yScaleFactor: 1,
+          containerWidth: element.width,
+          containerHeight: element.height,
+          position: {
+            mx: 0.33,
+            my: (element.height - 18) / element.height
+          }
+        });
+
+        drawPath(parentGfx, collectionPathData, {
+          strokeWidth: 2,
+          fill,
+          stroke
+        });
+      }
+
+      return dataObject;
+    }
+
+    function renderEvent(parentGfx, element, attrs = {}) {
+      return drawCircle(parentGfx, element.width, element.height, {
+        fillOpacity: DEFAULT_OPACITY,
+        ...attrs,
+        fill: getFillColor(element, defaultFillColor, attrs.fill),
+        stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
       });
     }
 
+    function renderGateway(parentGfx, element, attrs = {}) {
+      return drawDiamond(parentGfx, element.width, element.height, {
+        fill: getFillColor(element, defaultFillColor, attrs.fill),
+        fillOpacity: DEFAULT_OPACITY,
+        stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
+      });
+    }
+
+    function renderLane(parentGfx, element, attrs = {}) {
+      var lane = drawRect(parentGfx, getWidth(element, attrs), getHeight(element, attrs), 0, {
+        fill: getFillColor(element, defaultFillColor, attrs.fill),
+        fillOpacity: attrs.fillOpacity || DEFAULT_OPACITY,
+        stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1.5
+      });
+
+      var semantic = getBusinessObject(element);
+
+      if (is$1(semantic, 'bpmn:Lane')) {
+        var text = semantic.get('name');
+
+        renderLaneLabel(parentGfx, text, element, attrs);
+      }
+
+      return lane;
+    }
+
+    function renderSubProcess(parentGfx, element, attrs = {}) {
+      var activity = renderActivity(parentGfx, element, attrs);
+
+      var expanded = isExpanded(element);
+
+      if (isEventSubProcess(element)) {
+        attr$1(activity, {
+          strokeDasharray: '0, 5.5',
+          strokeWidth: 2.5
+        });
+
+        if (!expanded) {
+          var flowElements = getBusinessObject(element).flowElements || [];
+          var startEvents = flowElements.filter(e => is$1(e, 'bpmn:StartEvent'));
+
+          if (startEvents.length === 1) {
+            renderEventSubProcessIcon(startEvents[0], parentGfx, attrs, element);
+          }
+        }
+      }
+
+      renderEmbeddedLabel(parentGfx, element, expanded ? 'center-top' : 'center-middle', attrs);
+
+      if (expanded) {
+        renderTaskMarkers(parentGfx, element, undefined, attrs);
+      } else {
+        renderTaskMarkers(parentGfx, element, [ 'SubProcessMarker' ], attrs);
+      }
+
+      return activity;
+    }
+
+    function renderEventSubProcessIcon(startEvent, parentGfx, attrs, proxyElement) {
+      var iconSize = 22;
+
+      // match the colors of the enclosing subprocess
+      var proxyAttrs = {
+        fill: getFillColor(proxyElement, defaultFillColor, attrs.fill),
+        stroke: getStrokeColor(proxyElement, defaultStrokeColor, attrs.stroke),
+        width: iconSize,
+        height: iconSize
+      };
+
+      var interrupting = getBusinessObject(startEvent).isInterrupting;
+      var strokeDasharray = interrupting ? 0 : 3;
+
+      // better visibility for non-interrupting events
+      var strokeWidth = interrupting ? 1 : 1.2;
+
+      // make the icon look larger by drawing a smaller circle
+      var circleSize = 20;
+      var shift = (iconSize - circleSize) / 2;
+      var transform = 'translate(' + shift + ',' + shift + ')';
+
+      drawCircle(parentGfx, circleSize, circleSize, {
+        fill: proxyAttrs.fill,
+        stroke: proxyAttrs.stroke,
+        strokeWidth,
+        strokeDasharray,
+        transform
+      });
+
+      renderEventIcon(startEvent, parentGfx, proxyAttrs, proxyElement);
+    }
+
+    function renderTask(parentGfx, element, attrs = {}) {
+      var activity = renderActivity(parentGfx, element, attrs);
+
+      renderEmbeddedLabel(parentGfx, element, 'center-middle', attrs);
+
+      renderTaskMarkers(parentGfx, element, undefined, attrs);
+
+      return activity;
+    }
+
+    var handlers = this.handlers = {
+      'bpmn:AdHocSubProcess': function(parentGfx, element, attrs = {}) {
+        if (isExpanded(element)) {
+          attrs = pickAttrs(attrs, [
+            'fill',
+            'stroke',
+            'width',
+            'height'
+          ]);
+        } else {
+          attrs = pickAttrs(attrs, [
+            'fill',
+            'stroke'
+          ]);
+        }
+
+        return renderSubProcess(parentGfx, element, attrs);
+      },
+      'bpmn:Association': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderAssociation(parentGfx, element, attrs);
+      },
+      'bpmn:BoundaryEvent': function(parentGfx, element, attrs = {}) {
+        var { renderIcon = true } = attrs;
+
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var semantic = getBusinessObject(element),
+            cancelActivity = semantic.get('cancelActivity');
+
+        attrs = {
+          strokeWidth: 1.5,
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          fillOpacity: FULL_OPACITY,
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
+        };
+
+        if (!cancelActivity) {
+          attrs.strokeDasharray = '6';
+        }
+
+        var event = renderEvent(parentGfx, element, attrs);
+
+        drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
+          ...attrs,
+          fill: 'none'
+        });
+
+        if (renderIcon) {
+          renderEventIcon(element, parentGfx, attrs);
+        }
+
+        return event;
+      },
+      'bpmn:BusinessRuleTask': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        var headerData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_MAIN', {
+          abspos: {
+            x: 8,
+            y: 8
+          }
+        });
+
+        var businessPath = drawPath(parentGfx, headerData);
+
+        attr$1(businessPath, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        var headerPathData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_HEADER', {
+          abspos: {
+            x: 8,
+            y: 8
+          }
+        });
+
+        var businessHeaderPath = drawPath(parentGfx, headerPathData);
+
+        attr$1(businessHeaderPath, {
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return task;
+      },
+      'bpmn:CallActivity': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderSubProcess(parentGfx, element, {
+          strokeWidth: 5,
+          ...attrs
+        });
+      },
+      'bpmn:ComplexGateway': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var gateway = renderGateway(parentGfx, element, attrs);
+
+        var pathData = pathMap.getScaledPath('GATEWAY_COMPLEX', {
+          xScaleFactor: 0.5,
+          yScaleFactor:0.5,
+          containerWidth: element.width,
+          containerHeight: element.height,
+          position: {
+            mx: 0.46,
+            my: 0.26
+          }
+        });
+
+        drawPath(parentGfx, pathData, {
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return gateway;
+      },
+      'bpmn:DataInput': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var arrowPathData = pathMap.getRawPath('DATA_ARROW');
+
+        var dataObject = renderDataObject(parentGfx, element, attrs);
+
+        drawPath(parentGfx, arrowPathData, {
+          fill: 'none',
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return dataObject;
+      },
+      'bpmn:DataInputAssociation': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderAssociation(parentGfx, element, {
+          ...attrs,
+          markerEnd: marker(parentGfx, 'association-end', getFillColor(element, defaultFillColor, attrs.fill), getStrokeColor(element, defaultStrokeColor, attrs.stroke))
+        });
+      },
+      'bpmn:DataObject': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderDataObject(parentGfx, element, attrs);
+      },
+      'bpmn:DataObjectReference': as('bpmn:DataObject'),
+      'bpmn:DataOutput': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var arrowPathData = pathMap.getRawPath('DATA_ARROW');
+
+        var dataObject = renderDataObject(parentGfx, element, attrs);
+
+        drawPath(parentGfx, arrowPathData, {
+          strokeWidth: 1,
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
+        });
+
+        return dataObject;
+      },
+      'bpmn:DataOutputAssociation': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderAssociation(parentGfx, element, {
+          ...attrs,
+          markerEnd: marker(parentGfx, 'association-end', getFillColor(element, defaultFillColor, attrs.fill), getStrokeColor(element, defaultStrokeColor, attrs.stroke))
+        });
+      },
+      'bpmn:DataStoreReference': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var dataStorePath = pathMap.getScaledPath('DATA_STORE', {
+          xScaleFactor: 1,
+          yScaleFactor: 1,
+          containerWidth: element.width,
+          containerHeight: element.height,
+          position: {
+            mx: 0,
+            my: 0.133
+          }
+        });
+
+        return drawPath(parentGfx, dataStorePath, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          fillOpacity: DEFAULT_OPACITY,
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 2
+        });
+      },
+      'bpmn:EndEvent': function(parentGfx, element, attrs = {}) {
+        var { renderIcon = true } = attrs;
+
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var event = renderEvent(parentGfx, element, {
+          ...attrs,
+          strokeWidth: 4
+        });
+
+        if (renderIcon) {
+          renderEventIcon(element, parentGfx, attrs);
+        }
+
+        return event;
+      },
+      'bpmn:EventBasedGateway': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var semantic = getBusinessObject(element);
+
+        var diamond = renderGateway(parentGfx, element, attrs);
+
+        drawCircle(parentGfx, element.width, element.height, element.height * 0.20, {
+          fill: getFillColor(element, 'none', attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        var type = semantic.get('eventGatewayType'),
+            instantiate = !!semantic.get('instantiate');
+
+        function drawEvent() {
+
+          var pathData = pathMap.getScaledPath('GATEWAY_EVENT_BASED', {
+            xScaleFactor: 0.18,
+            yScaleFactor: 0.18,
+            containerWidth: element.width,
+            containerHeight: element.height,
+            position: {
+              mx: 0.36,
+              my: 0.44
+            }
+          });
+
+          drawPath(parentGfx, pathData, {
+            fill: 'none',
+            stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            strokeWidth: 2
+          });
+        }
+
+        if (type === 'Parallel') {
+          var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
+            xScaleFactor: 0.4,
+            yScaleFactor: 0.4,
+            containerWidth: element.width,
+            containerHeight: element.height,
+            position: {
+              mx: 0.474,
+              my: 0.296
+            }
+          });
+
+          drawPath(parentGfx, pathData, {
+            fill: 'none',
+            stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            strokeWidth: 1
+          });
+        } else if (type === 'Exclusive') {
+          if (!instantiate) {
+            drawCircle(parentGfx, element.width, element.height, element.height * 0.26, {
+              fill: 'none',
+              stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+              strokeWidth: 1
+            });
+          }
+
+          drawEvent();
+        }
+
+
+        return diamond;
+      },
+      'bpmn:ExclusiveGateway': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var gateway = renderGateway(parentGfx, element, attrs);
+
+        var pathData = pathMap.getScaledPath('GATEWAY_EXCLUSIVE', {
+          xScaleFactor: 0.4,
+          yScaleFactor: 0.4,
+          containerWidth: element.width,
+          containerHeight: element.height,
+          position: {
+            mx: 0.32,
+            my: 0.3
+          }
+        });
+
+        var di = getDi(element);
+
+        if (di.get('isMarkerVisible')) {
+          drawPath(parentGfx, pathData, {
+            fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            strokeWidth: 1
+          });
+        }
+
+        return gateway;
+      },
+      'bpmn:Gateway': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderGateway(parentGfx, element, attrs);
+      },
+      'bpmn:Group': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke',
+          'width',
+          'height'
+        ]);
+
+        return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, {
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1.5,
+          strokeDasharray: '10, 6, 0, 6',
+          fill: 'none',
+          pointerEvents: 'none',
+          width: getWidth(element, attrs),
+          height: getHeight(element, attrs)
+        });
+      },
+      'bpmn:InclusiveGateway': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var gateway = renderGateway(parentGfx, element, attrs);
+
+        drawCircle(parentGfx, element.width, element.height, element.height * 0.24, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 2.5
+        });
+
+        return gateway;
+      },
+      'bpmn:IntermediateEvent': function(parentGfx, element, attrs = {}) {
+        var { renderIcon = true } = attrs;
+
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var outer = renderEvent(parentGfx, element, {
+          ...attrs,
+          strokeWidth: 1.5
+        });
+
+        drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
+          fill: 'none',
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1.5
+        });
+
+        if (renderIcon) {
+          renderEventIcon(element, parentGfx, attrs);
+        }
+
+        return outer;
+      },
+      'bpmn:IntermediateCatchEvent': as('bpmn:IntermediateEvent'),
+      'bpmn:IntermediateThrowEvent': as('bpmn:IntermediateEvent'),
+      'bpmn:Lane': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke',
+          'width',
+          'height'
+        ]);
+
+        return renderLane(parentGfx, element, {
+          ...attrs,
+          fillOpacity: LOW_OPACITY
+        });
+      },
+      'bpmn:ManualTask': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        var pathData = pathMap.getScaledPath('TASK_TYPE_MANUAL', {
+          abspos: {
+            x: 17,
+            y: 15
+          }
+        });
+
+        drawPath(parentGfx, pathData, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 0.5
+        });
+
+        return task;
+      },
+      'bpmn:MessageFlow': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var semantic = getBusinessObject(element),
+            di = getDi(element);
+
+        var fill = getFillColor(element, defaultFillColor, attrs.fill),
+            stroke = getStrokeColor(element, defaultStrokeColor, attrs.stroke);
+
+        var path = drawConnectionSegments(parentGfx, element.waypoints, {
+          markerEnd: marker(parentGfx, 'messageflow-end', fill, stroke),
+          markerStart: marker(parentGfx, 'messageflow-start', fill, stroke),
+          stroke,
+          strokeDasharray: '10, 11',
+          strokeWidth: 1.5
+        });
+
+        if (semantic.get('messageRef')) {
+          var midPoint = path.getPointAtLength(path.getTotalLength() / 2);
+
+          var markerPathData = pathMap.getScaledPath('MESSAGE_FLOW_MARKER', {
+            abspos: {
+              x: midPoint.x,
+              y: midPoint.y
+            }
+          });
+
+          var messageAttrs = {
+            strokeWidth: 1
+          };
+
+          if (di.get('messageVisibleKind') === 'initiating') {
+            messageAttrs.fill = fill;
+            messageAttrs.stroke = stroke;
+          } else {
+            messageAttrs.fill = stroke;
+            messageAttrs.stroke = fill;
+          }
+
+          var message = drawPath(parentGfx, markerPathData, messageAttrs);
+
+          var messageRef = semantic.get('messageRef'),
+              name = messageRef.get('name');
+
+          var label = renderLabel(parentGfx, name, {
+            align: 'center-top',
+            fitBox: true,
+            style: {
+              fill: stroke
+            }
+          });
+
+          var messageBounds = message.getBBox(),
+              labelBounds = label.getBBox();
+
+          var translateX = midPoint.x - labelBounds.width / 2,
+              translateY = midPoint.y + messageBounds.height / 2 + ELEMENT_LABEL_DISTANCE;
+
+          transform(label, translateX, translateY, 0);
+        }
+
+        return path;
+      },
+      'bpmn:ParallelGateway': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var diamond = renderGateway(parentGfx, element, attrs);
+
+        var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
+          xScaleFactor: 0.6,
+          yScaleFactor: 0.6,
+          containerWidth: element.width,
+          containerHeight: element.height,
+          position: {
+            mx: 0.46,
+            my: 0.2
+          }
+        });
+
+        drawPath(parentGfx, pathData, {
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return diamond;
+      },
+      'bpmn:Participant': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke',
+          'width',
+          'height'
+        ]);
+
+        var participant = renderLane(parentGfx, element, attrs);
+
+        var expandedParticipant = isExpanded(element);
+        var horizontalParticipant = isHorizontal(element);
+
+        var semantic = getBusinessObject(element),
+            name = semantic.get('name');
+
+        if (expandedParticipant) {
+          var waypoints = horizontalParticipant ? [
+            {
+              x: 30,
+              y: 0
+            },
+            {
+              x: 30,
+              y: getHeight(element, attrs)
+            }
+          ] : [
+            {
+              x: 0,
+              y: 30
+            },
+            {
+              x: getWidth(element, attrs),
+              y: 30
+            }
+          ];
+
+          drawLine(parentGfx, waypoints, {
+            stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            strokeWidth: PARTICIPANT_STROKE_WIDTH
+          });
+
+          renderLaneLabel(parentGfx, name, element, attrs);
+        } else {
+          var bounds = getBounds(element, attrs);
+
+          if (!horizontalParticipant) {
+            bounds.height = getWidth(element, attrs);
+            bounds.width = getHeight(element, attrs);
+          }
+
+          var textBox = renderLabel(parentGfx, name, {
+            box: bounds,
+            align: 'center-middle',
+            style: {
+              fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+            }
+          });
+
+          if (!horizontalParticipant) {
+            var top = -1 * getHeight(element, attrs);
+            transform(textBox, 0, -top, 270);
+          }
+        }
+
+        if (semantic.get('participantMultiplicity')) {
+          renderTaskMarker('ParticipantMultiplicityMarker', parentGfx, element, attrs);
+        }
+
+        return participant;
+      },
+      'bpmn:ReceiveTask' : function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var semantic = getBusinessObject(element);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        var pathData;
+
+        if (semantic.get('instantiate')) {
+          drawCircle(parentGfx, 28, 28, 20 * 0.22, {
+            fill: getFillColor(element, defaultFillColor, attrs.fill),
+            stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+            strokeWidth: 1
+          });
+
+          pathData = pathMap.getScaledPath('TASK_TYPE_INSTANTIATING_SEND', {
+            abspos: {
+              x: 7.77,
+              y: 9.52
+            }
+          });
+        } else {
+          pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
+            xScaleFactor: 0.9,
+            yScaleFactor: 0.9,
+            containerWidth: 21,
+            containerHeight: 14,
+            position: {
+              mx: 0.3,
+              my: 0.4
+            }
+          });
+        }
+
+        drawPath(parentGfx, pathData, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return task;
+      },
+      'bpmn:ScriptTask': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        var pathData = pathMap.getScaledPath('TASK_TYPE_SCRIPT', {
+          abspos: {
+            x: 15,
+            y: 20
+          }
+        });
+
+        drawPath(parentGfx, pathData, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return task;
+      },
+      'bpmn:SendTask': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        var pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
+          xScaleFactor: 1,
+          yScaleFactor: 1,
+          containerWidth: 21,
+          containerHeight: 14,
+          position: {
+            mx: 0.285,
+            my: 0.357
+          }
+        });
+
+        drawPath(parentGfx, pathData, {
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getFillColor(element, defaultFillColor, attrs.fill),
+          strokeWidth: 1
+        });
+
+        return task;
+      },
+      'bpmn:SequenceFlow': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var fill = getFillColor(element, defaultFillColor, attrs.fill),
+            stroke = getStrokeColor(element, defaultStrokeColor, attrs.stroke);
+
+        var connection = drawConnectionSegments(parentGfx, element.waypoints, {
+          markerEnd: marker(parentGfx, 'sequenceflow-end', fill, stroke),
+          stroke
+        });
+
+        var semantic = getBusinessObject(element);
+
+        var { source } = element;
+
+        if (source) {
+          var sourceSemantic = getBusinessObject(source);
+
+          // conditional flow marker
+          if (semantic.get('conditionExpression') && is$1(sourceSemantic, 'bpmn:Activity')) {
+            attr$1(connection, {
+              markerStart: marker(parentGfx, 'conditional-flow-marker', fill, stroke)
+            });
+          }
+
+          // default marker
+          if (sourceSemantic.get('default') && (is$1(sourceSemantic, 'bpmn:Gateway') || is$1(sourceSemantic, 'bpmn:Activity')) &&
+              sourceSemantic.get('default') === semantic) {
+            attr$1(connection, {
+              markerStart: marker(parentGfx, 'conditional-default-flow-marker', fill, stroke)
+            });
+          }
+        }
+
+        return connection;
+      },
+      'bpmn:ServiceTask': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        drawCircle(parentGfx, 10, 10, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: 'none',
+          transform: 'translate(6, 6)'
+        });
+
+        var pathDataService1 = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
+          abspos: {
+            x: 12,
+            y: 18
+          }
+        });
+
+        drawPath(parentGfx, pathDataService1, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        drawCircle(parentGfx, 10, 10, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: 'none',
+          transform: 'translate(11, 10)'
+        });
+
+        var pathDataService2 = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
+          abspos: {
+            x: 17,
+            y: 22
+          }
+        });
+
+        drawPath(parentGfx, pathDataService2, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+
+        return task;
+      },
+      'bpmn:StartEvent': function(parentGfx, element, attrs = {}) {
+        var { renderIcon = true } = attrs;
+
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var semantic = getBusinessObject(element);
+
+        if (!semantic.get('isInterrupting')) {
+          attrs = {
+            ...attrs,
+            strokeDasharray: '6'
+          };
+        }
+
+        var event = renderEvent(parentGfx, element, attrs);
+
+        if (renderIcon) {
+          renderEventIcon(element, parentGfx, attrs);
+        }
+
+        return event;
+      },
+      'bpmn:SubProcess': function(parentGfx, element, attrs = {}) {
+        if (isExpanded(element)) {
+          attrs = pickAttrs(attrs, [
+            'fill',
+            'stroke',
+            'width',
+            'height'
+          ]);
+        } else {
+          attrs = pickAttrs(attrs, [
+            'fill',
+            'stroke'
+          ]);
+        }
+
+        return renderSubProcess(parentGfx, element, attrs);
+      },
+      'bpmn:Task': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        return renderTask(parentGfx, element, attrs);
+      },
+      'bpmn:TextAnnotation': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var {
+          width,
+          height
+        } = getBounds(element, attrs);
+
+        var textElement = drawRect(parentGfx, width, height, 0, 0, {
+          fill: 'none',
+          stroke: 'none'
+        });
+
+        var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
+          xScaleFactor: 1,
+          yScaleFactor: 1,
+          containerWidth: width,
+          containerHeight: height,
+          position: {
+            mx: 0.0,
+            my: 0.0
+          }
+        });
+
+        drawPath(parentGfx, textPathData, {
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke)
+        });
+
+        var semantic = getBusinessObject(element),
+            text = semantic.get('text') || '';
+
+        renderLabel(parentGfx, text, {
+          align: 'left-top',
+          box: getBounds(element, attrs),
+          padding: TEXT_ANNOTATION_PADDING,
+          style: {
+            fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+          }
+        });
+
+        return textElement;
+      },
+      'bpmn:Transaction': function(parentGfx, element, attrs = {}) {
+        if (isExpanded(element)) {
+          attrs = pickAttrs(attrs, [
+            'fill',
+            'stroke',
+            'width',
+            'height'
+          ]);
+        } else {
+          attrs = pickAttrs(attrs, [
+            'fill',
+            'stroke'
+          ]);
+        }
+
+        var outer = renderSubProcess(parentGfx, element, {
+          strokeWidth: 1.5,
+          ...attrs
+        });
+
+        var innerAttrs = styles.style([ 'no-fill', 'no-events' ], {
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1.5
+        });
+
+        var expanded = isExpanded(element);
+
+        if (!expanded) {
+          attrs = {};
+        }
+
+        drawRect(
+          parentGfx,
+          getWidth(element, attrs),
+          getHeight(element, attrs),
+          TASK_BORDER_RADIUS - INNER_OUTER_DIST,
+          INNER_OUTER_DIST,
+          innerAttrs
+        );
+
+        return outer;
+      },
+      'bpmn:UserTask': function(parentGfx, element, attrs = {}) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+
+        var task = renderTask(parentGfx, element, attrs);
+
+        var x = 15;
+        var y = 12;
+
+        var pathDataUser1 = pathMap.getScaledPath('TASK_TYPE_USER_1', {
+          abspos: {
+            x: x,
+            y: y
+          }
+        });
+
+        drawPath(parentGfx, pathDataUser1, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 0.5
+        });
+
+        var pathDataUser2 = pathMap.getScaledPath('TASK_TYPE_USER_2', {
+          abspos: {
+            x: x,
+            y: y
+          }
+        });
+
+        drawPath(parentGfx, pathDataUser2, {
+          fill: getFillColor(element, defaultFillColor, attrs.fill),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 0.5
+        });
+
+        var pathDataUser3 = pathMap.getScaledPath('TASK_TYPE_USER_3', {
+          abspos: {
+            x: x,
+            y: y
+          }
+        });
+
+        drawPath(parentGfx, pathDataUser3, {
+          fill: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          stroke: getStrokeColor(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 0.5
+        });
+
+        return task;
+      },
+      'label': function(parentGfx, element, attrs = {}) {
+        return renderExternalLabel(parentGfx, element, attrs);
+      }
+    };
 
     // extension API, use at your own risk
     this._drawPath = drawPath;
@@ -4630,57 +5078,81 @@
    * Draw shape into parentGfx.
    *
    * @param {SVGElement} parentGfx
-   * @param {Element} element
+   * @param {Shape} shape
+   * @param {Attrs} [attrs]
    *
    * @return {SVGElement} mainGfx
    */
-  BpmnRenderer.prototype.drawShape = function(parentGfx, element) {
-    var type = element.type;
-    var h = this._renderer(type);
+  BpmnRenderer.prototype.drawShape = function(parentGfx, shape, attrs = {}) {
+    var { type } = shape;
 
-    /* jshint -W040 */
-    return h(parentGfx, element);
+    var handler = this._renderer(type);
+
+    return handler(parentGfx, shape, attrs);
   };
 
   /**
    * Draw connection into parentGfx.
    *
    * @param {SVGElement} parentGfx
-   * @param {Element} element
+   * @param {Connection} connection
+   * @param {Attrs} [attrs]
    *
    * @return {SVGElement} mainGfx
    */
-  BpmnRenderer.prototype.drawConnection = function(parentGfx, element) {
-    var type = element.type;
-    var h = this._renderer(type);
+  BpmnRenderer.prototype.drawConnection = function(parentGfx, connection, attrs = {}) {
+    var { type } = connection;
 
-    /* jshint -W040 */
-    return h(parentGfx, element);
+    var handler = this._renderer(type);
+
+    return handler(parentGfx, connection, attrs);
   };
 
   /**
    * Get shape path.
    *
-   * @param {Element} element
+   * @param {Shape} shape
    *
    * @return {string} path
    */
-  BpmnRenderer.prototype.getShapePath = function(element) {
+  BpmnRenderer.prototype.getShapePath = function(shape) {
 
-    if (is$1(element, 'bpmn:Event')) {
-      return getCirclePath(element);
+    if (isLabel(shape)) {
+      return getRoundRectPath(shape, EXTERNAL_LABEL_BORDER_RADIUS);
     }
 
-    if (is$1(element, 'bpmn:Activity')) {
-      return getRoundRectPath(element, TASK_BORDER_RADIUS);
+    if (is$1(shape, 'bpmn:Event')) {
+      return getCirclePath(shape);
     }
 
-    if (is$1(element, 'bpmn:Gateway')) {
-      return getDiamondPath(element);
+    if (is$1(shape, 'bpmn:Activity')) {
+      return getRoundRectPath(shape, TASK_BORDER_RADIUS);
     }
 
-    return getRectPath(element);
+    if (is$1(shape, 'bpmn:Gateway')) {
+      return getDiamondPath(shape);
+    }
+
+    return getRectPath(shape);
   };
+
+  /**
+   * Pick attributes if they exist.
+   *
+   * @param {Object} attrs
+   * @param {string[]} keys
+   *
+   * @returns {Object}
+   */
+  function pickAttrs(attrs, keys = []) {
+    return keys.reduce((pickedAttrs, key) => {
+      if (attrs[ key ]) {
+        pickedAttrs[ key ] = attrs[ key ];
+      }
+
+      return pickedAttrs;
+    }, {});
+  }
 
   /**
    * @typedef {import('../util/Types').Dimensions} Dimensions
@@ -4695,8 +5167,8 @@
    * @typedef { number | Partial<Padding> } PaddingConfig
    *
    * @typedef { {
-   *   horizontal: 'center' | 'left';
-   *   vertical: 'top' | 'center';
+   *   horizontal: 'center' | 'left' | 'right';
+   *   vertical: 'top' | 'middle';
    * } } Alignment
    *
    *  @typedef { 'center-middle' | 'center-top' } AlignmentConfig
@@ -4762,45 +5234,105 @@
     }
   }
 
+  /** @type {CanvasRenderingContext2D | null} */
+  var _canvasContext = null;
+
+  /**
+   * @return {CanvasRenderingContext2D | null}
+   */
+  function getCanvasContext() {
+    if (!_canvasContext) {
+      _canvasContext = document.createElement('canvas').getContext('2d');
+    }
+
+    return _canvasContext;
+  }
+
+  /**
+   * Build a CSS font string from a style object for use with the canvas
+   * measureText API.
+   *
+   * @param {Record<string, number | string>} style
+   *
+   * @return {string}
+   */
+  function buildFont(style) {
+    var parts = [];
+
+    if (style.fontStyle) {
+      parts.push(style.fontStyle);
+    }
+
+    if (style.fontVariant) {
+      parts.push(style.fontVariant);
+    }
+
+    if (style.fontWeight) {
+      parts.push(style.fontWeight);
+    }
+
+    if (style.fontStretch) {
+      parts.push(style.fontStretch);
+    }
+
+    parts.push(buildLength(style.fontSize) || '12px');
+    parts.push(style.fontFamily || 'sans-serif');
+
+    return parts.join(' ');
+  }
+
+  /**
+   * Coerce a CSS length to a string with units, since canvas APIs
+   * silently reject unitless lengths and keep the previous value.
+   *
+   * @param {number | string | undefined} value
+   *
+   * @return {string | undefined}
+   */
+  function buildLength(value) {
+    if (value == null) {
+      return undefined;
+    }
+
+    if (typeof value === 'number' || /^-?\d+(\.\d+)?$/.test(value)) {
+      return value + 'px';
+    }
+
+    return value;
+  }
+
   /**
    * @param {string} text
-   * @param {SVGTextElement} fakeText
+   * @param {Record<string, number | string>} style
    *
    * @return {import('../util/Types').Dimensions}
    */
-  function getTextBBox(text, fakeText) {
+  function getTextBBox(text, style) {
+    var ctx = getCanvasContext();
 
-    fakeText.textContent = text;
-
-    var textBBox;
-
-    try {
-      var bbox,
-          emptyLine = text === '';
-
-      // add dummy text, when line is empty to
-      // determine correct height
-      fakeText.textContent = emptyLine ? 'dummy' : text;
-
-      textBBox = fakeText.getBBox();
-
-      // take text rendering related horizontal
-      // padding into account
-      bbox = {
-        width: textBBox.width + textBBox.x * 2,
-        height: textBBox.height
-      };
-
-      if (emptyLine) {
-
-        // correct width
-        bbox.width = 0;
-      }
-
-      return bbox;
-    } catch (e) {
+    if (!ctx) {
       return { width: 0, height: 0 };
     }
+
+    ctx.font = buildFont(style);
+
+    if ('letterSpacing' in ctx) {
+      ctx.letterSpacing = buildLength(style.letterSpacing) || '0px';
+    }
+
+    var emptyLine = text === '';
+
+    // strip trailing whitespace so measurement matches the browser's
+    // native rendering used by direct editing
+    var measurable = emptyLine ? 'dummy' : text.replace(/\s+$/, '');
+    var metrics = ctx.measureText(measurable);
+
+    return {
+      width: emptyLine ? 0 : metrics.width,
+      height: 'fontBoundingBoxAscent' in metrics
+        ? metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent
+        : metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+    };
   }
 
 
@@ -4811,11 +5343,11 @@
    *
    * @param {string[]} lines
    * @param {number} maxWidth
-   * @param {SVGTextElement} fakeText
+   * @param {Record<string, number | string>} style
    *
    * @return {LineDescriptor} the line descriptor
    */
-  function layoutNext(lines, maxWidth, fakeText) {
+  function layoutNext(lines, maxWidth, style) {
 
     var originalLine = lines.shift(),
         fitLine = originalLine;
@@ -4823,7 +5355,7 @@
     var textBBox;
 
     for (;;) {
-      textBBox = getTextBBox(fitLine, fakeText);
+      textBBox = getTextBBox(fitLine, style);
 
       textBBox.width = fitLine ? textBBox.width : 0;
 
@@ -4931,36 +5463,9 @@
 
 
   /**
-   * @return {SVGSVGElement}
-   */
-  function getHelperSvg() {
-    var helperSvg = document.getElementById('helper-svg');
-
-    if (!helperSvg) {
-      helperSvg = create$1('svg');
-
-      attr$1(helperSvg, {
-        id: 'helper-svg'
-      });
-
-      assign(helperSvg, {
-        visibility: 'hidden',
-        position: 'fixed',
-        width: 0,
-        height: 0
-      });
-
-      document.body.appendChild(helperSvg);
-    }
-
-    return helperSvg;
-  }
-
-
-  /**
    * Creates a new label utility
    *
-   * @param {TextConfig} config
+   * @param {TextConfig} [config]
    */
   function Text(config) {
 
@@ -5023,17 +5528,8 @@
 
     var maxWidth = box.width - padding.left - padding.right;
 
-    // ensure correct rendering by attaching helper text node to invisible SVG
-    var helperText = create$1('text');
-    attr$1(helperText, { x: 0, y: 0 });
-    attr$1(helperText, style);
-
-    var helperSvg = getHelperSvg();
-
-    append(helperSvg, helperText);
-
     while (lines.length) {
-      layouted.push(layoutNext(lines, maxWidth, helperText));
+      layouted.push(layoutNext(lines, maxWidth, style));
     }
 
     if (align.vertical === 'middle') {
@@ -5065,7 +5561,7 @@
 
     // layout each line taking into account that parent
     // shape might resize to fit text size
-    forEach$1(layouted, function(line) {
+    forEach(layouted, function(line) {
 
       var x;
 
@@ -5096,8 +5592,6 @@
       append(textElement, tspan);
     });
 
-    remove$2(helperText);
-
     var dimensions = {
       width: maxLineWidth,
       height: totalHeight
@@ -5119,7 +5613,7 @@
   var DEFAULT_FONT_SIZE = 12;
   var LINE_HEIGHT_RATIO = 1.2;
 
-  var MIN_TEXT_ANNOTATION_HEIGHT = 30;
+  var MIN_TEXT_ANNOTATION_HEIGHT = 40;
 
   /**
    * @typedef { {
@@ -5175,20 +5669,20 @@
      */
     this.getExternalLabelBounds = function(bounds, text) {
 
-      var layoutedDimensions = textUtil.getDimensions(text, {
-        box: {
-          width: 90,
-          height: 30
-        },
+      var box = {
+        width: Math.max(bounds.width, DEFAULT_LABEL_SIZE$1.width),
+        height: 30
+      };
+
+      var dimensions = getTextboxDimensions(text, box, {
         style: externalStyle
       });
 
-      // resize label shape to fit label text
       return {
-        x: Math.round(bounds.x + bounds.width / 2 - layoutedDimensions.width / 2),
-        y: Math.round(bounds.y),
-        width: Math.ceil(layoutedDimensions.width),
-        height: Math.ceil(layoutedDimensions.height)
+        x: Math.round(bounds.x + bounds.width / 2 - dimensions.width / 2),
+        y: bounds.y,
+        width: Math.ceil(dimensions.width),
+        height: Math.ceil(dimensions.height)
       };
 
     };
@@ -5203,20 +5697,44 @@
      */
     this.getTextAnnotationBounds = function(bounds, text) {
 
-      var layoutedDimensions = textUtil.getDimensions(text, {
-        box: bounds,
+      var dimensions = getTextboxDimensions(text, bounds, {
         style: defaultStyle,
         align: 'left-top',
-        padding: 5
+        padding: TEXT_ANNOTATION_PADDING
       });
 
       return {
         x: bounds.x,
         y: bounds.y,
         width: bounds.width,
-        height: Math.max(MIN_TEXT_ANNOTATION_HEIGHT, Math.round(layoutedDimensions.height))
+        height: Math.max(MIN_TEXT_ANNOTATION_HEIGHT, Math.round(dimensions.height))
       };
     };
+
+    /**
+     * Get the dimensions of a text element.
+     *
+     * @param {string} text
+     * @param {TextLayoutConfig} [options]
+     *
+     * @return {import('diagram-js/lib/util/Types').Dimensions}
+     */
+    this.getDimensions = function(text, options) {
+      return textUtil.getDimensions(text, options || {});
+    };
+
+    /**
+     * Compute dimension of text fitted inside a box.
+     *
+     * @param {string} text
+     * @param {Rect} box
+     * @param {TextLayoutConfig} layoutOptions
+     *
+     * @return {import('diagram-js/lib/util/Types').Dimensions}
+     */
+    function getTextboxDimensions(text, box, layoutOptions) {
+      return textUtil.getDimensions(text, assign$1({ box: box }, layoutOptions));
+    }
 
     /**
      * Create a layouted text element.
@@ -5778,10 +6296,6 @@
     translate: [ 'value', translate ]
   };
 
-  function getDefaultExportFromCjs (x) {
-  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-  }
-
   /**
    * @param {Point} point
    *
@@ -5937,7 +6451,6 @@
    * @typedef {import('diagram-js/lib/core/Canvas').default} Canvas
    * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
    * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
-   * @typedef {import('diagram-js/lib/i18n/translate/translate').default} Translate
    *
    * @typedef {import('../features/modeling/ElementFactory').default} ElementFactory
    * @typedef {import('../draw/TextRenderer').default} TextRenderer
@@ -5979,12 +6492,10 @@
     });
   }
 
-  function notYetDrawn(translate, semantic, refSemantic, property) {
-    return new Error(translate('element {element} referenced by {referenced}#{property} not yet drawn', {
-      element: elementToString(refSemantic),
-      referenced: elementToString(semantic),
-      property: property
-    }));
+  function notYetDrawn(semantic, refSemantic, property) {
+    return new Error(
+      `element ${ elementToString(refSemantic) } referenced by ${ elementToString(semantic) }#${ property } not yet drawn`
+    );
   }
 
 
@@ -5995,18 +6506,16 @@
    * @param {Canvas} canvas
    * @param {ElementFactory} elementFactory
    * @param {ElementRegistry} elementRegistry
-   * @param {Function} translate
    * @param {TextRenderer} textRenderer
    */
   function BpmnImporter(
       eventBus, canvas, elementFactory,
-      elementRegistry, translate, textRenderer) {
+      elementRegistry, textRenderer) {
 
     this._eventBus = eventBus;
     this._canvas = canvas;
     this._elementFactory = elementFactory;
     this._elementRegistry = elementRegistry;
-    this._translate = translate;
     this._textRenderer = textRenderer;
   }
 
@@ -6015,7 +6524,6 @@
     'canvas',
     'elementFactory',
     'elementRegistry',
-    'translate',
     'textRenderer'
   ];
 
@@ -6032,7 +6540,6 @@
    */
   BpmnImporter.prototype.add = function(semantic, di, parentElement) {
     var element,
-        translate = this._translate,
         hidden;
 
     var parentIndex;
@@ -6056,7 +6563,7 @@
     else if (is$1(di, 'bpmndi:BPMNShape')) {
 
       var collapsed = !isExpanded(semantic, di),
-          isFrame = isFrameElement$1(semantic);
+          isFrame = isFrameElement(semantic);
 
       hidden = parentElement && (parentElement.hidden || parentElement.collapsed);
 
@@ -6118,17 +6625,15 @@
 
       this._canvas.addConnection(element, parentElement, parentIndex);
     } else {
-      throw new Error(translate('unknown di {di} for element {semantic}', {
-        di: elementToString(di),
-        semantic: elementToString(semantic)
-      }));
+      throw new Error(
+        `unknown di ${ elementToString(di) } for element ${ elementToString(semantic) }`
+      );
     }
 
     // (optional) LABEL
     if (isLabelExternal(semantic) && getLabel(element)) {
       this.addLabel(semantic, di, element);
     }
-
 
     this._eventBus.fire('bpmnElement.added', { element: element });
 
@@ -6143,20 +6648,19 @@
    * @param {Shape} boundaryElement
    */
   BpmnImporter.prototype._attachBoundary = function(boundarySemantic, boundaryElement) {
-    var translate = this._translate;
     var hostSemantic = boundarySemantic.attachedToRef;
 
     if (!hostSemantic) {
-      throw new Error(translate('missing {semantic}#attachedToRef', {
-        semantic: elementToString(boundarySemantic)
-      }));
+      throw new Error(
+        `missing ${ elementToString(boundarySemantic) }#attachedToRef`
+      );
     }
 
     var host = this._elementRegistry.get(hostSemantic.id),
         attachers = host && host.attachers;
 
     if (!host) {
-      throw notYetDrawn(translate, boundarySemantic, hostSemantic, 'attachedToRef');
+      throw notYetDrawn(boundarySemantic, hostSemantic, 'attachedToRef');
     }
 
     // wire element.host <> host.attachers
@@ -6222,8 +6726,7 @@
 
     var element,
         refSemantic,
-        type = semantic.$type,
-        translate = this._translate;
+        type = semantic.$type;
 
     refSemantic = semantic[side + 'Ref'];
 
@@ -6246,12 +6749,11 @@
     }
 
     if (refSemantic) {
-      throw notYetDrawn(translate, semantic, refSemantic, side + 'Ref');
+      throw notYetDrawn(semantic, refSemantic, side + 'Ref');
     } else {
-      throw new Error(translate('{semantic}#{side} Ref not specified', {
-        semantic: elementToString(semantic),
-        side: side
-      }));
+      throw new Error(
+        `${ elementToString(semantic) }#${ side } Ref not specified`
+      );
     }
   };
 
@@ -6281,7 +6783,7 @@
       y <= bbox.y + bbox.height;
   }
 
-  function isFrameElement$1(semantic) {
+  function isFrameElement(semantic) {
     return is$1(semantic, 'bpmn:Group');
   }
 
@@ -6297,1197 +6799,6 @@
       DrawModule$1,
       ImportModule
     ]
-  };
-
-  /**
-   * @typedef {import('../util/Types').Point} Point
-   */
-
-  /**
-   * @param {import('../core/EventBus').Event} event
-   *
-   * @return {Event}
-   */
-  function getOriginal(event) {
-    return event.originalEvent || event.srcEvent;
-  }
-
-  /**
-   * @param {Event} event
-   *
-   * @return {Point|null}
-   */
-  function toPoint(event) {
-
-    if (event.pointers && event.pointers.length) {
-      event = event.pointers[0];
-    }
-
-    if (event.touches && event.touches.length) {
-      event = event.touches[0];
-    }
-
-    return event ? {
-      x: event.clientX,
-      y: event.clientY
-    } : null;
-  }
-
-  function isMac() {
-    return (/mac/i).test(navigator.platform);
-  }
-
-  /**
-   * @param {MouseEvent} event
-   * @param {string} button
-   *
-   * @return {boolean}
-   */
-  function isButton(event, button) {
-    return (getOriginal(event) || event).button === button;
-  }
-
-  /**
-   * @param {MouseEvent} event
-   *
-   * @return {boolean}
-   */
-  function isPrimaryButton(event) {
-
-    // button === 0 -> left áka primary mouse button
-    return isButton(event, 0);
-  }
-
-  /**
-   * @param {MouseEvent} event
-   *
-   * @return {boolean}
-   */
-  function isAuxiliaryButton(event) {
-
-    // button === 1 -> auxiliary áka wheel button
-    return isButton(event, 1);
-  }
-
-  /**
-   * @param {MouseEvent} event
-   *
-   * @return {boolean}
-   */
-  function hasPrimaryModifier(event) {
-    var originalEvent = getOriginal(event) || event;
-
-    if (!isPrimaryButton(event)) {
-      return false;
-    }
-
-    // Use cmd as primary modifier key for mac OS
-    if (isMac()) {
-      return originalEvent.metaKey;
-    } else {
-      return originalEvent.ctrlKey;
-    }
-  }
-
-  /**
-   * @param {MouseEvent} event
-   *
-   * @return {boolean}
-   */
-  function hasSecondaryModifier(event) {
-    var originalEvent = getOriginal(event) || event;
-
-    return isPrimaryButton(event) && originalEvent.shiftKey;
-  }
-
-  /**
-   * @typedef {import('../../model/Types').Element} Element
-   *
-   * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
-   * @typedef {import('../../core/EventBus').default} EventBus
-   * @typedef {import('../../draw/Styles').default} Styles
-   *
-   * @typedef {import('../../util/Types').Point} Point
-   */
-
-  function allowAll(event) { return true; }
-
-  function allowPrimaryAndAuxiliary(event) {
-    return isPrimaryButton(event) || isAuxiliaryButton(event);
-  }
-
-  var LOW_PRIORITY$4 = 500;
-
-
-  /**
-   * A plugin that provides interaction events for diagram elements.
-   *
-   * It emits the following events:
-   *
-   *   * element.click
-   *   * element.contextmenu
-   *   * element.dblclick
-   *   * element.hover
-   *   * element.mousedown
-   *   * element.mousemove
-   *   * element.mouseup
-   *   * element.out
-   *
-   * Each event is a tuple { element, gfx, originalEvent }.
-   *
-   * Canceling the event via Event#preventDefault()
-   * prevents the original DOM operation.
-   *
-   * @param {EventBus} eventBus
-   * @param {ElementRegistry} elementRegistry
-   * @param {Styles} styles
-   */
-  function InteractionEvents(eventBus, elementRegistry, styles) {
-
-    var self = this;
-
-    /**
-     * Fire an interaction event.
-     *
-     * @param {string} type local event name, e.g. element.click.
-     * @param {MouseEvent|TouchEvent} event native event
-     * @param {Element} [element] the diagram element to emit the event on;
-     *                                   defaults to the event target
-     */
-    function fire(type, event, element) {
-
-      if (isIgnored(type, event)) {
-        return;
-      }
-
-      var target, gfx, returnValue;
-
-      if (!element) {
-        target = event.delegateTarget || event.target;
-
-        if (target) {
-          gfx = target;
-          element = elementRegistry.get(gfx);
-        }
-      } else {
-        gfx = elementRegistry.getGraphics(element);
-      }
-
-      if (!gfx || !element) {
-        return;
-      }
-
-      returnValue = eventBus.fire(type, {
-        element: element,
-        gfx: gfx,
-        originalEvent: event
-      });
-
-      if (returnValue === false) {
-        event.stopPropagation();
-        event.preventDefault();
-      }
-    }
-
-    // TODO(nikku): document this
-    var handlers = {};
-
-    function mouseHandler(localEventName) {
-      return handlers[localEventName];
-    }
-
-    function isIgnored(localEventName, event) {
-
-      var filter = ignoredFilters[localEventName] || isPrimaryButton;
-
-      // only react on left mouse button interactions
-      // except for interaction events that are enabled
-      // for secundary mouse button
-      return !filter(event);
-    }
-
-    var bindings = {
-      click: 'element.click',
-      contextmenu: 'element.contextmenu',
-      dblclick: 'element.dblclick',
-      mousedown: 'element.mousedown',
-      mousemove: 'element.mousemove',
-      mouseover: 'element.hover',
-      mouseout: 'element.out',
-      mouseup: 'element.mouseup',
-    };
-
-    var ignoredFilters = {
-      'element.contextmenu': allowAll,
-      'element.mousedown': allowPrimaryAndAuxiliary,
-      'element.mouseup': allowPrimaryAndAuxiliary,
-      'element.click': allowPrimaryAndAuxiliary,
-      'element.dblclick': allowPrimaryAndAuxiliary
-    };
-
-
-    // manual event trigger //////////
-
-    /**
-     * Trigger an interaction event (based on a native dom event)
-     * on the target shape or connection.
-     *
-     * @param {string} eventName the name of the triggered DOM event
-     * @param {MouseEvent|TouchEvent} event
-     * @param {Element} targetElement
-     */
-    function triggerMouseEvent(eventName, event, targetElement) {
-
-      // i.e. element.mousedown...
-      var localEventName = bindings[eventName];
-
-      if (!localEventName) {
-        throw new Error('unmapped DOM event name <' + eventName + '>');
-      }
-
-      return fire(localEventName, event, targetElement);
-    }
-
-
-    var ELEMENT_SELECTOR = 'svg, .djs-element';
-
-    // event handling ///////
-
-    function registerEvent(node, event, localEvent, ignoredFilter) {
-
-      var handler = handlers[localEvent] = function(event) {
-        fire(localEvent, event);
-      };
-
-      if (ignoredFilter) {
-        ignoredFilters[localEvent] = ignoredFilter;
-      }
-
-      handler.$delegate = delegate.bind(node, ELEMENT_SELECTOR, event, handler);
-    }
-
-    function unregisterEvent(node, event, localEvent) {
-
-      var handler = mouseHandler(localEvent);
-
-      if (!handler) {
-        return;
-      }
-
-      delegate.unbind(node, event, handler.$delegate);
-    }
-
-    function registerEvents(svg) {
-      forEach$1(bindings, function(val, key) {
-        registerEvent(svg, key, val);
-      });
-    }
-
-    function unregisterEvents(svg) {
-      forEach$1(bindings, function(val, key) {
-        unregisterEvent(svg, key, val);
-      });
-    }
-
-    eventBus.on('canvas.destroy', function(event) {
-      unregisterEvents(event.svg);
-    });
-
-    eventBus.on('canvas.init', function(event) {
-      registerEvents(event.svg);
-    });
-
-
-    // hit box updating ////////////////
-
-    eventBus.on([ 'shape.added', 'connection.added' ], function(event) {
-      var element = event.element,
-          gfx = event.gfx;
-
-      eventBus.fire('interactionEvents.createHit', { element: element, gfx: gfx });
-    });
-
-    // Update djs-hit on change.
-    // A low priortity is necessary, because djs-hit of labels has to be updated
-    // after the label bounds have been updated in the renderer.
-    eventBus.on([
-      'shape.changed',
-      'connection.changed'
-    ], LOW_PRIORITY$4, function(event) {
-
-      var element = event.element,
-          gfx = event.gfx;
-
-      eventBus.fire('interactionEvents.updateHit', { element: element, gfx: gfx });
-    });
-
-    eventBus.on('interactionEvents.createHit', LOW_PRIORITY$4, function(event) {
-      var element = event.element,
-          gfx = event.gfx;
-
-      self.createDefaultHit(element, gfx);
-    });
-
-    eventBus.on('interactionEvents.updateHit', function(event) {
-      var element = event.element,
-          gfx = event.gfx;
-
-      self.updateDefaultHit(element, gfx);
-    });
-
-
-    // hit styles ////////////
-
-    var STROKE_HIT_STYLE = createHitStyle('djs-hit djs-hit-stroke');
-
-    var CLICK_STROKE_HIT_STYLE = createHitStyle('djs-hit djs-hit-click-stroke');
-
-    var ALL_HIT_STYLE = createHitStyle('djs-hit djs-hit-all');
-
-    var NO_MOVE_HIT_STYLE = createHitStyle('djs-hit djs-hit-no-move');
-
-    var HIT_TYPES = {
-      'all': ALL_HIT_STYLE,
-      'click-stroke': CLICK_STROKE_HIT_STYLE,
-      'stroke': STROKE_HIT_STYLE,
-      'no-move': NO_MOVE_HIT_STYLE
-    };
-
-    function createHitStyle(classNames, attrs) {
-
-      attrs = assign$1({
-        stroke: 'white',
-        strokeWidth: 15
-      }, attrs || {});
-
-      return styles.cls(classNames, [ 'no-fill', 'no-border' ], attrs);
-    }
-
-
-    // style helpers ///////////////
-
-    function applyStyle(hit, type) {
-
-      var attrs = HIT_TYPES[type];
-
-      if (!attrs) {
-        throw new Error('invalid hit type <' + type + '>');
-      }
-
-      attr$1(hit, attrs);
-
-      return hit;
-    }
-
-    function appendHit(gfx, hit) {
-      append(gfx, hit);
-    }
-
-
-    // API
-
-    /**
-     * Remove hints on the given graphics.
-     *
-     * @param {SVGElement} gfx
-     */
-    this.removeHits = function(gfx) {
-      var hits = all('.djs-hit', gfx);
-
-      forEach$1(hits, remove$2);
-    };
-
-    /**
-     * Create default hit for the given element.
-     *
-     * @param {Element} element
-     * @param {SVGElement} gfx
-     *
-     * @return {SVGElement} created hit
-     */
-    this.createDefaultHit = function(element, gfx) {
-      var waypoints = element.waypoints,
-          isFrame = element.isFrame,
-          boxType;
-
-      if (waypoints) {
-        return this.createWaypointsHit(gfx, waypoints);
-      } else {
-
-        boxType = isFrame ? 'stroke' : 'all';
-
-        return this.createBoxHit(gfx, boxType, {
-          width: element.width,
-          height: element.height
-        });
-      }
-    };
-
-    /**
-     * Create hits for the given waypoints.
-     *
-     * @param {SVGElement} gfx
-     * @param {Point[]} waypoints
-     *
-     * @return {SVGElement}
-     */
-    this.createWaypointsHit = function(gfx, waypoints) {
-
-      var hit = createLine(waypoints);
-
-      applyStyle(hit, 'stroke');
-
-      appendHit(gfx, hit);
-
-      return hit;
-    };
-
-    /**
-     * Create hits for a box.
-     *
-     * @param {SVGElement} gfx
-     * @param {string} type
-     * @param {Object} attrs
-     *
-     * @return {SVGElement}
-     */
-    this.createBoxHit = function(gfx, type, attrs) {
-
-      attrs = assign$1({
-        x: 0,
-        y: 0
-      }, attrs);
-
-      var hit = create$1('rect');
-
-      applyStyle(hit, type);
-
-      attr$1(hit, attrs);
-
-      appendHit(gfx, hit);
-
-      return hit;
-    };
-
-    /**
-     * Update default hit of the element.
-     *
-     * @param {Element} element
-     * @param {SVGElement} gfx
-     *
-     * @return {SVGElement} updated hit
-     */
-    this.updateDefaultHit = function(element, gfx) {
-
-      var hit = query('.djs-hit', gfx);
-
-      if (!hit) {
-        return;
-      }
-
-      if (element.waypoints) {
-        updateLine(hit, element.waypoints);
-      } else {
-        attr$1(hit, {
-          width: element.width,
-          height: element.height
-        });
-      }
-
-      return hit;
-    };
-
-    this.fire = fire;
-
-    this.triggerMouseEvent = triggerMouseEvent;
-
-    this.mouseHandler = mouseHandler;
-
-    this.registerEvent = registerEvent;
-    this.unregisterEvent = unregisterEvent;
-  }
-
-
-  InteractionEvents.$inject = [
-    'eventBus',
-    'elementRegistry',
-    'styles'
-  ];
-
-
-  /**
-   * An event indicating that the mouse hovered over an element
-   *
-   * @event element.hover
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * An event indicating that the mouse has left an element
-   *
-   * @event element.out
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * An event indicating that the mouse has clicked an element
-   *
-   * @event element.click
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * An event indicating that the mouse has double clicked an element
-   *
-   * @event element.dblclick
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * An event indicating that the mouse has gone down on an element.
-   *
-   * @event element.mousedown
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * An event indicating that the mouse has gone up on an element.
-   *
-   * @event element.mouseup
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * An event indicating that the context menu action is triggered
-   * via mouse or touch controls.
-   *
-   * @event element.contextmenu
-   *
-   * @type {Object}
-   * @property {Element} element
-   * @property {SVGElement} gfx
-   * @property {Event} originalEvent
-   */
-
-  /**
-   * @type { import('didi').ModuleDeclaration }
-   */
-  var InteractionEventsModule = {
-    __init__: [ 'interactionEvents' ],
-    interactionEvents: [ 'type', InteractionEvents ]
-  };
-
-  /**
-   * Returns the surrounding bbox for all elements in
-   * the array or the element primitive.
-   *
-   * @param {Element|Element[]} elements
-   * @param {boolean} [stopRecursion=false]
-   *
-   * @return {Rect}
-   */
-  function getBBox(elements, stopRecursion) {
-
-    stopRecursion = !!stopRecursion;
-    if (!isArray$2(elements)) {
-      elements = [ elements ];
-    }
-
-    var minX,
-        minY,
-        maxX,
-        maxY;
-
-    forEach$1(elements, function(element) {
-
-      // If element is a connection the bbox must be computed first
-      var bbox = element;
-      if (element.waypoints && !stopRecursion) {
-        bbox = getBBox(element.waypoints, true);
-      }
-
-      var x = bbox.x,
-          y = bbox.y,
-          height = bbox.height || 0,
-          width = bbox.width || 0;
-
-      if (x < minX || minX === undefined) {
-        minX = x;
-      }
-      if (y < minY || minY === undefined) {
-        minY = y;
-      }
-
-      if ((x + width) > maxX || maxX === undefined) {
-        maxX = x + width;
-      }
-      if ((y + height) > maxY || maxY === undefined) {
-        maxY = y + height;
-      }
-    });
-
-    return {
-      x: minX,
-      y: minY,
-      height: maxY - minY,
-      width: maxX - minX
-    };
-  }
-
-  /**
-   * Get the element's type
-   *
-   * @param {Element} element
-   *
-   * @return {'connection' | 'shape' | 'root'}
-   */
-  function getType(element) {
-
-    if ('waypoints' in element) {
-      return 'connection';
-    }
-
-    if ('x' in element) {
-      return 'shape';
-    }
-
-    return 'root';
-  }
-
-  /**
-   * @param {Element} element
-   *
-   * @return {boolean}
-   */
-  function isFrameElement(element) {
-    return !!(element && element.isFrame);
-  }
-
-  var LOW_PRIORITY$3 = 500;
-
-  /**
-   * @typedef {import('../../model/Types').Element} Element
-   *
-   * @typedef {import('../../core/EventBus').default} EventBus
-   * @typedef {import('../../draw/Styles').default} Styles
-   */
-
-  /**
-   * @class
-   *
-   * A plugin that adds an outline to shapes and connections that may be activated and styled
-   * via CSS classes.
-   *
-   * @param {EventBus} eventBus
-   * @param {Styles} styles
-   */
-  function Outline(eventBus, styles) {
-
-    this.offset = 6;
-
-    var OUTLINE_STYLE = styles.cls('djs-outline', [ 'no-fill' ]);
-
-    var self = this;
-
-    function createOutline(gfx, bounds) {
-      var outline = create$1('rect');
-
-      attr$1(outline, assign$1({
-        x: 10,
-        y: 10,
-        rx: 4,
-        width: 100,
-        height: 100
-      }, OUTLINE_STYLE));
-
-      append(gfx, outline);
-
-      return outline;
-    }
-
-    // A low priortity is necessary, because outlines of labels have to be updated
-    // after the label bounds have been updated in the renderer.
-    eventBus.on([ 'shape.added', 'shape.changed' ], LOW_PRIORITY$3, function(event) {
-      var element = event.element,
-          gfx = event.gfx;
-
-      var outline = query('.djs-outline', gfx);
-
-      if (!outline) {
-        outline = createOutline(gfx);
-      }
-
-      self.updateShapeOutline(outline, element);
-    });
-
-    eventBus.on([ 'connection.added', 'connection.changed' ], function(event) {
-      var element = event.element,
-          gfx = event.gfx;
-
-      var outline = query('.djs-outline', gfx);
-
-      if (!outline) {
-        outline = createOutline(gfx);
-      }
-
-      self.updateConnectionOutline(outline, element);
-    });
-  }
-
-
-  /**
-   * Updates the outline of a shape respecting the dimension of the
-   * element and an outline offset.
-   *
-   * @param {SVGElement} outline
-   * @param {Element} element
-   */
-  Outline.prototype.updateShapeOutline = function(outline, element) {
-
-    attr$1(outline, {
-      x: -this.offset,
-      y: -this.offset,
-      width: element.width + this.offset * 2,
-      height: element.height + this.offset * 2
-    });
-
-  };
-
-
-  /**
-   * Updates the outline of a connection respecting the bounding box of
-   * the connection and an outline offset.
-   *
-   * @param {SVGElement} outline
-   * @param {Element} connection
-   */
-  Outline.prototype.updateConnectionOutline = function(outline, connection) {
-
-    var bbox = getBBox(connection);
-
-    attr$1(outline, {
-      x: bbox.x - this.offset,
-      y: bbox.y - this.offset,
-      width: bbox.width + this.offset * 2,
-      height: bbox.height + this.offset * 2
-    });
-
-  };
-
-
-  Outline.$inject = [ 'eventBus', 'styles', 'elementRegistry' ];
-
-  /**
-   * @type { import('didi').ModuleDeclaration }
-   */
-  var OutlineModule = {
-    __init__: [ 'outline' ],
-    outline: [ 'type', Outline ]
-  };
-
-  /**
-   * @typedef {import('../../core/Canvas').default} Canvas
-   * @typedef {import('../../core/EventBus').default} EventBus
-   */
-
-  /**
-   * A service that offers the current selection in a diagram.
-   * Offers the api to control the selection, too.
-   *
-   * @param {EventBus} eventBus
-   * @param {Canvas} canvas
-   */
-  function Selection(eventBus, canvas) {
-
-    this._eventBus = eventBus;
-    this._canvas = canvas;
-
-    /**
-     * @type {Object[]}
-     */
-    this._selectedElements = [];
-
-    var self = this;
-
-    eventBus.on([ 'shape.remove', 'connection.remove' ], function(e) {
-      var element = e.element;
-      self.deselect(element);
-    });
-
-    eventBus.on([ 'diagram.clear', 'root.set' ], function(e) {
-      self.select(null);
-    });
-  }
-
-  Selection.$inject = [ 'eventBus', 'canvas' ];
-
-  /**
-   * Deselect an element.
-   *
-   * @param {Object} element The element to deselect.
-   */
-  Selection.prototype.deselect = function(element) {
-    var selectedElements = this._selectedElements;
-
-    var idx = selectedElements.indexOf(element);
-
-    if (idx !== -1) {
-      var oldSelection = selectedElements.slice();
-
-      selectedElements.splice(idx, 1);
-
-      this._eventBus.fire('selection.changed', { oldSelection: oldSelection, newSelection: selectedElements });
-    }
-  };
-
-  /**
-   * Get the selected elements.
-   *
-   * @return {Object[]} The selected elements.
-   */
-  Selection.prototype.get = function() {
-    return this._selectedElements;
-  };
-
-  /**
-   * Check whether an element is selected.
-   *
-   * @param {Object} element The element.
-   *
-   * @return {boolean} Whether the element is selected.
-   */
-  Selection.prototype.isSelected = function(element) {
-    return this._selectedElements.indexOf(element) !== -1;
-  };
-
-
-  /**
-   * Select one or many elements.
-   *
-   * @param {Object|Object[]} elements The element(s) to select.
-   * @param {boolean} [add] Whether to add the element(s) to the selected elements.
-   * Defaults to `false`.
-   */
-  Selection.prototype.select = function(elements, add) {
-    var selectedElements = this._selectedElements,
-        oldSelection = selectedElements.slice();
-
-    if (!isArray$2(elements)) {
-      elements = elements ? [ elements ] : [];
-    }
-
-    var canvas = this._canvas;
-
-    var rootElement = canvas.getRootElement();
-
-    elements = elements.filter(function(element) {
-      var elementRoot = canvas.findRoot(element);
-
-      return rootElement === elementRoot;
-    });
-
-    // selection may be cleared by passing an empty array or null
-    // to the method
-    if (add) {
-      forEach$1(elements, function(element) {
-        if (selectedElements.indexOf(element) !== -1) {
-
-          // already selected
-          return;
-        } else {
-          selectedElements.push(element);
-        }
-      });
-    } else {
-      this._selectedElements = selectedElements = elements.slice();
-    }
-
-    this._eventBus.fire('selection.changed', { oldSelection: oldSelection, newSelection: selectedElements });
-  };
-
-  /**
-   * @typedef {import('../../core/Canvas').default} Canvas
-   * @typedef {import('../../core/EventBus').default} EventBus
-   * @typedef {import('./Selection').default} Selection
-   */
-
-  var MARKER_HOVER = 'hover',
-      MARKER_SELECTED = 'selected';
-
-  var SELECTION_OUTLINE_PADDING = 6;
-
-
-  /**
-   * A plugin that adds a visible selection UI to shapes and connections
-   * by appending the <code>hover</code> and <code>selected</code> classes to them.
-   *
-   * @class
-   *
-   * Makes elements selectable, too.
-   *
-   * @param {Canvas} canvas
-   * @param {EventBus} eventBus
-   * @param {Selection} selection
-   */
-  function SelectionVisuals(canvas, eventBus, selection) {
-    this._canvas = canvas;
-
-    var self = this;
-
-    this._multiSelectionBox = null;
-
-    function addMarker(e, cls) {
-      canvas.addMarker(e, cls);
-    }
-
-    function removeMarker(e, cls) {
-      canvas.removeMarker(e, cls);
-    }
-
-    eventBus.on('element.hover', function(event) {
-      addMarker(event.element, MARKER_HOVER);
-    });
-
-    eventBus.on('element.out', function(event) {
-      removeMarker(event.element, MARKER_HOVER);
-    });
-
-    eventBus.on('selection.changed', function(event) {
-
-      function deselect(s) {
-        removeMarker(s, MARKER_SELECTED);
-      }
-
-      function select(s) {
-        addMarker(s, MARKER_SELECTED);
-      }
-
-      var oldSelection = event.oldSelection,
-          newSelection = event.newSelection;
-
-      forEach$1(oldSelection, function(e) {
-        if (newSelection.indexOf(e) === -1) {
-          deselect(e);
-        }
-      });
-
-      forEach$1(newSelection, function(e) {
-        if (oldSelection.indexOf(e) === -1) {
-          select(e);
-        }
-      });
-
-      self._updateSelectionOutline(newSelection);
-    });
-
-
-    eventBus.on('element.changed', function(event) {
-      if (selection.isSelected(event.element)) {
-        self._updateSelectionOutline(selection.get());
-      }
-    });
-  }
-
-  SelectionVisuals.$inject = [
-    'canvas',
-    'eventBus',
-    'selection'
-  ];
-
-  SelectionVisuals.prototype._updateSelectionOutline = function(selection) {
-    var layer = this._canvas.getLayer('selectionOutline');
-
-    clear$1(layer);
-
-    var enabled = selection.length > 1;
-
-    var container = this._canvas.getContainer();
-
-    classes$1(container)[enabled ? 'add' : 'remove']('djs-multi-select');
-
-    if (!enabled) {
-      return;
-    }
-
-    var bBox = addSelectionOutlinePadding(getBBox(selection));
-
-    var rect = create$1('rect');
-
-    attr$1(rect, assign$1({
-      rx: 3
-    }, bBox));
-
-    classes$1(rect).add('djs-selection-outline');
-
-    append(layer, rect);
-  };
-
-  // helpers //////////
-
-  function addSelectionOutlinePadding(bBox) {
-    return {
-      x: bBox.x - SELECTION_OUTLINE_PADDING,
-      y: bBox.y - SELECTION_OUTLINE_PADDING,
-      width: bBox.width + SELECTION_OUTLINE_PADDING * 2,
-      height: bBox.height + SELECTION_OUTLINE_PADDING * 2
-    };
-  }
-
-  /**
-   * @typedef {import('../../core/Canvas').default} Canvas
-   * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
-   * @typedef {import('../../core/EventBus').default} EventBus
-   * @typedef {import('./Selection').default} Selection
-   */
-
-  /**
-   * @param {EventBus} eventBus
-   * @param {Selection} selection
-   * @param {Canvas} canvas
-   * @param {ElementRegistry} elementRegistry
-   */
-  function SelectionBehavior(eventBus, selection, canvas, elementRegistry) {
-
-    // Select elements on create
-    eventBus.on('create.end', 500, function(event) {
-      var context = event.context,
-          canExecute = context.canExecute,
-          elements = context.elements,
-          hints = context.hints || {},
-          autoSelect = hints.autoSelect;
-
-      if (canExecute) {
-        if (autoSelect === false) {
-
-          // Select no elements
-          return;
-        }
-
-        if (isArray$2(autoSelect)) {
-          selection.select(autoSelect);
-        } else {
-
-          // Select all elements by default
-          selection.select(elements.filter(isShown));
-        }
-      }
-    });
-
-    // Select connection targets on connect
-    eventBus.on('connect.end', 500, function(event) {
-      var context = event.context,
-          connection = context.connection;
-
-      if (connection) {
-        selection.select(connection);
-      }
-    });
-
-    // Select shapes on move
-    eventBus.on('shape.move.end', 500, function(event) {
-      var previousSelection = event.previousSelection || [];
-
-      var shape = elementRegistry.get(event.context.shape.id);
-
-      // Always select main shape on move
-      var isSelected = find(previousSelection, function(selectedShape) {
-        return shape.id === selectedShape.id;
-      });
-
-      if (!isSelected) {
-        selection.select(shape);
-      }
-    });
-
-    // Select elements on click
-    eventBus.on('element.click', function(event) {
-
-      if (!isPrimaryButton(event)) {
-        return;
-      }
-
-      var element = event.element;
-
-      if (element === canvas.getRootElement()) {
-        element = null;
-      }
-
-      var isSelected = selection.isSelected(element),
-          isMultiSelect = selection.get().length > 1;
-
-      // Add to selection if CTRL or SHIFT pressed
-      var add = hasPrimaryModifier(event) || hasSecondaryModifier(event);
-
-      if (isSelected && isMultiSelect) {
-        if (add) {
-
-          // Deselect element
-          return selection.deselect(element);
-        } else {
-
-          // Select element only
-          return selection.select(element);
-        }
-      } else if (!isSelected) {
-
-        // Select element
-        selection.select(element, add);
-      } else {
-
-        // Deselect element
-        selection.deselect(element);
-      }
-    });
-  }
-
-  SelectionBehavior.$inject = [
-    'eventBus',
-    'selection',
-    'canvas',
-    'elementRegistry'
-  ];
-
-
-  function isShown(element) {
-    return !element.hidden;
-  }
-
-  /**
-   * @type { import('didi').ModuleDeclaration }
-   */
-  var SelectionModule = {
-    __init__: [ 'selectionVisuals', 'selectionBehavior' ],
-    __depends__: [
-      InteractionEventsModule,
-      OutlineModule
-    ],
-    selection: [ 'type', Selection ],
-    selectionVisuals: [ 'type', SelectionVisuals ],
-    selectionBehavior: [ 'type', SelectionBehavior ]
   };
 
   /**
@@ -7518,7 +6829,7 @@
   // document wide unique overlay ids
   var ids = new IdGenerator('ov');
 
-  var LOW_PRIORITY$2 = 500;
+  var LOW_PRIORITY$3 = 500;
 
   /**
    * @typedef {import('../../core/Canvas').default} Canvas
@@ -7663,7 +6974,7 @@
     }, config && config.defaults);
 
     /**
-     * @type {Map<string, Overlay>}
+     * @type {Record<string, Overlay>}
      */
     this._overlays = {};
 
@@ -7732,8 +7043,7 @@
       } else {
         return [];
       }
-    } else
-    if (search.type) {
+    } else if (search.type) {
       return filter(this._overlays, matchPattern({ type: search.type }));
     } else {
 
@@ -7800,13 +7110,13 @@
 
     var overlays = this.get(filter) || [];
 
-    if (!isArray$2(overlays)) {
+    if (!isArray$1(overlays)) {
       overlays = [ overlays ];
     }
 
     var self = this;
 
-    forEach$1(overlays, function(overlay) {
+    forEach(overlays, function(overlay) {
 
       var container = self._getOverlayContainer(overlay.element, true);
 
@@ -7931,7 +7241,7 @@
 
 
   Overlays.prototype._createOverlayContainer = function(element) {
-    var html = domify$1('<div class="djs-overlays" />');
+    var html = domify('<div class="djs-overlays" />');
     assign(html, { position: 'absolute' });
 
     this._overlayRoot.appendChild(html);
@@ -7998,12 +7308,12 @@
     // create proper html elements from
     // overlay HTML strings
     if (isString(html)) {
-      html = domify$1(html);
+      html = domify(html);
     }
 
     overlayContainer = this._getOverlayContainer(element);
 
-    htmlContainer = domify$1('<div class="djs-overlay" data-overlay-id="' + id + '">');
+    htmlContainer = domify('<div class="djs-overlay" data-overlay-id="' + id + '">');
     assign(htmlContainer, { position: 'absolute' });
 
     htmlContainer.appendChild(html);
@@ -8094,7 +7404,7 @@
 
     var self = this;
 
-    forEach$1(this._overlays, function(overlay) {
+    forEach(this._overlays, function(overlay) {
       self._updateOverlayVisibilty(overlay, viewbox);
     });
   };
@@ -8131,7 +7441,7 @@
       var element = e.element;
       var overlays = self.get({ element: element });
 
-      forEach$1(overlays, function(o) {
+      forEach(overlays, function(o) {
         self.remove(o.id);
       });
 
@@ -8149,13 +7459,13 @@
 
     // move integration
 
-    eventBus.on('element.changed', LOW_PRIORITY$2, function(e) {
+    eventBus.on('element.changed', LOW_PRIORITY$3, function(e) {
       var element = e.element;
 
       var container = self._getOverlayContainer(element, true);
 
       if (container) {
-        forEach$1(container.overlays, function(overlay) {
+        forEach(container.overlays, function(overlay) {
           self._updateOverlay(overlay);
         });
 
@@ -8188,7 +7498,7 @@
   // helpers /////////////////////////////
 
   function createRoot(parentNode) {
-    var root = domify$1(
+    var root = domify(
       '<div class="djs-overlay-container" />'
     );
 
@@ -8402,13 +7712,13 @@
       throw new Error('handlerFn must be a function');
     }
 
-    if (!isArray$2(events)) {
+    if (!isArray$1(events)) {
       events = [ events ];
     }
 
     var eventBus = this._eventBus;
 
-    forEach$1(events, function(event) {
+    forEach(events, function(event) {
 
       // concat commandStack(.event)?(.hook)?
       var fullEvent = [ 'commandStack', event, hook ].filter(function(e) { return e; }).join('.');
@@ -8679,7 +7989,7 @@
    * @param {Canvas} canvas
    */
   function DrilldownBreadcrumbs(eventBus, elementRegistry, canvas) {
-    var breadcrumbs = domify$1('<ul class="bjs-breadcrumbs"></ul>');
+    var breadcrumbs = domify('<ul class="bjs-breadcrumbs"></ul>');
     var container = canvas.getContainer();
     var containerClasses = classes(container);
     container.appendChild(breadcrumbs);
@@ -8713,23 +8023,30 @@
         businessObjectParents = getBusinessObjectParentChain(element);
       }
 
-      var path = businessObjectParents.map(function(parent) {
-        var title = escapeHTML(parent.name || parent.id);
-        var link = domify$1('<li><span class="bjs-crumb"><a title="' + title + '">' + title + '</a></span></li>');
+      var path = businessObjectParents.flatMap(function(parent) {
+        var parentPlane =
+          canvas.findRoot(getPlaneIdFromShape(parent)) ||
+          canvas.findRoot(parent.id);
 
-        var parentPlane = canvas.findRoot(getPlaneIdFromShape(parent)) || canvas.findRoot(parent.id);
-
-        // when the root is a collaboration, the process does not have a corresponding
-        // element in the elementRegisty. Instead, we search for the corresponding participant
+        // when the root is a collaboration, the process does not have a
+        // corresponding element in the elementRegisty. Instead, we search
+        // for the corresponding participant
         if (!parentPlane && is$1(parent, 'bpmn:Process')) {
           var participant = elementRegistry.find(function(element) {
             var businessObject = getBusinessObject(element);
 
-            return businessObject && businessObject.get('processRef') && businessObject.get('processRef') === parent;
+            return businessObject && businessObject.get('processRef') === parent;
           });
 
-          parentPlane = canvas.findRoot(participant.id);
+          parentPlane = participant && canvas.findRoot(participant.id);
         }
+
+        if (!parentPlane) {
+          return [];
+        }
+
+        var title = escapeHTML(parent.name || parent.id);
+        var link = domify('<li><span class="bjs-crumb"><a title="' + title + '">' + title + '</a></span></li>');
 
         link.addEventListener('click', function() {
           canvas.setRootElement(parentPlane);
@@ -8814,8 +8131,8 @@
 
       currentRoot = newRoot;
 
-      // current root was replaced with a collaboration, we don't update the viewbox
-      if (is$1(newRoot, 'bpmn:Collaboration') && !storedViewbox) {
+      // Keep viewbox when replacing root elements
+      if (!is$1(newRoot, 'bpmn:SubProcess') && !storedViewbox) {
         return;
       }
 
@@ -8960,11 +8277,9 @@
       self._processToDiagramMap[diagram.plane.bpmnElement.id] = diagram;
     });
 
-    var newDiagrams = [];
-    definitions.diagrams.forEach(function(diagram) {
-      var createdDiagrams = self._createNewDiagrams(diagram.plane);
-      Array.prototype.push.apply(newDiagrams, createdDiagrams);
-    });
+    var newDiagrams = definitions.diagrams
+      .filter(diagram => diagram.plane)
+      .flatMap(diagram => self._createNewDiagrams(diagram.plane));
 
     newDiagrams.forEach(function(diagram) {
       self._movePlaneElementsToOrigin(diagram.plane);
@@ -9175,13 +8490,14 @@
    * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
    * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
    * @typedef {import('diagram-js/lib/features/overlays/Overlays').default} Overlays
+   * @typedef {import('diagram-js/lib/i18n/translate/translate').default} Translate
    *
    * @typedef {import('../../model/Types').Element} Element
    * @typedef {import('../../model/Types').Parent} Parent
    * @typedef {import('../../model/Types').Shape} Shape
    */
 
-  var LOW_PRIORITY$1 = 250;
+  var LOW_PRIORITY$2 = 250;
   var ARROW_DOWN_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.81801948,3.50735931 L10.4996894,9.1896894 L10.5,4 L12,4 L12,12 L4,12 L4,10.5 L9.6896894,10.4996894 L3.75735931,4.56801948 C3.46446609,4.27512627 3.46446609,3.80025253 3.75735931,3.50735931 C4.05025253,3.21446609 4.52512627,3.21446609 4.81801948,3.50735931 Z"/></svg>';
 
   var EMPTY_MARKER = 'bjs-drilldown-empty';
@@ -9191,9 +8507,10 @@
    * @param {EventBus} eventBus
    * @param {ElementRegistry} elementRegistry
    * @param {Overlays} overlays
+   * @param {Translate} translate
    */
   function DrilldownOverlayBehavior(
-      canvas, eventBus, elementRegistry, overlays
+      canvas, eventBus, elementRegistry, overlays, translate
   ) {
     CommandInterceptor.call(this, eventBus);
 
@@ -9201,10 +8518,11 @@
     this._eventBus = eventBus;
     this._elementRegistry = elementRegistry;
     this._overlays = overlays;
+    this._translate = translate;
 
     var self = this;
 
-    this.executed('shape.toggleCollapse', LOW_PRIORITY$1, function(context) {
+    this.executed('shape.toggleCollapse', LOW_PRIORITY$2, function(context) {
       var shape = context.shape;
 
       // Add overlay to the collapsed shape
@@ -9216,7 +8534,7 @@
     }, true);
 
 
-    this.reverted('shape.toggleCollapse', LOW_PRIORITY$1, function(context) {
+    this.reverted('shape.toggleCollapse', LOW_PRIORITY$2, function(context) {
       var shape = context.shape;
 
       // Add overlay to the collapsed shape
@@ -9228,7 +8546,7 @@
     }, true);
 
 
-    this.executed([ 'shape.create', 'shape.move', 'shape.delete' ], LOW_PRIORITY$1,
+    this.executed([ 'shape.create', 'shape.move', 'shape.delete' ], LOW_PRIORITY$2,
       function(context) {
         var oldParent = context.oldParent,
             newParent = context.newParent || context.parent,
@@ -9245,7 +8563,7 @@
       }, true);
 
 
-    this.reverted([ 'shape.create', 'shape.move', 'shape.delete' ], LOW_PRIORITY$1,
+    this.reverted([ 'shape.create', 'shape.move', 'shape.delete' ], LOW_PRIORITY$2,
       function(context) {
         var oldParent = context.oldParent,
             newParent = context.newParent || context.parent,
@@ -9334,7 +8652,8 @@
    */
   DrilldownOverlayBehavior.prototype._addOverlay = function(element) {
     var canvas = this._canvas,
-        overlays = this._overlays;
+        overlays = this._overlays,
+        bo = getBusinessObject(element);
 
     var existingOverlays = overlays.get({ element: element, type: 'drilldown' });
 
@@ -9342,7 +8661,10 @@
       this._removeOverlay(element);
     }
 
-    var button = domify$1('<button class="bjs-drilldown">' + ARROW_DOWN_SVG + '</button>');
+    var button = domify('<button type="button" class="bjs-drilldown">' + ARROW_DOWN_SVG + '</button>'),
+        elementName = bo.get('name') || bo.get('id'),
+        title = this._translate('Open {element}', { element: elementName });
+    button.setAttribute('title', title);
 
     button.addEventListener('click', function() {
       canvas.setRootElement(canvas.findRoot(getPlaneIdFromShape(element)));
@@ -9372,7 +8694,8 @@
     'canvas',
     'eventBus',
     'elementRegistry',
-    'overlays'
+    'overlays',
+    'translate'
   ];
 
   var DrilldownModdule = {
@@ -9382,6 +8705,911 @@
     drilldownCentering: [ 'type', DrilldownCentering ],
     drilldownOverlayBehavior: [ 'type', DrilldownOverlayBehavior ],
     subprocessCompatibility: [ 'type', SubprocessCompatibility ]
+  };
+
+  /**
+   * @typedef {import('../util/Types').Point} Point
+   */
+
+
+  /**
+   * @param {import('../core/EventBus').Event} event
+   *
+   * @return {Event}
+   */
+  function getOriginal(event) {
+    return event.originalEvent || event.srcEvent;
+  }
+
+  /**
+   * @param {Event} event
+   *
+   * @return {Point|null}
+   */
+  function toPoint(event) {
+
+    if (event.pointers && event.pointers.length) {
+      event = event.pointers[0];
+    }
+
+    if (event.touches && event.touches.length) {
+      event = event.touches[0];
+    }
+
+    return event ? {
+      x: event.clientX,
+      y: event.clientY
+    } : null;
+  }
+
+  function isMac() {
+    return (/mac/i).test(navigator.platform);
+  }
+
+  /**
+   * @param {MouseEvent} event
+   * @param {string} button
+   *
+   * @return {boolean}
+   */
+  function isButton(event, button) {
+    return (getOriginal(event) || event).button === button;
+  }
+
+  /**
+   * @param {MouseEvent} event
+   *
+   * @return {boolean}
+   */
+  function isPrimaryButton(event) {
+
+    // button === 0 -> left áka primary mouse button
+    return isButton(event, 0);
+  }
+
+  /**
+   * @param {MouseEvent} event
+   *
+   * @return {boolean}
+   */
+  function isAuxiliaryButton(event) {
+
+    // button === 1 -> auxiliary áka wheel button
+    return isButton(event, 1);
+  }
+
+  /**
+   * @param {MouseEvent} event
+   *
+   * @return {boolean}
+   */
+  function hasSecondaryModifier(event) {
+    var originalEvent = getOriginal(event) || event;
+
+    return isPrimaryButton(event) && originalEvent.shiftKey;
+  }
+
+  /**
+   * @typedef {import('../../model/Types').Element} Element
+   *
+   * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+   * @typedef {import('../../core/EventBus').default} EventBus
+   * @typedef {import('../../draw/Styles').default} Styles
+   *
+   * @typedef {import('../../util/Types').Point} Point
+   */
+
+  function allowAll(event) { return true; }
+
+  function allowPrimaryAndAuxiliary(event) {
+    return isPrimaryButton(event) || isAuxiliaryButton(event);
+  }
+
+  var LOW_PRIORITY$1 = 500;
+
+
+  /**
+   * A plugin that provides interaction events for diagram elements.
+   *
+   * It emits the following events:
+   *
+   *   * element.click
+   *   * element.contextmenu
+   *   * element.dblclick
+   *   * element.hover
+   *   * element.mousedown
+   *   * element.mousemove
+   *   * element.mouseup
+   *   * element.out
+   *
+   * Each event is a tuple { element, gfx, originalEvent }.
+   *
+   * Canceling the event via Event#preventDefault()
+   * prevents the original DOM operation.
+   *
+   * @param {EventBus} eventBus
+   * @param {ElementRegistry} elementRegistry
+   * @param {Styles} styles
+   */
+  function InteractionEvents(eventBus, elementRegistry, styles) {
+
+    var self = this;
+
+    /**
+     * Fire an interaction event.
+     *
+     * @param {string} type local event name, e.g. element.click.
+     * @param {MouseEvent|TouchEvent} event native event
+     * @param {Element} [element] the diagram element to emit the event on;
+     *                                   defaults to the event target
+     */
+    function fire(type, event, element) {
+
+      if (isIgnored(type, event)) {
+        return;
+      }
+
+      var target, gfx, returnValue;
+
+      if (!element) {
+        target = event.delegateTarget || event.target;
+
+        if (target) {
+          gfx = target;
+          element = elementRegistry.get(gfx);
+        }
+      } else {
+        gfx = elementRegistry.getGraphics(element);
+      }
+
+      if (!gfx || !element) {
+        return;
+      }
+
+      returnValue = eventBus.fire(type, {
+        element: element,
+        gfx: gfx,
+        originalEvent: event
+      });
+
+      if (returnValue === false) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    }
+
+    // TODO(nikku): document this
+    var handlers = {};
+
+    function mouseHandler(localEventName) {
+      return handlers[localEventName];
+    }
+
+    function isIgnored(localEventName, event) {
+
+      var filter = ignoredFilters[localEventName] || isPrimaryButton;
+
+      // only react on left mouse button interactions
+      // except for interaction events that are enabled
+      // for secundary mouse button
+      return !filter(event);
+    }
+
+    var bindings = {
+      click: 'element.click',
+      contextmenu: 'element.contextmenu',
+      dblclick: 'element.dblclick',
+      mousedown: 'element.mousedown',
+      mousemove: 'element.mousemove',
+      mouseover: 'element.hover',
+      mouseout: 'element.out',
+      mouseup: 'element.mouseup',
+    };
+
+    var ignoredFilters = {
+      'element.contextmenu': allowAll,
+      'element.mousedown': allowPrimaryAndAuxiliary,
+      'element.mouseup': allowPrimaryAndAuxiliary,
+      'element.click': allowPrimaryAndAuxiliary,
+      'element.dblclick': allowPrimaryAndAuxiliary
+    };
+
+
+    // manual event trigger //////////
+
+    /**
+     * Trigger an interaction event (based on a native dom event)
+     * on the target shape or connection.
+     *
+     * @param {string} eventName the name of the triggered DOM event
+     * @param {MouseEvent|TouchEvent} event
+     * @param {Element} targetElement
+     */
+    function triggerMouseEvent(eventName, event, targetElement) {
+
+      // i.e. element.mousedown...
+      var localEventName = bindings[eventName];
+
+      if (!localEventName) {
+        throw new Error('unmapped DOM event name <' + eventName + '>');
+      }
+
+      return fire(localEventName, event, targetElement);
+    }
+
+
+    var ELEMENT_SELECTOR = 'svg, .djs-element';
+
+    // event handling ///////
+
+    function registerEvent(node, event, localEvent, ignoredFilter) {
+
+      var handler = handlers[localEvent] = function(event) {
+        fire(localEvent, event);
+      };
+
+      if (ignoredFilter) {
+        ignoredFilters[localEvent] = ignoredFilter;
+      }
+
+      handler.$delegate = delegate.bind(node, ELEMENT_SELECTOR, event, handler);
+    }
+
+    function unregisterEvent(node, event, localEvent) {
+
+      var handler = mouseHandler(localEvent);
+
+      if (!handler) {
+        return;
+      }
+
+      delegate.unbind(node, event, handler.$delegate);
+    }
+
+    function registerEvents(svg) {
+      forEach(bindings, function(val, key) {
+        registerEvent(svg, key, val);
+      });
+    }
+
+    function unregisterEvents(svg) {
+      forEach(bindings, function(val, key) {
+        unregisterEvent(svg, key, val);
+      });
+    }
+
+    eventBus.on('canvas.destroy', function(event) {
+      unregisterEvents(event.svg);
+    });
+
+    eventBus.on('canvas.init', function(event) {
+      registerEvents(event.svg);
+    });
+
+
+    // hit box updating ////////////////
+
+    eventBus.on([ 'shape.added', 'connection.added' ], function(event) {
+      var element = event.element,
+          gfx = event.gfx;
+
+      eventBus.fire('interactionEvents.createHit', { element: element, gfx: gfx });
+    });
+
+    // Update djs-hit on change.
+    // A low priortity is necessary, because djs-hit of labels has to be updated
+    // after the label bounds have been updated in the renderer.
+    eventBus.on([
+      'shape.changed',
+      'connection.changed'
+    ], LOW_PRIORITY$1, function(event) {
+
+      var element = event.element,
+          gfx = event.gfx;
+
+      eventBus.fire('interactionEvents.updateHit', { element: element, gfx: gfx });
+    });
+
+    eventBus.on('interactionEvents.createHit', LOW_PRIORITY$1, function(event) {
+      var element = event.element,
+          gfx = event.gfx;
+
+      self.createDefaultHit(element, gfx);
+    });
+
+    eventBus.on('interactionEvents.updateHit', function(event) {
+      var element = event.element,
+          gfx = event.gfx;
+
+      self.updateDefaultHit(element, gfx);
+    });
+
+
+    // hit styles ////////////
+
+    var STROKE_HIT_STYLE = createHitStyle('djs-hit djs-hit-stroke');
+
+    var CLICK_STROKE_HIT_STYLE = createHitStyle('djs-hit djs-hit-click-stroke');
+
+    var ALL_HIT_STYLE = createHitStyle('djs-hit djs-hit-all');
+
+    var NO_MOVE_HIT_STYLE = createHitStyle('djs-hit djs-hit-no-move');
+
+    var HIT_TYPES = {
+      'all': ALL_HIT_STYLE,
+      'click-stroke': CLICK_STROKE_HIT_STYLE,
+      'stroke': STROKE_HIT_STYLE,
+      'no-move': NO_MOVE_HIT_STYLE
+    };
+
+    function createHitStyle(classNames, attrs) {
+
+      attrs = assign$1({
+        stroke: 'white',
+        strokeWidth: 15
+      }, attrs || {});
+
+      return styles.cls(classNames, [ 'no-fill', 'no-border' ], attrs);
+    }
+
+
+    // style helpers ///////////////
+
+    function applyStyle(hit, type) {
+
+      var attrs = HIT_TYPES[type];
+
+      if (!attrs) {
+        throw new Error('invalid hit type <' + type + '>');
+      }
+
+      attr$1(hit, attrs);
+
+      return hit;
+    }
+
+    function appendHit(gfx, hit) {
+      append(gfx, hit);
+    }
+
+
+    // API
+
+    /**
+     * Remove hints on the given graphics.
+     *
+     * @param {SVGElement} gfx
+     */
+    this.removeHits = function(gfx) {
+      var hits = all('.djs-hit', gfx);
+
+      forEach(hits, remove$2);
+    };
+
+    /**
+     * Create default hit for the given element.
+     *
+     * @param {Element} element
+     * @param {SVGElement} gfx
+     *
+     * @return {SVGElement} created hit
+     */
+    this.createDefaultHit = function(element, gfx) {
+      var waypoints = element.waypoints,
+          isFrame = element.isFrame,
+          boxType;
+
+      if (waypoints) {
+        return this.createWaypointsHit(gfx, waypoints);
+      } else {
+
+        boxType = isFrame ? 'stroke' : 'all';
+
+        return this.createBoxHit(gfx, boxType, {
+          width: element.width,
+          height: element.height
+        });
+      }
+    };
+
+    /**
+     * Create hits for the given waypoints.
+     *
+     * @param {SVGElement} gfx
+     * @param {Point[]} waypoints
+     *
+     * @return {SVGElement}
+     */
+    this.createWaypointsHit = function(gfx, waypoints) {
+
+      var hit = createLine(waypoints);
+
+      applyStyle(hit, 'stroke');
+
+      appendHit(gfx, hit);
+
+      return hit;
+    };
+
+    /**
+     * Create hits for a box.
+     *
+     * @param {SVGElement} gfx
+     * @param {string} type
+     * @param {Object} attrs
+     *
+     * @return {SVGElement}
+     */
+    this.createBoxHit = function(gfx, type, attrs) {
+
+      attrs = assign$1({
+        x: 0,
+        y: 0
+      }, attrs);
+
+      var hit = create$1('rect');
+
+      applyStyle(hit, type);
+
+      attr$1(hit, attrs);
+
+      appendHit(gfx, hit);
+
+      return hit;
+    };
+
+    /**
+     * Update default hit of the element.
+     *
+     * @param {Element} element
+     * @param {SVGElement} gfx
+     *
+     * @return {SVGElement} updated hit
+     */
+    this.updateDefaultHit = function(element, gfx) {
+
+      var hit = query('.djs-hit', gfx);
+
+      if (!hit) {
+        return;
+      }
+
+      if (element.waypoints) {
+        updateLine(hit, element.waypoints);
+      } else {
+        attr$1(hit, {
+          width: element.width,
+          height: element.height
+        });
+      }
+
+      return hit;
+    };
+
+    this.fire = fire;
+
+    this.triggerMouseEvent = triggerMouseEvent;
+
+    this.mouseHandler = mouseHandler;
+
+    this.registerEvent = registerEvent;
+    this.unregisterEvent = unregisterEvent;
+  }
+
+
+  InteractionEvents.$inject = [
+    'eventBus',
+    'elementRegistry',
+    'styles'
+  ];
+
+
+  /**
+   * An event indicating that the mouse hovered over an element
+   *
+   * @event element.hover
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * An event indicating that the mouse has left an element
+   *
+   * @event element.out
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * An event indicating that the mouse has clicked an element
+   *
+   * @event element.click
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * An event indicating that the mouse has double clicked an element
+   *
+   * @event element.dblclick
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * An event indicating that the mouse has gone down on an element.
+   *
+   * @event element.mousedown
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * An event indicating that the mouse has gone up on an element.
+   *
+   * @event element.mouseup
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * An event indicating that the context menu action is triggered
+   * via mouse or touch controls.
+   *
+   * @event element.contextmenu
+   *
+   * @type {Object}
+   * @property {Element} element
+   * @property {SVGElement} gfx
+   * @property {Event} originalEvent
+   */
+
+  /**
+   * @type { import('didi').ModuleDeclaration }
+   */
+  var InteractionEventsModule = {
+    __init__: [ 'interactionEvents' ],
+    interactionEvents: [ 'type', InteractionEvents ]
+  };
+
+  /**
+   * @typedef {import('../../core/Canvas').default} Canvas
+   * @typedef {import('../../core/EventBus').default} EventBus
+   */
+
+  /**
+   * A service that offers the current selection in a diagram.
+   * Offers the api to control the selection, too.
+   *
+   * @param {EventBus} eventBus
+   * @param {Canvas} canvas
+   */
+  function Selection(eventBus, canvas) {
+
+    this._eventBus = eventBus;
+    this._canvas = canvas;
+
+    /**
+     * @type {Object[]}
+     */
+    this._selectedElements = [];
+
+    var self = this;
+
+    eventBus.on([ 'shape.remove', 'connection.remove' ], function(e) {
+      var element = e.element;
+      self.deselect(element);
+    });
+
+    eventBus.on([ 'diagram.clear', 'root.set' ], function(e) {
+      self.select(null);
+    });
+  }
+
+  Selection.$inject = [ 'eventBus', 'canvas' ];
+
+  /**
+   * Deselect an element.
+   *
+   * @param {Object} element The element to deselect.
+   */
+  Selection.prototype.deselect = function(element) {
+    var selectedElements = this._selectedElements;
+
+    var idx = selectedElements.indexOf(element);
+
+    if (idx !== -1) {
+      var oldSelection = selectedElements.slice();
+
+      selectedElements.splice(idx, 1);
+
+      this._eventBus.fire('selection.changed', { oldSelection: oldSelection, newSelection: selectedElements });
+    }
+  };
+
+  /**
+   * Get the selected elements.
+   *
+   * @return {Object[]} The selected elements.
+   */
+  Selection.prototype.get = function() {
+    return this._selectedElements;
+  };
+
+  /**
+   * Check whether an element is selected.
+   *
+   * @param {Object} element The element.
+   *
+   * @return {boolean} Whether the element is selected.
+   */
+  Selection.prototype.isSelected = function(element) {
+    return this._selectedElements.indexOf(element) !== -1;
+  };
+
+
+  /**
+   * Select one or many elements.
+   *
+   * @param {Object|Object[]} elements The element(s) to select.
+   * @param {boolean} [add] Whether to add the element(s) to the selected elements.
+   * Defaults to `false`.
+   */
+  Selection.prototype.select = function(elements, add) {
+    var selectedElements = this._selectedElements,
+        oldSelection = selectedElements.slice();
+
+    if (!isArray$1(elements)) {
+      elements = elements ? [ elements ] : [];
+    }
+
+    var canvas = this._canvas;
+
+    var rootElement = canvas.getRootElement();
+
+    elements = elements.filter(function(element) {
+      var elementRoot = canvas.findRoot(element);
+
+      return rootElement === elementRoot;
+    });
+
+    // selection may be cleared by passing an empty array or null
+    // to the method
+    if (add) {
+      forEach(elements, function(element) {
+        if (selectedElements.indexOf(element) !== -1) {
+
+          // already selected
+          return;
+        } else {
+          selectedElements.push(element);
+        }
+      });
+    } else {
+      this._selectedElements = selectedElements = elements.slice();
+    }
+
+    this._eventBus.fire('selection.changed', { oldSelection: oldSelection, newSelection: selectedElements });
+  };
+
+  /**
+   * @typedef {import('../../core/Canvas').default} Canvas
+   * @typedef {import('../../core/EventBus').default} EventBus
+   */
+
+  var MARKER_HOVER = 'hover',
+      MARKER_SELECTED = 'selected';
+
+  /**
+   * A plugin that adds a visible selection UI to shapes and connections
+   * by appending the <code>hover</code> and <code>selected</code> classes to them.
+   *
+   * @class
+   *
+   * Makes elements selectable, too.
+   *
+   * @param {Canvas} canvas
+   * @param {EventBus} eventBus
+   */
+  function SelectionVisuals(canvas, eventBus) {
+    this._canvas = canvas;
+
+    function addMarker(e, cls) {
+      canvas.addMarker(e, cls);
+    }
+
+    function removeMarker(e, cls) {
+      canvas.removeMarker(e, cls);
+    }
+
+    eventBus.on('element.hover', function(event) {
+      addMarker(event.element, MARKER_HOVER);
+    });
+
+    eventBus.on('element.out', function(event) {
+      removeMarker(event.element, MARKER_HOVER);
+    });
+
+    eventBus.on('selection.changed', function(event) {
+
+      function deselect(s) {
+        removeMarker(s, MARKER_SELECTED);
+      }
+
+      function select(s) {
+        addMarker(s, MARKER_SELECTED);
+      }
+
+      var oldSelection = event.oldSelection,
+          newSelection = event.newSelection;
+
+      forEach(oldSelection, function(e) {
+        if (newSelection.indexOf(e) === -1) {
+          deselect(e);
+        }
+      });
+
+      forEach(newSelection, function(e) {
+        if (oldSelection.indexOf(e) === -1) {
+          select(e);
+        }
+      });
+    });
+  }
+
+  SelectionVisuals.$inject = [
+    'canvas',
+    'eventBus'
+  ];
+
+  /**
+   * @typedef {import('../../core/Canvas').default} Canvas
+   * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+   * @typedef {import('../../core/EventBus').default} EventBus
+   * @typedef {import('./Selection').default} Selection
+   */
+
+  /**
+   * @param {EventBus} eventBus
+   * @param {Selection} selection
+   * @param {Canvas} canvas
+   * @param {ElementRegistry} elementRegistry
+   */
+  function SelectionBehavior(eventBus, selection, canvas, elementRegistry) {
+
+    // Select elements on create
+    eventBus.on('create.end', 500, function(event) {
+      var context = event.context,
+          canExecute = context.canExecute,
+          elements = context.elements,
+          hints = context.hints || {},
+          autoSelect = hints.autoSelect;
+
+      if (canExecute) {
+        if (autoSelect === false) {
+
+          // Select no elements
+          return;
+        }
+
+        if (isArray$1(autoSelect)) {
+          selection.select(autoSelect);
+        } else {
+
+          // Select all elements by default
+          selection.select(elements.filter(isShown));
+        }
+      }
+    });
+
+    // Select connection targets on connect
+    eventBus.on('connect.end', 500, function(event) {
+      var context = event.context,
+          connection = context.connection;
+
+      if (connection) {
+        selection.select(connection);
+      }
+    });
+
+    // Select shapes on move
+    eventBus.on('shape.move.end', 500, function(event) {
+      var previousSelection = event.previousSelection || [];
+
+      var shape = elementRegistry.get(event.context.shape.id);
+
+      // Always select main shape on move
+      var isSelected = find(previousSelection, function(selectedShape) {
+        return shape.id === selectedShape.id;
+      });
+
+      if (!isSelected) {
+        selection.select(shape);
+      }
+    });
+
+    // Select elements on click
+    eventBus.on('element.click', function(event) {
+
+      if (!isPrimaryButton(event)) {
+        return;
+      }
+
+      var element = event.element;
+
+      if (element === canvas.getRootElement()) {
+        element = null;
+      }
+
+      var isSelected = selection.isSelected(element),
+          isMultiSelect = selection.get().length > 1;
+
+      // Add to selection if SHIFT pressed
+      var add = hasSecondaryModifier(event);
+
+      if (isSelected && isMultiSelect) {
+        if (add) {
+
+          // Deselect element
+          return selection.deselect(element);
+        } else {
+
+          // Select element only
+          return selection.select(element);
+        }
+      } else if (!isSelected) {
+
+        // Select element
+        selection.select(element, add);
+      } else {
+
+        // Deselect element
+        selection.deselect(element);
+      }
+    });
+  }
+
+  SelectionBehavior.$inject = [
+    'eventBus',
+    'selection',
+    'canvas',
+    'elementRegistry'
+  ];
+
+
+  function isShown(element) {
+    return !element.hidden;
+  }
+
+  /**
+   * @type { import('didi').ModuleDeclaration }
+   */
+  var SelectionModule = {
+    __init__: [ 'selectionVisuals', 'selectionBehavior' ],
+    __depends__: [
+      InteractionEventsModule,
+    ],
+    selection: [ 'type', Selection ],
+    selectionVisuals: [ 'type', SelectionVisuals ],
+    selectionBehavior: [ 'type', SelectionBehavior ]
   };
 
   const CLASS_PATTERN = /^class[ {]/;
@@ -9416,7 +9644,7 @@
   }
 
   /**
-   * @typedef {import('./index').InjectAnnotated } InjectAnnotated
+   * @typedef {import('./index.js').InjectAnnotated } InjectAnnotated
    */
 
   /**
@@ -9486,19 +9714,22 @@
   }
 
   /**
-   * @typedef { import('./index').ModuleDeclaration } ModuleDeclaration
-   * @typedef { import('./index').ModuleDefinition } ModuleDefinition
-   * @typedef { import('./index').InjectorContext } InjectorContext
+   * @typedef { import('./index.js').ModuleDeclaration } ModuleDeclaration
+   * @typedef { import('./index.js').ModuleDefinition } ModuleDefinition
+   * @typedef { import('./index.js').InjectorContext } InjectorContext
+   *
+   * @typedef { import('./index.js').TypedDeclaration<any, any> } TypedDeclaration
    */
 
   /**
    * Create a new injector with the given modules.
    *
    * @param {ModuleDefinition[]} modules
-   * @param {InjectorContext} [parent]
+   * @param {InjectorContext} [_parent]
    */
-  function Injector(modules, parent) {
-    parent = parent || {
+  function Injector(modules, _parent) {
+
+    const parent = _parent || /** @type InjectorContext */ ({
       get: function(name, strict) {
         currentlyResolving.push(name);
 
@@ -9508,7 +9739,7 @@
           throw error(`No provider for "${ name }"!`);
         }
       }
-    };
+    });
 
     const currentlyResolving = [];
     const providers = this._providers = Object.create(parent._providers || null);
@@ -9531,12 +9762,13 @@
      * @return {any}
      */
     function get(name, strict) {
-      if (!providers[name] && name.indexOf('.') !== -1) {
+      if (!providers[name] && name.includes('.')) {
+
         const parts = name.split('.');
-        let pivot = get(parts.shift());
+        let pivot = get(/** @type { string } */ (parts.shift()));
 
         while (parts.length) {
-          pivot = pivot[parts.shift()];
+          pivot = pivot[/** @type { string } */ (parts.shift())];
         }
 
         return pivot;
@@ -9576,6 +9808,9 @@
         }
       }
 
+      /**
+       * @type {string[]}
+       */
       const inject = fn.$inject || parseAnnotations(fn);
       const dependencies = inject.map(dep => {
         if (hasOwnProp(locals, dep)) {
@@ -9587,22 +9822,42 @@
 
       return {
         fn: fn,
-        dependencies: dependencies
+        dependencies
       };
     }
 
-    function instantiate(Type) {
+    /**
+     * Instantiate the given type, injecting dependencies.
+     *
+     * @template T
+     *
+     * @param { Function | [...string[], Function ]} type
+     *
+     * @return T
+     */
+    function instantiate(type) {
       const {
         fn,
         dependencies
-      } = fnDef(Type);
+      } = fnDef(type);
 
       // instantiate var args constructor
-      const Constructor = Function.prototype.bind.apply(fn, [ null ].concat(dependencies));
+      const Constructor = Function.prototype.bind.call(fn, null, ...dependencies);
 
       return new Constructor();
     }
 
+    /**
+     * Invoke the given function, injecting dependencies. Return the result.
+     *
+     * @template T
+     *
+     * @param { Function | [...string[], Function ]} func
+     * @param { Object } [context]
+     * @param { Object } [locals]
+     *
+     * @return {T} invocation result
+     */
     function invoke(func, context, locals) {
       const {
         fn,
@@ -9767,13 +10022,17 @@
           return;
         }
 
-        if (moduleDefinition[key][2] === 'private') {
-          providers[key] = moduleDefinition[key];
+        const typeDeclaration = /** @type { TypedDeclaration } */ (
+          moduleDefinition[key]
+        );
+
+        if (typeDeclaration[2] === 'private') {
+          providers[key] = typeDeclaration;
           return;
         }
 
-        const type = moduleDefinition[key][0];
-        const value = moduleDefinition[key][1];
+        const type = typeDeclaration[0];
+        const value = typeDeclaration[1];
 
         providers[key] = [ factoryMap[type], arrayUnwrap(type, value), type ];
       });
@@ -9895,7 +10154,7 @@
       height: element.height || 0
     });
 
-    if (isFrameElement(element)) {
+    if (isFrameElement$1(element)) {
       attr$1(rect, assign$1({}, this.FRAME_STYLE, attrs || {}));
     } else {
       attr$1(rect, assign$1({}, this.SHAPE_STYLE, attrs || {}));
@@ -10007,7 +10266,7 @@
      */
     this.style = function(traits, additionalAttrs) {
 
-      if (!isArray$2(traits) && !additionalAttrs) {
+      if (!isArray$1(traits) && !additionalAttrs) {
         additionalAttrs = traits;
         traits = [];
       }
@@ -10031,7 +10290,7 @@
      * @return {Object} the style definition
      */
     this.computeStyle = function(custom, traits, defaultStyles) {
-      if (!isArray$2(traits)) {
+      if (!isArray$1(traits)) {
         defaultStyles = traits;
         traits = [];
       }
@@ -10134,6 +10393,7 @@
    *   deferUpdate?: boolean;
    *   width?: number;
    *   height?: number;
+   *   autoFocus?: boolean;
    * } } CanvasConfig
    * @typedef { {
    *   group: SVGElement;
@@ -10161,6 +10421,7 @@
    * @typedef {import('../util/Types').Point} Point
    * @typedef {import('../util/Types').Rect} Rect
    * @typedef {import('../util/Types').RectTRBL} RectTRBL
+   * @typedef {import('../util/Types').ScrollDelta} ScrollDelta
    */
 
   function round(number, resolution) {
@@ -10274,6 +10535,11 @@
      */
     this._rootElement = null;
 
+    /**
+     * @type {boolean}
+     */
+    this._focused = false;
+
     this._init(config || {});
   }
 
@@ -10300,23 +10566,52 @@
    * @param {CanvasConfig} config
    */
   Canvas.prototype._init = function(config) {
-
     const eventBus = this._eventBus;
 
     // html container
     const container = this._container = createContainer(config);
 
     const svg = this._svg = create$1('svg');
-    attr$1(svg, { width: '100%', height: '100%' });
+
+    attr$1(svg, {
+      width: '100%',
+      height: '100%'
+    });
+
+    attr(svg, 'tabindex', 0);
+
+    config.autoFocus && eventBus.on('element.hover', () => {
+      this.restoreFocus();
+    });
+
+    eventBus.on('element.mousedown', 500, (event) => {
+      this.focus();
+    });
+
+    svg.addEventListener('focusin', () => {
+      this._setFocused(true);
+    });
+
+    svg.addEventListener('focusout', () => {
+      this._setFocused(false);
+    });
+
+    svg.addEventListener('mouseover', () => {
+      this._eventBus.fire('canvas.mouseover');
+    });
+
+    svg.addEventListener('mouseout', () => {
+      this._eventBus.fire('canvas.mouseout');
+    });
 
     append(container, svg);
 
     const viewport = this._viewport = createGroup(svg, 'viewport');
 
-    // debounce canvas.viewbox.changed events
-    // for smoother diagram interaction
-    if (config.deferUpdate !== false) {
-      this._viewboxChanged = debounce(bind$2(this._viewboxChanged, this), 300);
+    // debounce canvas.viewbox.changed events when deferUpdate is set
+    // to help with potential performance issues
+    if (config.deferUpdate) {
+      this._viewboxChanged = debounce(bind$1(this._viewboxChanged, this), 300);
     }
 
     eventBus.on('diagram.init', () => {
@@ -10376,6 +10671,17 @@
     delete this._viewport;
   };
 
+  Canvas.prototype._setFocused = function(focused) {
+
+    if (focused == this._focused) {
+      return;
+    }
+
+    this._focused = focused;
+
+    this._eventBus.fire('canvas.focus.changed', { focused });
+  };
+
   Canvas.prototype._clear = function() {
 
     const allElements = this._elementRegistry.getAll();
@@ -10397,6 +10703,33 @@
 
     // force recomputation of view box
     delete this._cachedViewbox;
+  };
+
+  /**
+   * Sets focus on the canvas SVG element.
+   */
+  Canvas.prototype.focus = function() {
+    this._svg.focus({ preventScroll: true });
+
+    this._setFocused(true);
+  };
+
+  /**
+  * Sets focus on the canvas SVG element if `document.body` is currently focused.
+  */
+  Canvas.prototype.restoreFocus = function() {
+    if (document.activeElement === document.body) {
+      this.focus();
+    }
+  };
+
+  /**
+  * Returns true if the canvas is focused.
+  *
+  * @return {boolean}
+  */
+  Canvas.prototype.isFocused = function() {
+    return this._focused;
   };
 
   /**
@@ -10646,6 +10979,8 @@
       element = this._elementRegistry.get(element);
     }
 
+    element.markers = element.markers || new Set();
+
     // we need to access all
     container = this._elementRegistry._elements[element.id];
 
@@ -10653,13 +10988,15 @@
       return;
     }
 
-    forEach$1([ container.gfx, container.secondaryGfx ], function(gfx) {
+    forEach([ container.gfx, container.secondaryGfx ], function(gfx) {
       if (gfx) {
 
         // invoke either addClass or removeClass based on mode
         if (add) {
+          element.markers.add(marker);
           classes$1(gfx).add(marker);
         } else {
+          element.markers.delete(marker);
           classes$1(gfx).remove(marker);
         }
       }
@@ -10727,9 +11064,11 @@
       element = this._elementRegistry.get(element);
     }
 
-    const gfx = this.getGraphics(element);
+    if (!element.markers) {
+      return false;
+    }
 
-    return classes$1(gfx).has(marker);
+    return element.markers.has(marker);
   };
 
   /**
@@ -10861,7 +11200,7 @@
   Canvas.prototype.setRootElement = function(rootElement) {
 
     if (rootElement === this._rootElement) {
-      return;
+      return rootElement;
     }
 
     let plane;
@@ -11232,7 +11571,7 @@
   Canvas.prototype.viewbox = function(box) {
 
     if (box === undefined && this._cachedViewbox) {
-      return this._cachedViewbox;
+      return structuredClone(this._cachedViewbox);
     }
 
     const viewport = this._viewport,
@@ -11296,7 +11635,7 @@
   /**
    * Gets or sets the scroll of the canvas.
    *
-   * @param {Point} [delta] The scroll to be set.
+   * @param {ScrollDelta} [delta] The scroll to be set.
    *
    * @return {Point}
    */
@@ -11337,6 +11676,11 @@
 
     if (rootElement !== this.getRootElement()) {
       this.setRootElement(rootElement);
+    }
+
+    // element is rootElement, do not change viewport
+    if (rootElement === element) {
+      return;
     }
 
     if (!padding) {
@@ -11866,32 +12210,17 @@
     }
   };
 
-  var objectRefs = {exports: {}};
-
-  var collection = {};
-
-  /**
-   * An empty collection stub. Use {@link RefsCollection.extend} to extend a
-   * collection with ref semantics.
-   *
-   * @class RefsCollection
-   */
-
   /**
    * Extends a collection with {@link Refs} aware methods
    *
-   * @memberof RefsCollection
-   * @static
-   *
-   * @param  {Array<Object>} collection
-   * @param  {Refs} refs instance
-   * @param  {Object} property represented by the collection
-   * @param  {Object} target object the collection is attached to
+   * @param {Array<Object>} collection
+   * @param {Refs} refs instance
+   * @param {Object} property represented by the collection
+   * @param {Object} target object the collection is attached to
    *
    * @return {RefsCollection<Object>} the extended array
    */
   function extend(collection, refs, property, target) {
-
     var inverseProperty = property.inverse;
 
     /**
@@ -11902,7 +12231,7 @@
      * @param {Object} element the element to remove
      */
     Object.defineProperty(collection, 'remove', {
-      value: function(element) {
+      value: function (element) {
         var idx = this.indexOf(element);
         if (idx !== -1) {
           this.splice(idx, 1);
@@ -11910,7 +12239,6 @@
           // unset inverse
           refs.unset(element, inverseProperty, target);
         }
-
         return element;
       }
     });
@@ -11923,7 +12251,7 @@
      * @param {Object} element the element to check for
      */
     Object.defineProperty(collection, 'contains', {
-      value: function(element) {
+      value: function (element) {
         return this.indexOf(element) !== -1;
       }
     });
@@ -11938,12 +12266,9 @@
      *                 (possibly moving other elements around)
      */
     Object.defineProperty(collection, 'add', {
-      value: function(element, idx) {
-
+      value: function (element, idx) {
         var currentIdx = this.indexOf(element);
-
         if (typeof idx === 'undefined') {
-
           if (currentIdx !== -1) {
             // element already in collection (!)
             return;
@@ -11955,14 +12280,12 @@
 
         // handle already in collection
         if (currentIdx !== -1) {
-
           // remove element from currentIdx
           this.splice(currentIdx, 1);
         }
 
         // add element at idx
         this.splice(idx, 0, element);
-
         if (currentIdx === -1) {
           // set inverse, unless element was
           // in collection already
@@ -11976,69 +12299,53 @@
     Object.defineProperty(collection, '__refs_collection', {
       value: true
     });
-
     return collection;
   }
 
-
+  /**
+   * Checks if a given collection is extended
+   *
+   * @param {Array<Object>} collection
+   *
+   * @return {boolean}
+   */
   function isExtended(collection) {
     return collection.__refs_collection === true;
   }
 
-  collection.extend = extend;
-
-  collection.isExtended = isExtended;
-
-  var Collection = collection;
-
   function hasOwnProperty$1(e, property) {
     return Object.prototype.hasOwnProperty.call(e, property.name || property);
   }
-
   function defineCollectionProperty(ref, property, target) {
-
-    var collection = Collection.extend(target[property.name] || [], ref, property, target);
-
+    var collection = extend(target[property.name] || [], ref, property, target);
     Object.defineProperty(target, property.name, {
       enumerable: property.enumerable,
       value: collection
     });
-
     if (collection.length) {
-
-      collection.forEach(function(o) {
+      collection.forEach(function (o) {
         ref.set(o, property.inverse, target);
       });
     }
   }
-
-
   function defineProperty$1(ref, property, target) {
-
     var inverseProperty = property.inverse;
-
     var _value = target[property.name];
-
     Object.defineProperty(target, property.name, {
       configurable: property.configurable,
       enumerable: property.enumerable,
-
-      get: function() {
+      get: function () {
         return _value;
       },
-
-      set: function(value) {
-
+      set: function (value) {
         // return if we already performed all changes
         if (value === _value) {
           return;
         }
-
         var old = _value;
 
         // temporary set null
         _value = null;
-
         if (old) {
           ref.unset(old, inverseProperty, target);
         }
@@ -12050,7 +12357,6 @@
         ref.set(_value, inverseProperty, target);
       }
     });
-
   }
 
   /**
@@ -12096,16 +12402,14 @@
    *
    * wheels[0].car // undefined
    */
-  function Refs$1(a, b) {
-
-    if (!(this instanceof Refs$1)) {
-      return new Refs$1(a, b);
+  function Refs(a, b) {
+    if (!(this instanceof Refs)) {
+      return new Refs(a, b);
     }
 
     // link
     a.inverse = b;
     b.inverse = a;
-
     this.props = {};
     this.props[a.name] = a;
     this.props[b.name] = b;
@@ -12120,43 +12424,34 @@
    * @param  {Object} target
    * @param  {String} property
    */
-  Refs$1.prototype.bind = function(target, property) {
+  Refs.prototype.bind = function (target, property) {
     if (typeof property === 'string') {
       if (!this.props[property]) {
         throw new Error('no property <' + property + '> in ref');
       }
       property = this.props[property];
     }
-
     if (property.collection) {
       defineCollectionProperty(this, property, target);
     } else {
       defineProperty$1(this, property, target);
     }
   };
-
-  Refs$1.prototype.ensureRefsCollection = function(target, property) {
-
+  Refs.prototype.ensureRefsCollection = function (target, property) {
     var collection = target[property.name];
-
-    if (!Collection.isExtended(collection)) {
+    if (!isExtended(collection)) {
       defineCollectionProperty(this, property, target);
     }
-
     return collection;
   };
-
-  Refs$1.prototype.ensureBound = function(target, property) {
+  Refs.prototype.ensureBound = function (target, property) {
     if (!hasOwnProperty$1(target, property)) {
       this.bind(target, property);
     }
   };
-
-  Refs$1.prototype.unset = function(target, property, value) {
-
+  Refs.prototype.unset = function (target, property, value) {
     if (target) {
       this.ensureBound(target, property);
-
       if (property.collection) {
         this.ensureRefsCollection(target, property).remove(value);
       } else {
@@ -12164,12 +12459,9 @@
       }
     }
   };
-
-  Refs$1.prototype.set = function(target, property, value) {
-
+  Refs.prototype.set = function (target, property, value) {
     if (target) {
       this.ensureBound(target, property);
-
       if (property.collection) {
         this.ensureRefsCollection(target, property).add(value);
       } else {
@@ -12177,15 +12469,6 @@
       }
     }
   };
-
-  var refs = Refs$1;
-
-  objectRefs.exports = refs;
-
-  objectRefs.exports.Collection = collection;
-
-  var objectRefsExports = objectRefs.exports;
-  var Refs = /*@__PURE__*/getDefaultExportFromCjs(objectRefsExports);
 
   var parentRefs = new Refs({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
       labelRefs = new Refs({ name: 'labels', enumerable: true, collection: true }, { name: 'labelTarget' }),
@@ -12723,6 +13006,8 @@
    * var sum = eventBus.fire('sum', 1, 2);
    * console.log(sum); // 3
    * ```
+   *
+   * @template [EventMap=null]
    */
   function EventBus() {
 
@@ -12736,8 +13021,9 @@
     this.on('diagram.destroy', 1, this._destroy, this);
   }
 
-
   /**
+   * @overlord
+   *
    * Register an event listener for events with the given name.
    *
    * The callback will be invoked with `event, ...additionalArguments`
@@ -12756,9 +13042,28 @@
    * @param {EventBusEventCallback<T>} callback
    * @param {any} [that] callback context
    */
+  /**
+   * Register an event listener for events with the given name.
+   *
+   * The callback will be invoked with `event, ...additionalArguments`
+   * that have been passed to {@link EventBus#fire}.
+   *
+   * Returning false from a listener will prevent the events default action
+   * (if any is specified). To stop an event from being processed further in
+   * other listeners execute {@link Event#stopPropagation}.
+   *
+   * Returning anything but `undefined` from a listener will stop the listener propagation.
+   *
+   * @template {keyof EventMap} EventName
+   *
+   * @param {EventName} events to subscribe to
+   * @param {number} [priority=1000] listen priority
+   * @param {EventBusEventCallback<EventMap[EventName]>} callback
+   * @param {any} [that] callback context
+   */
   EventBus.prototype.on = function(events, priority, callback, that) {
 
-    events = isArray$2(events) ? events : [ events ];
+    events = isArray$1(events) ? events : [ events ];
 
     if (isFunction(priority)) {
       that = callback;
@@ -12773,7 +13078,7 @@
     var actualCallback = callback;
 
     if (that) {
-      actualCallback = bind$2(callback, that);
+      actualCallback = bind$1(callback, that);
 
       // make sure we remember and are able to remove
       // bound callbacks via {@link #off} using the original
@@ -12793,6 +13098,8 @@
   };
 
   /**
+   * @overlord
+   *
    * Register an event listener that is called only once.
    *
    * @template T
@@ -12800,6 +13107,16 @@
    * @param {string|string[]} events to subscribe to
    * @param {number} [priority=1000] the listen priority
    * @param {EventBusEventCallback<T>} callback
+   * @param {any} [that] callback context
+   */
+  /**
+   * Register an event listener that is called only once.
+   *
+   * @template {keyof EventMap} EventName
+   *
+   * @param {EventName} events to subscribe to
+   * @param {number} [priority=1000] listen priority
+   * @param {EventBusEventCallback<EventMap[EventName]>} callback
    * @param {any} [that] callback context
    */
   EventBus.prototype.once = function(events, priority, callback, that) {
@@ -12840,11 +13157,11 @@
    * If no callback is given, all listeners for a given event name are being removed.
    *
    * @param {string|string[]} events
-   * @param {EventBusEventCallback} [callback]
+   * @param {EventBusEventCallback<unknown>} [callback]
    */
   EventBus.prototype.off = function(events, callback) {
 
-    events = isArray$2(events) ? events : [ events ];
+    events = isArray$1(events) ? events : [ events ];
 
     var self = this;
 
@@ -13343,7 +13660,7 @@
    */
   GraphicsFactory.prototype.create = function(type, element, parentIndex) {
     var childrenGfx = this._getChildrenContainer(element.parent);
-    return this._createContainer(type, childrenGfx, parentIndex, isFrameElement(element));
+    return this._createContainer(type, childrenGfx, parentIndex, isFrameElement$1(element));
   };
 
   /**
@@ -13368,7 +13685,7 @@
 
     // update all parents of changed and reorganized their children
     // in the correct order (as indicated in our model)
-    forEach$1(parents, function(parent) {
+    forEach(parents, function(parent) {
 
       var children = parent.children;
 
@@ -13378,7 +13695,7 @@
 
       var childrenGfx = self._getChildrenContainer(parent);
 
-      forEach$1(children.slice().reverse(), function(child) {
+      forEach(children.slice().reverse(), function(child) {
         var childGfx = elementRegistry.getGraphics(child);
 
         prependTo(childGfx.parentNode, childrenGfx);
@@ -13391,13 +13708,14 @@
    *
    * @param {SVGElement} visual The graphical element.
    * @param {ShapeLike} element The shape.
+   * @param {Object} attrs Optional attributes.
    *
    * @return {SVGElement}
    */
-  GraphicsFactory.prototype.drawShape = function(visual, element) {
+  GraphicsFactory.prototype.drawShape = function(visual, element, attrs = {}) {
     var eventBus = this._eventBus;
 
-    return eventBus.fire('render.shape', { gfx: visual, element: element });
+    return eventBus.fire('render.shape', { gfx: visual, element, attrs });
   };
 
   /**
@@ -13418,13 +13736,14 @@
    *
    * @param {SVGElement} visual The graphical element.
    * @param {ConnectionLike} element The connection.
+   * @param {Object} attrs Optional attributes.
    *
    * @return {SVGElement}
    */
-  GraphicsFactory.prototype.drawConnection = function(visual, element) {
+  GraphicsFactory.prototype.drawConnection = function(visual, element, attrs = {}) {
     var eventBus = this._eventBus;
 
-    return eventBus.fire('render.connection', { gfx: visual, element: element });
+    return eventBus.fire('render.connection', { gfx: visual, element, attrs });
   };
 
   /**
@@ -13462,8 +13781,7 @@
 
       // update positioning
       translate$1(gfx, element.x, element.y);
-    } else
-    if (type === 'connection') {
+    } else if (type === 'connection') {
       this.drawConnection(visual, element);
     } else {
       throw new Error('unknown type: ' + type);
@@ -13527,6 +13845,16 @@
    */
 
   /**
+   * @template T
+   * @typedef {import('didi').FactoryFunction<T>} FactoryFunction
+   */
+
+  /**
+   * @template T
+   * @typedef {import('didi').ArrayFunc<T>} ArrayFunc
+   */
+
+  /**
    * Bootstrap an injector from a list of modules, instantiating a number of default components
    *
    * @param {ModuleDeclaration[]} modules
@@ -13544,9 +13872,10 @@
   /**
    * Creates an injector from passed options.
    *
+   * @template ServiceMap
    * @param {DiagramOptions} [options]
    *
-   * @return {Injector}
+   * @return {Injector<ServiceMap>}
    */
   function createInjector(options) {
 
@@ -13573,6 +13902,7 @@
    *
    * @class
    * @constructor
+   * @template [ServiceMap=null]
    *
    * @example Creating a plug-in that logs whenever a shape is added to the canvas.
    *
@@ -13611,43 +13941,16 @@
    * ```
    *
    * @param {DiagramOptions} [options]
-   * @param {Injector} [injector] An (optional) injector to bootstrap the diagram with.
+   * @param {Injector<ServiceMap>} [injector] An (optional) injector to bootstrap the diagram with.
    */
   function Diagram(options, injector) {
 
-    this._injector = injector = injector || createInjector(options);
-
-    // API
-
     /**
-     * Resolves a diagram service.
-     *
-     * @template T
-     *
-     * @param {string} name The name of the service to get.
-     * @param {boolean} [strict=true] If false, resolve missing services to null.
-     *
-     * @return {T|null}
+     * @type {Injector<ServiceMap>}
      */
-    this.get = injector.get;
-
-    /**
-     * Executes a function with its dependencies injected.
-     *
-     * @template T
-     *
-     * @param {Function} func function to be invoked
-     * @param {InjectionContext} [context] context of the invocation
-     * @param {LocalsMap} [locals] locals provided
-     *
-     * @return {T|null}
-     */
-    this.invoke = injector.invoke;
+    this._injector = injector || createInjector(options);
 
     // init
-
-    // indicate via event
-
 
     /**
      * An event indicating that all plug-ins are loaded.
@@ -13671,6 +13974,82 @@
     this.get('eventBus').fire('diagram.init');
   }
 
+  /**
+   * @overlord
+   *
+   * Resolves a diagram service.
+   *
+   * @template T
+   *
+   * @param {string} name The name of the service to get.
+   *
+   * @return {T}
+   */
+  /**
+   * @overlord
+   *
+   * Resolves a diagram service.
+   *
+   * @template T
+   *
+   * @param {string} name The name of the service to get.
+   * @param {true} strict If false, resolve missing services to null.
+   *
+   * @return {T}
+   */
+  /**
+   * @overlord
+   *
+   * Resolves a diagram service.
+   *
+   * @template T
+   *
+   * @param {string} name The name of the service to get.
+   * @param {boolean} strict If false, resolve missing services to null.
+   *
+   * @return {T|null}
+   */
+  /**
+   * Resolves a diagram service.
+   *
+   * @template {keyof ServiceMap} Name
+   *
+   * @param {Name} name The name of the service to get.
+   *
+   * @return {ServiceMap[Name]}
+   */
+  Diagram.prototype.get = function(name, strict) {
+    return this._injector.get(name, strict);
+  };
+
+  /**
+   * @overlord
+   *
+   * Invoke the given function, injecting dependencies. Return the result.
+   *
+   * @template T
+   *
+   * @param {FactoryFunction<T>} func
+   * @param {InjectionContext} [context]
+   * @param {LocalsMap} [locals]
+   *
+   * @return {T}
+   */
+  /**
+   * Invoke the given function, injecting dependencies provided in
+   * array notation. Return the result.
+   *
+   * @template T
+   *
+   * @param {ArrayFunc<T>} func function to be invoked
+   * @param {InjectionContext} [context] context of the invocation
+   * @param {LocalsMap} [locals] locals provided
+   *
+   * @return {T}
+   */
+  Diagram.prototype.invoke = function(func, context, locals) {
+    return this._injector.invoke(func, context, locals);
+  };
 
   /**
    * Destroys the diagram
@@ -13719,7 +14098,7 @@
         prototype = Object.create(Base.prototype);
 
     // initialize default values
-    forEach$1(descriptor.properties, function(p) {
+    forEach(descriptor.properties, function(p) {
       if (!p.isMany && p.default !== undefined) {
         prototype[p.name] = p.default;
       }
@@ -13738,7 +14117,7 @@
       props.define(this, '$attrs', { value: {} });
       props.define(this, '$parent', { writable: true });
 
-      forEach$1(attrs, bind$2(function(val, key) {
+      forEach(attrs, bind$1(function(val, key) {
         this.set(key, val);
       }, this));
     }
@@ -13820,13 +14199,15 @@
     if (parts.length === 1) {
       localName = name;
       prefix = defaultPrefix;
-    } else
+    }
 
     // prefix + local name
-    if (parts.length === 2) {
+    else if (parts.length === 2) {
       localName = parts[1];
       prefix = parts[0];
-    } else {
+    }
+
+    else {
       throw new Error('expected <prefix:localName> or <localName>, got ' + name);
     }
 
@@ -14001,6 +14382,17 @@
     this.idProperty = p;
   };
 
+  DescriptorBuilder.prototype.assertNotTrait = function(typeDescriptor) {
+
+    const _extends = typeDescriptor.extends || [];
+
+    if (_extends.length) {
+      throw new Error(
+        `cannot create <${ typeDescriptor.name }> extending <${ typeDescriptor.extends }>`
+      );
+    }
+  };
+
   DescriptorBuilder.prototype.assertNotDefined = function(p, name) {
     var propertyName = p.name,
         definedProperty = this.propertiesByName[propertyName];
@@ -14019,6 +14411,10 @@
 
   DescriptorBuilder.prototype.addTrait = function(t, inherited) {
 
+    if (inherited) {
+      this.assertNotTrait(t);
+    }
+
     var typesByName = this.allTypesByName,
         types = this.allTypes;
 
@@ -14028,7 +14424,7 @@
       return;
     }
 
-    forEach$1(t.properties, bind$2(function(p) {
+    forEach(t.properties, bind$1(function(p) {
 
       // clone property to allow extensions
       p = assign$1({}, p, {
@@ -14075,7 +14471,7 @@
 
     this.properties = properties;
 
-    forEach$1(packages, bind$2(this.registerPackage, this));
+    forEach(packages, bind$1(this.registerPackage, this));
   }
 
 
@@ -14099,7 +14495,7 @@
     ensureAvailable(pkgMap, pkg, 'uri');
 
     // register types
-    forEach$1(pkg.types, bind$2(function(descriptor) {
+    forEach(pkg.types, bind$1(function(descriptor) {
       this.registerType(descriptor, pkg);
     }, this));
 
@@ -14125,7 +14521,7 @@
         propertiesByName = {};
 
     // parse properties
-    forEach$1(type.properties, bind$2(function(p) {
+    forEach(type.properties, bind$1(function(p) {
 
       // namespace property names
       var propertyNs = parseName(p.name, ns.prefix),
@@ -14151,8 +14547,10 @@
       propertiesByName: propertiesByName
     });
 
-    forEach$1(type.extends, bind$2(function(extendsName) {
-      var extended = this.typeMap[extendsName];
+    forEach(type.extends, bind$1(function(extendsName) {
+      var extendsNameNs = parseName(extendsName, ns.prefix);
+
+      var extended = this.typeMap[extendsNameNs.name];
 
       extended.traits = extended.traits || [];
       extended.traits.push(name);
@@ -14182,35 +14580,44 @@
     var self = this;
 
     /**
-     * Traverse the selected trait.
-     *
-     * @param {String} cls
-     */
-    function traverseTrait(cls) {
-      return traverseSuper(cls, true);
-    }
-
-    /**
      * Traverse the selected super type or trait
      *
      * @param {String} cls
      * @param {Boolean} [trait=false]
      */
-    function traverseSuper(cls, trait) {
+    function traverse(cls, trait) {
       var parentNs = parseName(cls, isBuiltIn(cls) ? '' : nsName.prefix);
       self.mapTypes(parentNs, iterator, trait);
+    }
+
+    /**
+     * Traverse the selected trait.
+     *
+     * @param {String} cls
+     */
+    function traverseTrait(cls) {
+      return traverse(cls, true);
+    }
+
+    /**
+     * Traverse the selected super type
+     *
+     * @param {String} cls
+     */
+    function traverseSuper(cls) {
+      return traverse(cls, false);
     }
 
     if (!type) {
       throw new Error('unknown type <' + nsName.name + '>');
     }
 
-    forEach$1(type.superClass, trait ? traverseTrait : traverseSuper);
+    forEach(type.superClass, trait ? traverseTrait : traverseSuper);
 
     // call iterator with (type, inherited=!trait)
     iterator(type, !trait);
 
-    forEach$1(type.traits, traverseTrait);
+    forEach(type.traits, traverseTrait);
   };
 
 
@@ -14281,7 +14688,7 @@
       throw new TypeError('property name must be a non-empty string');
     }
 
-    var property = this.model.getPropertyDescriptor(target, name);
+    var property = this.getProperty(target, name);
 
     var propertyName = property && property.name;
 
@@ -14292,7 +14699,7 @@
       if (property) {
         delete target[propertyName];
       } else {
-        delete target.$attrs[name];
+        delete target.$attrs[stripGlobal(name)];
       }
     } else {
 
@@ -14305,7 +14712,7 @@
           defineProperty(target, property, value);
         }
       } else {
-        target.$attrs[name] = value;
+        target.$attrs[stripGlobal(name)] = value;
       }
     }
   };
@@ -14320,10 +14727,10 @@
    */
   Properties.prototype.get = function(target, name) {
 
-    var property = this.model.getPropertyDescriptor(target, name);
+    var property = this.getProperty(target, name);
 
     if (!property) {
-      return target.$attrs[name];
+      return target.$attrs[stripGlobal(name)];
     }
 
     var propertyName = property.name;
@@ -14377,6 +14784,43 @@
     this.define(target, '$model', { value: model });
   };
 
+  /**
+   * Return property with the given name on the element.
+   *
+   * @param {any} target
+   * @param {string} name
+   *
+   * @return {object | null} property
+   */
+  Properties.prototype.getProperty = function(target, name) {
+
+    var model = this.model;
+
+    var property = model.getPropertyDescriptor(target, name);
+
+    if (property) {
+      return property;
+    }
+
+    if (name.includes(':')) {
+      return null;
+    }
+
+    const strict = model.config.strict;
+
+    if (typeof strict !== 'undefined') {
+      const error = new TypeError(`unknown property <${ name }> on <${ target.$type }>`);
+
+      if (strict) {
+        throw error;
+      } else {
+
+        typeof console !== 'undefined' && console.warn(error);
+      }
+    }
+
+    return null;
+  };
 
   function isUndefined(val) {
     return typeof val === 'undefined';
@@ -14389,6 +14833,10 @@
       value: value,
       configurable: true
     });
+  }
+
+  function stripGlobal(name) {
+    return name.replace(/^:/, '');
   }
 
   // Moddle implementation /////////////////////////////////////////////////
@@ -14413,8 +14861,10 @@
    * var moddle = new Moddle([pkg]);
    *
    * @param {Array<Package>} packages the packages to contain
+   *
+   * @param { { strict?: boolean } } [config] moddle configuration
    */
-  function Moddle(packages) {
+  function Moddle(packages, config = {}) {
 
     this.properties = new Properties(this);
 
@@ -14422,6 +14872,8 @@
     this.registry = new Registry(packages, this.properties);
 
     this.typeCache = {};
+
+    this.config = config;
   }
 
 
@@ -14515,6 +14967,12 @@
       $type: name,
       $instanceOf: function(type) {
         return type === this.$type;
+      },
+      get: function(key) {
+        return this[key];
+      },
+      set: function(key, value) {
+        set$1(this, [ key ], value);
       }
     };
 
@@ -14530,10 +14988,12 @@
 
     this.properties.defineDescriptor(element, descriptor);
     this.properties.defineModel(element, this);
+    this.properties.define(element, 'get', { enumerable: false, writable: true });
+    this.properties.define(element, 'set', { enumerable: false, writable: true });
     this.properties.define(element, '$parent', { enumerable: false, writable: true });
     this.properties.define(element, '$instanceOf', { enumerable: false, writable: true });
 
-    forEach$1(properties, function(a, key) {
+    forEach(properties, function(a, key) {
       if (isObject(a) && a.value !== undefined) {
         element[a.name] = a.value;
       } else {
@@ -14648,7 +15108,7 @@
    * sub-set of reserved names (&amp;) as well as
    * hex (&#xaaf;) and decimal (&#1231;) encoded characters.
    *
-   * @param {string} str
+   * @param {string} s
    *
    * @return {string} decoded string
    */
@@ -14659,10 +15119,6 @@
 
     return s;
   }
-
-  var XSI_URI = 'http://www.w3.org/2001/XMLSchema-instance';
-  var XSI_PREFIX = 'xsi';
-  var XSI_TYPE$1 = 'xsi:type';
 
   var NON_WHITESPACE_OUTSIDE_ROOT_NODE = 'non-whitespace outside of root node';
 
@@ -14708,7 +15164,7 @@
   }
 
   function noopGetContext() {
-    return { 'line': 0, 'column': 0 };
+    return { line: 0, column: 0 };
   }
 
   function throwFunc(err) {
@@ -14873,9 +15329,6 @@
       for (k in nsMap) {
         _nsUriToPrefix[k] = nsMap[k];
       }
-
-      // FORCE default mapping for schema instance
-      _nsUriToPrefix[XSI_URI] = XSI_PREFIX;
 
       isNamespace = true;
       nsUriToPrefix = _nsUriToPrefix;
@@ -15200,23 +15653,6 @@
 
           // end: normalize ns attribute name
 
-          // normalize xsi:type ns attribute value
-          if (name === XSI_TYPE$1) {
-            w = value.indexOf(':');
-
-            if (w !== -1) {
-              nsName = value.substring(0, w);
-
-              // handle default prefixes, i.e. xs:String gracefully
-              nsName = nsMatrix[nsName] || nsName;
-              value = nsName + value.substring(w);
-            } else {
-              value = defaultAlias + ':' + value;
-            }
-          }
-
-          // end: normalize xsi:type ns attribute value
-
           attrs[name] = value;
         }
 
@@ -15245,23 +15681,6 @@
                 : nsName + name.substr(w);
 
               // end: normalize ns attribute name
-
-              // normalize xsi:type ns attribute value
-              if (name === XSI_TYPE$1) {
-                w = value.indexOf(':');
-
-                if (w !== -1) {
-                  nsName = value.substring(0, w);
-
-                  // handle default prefixes, i.e. xs:String gracefully
-                  nsName = nsMatrix[nsName] || nsName;
-                  value = nsName + value.substring(w);
-                } else {
-                  value = defaultAlias + ':' + value;
-                }
-              }
-
-              // end: normalize xsi:type ns attribute value
             }
 
             attrs[name] = value;
@@ -15316,16 +15735,16 @@
           data = xml.substring(j);
         } else
 
-        // start errors
-        if (j === 0) {
-          data = xml.substring(j, i);
-        }
+          // start errors
+          if (j === 0) {
+            data = xml.substring(j, i);
+          }
 
-        // other errors
-        else {
-          column = i - startOfLine;
-          data = (j == -1 ? xml.substring(i) : xml.substring(i, j + 1));
-        }
+          // other errors
+          else {
+            column = i - startOfLine;
+            data = (j == -1 ? xml.substring(i) : xml.substring(i, j + 1));
+          }
 
         return {
           'data': data,
@@ -15402,11 +15821,11 @@
           }
         }
 
-        w = xml.charCodeAt(i+1);
+        w = xml.charCodeAt(i + 1);
 
         // parse comments + CDATA
         if (w === 33) { // "!"
-          q = xml.charCodeAt(i+2);
+          q = xml.charCodeAt(i + 2);
 
           // CDATA section
           if (q === 91 && xml.substr(i + 3, 6) === 'CDATA[') { // 91 == "["
@@ -15690,18 +16109,16 @@
     'xml': 'http://www.w3.org/XML/1998/namespace'
   };
 
-  var XSI_TYPE = 'xsi:type';
+  var SERIALIZE_PROPERTY = 'property';
 
-  function serializeFormat(element) {
+  function getSerialization(element) {
     return element.xml && element.xml.serialize;
   }
 
-  function serializeAsType(element) {
-    return serializeFormat(element) === XSI_TYPE;
-  }
+  function getSerializationType(element) {
+    const type = getSerialization(element);
 
-  function serializeAsProperty(element) {
-    return serializeFormat(element) === 'property';
+    return type !== SERIALIZE_PROPERTY && (type || null);
   }
 
   function capitalize(str) {
@@ -15717,12 +16134,20 @@
     return aliasNs.prefix + ':' + capitalize(aliasNs.localName);
   }
 
+  /**
+   * Un-prefix a potentially prefixed type name.
+   *
+   * @param {NsName} nameNs
+   * @param {Object} [pkg]
+   *
+   * @return {string}
+   */
   function prefixedToName(nameNs, pkg) {
 
     var name = nameNs.name,
         localName = nameNs.localName;
 
-    var typePrefix = pkg.xml && pkg.xml.typePrefix;
+    var typePrefix = pkg && pkg.xml && pkg.xml.typePrefix;
 
     if (typePrefix && localName.indexOf(typePrefix) === 0) {
       return nameNs.prefix + ':' + localName.slice(typePrefix.length);
@@ -15731,12 +16156,19 @@
     }
   }
 
-  function normalizeXsiTypeName(name, model) {
+  function normalizeTypeName(name, nsMap, model) {
 
-    var nameNs = parseName(name);
-    var pkg = model.getPackage(nameNs.prefix);
+    // normalize against actual NS
+    const nameNs = parseName(name, nsMap.xmlns);
 
-    return prefixedToName(nameNs, pkg);
+    const normalizedName = `${ nsMap[nameNs.prefix] || nameNs.prefix }:${ nameNs.localName }`;
+
+    const normalizedNameNs = parseName(normalizedName);
+
+    // determine actual type name, based on package-defined prefix
+    var pkg = model.getPackage(normalizedNameNs.prefix);
+
+    return prefixedToName(normalizedNameNs, pkg);
   }
 
   function error(message) {
@@ -15813,9 +16245,10 @@
         if (id) {
 
           // for QName validation as per http://www.w3.org/TR/REC-xml/#NT-NameChar
-          //if (!/^([a-z][\w-.]*:)?[a-z_][\w-.]*$/i.test(id)) {
-          //  throw new Error('illegal ID <' + id + '>');
-          //}
+          // EasyFlow: allow non-QName IDs (e.g. Chinese/business IDs) for backward compatibility.
+          // if (!/^([a-z][\w-.]*:)?[a-z_][\w-.]*$/i.test(id)) {
+          //   throw new Error('illegal ID <' + id + '>');
+          // }
 
           if (elementsById[id]) {
             throw error('duplicate ID <' + id + '>');
@@ -15995,7 +16428,7 @@
         model = this.model,
         propNameNs;
 
-    forEach$1(attributes, function(value, name) {
+    forEach(attributes, function(value, name) {
 
       var prop = descriptor.propertiesByName[name],
           values;
@@ -16013,7 +16446,7 @@
           // IDREFS: parse references as whitespace-separated list
           values = value.split(' ');
 
-          forEach$1(values, function(v) {
+          forEach(values, function(v) {
             context.addReference({
               element: instance,
               property: prop.ns.name,
@@ -16025,8 +16458,9 @@
       } else {
         if (prop) {
           value = coerceType(prop.type, value);
-        } else
-        if (name !== 'xmlns') {
+        } else if (name === 'xmlns') {
+          name = ':' + name;
+        } else {
           propNameNs = parseName(name, descriptor.ns.prefix);
 
           // check whether attribute is defined in a well-known namespace
@@ -16059,26 +16493,27 @@
         descriptor = getModdleDescriptor(type);
 
     var propertyName = nameNs.name,
-        property = descriptor.propertiesByName[propertyName],
-        elementTypeName,
-        elementType;
+        property = descriptor.propertiesByName[propertyName];
 
     // search for properties by name first
 
     if (property && !property.isAttr) {
 
-      if (serializeAsType(property)) {
-        elementTypeName = node.attributes[XSI_TYPE];
+      const serializationType = getSerializationType(property);
 
-        // xsi type is optional, if it does not exists the
+      if (serializationType) {
+        const elementTypeName = node.attributes[serializationType];
+
+        // type is optional, if it does not exists the
         // default type is assumed
         if (elementTypeName) {
 
+          // convert the prefix used to the mapped form, but also
           // take possible type prefixes from XML
-          // into account, i.e.: xsi:type="t{ActualType}"
-          elementTypeName = normalizeXsiTypeName(elementTypeName, model);
+          // into account, i.e.: xsi:type="t{ActualType}",
+          const normalizedTypeName = normalizeTypeName(elementTypeName, node.ns, model);
 
-          elementType = model.getType(elementTypeName);
+          const elementType = model.getType(normalizedTypeName);
 
           return assign$1({}, property, {
             effectiveType: getModdleDescriptor(elementType).name
@@ -16093,8 +16528,8 @@
     var pkg = model.getPackage(nameNs.prefix);
 
     if (pkg) {
-      elementTypeName = aliasToName(nameNs, pkg);
-      elementType = model.getType(elementTypeName);
+      const elementTypeName = aliasToName(nameNs, pkg);
+      const elementType = model.getType(elementTypeName);
 
       // search for collection members later
       property = find(descriptor.properties, function(p) {
@@ -16516,9 +16951,12 @@
       uriMap[p.uri] = p.prefix;
 
       return uriMap;
-    }, {
-      'http://www.w3.org/XML/1998/namespace': 'xml' // add default xml ns
-    });
+    }, Object.entries(DEFAULT_NS_MAP).reduce(function(map, [ prefix, url ]) {
+      map[url] = prefix;
+
+      return map;
+    }, model.config && model.config.nsMap || {}));
+
     parser
       .ns(uriMap)
       .on('openTag', function(obj, decodeStr, selfClosing, getContext) {
@@ -16619,75 +17057,82 @@
 
   function Namespaces(parent) {
 
-    var prefixMap = {};
-    var uriMap = {};
-    var used = {};
+    this.prefixMap = {};
+    this.uriMap = {};
+    this.used = {};
 
-    var wellknown = [];
-    var custom = [];
+    this.wellknown = [];
+    this.custom = [];
+    this.parent = parent;
 
-    // API
+    this.defaultPrefixMap = parent && parent.defaultPrefixMap || {};
+  }
 
-    this.byUri = function(uri) {
-      return uriMap[uri] || (
-        parent && parent.byUri(uri)
-      );
-    };
+  Namespaces.prototype.mapDefaultPrefixes = function(defaultPrefixMap) {
+    this.defaultPrefixMap = defaultPrefixMap;
+  };
 
-    this.add = function(ns, isWellknown) {
+  Namespaces.prototype.defaultUriByPrefix = function(prefix) {
+    return this.defaultPrefixMap[prefix];
+  };
 
-      uriMap[ns.uri] = ns;
+  Namespaces.prototype.byUri = function(uri) {
+    return this.uriMap[uri] || (
+      this.parent && this.parent.byUri(uri)
+    );
+  };
 
-      if (isWellknown) {
-        wellknown.push(ns);
-      } else {
-        custom.push(ns);
-      }
+  Namespaces.prototype.add = function(ns, isWellknown) {
 
-      this.mapPrefix(ns.prefix, ns.uri);
-    };
+    this.uriMap[ns.uri] = ns;
 
-    this.uriByPrefix = function(prefix) {
-      return prefixMap[prefix || 'xmlns'];
-    };
+    if (isWellknown) {
+      this.wellknown.push(ns);
+    } else {
+      this.custom.push(ns);
+    }
 
-    this.mapPrefix = function(prefix, uri) {
-      prefixMap[prefix || 'xmlns'] = uri;
-    };
+    this.mapPrefix(ns.prefix, ns.uri);
+  };
 
-    this.getNSKey = function(ns) {
-      return (ns.prefix !== undefined) ? (ns.uri + '|' + ns.prefix) : ns.uri;
-    };
+  Namespaces.prototype.uriByPrefix = function(prefix) {
+    return this.prefixMap[prefix || 'xmlns'] || (
+      this.parent && this.parent.uriByPrefix(prefix)
+    );
+  };
 
-    this.logUsed = function(ns) {
+  Namespaces.prototype.mapPrefix = function(prefix, uri) {
+    this.prefixMap[prefix || 'xmlns'] = uri;
+  };
 
-      var uri = ns.uri;
+  Namespaces.prototype.getNSKey = function(ns) {
+    return (ns.prefix !== undefined) ? (ns.uri + '|' + ns.prefix) : ns.uri;
+  };
+
+  Namespaces.prototype.logUsed = function(ns) {
+
+    var uri = ns.uri;
+    var nsKey = this.getNSKey(ns);
+
+    this.used[nsKey] = this.byUri(uri);
+
+    // Inform parent recursively about the usage of this NS
+    if (this.parent) {
+      this.parent.logUsed(ns);
+    }
+  };
+
+  Namespaces.prototype.getUsed = function(ns) {
+
+    var allNs = [].concat(this.wellknown, this.custom);
+
+    return allNs.filter(ns => {
       var nsKey = this.getNSKey(ns);
 
-      used[nsKey] = this.byUri(uri);
+      return this.used[nsKey];
+    });
+  };
 
-      // Inform parent recursively about the usage of this NS
-      if (parent) {
-        parent.logUsed(ns);
-      }
-    };
-
-    this.getUsed = function(ns) {
-
-      function isUsed(ns) {
-        var nsKey = self.getNSKey(ns);
-
-        return used[nsKey];
-      }
-
-      var self = this;
-
-      var allNs = [].concat(wellknown, custom);
-
-      return allNs.filter(isUsed);
-    };
-
-  }
 
   function lower(string) {
     return string.charAt(0).toLowerCase() + string.slice(1);
@@ -16757,7 +17202,7 @@
       }
 
       // do not serialize defaults
-      if (!has$1(element, name)) {
+      if (!has(element, name)) {
         return false;
       }
 
@@ -16902,7 +17347,7 @@
     var isGeneric = elementDescriptor.isGeneric;
 
     if (isGeneric) {
-      otherAttrs = this.parseGeneric(element);
+      otherAttrs = this.parseGenericNsAttributes(element);
     } else {
       otherAttrs = this.parseNsAttributes(element);
     }
@@ -16916,7 +17361,9 @@
     // compute tag name
     this.tagName = this.addTagName(this.ns);
 
-    if (!isGeneric) {
+    if (isGeneric) {
+      this.parseGenericContainments(element);
+    } else {
       properties = getSerializableProperties(element);
 
       this.parseAttributes(filterAttributes(properties));
@@ -16979,35 +17426,29 @@
     }
   };
 
-  ElementSerializer.prototype.parseGeneric = function(element) {
+  ElementSerializer.prototype.parseGenericNsAttributes = function(element) {
 
-    var self = this,
-        body = this.body;
+    return Object.entries(element).filter(
+      ([ key, value ]) => !key.startsWith('$') && this.parseNsAttribute(element, key, value)
+    ).map(
+      ([ key, value ]) => ({ name: key, value: value })
+    );
+  };
 
-    var attributes = [];
+  ElementSerializer.prototype.parseGenericContainments = function(element) {
+    var body = element.$body;
 
-    forEach$1(element, function(val, key) {
+    if (body) {
+      this.body.push(new BodySerializer().build({ type: 'String' }, body));
+    }
 
-      var nonNsAttr;
+    var children = element.$children;
 
-      if (key === '$body') {
-        body.push(new BodySerializer().build({ type: 'String' }, val));
-      } else
-      if (key === '$children') {
-        forEach$1(val, function(child) {
-          body.push(new ElementSerializer(self).build(child));
-        });
-      } else
-      if (key.indexOf('$') !== 0) {
-        nonNsAttr = self.parseNsAttribute(element, key, val);
-
-        if (nonNsAttr) {
-          attributes.push({ name: key, value: val });
-        }
-      }
-    });
-
-    return attributes;
+    if (children) {
+      forEach(children, child => {
+        this.body.push(new ElementSerializer(this).build(child));
+      });
+    }
   };
 
   ElementSerializer.prototype.parseNsAttribute = function(element, name, value) {
@@ -17054,7 +17495,7 @@
    * @param  {Object} element
    * @return {Array<Object>}
    */
-  ElementSerializer.prototype.parseNsAttributes = function(element, attrs) {
+  ElementSerializer.prototype.parseNsAttributes = function(element) {
     var self = this;
 
     var genericAttrs = element.$attrs;
@@ -17064,7 +17505,7 @@
     // parse namespace attributes first
     // and log them. push non namespace attributes to a list
     // and process them later
-    forEach$1(genericAttrs, function(value, name) {
+    forEach(genericAttrs, function(value, name) {
 
       var nonNsAttr = self.parseNsAttribute(element, name, value);
 
@@ -17080,23 +17521,18 @@
 
     var self = this;
 
-    forEach$1(attributes, function(attr) {
-
-      // do not serialize xsi:type attribute
-      // it is set manually based on the actual implementation type
-      if (attr.name === XSI_TYPE) {
-        return;
-      }
+    forEach(attributes, function(attr) {
 
       try {
         self.addAttribute(self.nsAttributeName(attr.name), attr.value);
       } catch (e) {
-        /* global console */
 
-        console.warn(
-          'missing namespace information for ',
-          attr.name, '=', attr.value, 'on', element,
-          e);
+        // eslint-disable-next-line no-undef
+        typeof console !== 'undefined' && console.warn(
+          `missing namespace information for <${
+          attr.name
+        }=${ attr.value }> on`, element, e
+        );
       }
     });
   };
@@ -17107,7 +17543,7 @@
         body = this.body,
         element = this.element;
 
-    forEach$1(properties, function(p) {
+    forEach(properties, function(p) {
       var value = element.get(p.name),
           isReference = p.isReference,
           isMany = p.isMany;
@@ -17118,31 +17554,29 @@
 
       if (p.isBody) {
         body.push(new BodySerializer().build(p, value[0]));
-      } else
-      if (isSimple(p.type)) {
-        forEach$1(value, function(v) {
+      } else if (isSimple(p.type)) {
+        forEach(value, function(v) {
           body.push(new ValueSerializer(self.addTagName(self.nsPropertyTagName(p))).build(p, v));
         });
-      } else
-      if (isReference) {
-        forEach$1(value, function(v) {
+      } else if (isReference) {
+        forEach(value, function(v) {
           body.push(new ReferenceSerializer(self.addTagName(self.nsPropertyTagName(p))).build(v));
         });
       } else {
 
         // allow serialization via type
         // rather than element name
-        var asType = serializeAsType(p),
-            asProperty = serializeAsProperty(p);
+        var serialization = getSerialization(p);
 
-        forEach$1(value, function(v) {
+        forEach(value, function(v) {
           var serializer;
 
-          if (asType) {
-            serializer = new TypeSerializer(self, p);
-          } else
-          if (asProperty) {
-            serializer = new ElementSerializer(self, p);
+          if (serialization) {
+            if (serialization === SERIALIZE_PROPERTY) {
+              serializer = new ElementSerializer(self, p);
+            } else {
+              serializer = new TypeSerializer(self, p, serialization);
+            }
           } else {
             serializer = new ElementSerializer(self);
           }
@@ -17190,9 +17624,7 @@
   };
 
   ElementSerializer.prototype.logNamespaceUsed = function(ns, local) {
-    var element = this.element,
-        model = element.$model,
-        namespaces = this.getNamespaces(local);
+    var namespaces = this.getNamespaces(local);
 
     // ns may be
     //
@@ -17210,7 +17642,7 @@
       return { localName: ns.localName };
     }
 
-    wellknownUri = DEFAULT_NS_MAP[prefix] || model && (model.getPackage(prefix) || {}).uri;
+    wellknownUri = namespaces.defaultUriByPrefix(prefix);
 
     uri = uri || wellknownUri || namespaces.uriByPrefix(prefix);
 
@@ -17219,6 +17651,11 @@
     }
 
     ns = namespaces.byUri(uri);
+
+    // register new default prefix <xmlns> in local scope
+    if (!ns && !prefix) {
+      ns = this.logNamespace({ uri }, wellknownUri === uri, true);
+    }
 
     if (!ns) {
       newPrefix = prefix;
@@ -17243,7 +17680,7 @@
     var self = this,
         element = this.element;
 
-    forEach$1(properties, function(p) {
+    forEach(properties, function(p) {
 
       var value = element.get(p.name);
 
@@ -17251,10 +17688,9 @@
 
         if (!p.isMany) {
           value = value.id;
-        }
-        else {
+        } else {
           var values = [];
-          forEach$1(value, function(v) {
+          forEach(value, function(v) {
             values.push(v.id);
           });
 
@@ -17310,7 +17746,7 @@
       attrs = getNsAttrs(namespaces).concat(attrs);
     }
 
-    forEach$1(attrs, function(a) {
+    forEach(attrs, function(a) {
       writer
         .append(' ')
         .append(nsName(a.name)).append('="').append(a.value).append('"');
@@ -17337,7 +17773,7 @@
           .indent();
       }
 
-      forEach$1(this.body, function(b) {
+      forEach(this.body, function(b) {
         b.serializeTo(writer);
       });
 
@@ -17356,20 +17792,25 @@
   /**
    * A serializer for types that handles serialization of data types
    */
-  function TypeSerializer(parent, propertyDescriptor) {
+  function TypeSerializer(parent, propertyDescriptor, serialization) {
     ElementSerializer.call(this, parent, propertyDescriptor);
+
+    this.serialization = serialization;
   }
 
   inherits(TypeSerializer, ElementSerializer);
 
   TypeSerializer.prototype.parseNsAttributes = function(element) {
 
-    // extracted attributes
-    var attributes = ElementSerializer.prototype.parseNsAttributes.call(this, element);
+    // extracted attributes with serialization attribute
+    // <type=typeName> stripped; it may be later
+    var attributes = ElementSerializer.prototype.parseNsAttributes.call(this, element).filter(
+      attr => attr.name !== this.serialization
+    );
 
     var descriptor = element.$descriptor;
 
-    // only serialize xsi:type if necessary
+    // only serialize <type=typeName> if necessary
     if (descriptor.name === this.propertyDescriptor.type) {
       return attributes;
     }
@@ -17384,7 +17825,7 @@
         typePrefix = (pkg.xml && pkg.xml.typePrefix) || '';
 
     this.addAttribute(
-      this.nsAttributeName(XSI_TYPE),
+      this.nsAttributeName(this.serialization),
       (typeNs.prefix ? typeNs.prefix + ':' : '') + typePrefix + descriptor.ns.localName
     );
 
@@ -17457,7 +17898,13 @@
         formatingWriter.append(XML_PREAMBLE);
       }
 
-      new ElementSerializer().build(tree).serializeTo(formatingWriter);
+      var serializer = new ElementSerializer();
+
+      var model = tree.$model;
+
+      serializer.getNamespaces().mapDefaultPrefixes(getDefaultPrefixMappings(model));
+
+      serializer.build(tree).serializeTo(formatingWriter);
 
       if (!writer) {
         return internalWriter.value;
@@ -17467,6 +17914,39 @@
     return {
       toXML: toXML
     };
+  }
+
+
+  // helpers ///////////
+
+  /**
+   * @param {Moddle} model
+   *
+   * @return { Record<string, string> } map from prefix to URI
+   */
+  function getDefaultPrefixMappings(model) {
+
+    const nsMap = model.config && model.config.nsMap || {};
+
+    const prefixMap = {};
+
+    // { prefix -> uri }
+    for (const prefix in DEFAULT_NS_MAP) {
+      prefixMap[prefix] = DEFAULT_NS_MAP[prefix];
+    }
+
+    // { uri -> prefix }
+    for (const uri in nsMap) {
+      const prefix = nsMap[uri];
+
+      prefixMap[prefix] = uri;
+    }
+
+    for (const pkg of model.getPackages()) {
+      prefixMap[pkg.prefix] = pkg.uri;
+    }
+
+    return prefixMap;
   }
 
   /**
@@ -18384,7 +18864,6 @@
   			{
   				name: "target",
   				type: "LinkEventDefinition",
-  				isAttr: true,
   				isReference: true
   			},
   			{
@@ -18410,7 +18889,6 @@
   			{
   				name: "operationRef",
   				type: "Operation",
-  				isAttr: true,
   				isReference: true
   			}
   		]
@@ -21196,7 +21674,7 @@
   	associations: associations
   };
 
-  var packages = {
+  const packages = {
     bpmn: BpmnPackage,
     bpmndi: BpmnDiPackage,
     dc: DcPackage,
@@ -21205,8 +21683,8 @@
     color: BpmnInColorPackage
   };
 
-  function simple(additionalPackages, options) {
-    var pks = assign$1({}, packages, additionalPackages);
+  function SimpleBpmnModdle(additionalPackages, options) {
+    const pks = assign$1({}, packages, additionalPackages);
 
     return new BpmnModdle(pks, options);
   }
@@ -21214,62 +21692,6 @@
   /**
    * @typedef {import('../model/Types').ModdleElement} ModdleElement
    */
-
-  // TODO(nikku): remove with future bpmn-js version
-
-  /**
-   * Wraps APIs to check:
-   *
-   * 1) If a callback is passed -> Warn users about callback deprecation.
-   * 2) If Promise class is implemented in current environment.
-   *
-   * @private
-   *
-   * @param {Function} api
-   *
-   * @return {Function}
-   */
-  function wrapForCompatibility(api) {
-
-    return function() {
-
-      if (!window.Promise) {
-        throw new Error('Promises is not supported in this environment. Please polyfill Promise.');
-      }
-
-      var argLen = arguments.length;
-      if (argLen >= 1 && isFunction(arguments[argLen - 1])) {
-
-        var callback = arguments[argLen - 1];
-
-        console.warn(new Error(
-          'Passing callbacks to ' + api.name + ' is deprecated and will be removed in a future major release. ' +
-          'Please switch to promises: https://bpmn.io/l/moving-to-promises.html'
-        ));
-
-        var argsWithoutCallback = Array.prototype.slice.call(arguments, 0, -1);
-
-        api.apply(this, argsWithoutCallback).then(function(result) {
-
-          var firstKey = Object.keys(result)[0];
-
-          // The APIs we are wrapping all resolve a single item depending on the API.
-          // For instance, importXML resolves { warnings } and saveXML returns { xml }.
-          // That's why we can call the callback with the first item of result.
-          return callback(null, result[firstKey]);
-
-          // Passing a second paramter instead of catch because we don't want to
-          // catch errors thrown by callback().
-        }, function(err) {
-
-          return callback(err, err.warnings);
-        });
-      } else {
-
-        return api.apply(this, arguments);
-      }
-    };
-  }
 
 
   // TODO(nikku): remove with future bpmn-js version
@@ -21284,7 +21706,7 @@
   function ensureCompatDiRef(businessObject) {
 
     // bpmnElement can have multiple independent DIs
-    if (!has$1(businessObject, 'di')) {
+    if (!has(businessObject, 'di')) {
       Object.defineProperty(businessObject, 'di', {
         enumerable: false,
         get: function() {
@@ -21295,8 +21717,6 @@
   }
 
   /**
-   * @typedef {import('diagram-js/lib/i18n/translate/translate').default} Translate
-   *
    * @typedef {import('../model/Types').ModdleElement} ModdleElement
    */
 
@@ -21329,9 +21749,8 @@
 
   /**
    * @param {Record<'element' | 'root' | 'error', Function>} handler
-   * @param {Translate} translate
    */
-  function BpmnTreeWalker(handler, translate) {
+  function BpmnTreeWalker(handler) {
 
     // list of containers already walked
     var handledElements = {};
@@ -21365,7 +21784,7 @@
       // avoid multiple rendering of elements
       if (gfx) {
         throw new Error(
-          translate('already rendered {element}', { element: elementToString(element) })
+          `already rendered ${ elementToString(element) }`
         );
       }
 
@@ -21385,11 +21804,10 @@
         handled(element);
 
         return gfx;
-      } catch (e) {
-        logError(e.message, { element: element, error: e });
+      } catch (error) {
+        logError(error.message, { element, error });
 
-        console.error(translate('failed to import {element}', { element: elementToString(element) }));
-        console.error(e);
+        console.error(`failed to import ${ elementToString(element) }`, error);
       }
     }
 
@@ -21405,9 +21823,7 @@
       if (bpmnElement) {
         if (diMap[bpmnElement.id]) {
           logError(
-            translate('multiple DI elements defined for {element}', {
-              element: elementToString(bpmnElement)
-            }),
+            `multiple DI elements defined for ${ elementToString(bpmnElement) }`,
             { element: bpmnElement }
           );
         } else {
@@ -21417,9 +21833,7 @@
         }
       } else {
         logError(
-          translate('no bpmnElement referenced in {element}', {
-            element: elementToString(di)
-          }),
+          `no bpmnElement referenced in ${ elementToString(di) }`,
           { element: di }
         );
       }
@@ -21432,7 +21846,7 @@
     function handlePlane(plane) {
       registerDi(plane);
 
-      forEach$1(plane.planeElement, handlePlaneElement);
+      forEach(plane.planeElement, handlePlaneElement);
     }
 
     function handlePlaneElement(planeElement) {
@@ -21457,7 +21871,7 @@
       var diagrams = definitions.diagrams;
 
       if (diagram && diagrams.indexOf(diagram) === -1) {
-        throw new Error(translate('diagram not part of bpmn:Definitions'));
+        throw new Error('diagram not part of <bpmn:Definitions />');
       }
 
       if (!diagram && diagrams && diagrams.length) {
@@ -21466,7 +21880,7 @@
 
       // no diagram -> nothing to import
       if (!diagram) {
-        throw new Error(translate('no diagram to display'));
+        throw new Error('no diagram to display');
       }
 
       // load DI from selected diagram only
@@ -21477,10 +21891,9 @@
       var plane = diagram.plane;
 
       if (!plane) {
-        throw new Error(translate(
-          'no plane for {element}',
-          { element: elementToString(diagram) }
-        ));
+        throw new Error(
+          `no plane for ${ elementToString(diagram) }`
+        );
       }
 
       var rootElement = plane.bpmnElement;
@@ -21491,14 +21904,11 @@
         rootElement = findDisplayCandidate(definitions);
 
         if (!rootElement) {
-          throw new Error(translate('no process or collaboration to display'));
+          throw new Error('no process or collaboration to display');
         } else {
 
           logError(
-            translate('correcting missing bpmnElement on {plane} to {rootElement}', {
-              plane: elementToString(plane),
-              rootElement: elementToString(rootElement)
-            })
+            `correcting missing bpmnElement on ${ elementToString(plane) } to ${ elementToString(rootElement) }`
           );
 
           // correct DI on the fly
@@ -21519,10 +21929,7 @@
         handleUnhandledProcesses(definitions.rootElements, ctx);
       } else {
         throw new Error(
-          translate('unsupported bpmnElement for {plane}: {rootElement}', {
-            plane: elementToString(plane),
-            rootElement: elementToString(rootElement)
-          })
+          `unsupported bpmnElement for ${ elementToString(plane) }: ${ elementToString(rootElement) }`
         );
       }
 
@@ -21569,7 +21976,7 @@
     }
 
     function handleMessageFlows(messageFlows, context) {
-      forEach$1(messageFlows, contextual(handleMessageFlow, context));
+      forEach(messageFlows, contextual(handleMessageFlow, context));
     }
 
     function handleDataAssociation(association, context) {
@@ -21595,7 +22002,7 @@
 
     function handleArtifacts(artifacts, context) {
 
-      forEach$1(artifacts, function(e) {
+      forEach(artifacts, function(e) {
         if (is(e, 'bpmn:Association')) {
           deferred.push(function() {
             handleArtifact(e, context);
@@ -21612,8 +22019,8 @@
         return;
       }
 
-      forEach$1(ioSpecification.dataInputs, contextual(handleDataInput, context));
-      forEach$1(ioSpecification.dataOutputs, contextual(handleDataOutput, context));
+      forEach(ioSpecification.dataInputs, contextual(handleDataInput, context));
+      forEach(ioSpecification.dataOutputs, contextual(handleDataOutput, context));
     }
 
     var handleSubProcess = this.handleSubProcess = function handleSubProcess(subProcess, context) {
@@ -21640,8 +22047,8 @@
       //   * bpmn:CatchEvent
       //
       deferred.push(function() {
-        forEach$1(flowNode.dataInputAssociations, contextual(handleDataAssociation, context));
-        forEach$1(flowNode.dataOutputAssociations, contextual(handleDataAssociation, context));
+        forEach(flowNode.dataInputAssociations, contextual(handleDataAssociation, context));
+        forEach(flowNode.dataOutputAssociations, contextual(handleDataAssociation, context));
       });
     }
 
@@ -21668,11 +22075,11 @@
     }
 
     function handleLaneSet(laneSet, context) {
-      forEach$1(laneSet.lanes, contextual(handleLane, context));
+      forEach(laneSet.lanes, contextual(handleLane, context));
     }
 
     function handleLaneSets(laneSets, context) {
-      forEach$1(laneSets, contextual(handleLaneSet, context));
+      forEach(laneSets, contextual(handleLaneSet, context));
     }
 
     function handleFlowElementsContainer(container, context) {
@@ -21684,28 +22091,28 @@
     }
 
     function handleFlowElements(flowElements, context) {
-      forEach$1(flowElements, function(e) {
-        if (is(e, 'bpmn:SequenceFlow')) {
+      forEach(flowElements, function(flowElement) {
+        if (is(flowElement, 'bpmn:SequenceFlow')) {
           deferred.push(function() {
-            handleSequenceFlow(e, context);
+            handleSequenceFlow(flowElement, context);
           });
-        } else if (is(e, 'bpmn:BoundaryEvent')) {
+        } else if (is(flowElement, 'bpmn:BoundaryEvent')) {
           deferred.unshift(function() {
-            handleFlowNode(e, context);
+            handleFlowNode(flowElement, context);
           });
-        } else if (is(e, 'bpmn:FlowNode')) {
-          handleFlowNode(e, context);
-        } else if (is(e, 'bpmn:DataObject')) ; else if (is(e, 'bpmn:DataStoreReference')) {
-          handleDataElement(e, context);
-        } else if (is(e, 'bpmn:DataObjectReference')) {
-          handleDataElement(e, context);
+        } else if (is(flowElement, 'bpmn:FlowNode')) {
+          handleFlowNode(flowElement, context);
+        } else if (is(flowElement, 'bpmn:DataObject')) ; else if (is(flowElement, 'bpmn:DataStoreReference')) {
+          handleDataElement(flowElement, context);
+        } else if (is(flowElement, 'bpmn:DataObjectReference')) {
+          handleDataElement(flowElement, context);
         } else {
           logError(
-            translate('unrecognized flowElement {element} in context {context}', {
-              element: elementToString(e),
-              context: (context ? elementToString(context.businessObject) : 'null')
-            }),
-            { element: e, context: context }
+            `unrecognized flowElement ${ elementToString(flowElement) } in context ${ elementToString(context && context.businessObject) }`,
+            {
+              element: flowElement,
+              context
+            }
           );
         }
       });
@@ -21722,21 +22129,20 @@
 
     function handleCollaboration(collaboration, context) {
 
-      forEach$1(collaboration.participants, contextual(handleParticipant, context));
+      forEach(collaboration.participants, contextual(handleParticipant, context));
 
-      handleArtifacts(collaboration.artifacts, context);
-
-      // handle message flows latest in the process
       deferred.push(function() {
         handleMessageFlows(collaboration.messageFlows, context);
       });
+
+      handleArtifacts(collaboration.artifacts, context);
     }
 
 
     function wireFlowNodeRefs(lane) {
 
       // wire the virtual flowNodeRefs <-> relationship
-      forEach$1(lane.flowNodeRef, function(flowNode) {
+      forEach(lane.flowNodeRef, function(flowNode) {
         var lanes = flowNode.get('lanes');
 
         if (lanes) {
@@ -21772,7 +22178,6 @@
 
     var importer,
         eventBus,
-        translate,
         canvas;
 
     var error,
@@ -21802,7 +22207,7 @@
         }
       };
 
-      var walker = new BpmnTreeWalker(visitor, translate);
+      var walker = new BpmnTreeWalker(visitor);
 
 
       bpmnDiagram = bpmnDiagram || (definitions.diagrams && definitions.diagrams[0]);
@@ -21810,12 +22215,12 @@
       var diagramsToImport = getDiagramsToImport(definitions, bpmnDiagram);
 
       if (!diagramsToImport) {
-        throw new Error(translate('no diagram to display'));
+        throw new Error('no diagram to display');
       }
 
       // traverse BPMN 2.0 document model,
       // starting at definitions
-      forEach$1(diagramsToImport, function(diagram) {
+      forEach(diagramsToImport, function(diagram) {
         walker.handleDefinitions(definitions, diagram);
       });
 
@@ -21833,7 +22238,6 @@
       try {
         importer = diagram.get('bpmnImporter');
         eventBus = diagram.get('eventBus');
-        translate = diagram.get('translate');
         canvas = diagram.get('canvas');
 
         eventBus.fire('import.render.start', { definitions: definitions });
@@ -21864,7 +22268,7 @@
    * @return {ModdleElement[]}
    */
   function getDiagramsToImport(definitions, bpmnDiagram) {
-    if (!bpmnDiagram) {
+    if (!bpmnDiagram || !bpmnDiagram.plane) {
       return;
     }
 
@@ -21897,7 +22301,7 @@
 
     // all collaboration processes can contain sub-diagrams
     if (collaboration) {
-      rootElements = map$1(collaboration.participants, function(participant) {
+      rootElements = map(collaboration.participants, function(participant) {
         return participant.processRef;
       });
 
@@ -21911,7 +22315,12 @@
     var diagramsToImport = [ bpmnDiagram ];
     var handledElements = [ bpmnElement ];
 
-    forEach$1(definitions.diagrams, function(diagram) {
+    forEach(definitions.diagrams, function(diagram) {
+
+      if (!diagram.plane) {
+        return;
+      }
+
       var businessObject = diagram.plane.bpmnElement;
 
       if (
@@ -21930,7 +22339,7 @@
   function selfAndAllFlowElements(elements) {
     var result = [];
 
-    forEach$1(elements, function(element) {
+    forEach(elements, function(element) {
       if (!element) {
         return;
       }
@@ -21960,6 +22369,7 @@
    *
    * @see http://bpmn.io/license for more information.
    */
+
 
 
   // inlined ../../resources/logo.svg
@@ -22023,7 +22433,7 @@
   var lightbox;
 
   function createLightbox() {
-    lightbox = domify$1(LIGHTBOX_MARKUP);
+    lightbox = domify(LIGHTBOX_MARKUP);
 
     assign(lightbox, LIGHTBOX_STYLES);
     assign(query('svg', lightbox), LOGO_STYLES);
@@ -22053,6 +22463,12 @@
    * must not be changed.
    *
    * @see http://bpmn.io/license for more information.
+   */
+
+  /**
+   * @template T
+   *
+   * @typedef { import('diagram-js/lib/core/EventBus').default<T> } EventBus
    */
 
   /**
@@ -22141,10 +22557,20 @@
    */
 
   /**
+   * @template Type
+   *
+   * @typedef { Type extends { eventBus: EventBus<infer X> } ? X : never } EventMap
+   */
+
+  /**
    * A base viewer for BPMN 2.0 diagrams.
    *
-   * Have a look at {@link Viewer}, {@link NavigatedViewer} or {@link Modeler} for
+   * Have a look at {@link bpmn-js/lib/Viewer}, {@link bpmn-js/lib/NavigatedViewer} or {@link bpmn-js/lib/Modeler} for
    * bundles that include actual features.
+   *
+   * @template [ServiceMap=null]
+   *
+   * @extends Diagram<ServiceMap>
    *
    * @param {BaseViewerOptions} [options] The options to configure the viewer.
    */
@@ -22165,13 +22591,13 @@
      */
     this._container = this._createContainer(options);
 
+    this._init(this._container, this._moddle, options);
+
     /* <project-logo> */
 
     addProjectLogo(this._container);
 
     /* </project-logo> */
-
-    this._init(this._container, this._moddle, options);
   }
 
   e(BaseViewer, Diagram);
@@ -22212,28 +22638,7 @@
     const self = this;
 
     function ParseCompleteEvent(data) {
-
-      const event = self.get('eventBus').createEvent(data);
-
-      // TODO(nikku): remove with future bpmn-js version
-      Object.defineProperty(event, 'context', {
-        enumerable: true,
-        get: function() {
-
-          console.warn(new Error(
-            'import.parse.complete <context> is deprecated ' +
-            'and will be removed in future library versions'
-          ));
-
-          return {
-            warnings: data.warnings,
-            references: data.references,
-            elementsById: data.elementsById
-          };
-        }
-      });
-
-      return event;
+      return self.get('eventBus').createEvent(data);
     }
 
     let aggregatedWarnings = [];
@@ -22311,8 +22716,6 @@
     }
   };
 
-  BaseViewer.prototype.importXML = wrapForCompatibility(BaseViewer.prototype.importXML);
-
 
   /**
    * Import parsed definitions and render a BPMN 2.0 diagram.
@@ -22342,8 +22745,6 @@
 
     return { warnings: result.warnings };
   };
-
-  BaseViewer.prototype.importDefinitions = wrapForCompatibility(BaseViewer.prototype.importDefinitions);
 
 
   /**
@@ -22405,8 +22806,6 @@
 
     return { warnings };
   };
-
-  BaseViewer.prototype.open = wrapForCompatibility(BaseViewer.prototype.open);
 
   /**
    * Export the currently displayed BPMN 2.0 diagram as
@@ -22482,8 +22881,6 @@
     return result;
   };
 
-  BaseViewer.prototype.saveXML = wrapForCompatibility(BaseViewer.prototype.saveXML);
-
 
   /**
    * Export the currently displayed BPMN 2.0 diagram as
@@ -22513,7 +22910,7 @@
       const canvas = this.get('canvas');
 
       const contentNode = canvas.getActiveLayer(),
-            defsNode = query('defs', canvas._svg);
+            defsNode = query(':scope > defs', canvas._svg);
 
       const contents = innerSVG(contentNode),
             defs = defsNode ? '<defs>' + innerSVG(defsNode) + '</defs>' : '';
@@ -22550,40 +22947,6 @@
 
     return { svg };
   };
-
-  BaseViewer.prototype.saveSVG = wrapForCompatibility(BaseViewer.prototype.saveSVG);
-
-  /**
-   * Get a named diagram service.
-   *
-   * @example
-   *
-   * const elementRegistry = viewer.get('elementRegistry');
-   * const startEventShape = elementRegistry.get('StartEvent_1');
-   *
-   * @param {string} name
-   *
-   * @return {Object} diagram service instance
-   *
-   * @method BaseViewer#get
-   */
-
-  /**
-   * Invoke a function in the context of this viewer.
-   *
-   * @example
-   *
-   * viewer.invoke(function(elementRegistry) {
-   *   const startEventShape = elementRegistry.get('StartEvent_1');
-   * });
-   *
-   * @param {Function} fn to be invoked
-   *
-   * @return {Object} the functions return value
-   *
-   * @method BaseViewer#invoke
-   */
-
 
   BaseViewer.prototype._setDefinitions = function(definitions) {
     this._definitions = definitions;
@@ -22629,15 +22992,62 @@
   };
 
   /**
-   * Register an event listener.
+   * @overlord
    *
-   * Remove an event listener via {@link BaseViewer#off}.
+   * Register an event listener for events with the given name.
+   *
+   * The callback will be invoked with `event, ...additionalArguments`
+   * that have been passed to {@link EventBus#fire}.
+   *
+   * Returning false from a listener will prevent the events default action
+   * (if any is specified). To stop an event from being processed further in
+   * other listeners execute {@link Event#stopPropagation}.
+   *
+   * Returning anything but `undefined` from a listener will stop the listener propagation.
+   *
+   * @template {keyof EventMap<ServiceMap>} EventName
+   *
+   * @param {EventName} events to subscribe to
+   * @param {number} [priority=1000] listen priority
+   * @param {EventBusEventCallback<(EventMap<ServiceMap>)[EventName]>} callback
+   * @param {any} [that] callback context
+   */
+  /**
+   * @overlord
+   *
+   * Register an event listener for events with the given name.
+   *
+   * The callback will be invoked with `event, ...additionalArguments`
+   * that have been passed to {@link EventBus#fire}.
+   *
+   * Returning false from a listener will prevent the events default action
+   * (if any is specified). To stop an event from being processed further in
+   * other listeners execute {@link Event#stopPropagation}.
+   *
+   * Returning anything but `undefined` from a listener will stop the listener propagation.
    *
    * @template T
    *
    * @param {string|string[]} events The event(s) to listen to.
    * @param {number} [priority] The priority with which to listen.
    * @param {EventBusEventCallback<T>} callback The callback.
+   * @param {any} [that] Value of `this` the callback will be called with.
+   */
+  /**
+   * Register an event listener for events with the given name.
+   *
+   * The callback will be invoked with `event, ...additionalArguments`
+   * that have been passed to {@link EventBus#fire}.
+   *
+   * Returning false from a listener will prevent the events default action
+   * (if any is specified). To stop an event from being processed further in
+   * other listeners execute {@link Event#stopPropagation}.
+   *
+   * Returning anything but `undefined` from a listener will stop the listener propagation.
+   *
+   * @param {string|string[]} events The event(s) to listen to.
+   * @param {number} [priority] The priority with which to listen.
+   * @param {Function} callback The callback.
    * @param {any} [that] Value of `this` the callback will be called with.
    */
   BaseViewer.prototype.on = function(events, priority, callback, that) {
@@ -22764,7 +23174,7 @@
    */
   BaseViewer.prototype._createContainer = function(options) {
 
-    const container = domify$1('<div class="bjs-container"></div>');
+    const container = domify('<div class="bjs-container"></div>');
 
     assign(container, {
       width: ensureUnit(options.width),
@@ -22783,7 +23193,7 @@
   BaseViewer.prototype._createModdle = function(options) {
     const moddleOptions = assign$1({}, this._moddleExtensions, options.moddleExtensions);
 
-    return new simple(moddleOptions);
+    return new SimpleBpmnModdle(moddleOptions);
   };
 
   BaseViewer.prototype._modules = [];
@@ -22865,7 +23275,7 @@
       img +
       '</a>';
 
-    const linkElement = domify$1(linkMarkup);
+    const linkElement = domify(linkMarkup);
 
     assign(query('svg', linkElement), LOGO_STYLES);
     assign(linkElement, LINK_STYLES, {
@@ -22893,7 +23303,7 @@
   /**
    * A viewer for BPMN 2.0 diagrams.
    *
-   * Have a look at {@link NavigatedViewer} or {@link Modeler} for bundles that include
+   * Have a look at {@link bpmn-js/lib/NavigatedViewer} or {@link bpmn-js/lib/Modeler} for bundles that include
    * additional features.
    *
    *
@@ -22929,6 +23339,10 @@
    * bpmnViewer.importXML(...);
    * ```
    *
+   * @template [ServiceMap=null]
+   *
+   * @extends BaseViewer<ServiceMap>
+   *
    * @param {BaseViewerOptions} [options] The options to configure the viewer.
    */
   function Viewer(options) {
@@ -22940,10 +23354,10 @@
   // modules the viewer is composed of
   Viewer.prototype._modules = [
     CoreModule$1,
-    TranslateModule,
-    SelectionModule,
+    DrilldownModdule,
     OverlaysModule,
-    DrilldownModdule
+    SelectionModule,
+    TranslateModule
   ];
 
   // default moddle extensions the viewer is composed of
@@ -22951,6 +23365,8 @@
 
   var KEYS_COPY = [ 'c', 'C' ];
   var KEYS_PASTE = [ 'v', 'V' ];
+  var KEYS_DUPLICATE = [ 'd', 'D' ];
+  var KEYS_CUT = [ 'x', 'X' ];
   var KEYS_REDO = [ 'y', 'Y' ];
   var KEYS_UNDO = [ 'z', 'Z' ];
 
@@ -22985,7 +23401,7 @@
    * @return {boolean}
    */
   function isKey(keys, event) {
-    keys = isArray$2(keys) ? keys : [ keys ];
+    keys = isArray$1(keys) ? keys : [ keys ];
 
     return keys.indexOf(event.key) !== -1 || keys.indexOf(event.code) !== -1;
   }
@@ -23009,6 +23425,20 @@
    */
   function isPaste(event) {
     return isCmd(event) && isKey(KEYS_PASTE, event);
+  }
+
+  /**
+   * @param {KeyboardEvent} event
+   */
+  function isDuplicate(event) {
+    return isCmd(event) && isKey(KEYS_DUPLICATE, event);
+  }
+
+  /**
+   * @param {KeyboardEvent} event
+   */
+  function isCut(event) {
+    return isCmd(event) && isKey(KEYS_CUT, event);
   }
 
   /**
@@ -23038,9 +23468,10 @@
   var KEYDOWN_EVENT = 'keyboard.keydown',
       KEYUP_EVENT = 'keyboard.keyup';
 
-  var HANDLE_MODIFIER_ATTRIBUTE = 'input-handle-modified-keys';
-
   var DEFAULT_PRIORITY = 1000;
+
+  var compatMessage = 'Keyboard binding is now implicit; explicit binding to an element got removed. For more information, see https://github.com/bpmn-io/diagram-js/issues/661';
+
 
   /**
    * A keyboard abstraction that may be activated and
@@ -23060,17 +23491,18 @@
    *
    * All events contain one field which is node.
    *
-   * A default binding for the keyboard may be specified via the
-   * `keyboard.bindTo` configuration option.
+   * Specify the initial keyboard binding state via the
+   * `keyboard.bind=true|false` configuration option.
    *
    * @param {Object} config
-   * @param {EventTarget} [config.bindTo]
+   * @param {boolean} [config.bind]
    * @param {EventBus} eventBus
    */
   function Keyboard(config, eventBus) {
     var self = this;
 
-    this._config = config || {};
+    this._config = config = config || {};
+
     this._eventBus = eventBus;
 
     this._keydownHandler = this._keydownHandler.bind(this);
@@ -23083,19 +23515,22 @@
       self.unbind();
     });
 
-    eventBus.on('diagram.init', function() {
+    if (config.bindTo) {
+      console.error('unsupported configuration <keyboard.bindTo>', new Error(compatMessage));
+    }
+
+    var bind = config && config.bind !== false;
+
+    eventBus.on('canvas.init', function(event) {
+      self._target = event.svg;
+
+      if (bind) {
+        self.bind();
+      }
+
       self._fire('init');
     });
 
-    eventBus.on('attach', function() {
-      if (config && config.bindTo) {
-        self.bind(config.bindTo);
-      }
-    });
-
-    eventBus.on('detach', function() {
-      self.unbind();
-    });
   }
 
   Keyboard.$inject = [
@@ -23130,43 +23565,31 @@
   };
 
   Keyboard.prototype._isEventIgnored = function(event) {
-    if (event.defaultPrevented) {
-      return true;
-    }
-
-    return isInput(event.target) && this._isModifiedKeyIgnored(event);
-  };
-
-  Keyboard.prototype._isModifiedKeyIgnored = function(event) {
-    if (!isCmd(event)) {
-      return true;
-    }
-
-    var allowedModifiers = this._getAllowedModifiers(event.target);
-    return allowedModifiers.indexOf(event.key) === -1;
-  };
-
-  Keyboard.prototype._getAllowedModifiers = function(element) {
-    var modifierContainer = closest(element, '[' + HANDLE_MODIFIER_ATTRIBUTE + ']', true);
-
-    if (!modifierContainer || (this._node && !this._node.contains(modifierContainer))) {
-      return [];
-    }
-
-    return modifierContainer.getAttribute(HANDLE_MODIFIER_ATTRIBUTE).split(',');
+    return false;
   };
 
   /**
    * Bind keyboard events to the given DOM node.
    *
+   * @overlord
+   * @deprecated No longer in use since version 15.0.0.
+   *
    * @param {EventTarget} node
    */
+  /**
+   * Bind keyboard events to the canvas node.
+   */
   Keyboard.prototype.bind = function(node) {
+
+    // legacy <node> argument provided
+    if (node) {
+      console.error('unsupported argument <node>', new Error(compatMessage));
+    }
 
     // make sure that the keyboard is only bound once to the DOM
     this.unbind();
 
-    this._node = node;
+    node = this._node = this._target;
 
     // bind key events
     event.bind(node, 'keydown', this._keydownHandler);
@@ -23236,14 +23659,6 @@
   Keyboard.prototype.isCmd = isCmd;
   Keyboard.prototype.isShift = isShift;
   Keyboard.prototype.isKey = isKey;
-
-
-
-  // helpers ///////
-
-  function isInput(target) {
-    return target && (matches(target, 'input, textarea') || target.contentEditable === 'true');
-  }
 
   var LOW_PRIORITY = 500;
 
@@ -23350,6 +23765,33 @@
         return true;
       }
     });
+
+    // duplicate
+    // CTRL/CMD + D
+    addListener('duplicate', function(context) {
+
+      var event = context.keyEvent;
+
+      if (isDuplicate(event)) {
+        editorActions.trigger('duplicate');
+
+        return true;
+      }
+    });
+
+    // cut
+    // CTRL/CMD + X
+    addListener('cut', function(context) {
+
+      var event = context.keyEvent;
+
+      if (isCut(event)) {
+        editorActions.trigger('cut');
+
+        return true;
+      }
+    });
+
 
     // zoom in one step
     // CTRL/CMD + +
@@ -23575,7 +24017,7 @@
   }
 
   /**
-   * @typedef {import('../core/EventBus').EventBus} EventBus
+   * @typedef {import('../core/EventBus').default} EventBus
    */
 
   var TRAP_PRIORITY = 5000;
@@ -23609,6 +24051,7 @@
    */
 
 
+
   /**
    * @param {Point} a
    * @param {Point} b
@@ -23639,12 +24082,19 @@
 
     var context;
 
+    function handleMousedown(event) {
+      return handleStart(event.originalEvent);
+    }
 
     // listen for move on element mouse down;
     // allow others to hook into the event before us though
     // (dragging / element moving will do this)
-    eventBus.on('element.mousedown', 500, function(e) {
-      return handleStart(e.originalEvent);
+    eventBus.on('canvas.focus.changed', function(event) {
+      if (event.focused) {
+        eventBus.on('element.mousedown', 500, handleMousedown);
+      } else {
+        eventBus.off('element.mousedown', handleMousedown);
+      }
     });
 
 
@@ -23789,6 +24239,7 @@
    * @typedef {import('../../core/EventBus').default} EventBus
    *
    * @typedef {import('../../util/Types').Point} Point
+   * @typedef {import('../../util/Types').ScrollDelta} ScrollDelta
    */
 
   var sign = Math.sign || function(n) {
@@ -23824,16 +24275,21 @@
     this._canvas = canvas;
     this._container = canvas._container;
 
-    this._handleWheel = bind$2(this._handleWheel, this);
+    this._handleWheel = bind$1(this._handleWheel, this);
 
     this._totalDelta = 0;
     this._scale = config.scale || DEFAULT_SCALE;
 
     var self = this;
 
-    eventBus.on('canvas.init', function(e) {
+    eventBus.on('canvas.mouseover', function() {
       self._init(config.enabled !== false);
     });
+
+    eventBus.on('canvas.mouseout', function() {
+      self._init(false);
+    });
+
   }
 
   ZoomScroll.$inject = [
@@ -23843,7 +24299,7 @@
   ];
 
   /**
-   * @param {Point} delta
+   * @param {ScrollDelta} delta
    */
   ZoomScroll.prototype.scroll = function scroll(delta) {
     this._canvas.scroll(delta);
@@ -23879,8 +24335,7 @@
 
   ZoomScroll.prototype._handleWheel = function handleWheel(event) {
 
-    // event is already handled by '.djs-scrollable'
-    if (closest(event.target, '.djs-scrollable', true)) {
+    if (!this._enabled) {
       return;
     }
 
@@ -23891,7 +24346,7 @@
     // pinch to zoom is mapped to wheel + ctrlKey = true
     // in modern browsers (!)
 
-    var isZoom = event.ctrlKey;
+    var isZoom = event.ctrlKey || (isMac() && event.metaKey);
 
     var isHorizontalScroll = event.shiftKey;
 
@@ -23943,7 +24398,7 @@
    * Zoom with fixed step size.
    *
    * @param {number} delta Zoom delta (1 for zooming in, -1 for zooming out).
-   * @param {Point} position
+   * @param {Point} [position]
    */
   ZoomScroll.prototype.stepZoom = function stepZoom(delta, position) {
 
@@ -23957,7 +24412,7 @@
    * Zoom in/out given a step size.
    *
    * @param {number} delta
-   * @param {Point} position
+   * @param {Point} [position]
    * @param {number} stepSize
    */
   ZoomScroll.prototype._zoom = function(delta, position, stepSize) {
@@ -24029,6 +24484,10 @@
 
   /**
    * A viewer with mouse and keyboard navigation features.
+   *
+   * @template [ServiceMap=null]
+   *
+   * @extends Viewer<ServiceMap>
    *
    * @param {BaseViewerOptions} [options]
    */

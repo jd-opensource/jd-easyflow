@@ -357,10 +357,10 @@
         and status=#{fieldMap.status.value}
       </if>
       <if test="fieldMap.createdDateStart != null">
-        and created_date &gt;=#{fieldMap.createdDate.value}
+        and created_date &gt;=#{fieldMap.createdDateStart.value}
       </if> 
       <if test="fieldMap.createdDateEnd != null">
-        and created_date &lt;=#{fieldMap.createdDate.value}
+        and created_date &lt;=#{fieldMap.createdDateEnd.value}
       </if>     
       <if test="fieldMap.processInstanceKeyField != null">
         and process_instance_key_field =#{fieldMap.processInstanceKeyField.value}
@@ -442,10 +442,10 @@
         and task.status=#{fieldMap.status.value}
       </if>
       <if test="fieldMap.createdDateStart != null">
-        and task.created_date &gt;=#{fieldMap.createdDate.value}
+        and task.created_date &gt;=#{fieldMap.createdDateStart.value}
       </if> 
       <if test="fieldMap.createdDateEnd != null">
-        and task.created_date &lt;=#{fieldMap.createdDate.value}
+        and task.created_date &lt;=#{fieldMap.createdDateEnd.value}
       </if>
 
       <if test="fieldMap.assignStatus != null">

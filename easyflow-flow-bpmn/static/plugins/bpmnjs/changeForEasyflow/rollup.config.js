@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import terser from '@rollup/plugin-terser';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -131,7 +129,7 @@ function processTemplate(str, args) {
     var replacement = args[n];
 
     if (!replacement) {
-      throw new Error('unknown template {{ ' + n + '}}');
+      throw new Error(`unknown template {{ ${ n } }}`);
     }
 
     return replacement;

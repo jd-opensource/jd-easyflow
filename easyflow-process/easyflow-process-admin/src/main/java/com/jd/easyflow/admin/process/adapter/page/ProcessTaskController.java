@@ -87,6 +87,7 @@ public class ProcessTaskController extends BasePageController {
     }
 
     protected WebResponse<PagerResult> getData(PagerCondition condition) {
+        checkPageParams(condition);
         Map extData = new HashMap<>(1);
         extData.put("productCode", null == condition.getField("productCode") ? null : condition.getField("productCode").getValue());
         String currentUser = userGroupAdminExtension.getCurrentUser(extData);
@@ -94,7 +95,11 @@ public class ProcessTaskController extends BasePageController {
         List<String> group2List = userGroupAdminExtension.getUserGroup2List(currentUser, extData);
 
         String queryType = (String) condition.getField("queryType").getValue();
+        FieldEntry executorEntry = condition.getField("executor");
         if ("MY_TODO".equals(queryType)) {
+            if (executorEntry != null) {
+                condition.getFieldList().remove(executorEntry);
+            }
             condition.addField(new FieldEntry("assignUser", currentUser));
             if (groupList != null) {
                 condition.addField(new FieldEntry("assignGroupList", groupList));
@@ -104,7 +109,15 @@ public class ProcessTaskController extends BasePageController {
             }
             condition.addField(new FieldEntry("status", "PENDING"));
         } else if ("MY_DONE".equals(queryType)) {
+            if (executorEntry != null) {
+                condition.getFieldList().remove(executorEntry);
+            }
             condition.addField(new FieldEntry("executor", currentUser));
+        } else if ("ALL_TODO".equals(queryType)) {
+            if (executorEntry != null) {
+                condition.getFieldList().remove(executorEntry);
+            }
+            condition.addField(new FieldEntry("status", "PENDING"));
         }
         condition.putExtData(ProcessTaskConstants.PAGER_EXT_KEY_ASSIGN, ProcessTaskConstants.PAGER_EXT_ASSIGN_PENDING);
         condition.putExtData(ProcessTaskConstants.PAGER_EXT_KEY_NODE_TASK_CONF,

@@ -119,6 +119,14 @@
                     "lasso-tool": entries['lasso-tool'],
                 }
 
+                // bpmn-js may add/remove palette entries across versions. Avoid returning
+                // undefined entries if a default entry is not available in the current version.
+                Object.keys(newEntries).forEach(function(key) {
+                    if (!newEntries[key]) {
+                        delete newEntries[key];
+                    }
+                });
+
                 return newEntries;
             }
         }
@@ -211,9 +219,6 @@
             // Render control
             var config = {
                 container: $bpmnContainer.find(".j-flow-canvas"),
-                keyboar: {
-                    bindTo: window
-                },
                 moddleExtensions: {
                     easyflow: easyflowExtension
                 },

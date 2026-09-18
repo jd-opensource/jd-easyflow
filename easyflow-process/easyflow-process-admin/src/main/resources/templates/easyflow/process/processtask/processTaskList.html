@@ -17,6 +17,7 @@
                             <select name="queryType" class="form-control" id="queryType">
                                 <option value="MY_TODO">[[#{easyflow.process.admin.page.processTaskList.myTodo}]]</option>
                                 <option value="MY_DONE">[[#{easyflow.process.admin.page.processTaskList.myDone}]]</option>
+                                <option value="ALL_TODO">[[#{easyflow.process.admin.page.processTaskList.allTodo}]]</option>
                                 <option value="ALL">[[#{easyflow.process.admin.page.processTaskList.allTask}]]</option>
                             </select>
                         </div>
@@ -43,6 +44,18 @@
                         <div class="form-group col">
                             <label>[[#{easyflow.process.admin.page.processTaskList.queryKeyField}]]:</label><input name="processInstanceKeyField" class="form-control"></input>
                         </div>                                                                                      
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.createdDateStart}]]:</label><input type="text" name="createdDateStart" id="createdDateStart" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.createdDateEnd}]]:</label><input type="text" name="createdDateEnd" id="createdDateEnd" class="form-control"></input>
+                        </div>
+                        <div class="form-group col">
+                            <label>[[#{easyflow.process.admin.page.processTaskList.queryExecutor}]]:</label><input name="executor" id="executor" class="form-control"></input>
+                        </div>
+                        <div class="form-group col"></div>
                     </div>                  
                     <div class="form-row">
                         <div class="col text-center">
@@ -61,14 +74,28 @@
 <script type="text/javascript" id="script" th:inline="javascript">
     $("#tabs").jTabs().jTabs("open", {id: "tab-table", name: "[(#{easyflow.process.admin.page.processTaskList.taskList})]", element: $("#tableContainer"), closeable: false});
     var queryParam = {};
+    if ("datetimepicker" in $.fn) {
+        $("#createdDateStart").datetimepicker({startView:2, minView:2, format:"yyyy-mm-dd"});
+        $("#createdDateEnd").datetimepicker({startView:2, minView:2, format:"yyyy-mm-dd"});
+    }
+
+    function refreshExecutorStatus() {
+        if ($("#queryType").val() == "ALL") {
+            $("#executor").prop("disabled", false);
+        } else {
+            $("#executor").val("").prop("disabled", true);
+        }
+    }
 
     function reset() {
         $("#search .form-control").val("");
         $("#queryType").val("MY_TODO");
+        refreshExecutorStatus();
         queryParam = $("#search").serializeObject();
     };
     reset();
     $("#query").click(function () {
+        refreshExecutorStatus();
         queryParam = $("#search").serializeObject();
         $('#datatable').bootstrapTable("refresh");
         return false;
@@ -76,6 +103,9 @@
     $("#reset").click(function () {
         reset();
         return false;
+    });
+    $("#queryType").change(function () {
+        refreshExecutorStatus();
     });
     var root = "[(@{/easyflow/processTask})]";
     var instanceRoot = "[(@{/easyflow/processInstance})]";

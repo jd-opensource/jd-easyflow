@@ -38,3 +38,5 @@ local/
 
 .metadata/
 .joycode
+.codegraph/
+.easybot

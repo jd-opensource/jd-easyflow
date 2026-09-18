@@ -21,6 +21,11 @@
     height: 100%
 }
 
+/* bpmn-js v18 makes canvas SVG focusable; hide browser focus outline in EasyFlow panel. */
+.j-flow-canvas .djs-container svg:focus {
+    outline: none;
+}
+
 .j-bpmn-btn-group {
     position:absolute;
     left:10px;
