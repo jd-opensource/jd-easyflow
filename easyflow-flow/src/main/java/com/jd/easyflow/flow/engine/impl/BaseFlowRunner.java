@@ -84,7 +84,7 @@ public abstract class BaseFlowRunner implements FlowRunner {
             NodeContextAccessor.setThrowable(currentNode, t);
             throw t;
         } finally {
-            if (nextNodes == null) {
+            if (nextNodes == null || nextNodes.length == 0) {
                 ((FlowContextImpl) context).addEndNode(currentNode);
             }
         }

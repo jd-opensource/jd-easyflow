@@ -57,7 +57,17 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         }
         CountDownLatch lock = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger();
-        scheduleNodes(context, counter, lock, runId);
+        // Sentinel count to avoid the runner finishes scheduling before all nodes are submitted:
+        // a submitted node may decrement the counter to 0 before the remaining start nodes are scheduled.
+        counter.incrementAndGet();
+        try {
+            scheduleNodes(context, counter, lock, runId);
+        } finally {
+            int count = counter.decrementAndGet();
+            if (count == 0) {
+                lock.countDown();
+            }
+        }
         try {
             if (timeout == 0) {
                 lock.await();
@@ -103,7 +113,8 @@ public class MultipleThreadFlowRunner extends BaseFlowRunner {
         NodeContext currentNode;
         while ((currentNode = context.getNextNode()) != null) {
             final NodeContext finalCurrentNode = currentNode;
-            counter.addAndGet(1);
+            // Increment counter BEFORE execute, so the counter never reaches 0 while submission is in progress.
+            counter.incrementAndGet();
             executor.execute(() -> {
                 try {
                     if (context.isLogOn() && logger.isInfoEnabled()) {

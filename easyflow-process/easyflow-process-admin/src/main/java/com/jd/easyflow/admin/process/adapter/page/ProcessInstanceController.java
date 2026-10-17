@@ -270,7 +270,7 @@ public class ProcessInstanceController extends BasePageController {
                 }
             }
         } else {
-            Fsm fsm = new FsmParser().parse(definition, false);
+            Fsm fsm = FsmParser.parse(definition, false);
             for (ProcessNodeInstanceDTO node : nodeList) {
                 State state = fsm.getState(node.getNodeId());
                 if (state != null) {

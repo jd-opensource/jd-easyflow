@@ -185,9 +185,10 @@ public class Flow implements FlowLifeCycle {
             this.nodeList = nodeList;
             this.nodeMap = new HashMap<>();
             this.nodeIndexMap = new HashMap<>();
-            for (FlowNode node : nodeList) {
+            for (int i = 0; i < nodeList.size(); i++) {
+                FlowNode node = nodeList.get(i);
                 this.nodeMap.put(node.getId(), node);
-                this.nodeIndexMap.put(node.getId(), this.nodeList.size() - 1);
+                this.nodeIndexMap.put(node.getId(), i);
             }
         }
     }

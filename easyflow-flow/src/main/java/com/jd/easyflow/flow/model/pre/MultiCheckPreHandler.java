@@ -58,8 +58,15 @@ public class MultiCheckPreHandler implements NodePreHandler, NodePrePropertyGett
                 previousNodes = new ArrayList<NodeContext>();
                 context.put(FlowConstants.CTX_PREVIOUS_NODES_PREFIX + nodeContext.getNodeId(), previousNodes);
             }
-            preNodes.add(nodeContext.getPreviousNode().getNodeId());
-            previousNodes.add(nodeContext.getPreviousNode());
+            NodeContext previousNode = nodeContext.getPreviousNode();
+            if (previousNode == null) {
+                if (context.isLogOn() && logger.isInfoEnabled()) {
+                    logger.info("Previous node is null, node:" + nodeContext.getNodeId() + " cannot pass multi check");
+                }
+                return false;
+            }
+            preNodes.add(previousNode.getNodeId());
+            previousNodes.add(previousNode);
 
             FlowNode currentNode = context.getFlow().getNode(nodeContext.getNodeId());
             List<String> preNodeList = this.getPreNodes(nodeContext, context);

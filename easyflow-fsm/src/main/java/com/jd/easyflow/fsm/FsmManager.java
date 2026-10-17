@@ -63,18 +63,24 @@ public class FsmManager extends CoreFsmManager implements SmartLifecycle, Applic
      *
      */
     protected void loadFsm() {
+        if (fsmPath == null) {
+            return;
+        }
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources;
-        try {
-            resources = resolver.getResources(fsmPath);
-            for (Resource resource : resources) {
-                logger.info("Start parse fsm definition file:" + resource.getURI());
-                try (InputStream is = resource.getInputStream()) {
-                   loadFsmInputStream(is);
+        String[] fsmPaths = fsmPath.split(",");
+        for (String path : fsmPaths) {
+            try {
+                resources = resolver.getResources(path.trim());
+                for (Resource resource : resources) {
+                    logger.info("Start parse fsm definition file:" + resource.getURI());
+                    try (InputStream is = resource.getInputStream()) {
+                       loadFsmInputStream(is);
+                    }
                 }
+            } catch (IOException e) {
+                throw new RuntimeException("Fsm definition file load exception", e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Fsm definition file load exception", e);
         }
     }
 

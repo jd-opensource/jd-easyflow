@@ -176,22 +176,40 @@ public class BpmnConverter {
         try {
             XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
             xmlInputFactory.setProperty("javax.xml.stream.isCoalescing", true);
+            // Disable DTD and external entities to prevent XXE attacks.
+            xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
             reader = xmlInputFactory.createXMLStreamReader(inputStream);
         } catch (XMLStreamException | FactoryConfigurationError e) {
+            closeXmlStreamReader(reader);
             throw new FlowException("BPMN Parse Exception", e);
         }
-        // Convert to java BPMN model leveraging the activiti ability.
-        BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
-        BpmnModel bpmnModel = bpmnXmlConverter.convertToBpmnModel(reader);
-        // Convert java BPMN model to EasyFlow model.
-        List<Map<String, Object>> flowDefList = new ArrayList<>();
-        for (Process process : bpmnModel.getProcesses()) {
-            Map<String, Object> flowDef = new HashMap<String, Object>();
-            convertProcess(process, bpmnModel, flowDef);
-            flowDefList.add(flowDef);
+        try {
+            // Convert to java BPMN model leveraging the activiti ability.
+            BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
+            BpmnModel bpmnModel = bpmnXmlConverter.convertToBpmnModel(reader);
+            // Convert java BPMN model to EasyFlow model.
+            List<Map<String, Object>> flowDefList = new ArrayList<>();
+            for (Process process : bpmnModel.getProcesses()) {
+                Map<String, Object> flowDef = new HashMap<String, Object>();
+                convertProcess(process, bpmnModel, flowDef);
+                flowDefList.add(flowDef);
+            }
+
+            return flowDefList;
+        } finally {
+            closeXmlStreamReader(reader);
         }
-        
-        return flowDefList;
+    }
+
+    private static void closeXmlStreamReader(XMLStreamReader reader) {
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (Throwable t) { // NOSONAR
+                logger.warn("Close XML stream reader exception:" + t.getMessage());
+            }
+        }
     }
 
     /**

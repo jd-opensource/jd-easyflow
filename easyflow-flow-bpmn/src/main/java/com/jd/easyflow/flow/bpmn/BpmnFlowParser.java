@@ -63,9 +63,13 @@ public class BpmnFlowParser extends FlowParserImpl {
     public List<Flow> parse(FlowParseParam param) {
         String data = param.getStringDefinition();
         if (data != null && data.trim().startsWith(XML_PREFIX)) {
-            logger.info("BPMN Definition:\n" + data);
+            if (logger.isDebugEnabled()) {
+                logger.debug("BPMN Definition:\n" + data);
+            }
             String easyFlowDef = BpmnConverter.convert(data, flowPrettyConfig);
-            logger.info("EasyFlow Definition:\n" + easyFlowDef);
+            if (logger.isDebugEnabled()) {
+                logger.debug("EasyFlow Definition:\n" + easyFlowDef);
+            }
             param.setStringDefinition(easyFlowDef);
             List<Flow> flowList = super.parse(param);
             flowList.get(0).setProperty(FLOW_BPMN_STRING_KEY, data);

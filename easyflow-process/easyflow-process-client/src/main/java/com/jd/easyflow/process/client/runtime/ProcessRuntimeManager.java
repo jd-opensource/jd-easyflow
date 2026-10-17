@@ -129,7 +129,7 @@ public class ProcessRuntimeManager {
         return op(context, () -> {
             ProcessCache cache = context.getCache();
             for (ProcessInstanceDTO dto : cache.objects(ProcessInstanceDTO.class)) {
-                if (Objects.equals(dto.getProcessType(), dto.getProcessType())
+                if (Objects.equals(dto.getProcessType(), processType)
                         && Objects.equals(dto.getBizNo(), bizNo)
                         && StdProcessConstants.STATUS_ACTIVE.equals(dto.getStatus())) {
                     return dto;
@@ -192,7 +192,7 @@ public class ProcessRuntimeManager {
                 List<ProcessNodeInstanceDTO> nodeInstanceList = ExportResponseUtil
                         .unwrap(getProcessInstanceExport().queryNodeInstanceByNos(exportRequestBuilder.build(queryList, context)));
                 for (ProcessNodeInstanceDTO nodeInstance : nodeInstanceList) {
-                    context.getCache().put(nodeInstance.getNodeInstanceNo(), context, false);
+                    context.getCache().put(nodeInstance.getNodeInstanceNo(), nodeInstance, false);
                     resultMap.put(nodeInstance.getNodeInstanceNo(), nodeInstance);
                 }
             }
